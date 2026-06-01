@@ -1,1 +1,1087 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Secure Authentication - Twinsure</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript><style>:root{--primary-dark:#001533;--primary-mid:#00296b;--primary-light:#003f88;--primary-lighter:#00509d;--accent-gold:#fdc500;--accent-gold-light:#ffd500;--bg-glass:rgba(10, 28, 54, 0.45);--border-glass:rgba(255, 255, 255, 0.08);--border-focus:rgba(253, 197, 0, 0.5);--text-white:#ffffff;--text-grey:#94a3b8;--text-light:#cbd5e1}*{margin:0;padding:0;box-sizing:border-box}html{width:100%;max-width:100%;overflow-x:clip}body{font-family:Inter,sans-serif;background-color:var(--primary-dark);color:var(--text-light);min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;margin:0;padding:0}#bgCanvas{position:absolute;top:0;left:0;width:100vw;height:100vh;z-index:1;pointer-events:none}.bg-spot{position:absolute;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:2}.spot-top-right{top:-10%;right:-10%;width:500px;height:500px;background:rgba(0,80,157,.25)}.spot-bottom-left{bottom:-10%;left:-10%;width:600px;height:600px;background:rgba(253,197,0,.06)}#cursorGlow{position:fixed;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(0,80,157,.15) 0,transparent 70%);transform:translate(-50%,-50%);pointer-events:none;z-index:3;transition:left .15s ease-out,top .15s ease-out}.top-left-branding{position:absolute;top:2.5rem;left:5%;z-index:10;display:flex;align-items:center;gap:.6rem;text-decoration:none}.top-logo-icon{width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;box-shadow:0 0 15px rgba(0,80,157,.3)}.top-logo-icon svg{width:20px;height:20px}.top-logo-text{font-family:Outfit,sans-serif;font-size:1.4rem;font-weight:800;color:var(--text-white);letter-spacing:.5px;text-shadow:0 0 10px rgba(255,255,255,.15)}.auth-container{width:90%;max-width:960px;min-height:580px;background:var(--bg-glass);backdrop-filter:blur(25px) saturate(180%);border:1px solid var(--border-glass);border-radius:28px;box-shadow:0 25px 65px rgba(0,0,0,.45);display:grid;grid-template-columns:1fr 1fr;overflow:hidden;position:relative;z-index:10;transition:all .5s ease}.auth-panel-left{background:linear-gradient(145deg,rgba(0,21,51,.95) 0,rgba(0,10,26,.98) 100%);border-right:1px solid var(--border-glass);padding:3rem;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}.auth-panel-left::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 40%,rgba(0,80,157,.25) 0,transparent 60%);pointer-events:none;z-index:1}.panel-logo{display:flex;align-items:center;gap:.6rem;z-index:5}.logo-icon-gold svg{width:28px;height:28px;filter:drop-shadow(0 0 8px rgba(253, 197, 0, .4))}.panel-logo span{font-family:Outfit,sans-serif;font-size:1.35rem;font-weight:800;color:var(--text-white);letter-spacing:.5px}.visuals-shield-assembly{position:relative;width:250px;height:250px;margin:auto;display:flex;align-items:center;justify-content:center;z-index:5}.glow-halo{position:absolute;width:170px;height:170px;background:radial-gradient(circle,rgba(0,80,157,.45) 0,transparent 70%);border-radius:50%;z-index:1;filter:blur(15px)}.central-shield-element{width:110px;height:121px;z-index:5;animation:pulseGlow 4s ease-in-out infinite}@keyframes pulseGlow{0%{transform:scale(1);filter:drop-shadow(0 0 12px rgba(0, 80, 157, .35))}50%{transform:scale(1.04);filter:drop-shadow(0 0 28px rgba(0, 80, 157, .6))}100%{transform:scale(1);filter:drop-shadow(0 0 12px rgba(0, 80, 157, .35))}}.fl-mock{background:rgba(255,255,255,.05);backdrop-filter:blur(12px);border:1.5px solid rgba(255,255,255,.09);border-radius:10px;padding:.4rem .6rem;position:absolute;z-index:10;box-shadow:0 10px 25px rgba(0,0,0,.25);display:flex;align-items:center;gap:.4rem}.mock-title{font-size:.55rem;font-weight:700;color:var(--text-grey);text-transform:uppercase;letter-spacing:.5px}.mini-chart-svg{width:45px;height:15px;overflow:visible}.mock-tl{top:8%;left:2%;flex-direction:column;align-items:flex-start;animation:floatUp 5.5s ease-in-out infinite}.mock-tr{top:15%;right:0;width:34px;height:34px;justify-content:center;border-radius:50%;color:var(--accent-gold);font-size:.95rem;animation:floatDown 6s ease-in-out infinite}.mock-bl{bottom:12%;left:2%;width:36px;height:36px;justify-content:center;border-radius:50%;font-size:1.1rem;animation:floatDown 5s ease-in-out infinite}.mock-br{bottom:8%;right:2%;gap:.5rem;animation:floatUp 6.5s ease-in-out infinite}.mini-pie-slice{width:14px;height:14px;border-radius:50%;background:conic-gradient(var(--accent-gold) 0 60%,var(--primary-lighter) 60% 100%)}.mini-lines{display:flex;flex-direction:column;gap:3px}.mini-ln{width:25px;height:3px;background:rgba(255,255,255,.2);border-radius:1px}@keyframes floatUp{0%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-7px) rotate(1deg)}100%{transform:translateY(0) rotate(-1deg)}}@keyframes floatDown{0%{transform:translateY(0) rotate(1deg)}50%{transform:translateY(7px) rotate(-1deg)}100%{transform:translateY(0) rotate(1deg)}}.panel-text-block{z-index:5}.panel-text-block h2{font-family:Outfit,sans-serif;font-size:1.85rem;font-weight:800;color:var(--text-white);margin-bottom:.6rem;line-height:1.25}.panel-text-block p{font-size:.9rem;color:var(--text-grey)}.auth-panel-right{padding:3rem 2.5rem;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;position:relative}.form-slider-container{width:100%;overflow:hidden;flex:1;display:flex;flex-direction:column;justify-content:center}.form-slider-wrapper{display:flex;width:200%;transition:transform .6s cubic-bezier(.85,0,.15,1)}.form-slide-pane{width:50%;display:flex;flex-direction:column;gap:1.5rem;transition:opacity .4s ease}.form-header h2{font-size:2.1rem;font-weight:800;color:var(--text-white);margin-bottom:.3rem;letter-spacing:-.5px}.form-header p{font-size:.88rem;color:var(--text-grey);line-height:1.4}.form-group{display:flex;flex-direction:column;gap:.5rem;position:relative}.form-group label{font-size:.82rem;font-weight:600;color:var(--text-light)}.input-wrapper{position:relative;display:flex;align-items:center}.input-icon-left{position:absolute;left:1.2rem;color:var(--text-grey);font-size:.95rem;pointer-events:none}.input-icon-right{position:absolute;right:1.2rem;color:var(--text-grey);font-size:.95rem;cursor:pointer;transition:color .2s}.input-icon-right:hover{color:var(--text-white)}.input-field{width:100%;background:rgba(255,255,255,.03);border:1.5px solid rgba(255,255,255,.08);border-radius:14px;padding:.9rem 1.2rem .9rem 2.8rem;font-size:.9rem;color:var(--text-white);outline:0;transition:all .3s ease}.input-field::placeholder{color:var(--text-grey);opacity:.7}.input-field:focus{background:rgba(255,255,255,.05);border-color:var(--border-focus);box-shadow:0 0 12px rgba(253,197,0,.15)}.form-options-row{display:flex;justify-content:space-between;align-items:center;font-size:.8rem}.custom-chk{display:flex;align-items:center;gap:.5rem;cursor:pointer;user-select:none;color:var(--text-light)}.custom-chk input{display:none}.chk-box{width:16px;height:16px;border-radius:4px;border:1.5px solid rgba(255,255,255,.2);background:rgba(255,255,255,.03);display:flex;align-items:center;justify-content:center;font-size:.65rem;color:transparent;transition:.2s}.custom-chk input:checked+.chk-box{background:var(--accent-gold);border-color:var(--accent-gold);color:var(--primary-dark)}.text-link{color:var(--text-light);text-decoration:underline;transition:color .2s}.text-link:hover{color:var(--accent-gold-light)}.btn-auth-submit{width:100%;padding:1rem;border-radius:14px;font-weight:700;font-size:.95rem;font-family:Inter,sans-serif;cursor:pointer;border:none;background:linear-gradient(135deg,var(--accent-gold-light) 0,var(--accent-gold) 100%);color:var(--primary-dark);box-shadow:0 4px 15px rgba(253,197,0,.25);transition:all .3s ease;display:flex;align-items:center;justify-content:center;gap:.5rem}.btn-auth-submit:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(253,197,0,.4)}.form-footer-switch{text-align:center;font-size:.82rem;color:var(--text-grey)}.form-footer-switch a{color:var(--accent-gold-light);font-weight:600;text-decoration:underline}.security-disclaimer-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:1rem 1.2rem;display:flex;gap:.9rem;align-items:center;position:relative;box-shadow:0 8px 24px rgba(0,0,0,.15);margin-top:1.5rem}.security-disclaimer-card::after{content:'';position:absolute;bottom:0;right:0;width:12px;height:12px;background:var(--accent-gold);clip-path:polygon(100% 0,0 100%,100% 100%);border-bottom-right-radius:16px}.security-lock-top{position:absolute;top:.6rem;right:.8rem;font-size:.72rem;color:rgba(253,197,0,.35)}.disclaimer-badge{width:38px;height:38px;border-radius:50%;background:rgba(253,197,0,.08);border:1px solid rgba(253,197,0,.25);display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--accent-gold);flex-shrink:0}.disclaimer-text{font-size:.72rem;line-height:1.4;color:var(--text-grey)}.encrypted-badge-row{display:flex;align-items:center;justify-content:center;gap:.4rem;font-size:.72rem;color:var(--text-grey);margin-top:.8rem;font-weight:500}.encrypted-badge-row i{color:#25d366}.alert{padding:.75rem 1rem;border-radius:10px;font-size:.78rem;font-weight:600;margin-bottom:.5rem;display:none}.alert.success{display:block;background:rgba(37,211,102,.12);border:1px solid #25d366;color:#25d366}.alert.error{display:block;background:rgba(239,68,68,.12);border:1px solid #ef4444;color:#ef4444}@media (max-width:992px){.auth-container{grid-template-columns:1fr;max-width:100%;width:100%}.auth-panel-left{display:none}.top-left-branding{position:static;margin-bottom:2rem;justify-content:center}body{flex-direction:column;justify-content:center;padding:3rem 1rem}}@media (max-width:768px){body{padding:2rem .75rem;justify-content:flex-start}.auth-container{border-radius:22px}.auth-panel-right{padding:2rem 1.25rem}.form-header h2{font-size:1.8rem}.form-options-row{flex-direction:column;align-items:flex-start;gap:.75rem}.top-left-branding{margin-bottom:1.5rem}.security-disclaimer-card{flex-direction:column;align-items:flex-start}}</style></head><body><div id="cursorGlow"></div><canvas id="bgCanvas"></canvas><div class="bg-spot spot-top-right"></div><div class="bg-spot spot-bottom-left"></div><a href="index.html" class="top-left-branding"><div class="top-logo-icon"><svg viewBox="0 0 100 100"><path d="M 50,10 Q 80,18 80,42 C 80,70 50,90 50,90 C 50,90 20,70 20,42 Q 20,18 50,10 Z" fill="none" stroke="url(#goldGradTop)" stroke-width="8"></path><path d="M 40,50 C 40,43 45,43 50,50 C 55,57 60,57 60,50 C 60,43 55,43 50,50 C 45,57 40,57 40,50 Z" fill="none" stroke="url(#goldGradTop)" stroke-width="6" stroke-linecap="round"></path><defs><linearGradient id="goldGradTop" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffd500"/><stop offset="100%" stop-color="#fdc500"/></linearGradient></defs></svg></div><span class="top-logo-text">Twinsure</span></a><div class="auth-container" id="authContainer"><div class="auth-panel-left"><div class="visuals-shield-assembly"><div class="glow-halo"></div><div class="central-shield-element"><svg viewBox="0 0 100 110"><path d="M 50,5 Q 90,15 90,45 C 90,80 50,105 50,105 C 50,105 10,80 10,45 Q 10,15 50,5 Z" fill="url(#leftShieldGrad)" stroke="rgba(255,255,255,0.12)" stroke-width="2.5"></path><path d="M 50,22 Q 76,28 76,46 C 76,66 50,82 50,82 C 50,82 24,66 24,46 Q 24,28 50,22 Z" fill="url(#innerGoldGrad)" stroke="rgba(253,197,0,0.3)" stroke-width="1.5"></path><path d="M 40,46 C 40,40 45,40 50,46 C 55,52 60,52 60,46 C 60,40 55,40 50,46 C 45,52 40,52 40,46 Z" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"></path><defs><linearGradient id="leftShieldGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00509d" stop-opacity="0.8"/><stop offset="100%" stop-color="#001533" stop-opacity="0.95"/></linearGradient><linearGradient id="innerGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffd500"/><stop offset="100%" stop-color="#fdc500"/></linearGradient></defs></svg></div><div class="fl-mock mock-tl"><span class="mock-title">Analysis</span> <svg viewBox="0 0 100 30" class="mini-chart-svg"><path d="M 0,25 Q 25,8 50,15 T 100,5" fill="none" stroke="var(--accent-gold)" stroke-width="3" stroke-linecap="round"></path></svg></div><div class="fl-mock mock-tr"><i class="fas fa-shield-alt"></i></div><div class="fl-mock mock-bl"><i class="fas fa-check" style="color:#25d366"></i></div><div class="fl-mock mock-br"><div class="mini-pie-slice"></div><div class="mini-lines"><div class="mini-ln"></div><div class="mini-ln" style="width:70%"></div></div></div></div><div class="panel-text-block"><h2>“Secure Access To Your Insurance Ecosystem”</h2><p>Your protection journey continues here.</p></div></div><div class="auth-panel-right"><div style="margin-bottom:.8rem"><button id="goBackBtn" class="text-link" style="background:0 0;border:none;padding:0;font-size:.95rem;cursor:pointer">&larr; Go Back</button></div><div class="form-slider-container"><div class="form-slider-wrapper" id="formSlider"><div class="form-slide-pane"><div class="form-header"><h2>Welcome Back</h2><p>Login to continue your secure insurance experience.</p></div><div id="loginAlert" class="alert"></div><form id="loginForm" style="display:flex;flex-direction:column;gap:1.2rem"><div class="form-group"><label for="email">Email ID</label><div class="input-wrapper"><i class="far fa-envelope input-icon-left"></i> <input type="email" id="email" class="input-field" placeholder="Enter your email address" required autocomplete="email"></div></div><div class="form-group"><label for="password">Password</label><div class="input-wrapper"><i class="fas fa-lock input-icon-left"></i> <input type="password" id="password" class="input-field" placeholder="Enter your password" required autocomplete="current-password"> <i class="far fa-eye-slash input-icon-right" id="loginPassEye" onclick='togglePasswordVisibility("password","loginPassEye")'></i></div></div><div class="form-options-row"><label class="custom-chk"><input type="checkbox" id="rememberMe"> <span class="chk-box"><i class="fas fa-check"></i></span> <span>Remember Me</span></label> <a href="#" class="text-link" onclick='alert("Forgot password link clicked. Please contact administrator to reset.")'>Forgot Password?</a></div><button type="submit" class="btn-auth-submit"><span>Login</span> <i class="fas fa-arrow-right-to-bracket"></i></button></form><div class="form-footer-switch"><span>Don’t have an account?</span> <a href="#" id="goToSignUp">Sign Up</a></div></div><div class="form-slide-pane"><div class="form-header"><h2>Create Account</h2><p>Register to secure your customized policy recommends.</p></div><form id="registerForm" style="display:flex;flex-direction:column;gap:1.1rem"><div class="form-group"><label for="regName">Full Name</label><div class="input-wrapper"><i class="far fa-user input-icon-left"></i> <input id="regName" class="input-field" placeholder="Enter your full name" required></div></div><div class="form-group"><label for="regEmail">Email ID</label><div class="input-wrapper"><i class="far fa-envelope input-icon-left"></i> <input type="email" id="regEmail" class="input-field" placeholder="Enter your email address" required></div></div><div class="form-group"><label for="regPassword">Password</label><div class="input-wrapper"><i class="fas fa-lock input-icon-left"></i> <input type="password" id="regPassword" class="input-field" placeholder="Create secure password" required> <i class="far fa-eye-slash input-icon-right" id="regPassEye" onclick='togglePasswordVisibility("regPassword","regPassEye")'></i></div></div><div class="form-options-row"><label class="custom-chk"><input type="checkbox" id="agreeTerms" required> <span class="chk-box"><i class="fas fa-check"></i></span> <span style="font-size:.75rem">I agree to Terms & Conditions</span></label></div><button type="submit" class="btn-auth-submit"><span>Sign Up</span> <i class="fas fa-user-plus"></i></button></form><div class="form-footer-switch"><span>Already have an account?</span> <a href="#" id="goToLogin">Login</a></div></div></div></div><div><div class="security-disclaimer-card"><i class="fas fa-shield-alt security-lock-top"></i><div class="disclaimer-badge"><i class="fas fa-shield-halved"></i></div><div class="disclaimer-text">Ensure your surroundings are secure while entering your credentials. Twinsure is not responsible for credentials exposed from your side. If you suspect any unauthorized access, please contact us immediately and change your credentials.</div></div><div class="encrypted-badge-row"><i class="fas fa-lock"></i> <span>Protected by 256-bit Secure Encrypted Authentication</span></div></div></div></div><script defer="defer" src="js/config.js"></script><script defer="defer" src="js/api.js"></script><script>let slider=document.getElementById("formSlider"),goToSignUp=document.getElementById("goToSignUp"),goToLogin=document.getElementById("goToLogin"),authContainer=document.getElementById("authContainer");function togglePasswordVisibility(e,t){e=document.getElementById(e),t=document.getElementById(t),"password"===e.type?(e.type="text",t.classList.remove("fa-eye-slash"),t.classList.add("fa-eye")):(e.type="password",t.classList.remove("fa-eye"),t.classList.add("fa-eye-slash"))}goToSignUp.addEventListener("click",e=>{e.preventDefault(),slider.style.transform="translateX(-50%)"}),goToLogin.addEventListener("click",e=>{e.preventDefault(),slider.style.transform="translateX(0%)"}),window.addEventListener("mousemove",e=>{var t=document.getElementById("cursorGlow");t&&(t.style.left=e.clientX+"px",t.style.top=e.clientY+"px")});let canvas=document.getElementById("bgCanvas");if(canvas){let e=canvas.getContext("2d"),t=[];function resize(){canvas.width=window.innerWidth,canvas.height=window.innerHeight}window.addEventListener("resize",resize),resize();class i{constructor(){this.x=Math.random()*canvas.width,this.y=Math.random()*canvas.height,this.size=20*Math.random()+8,this.speedX=.2*Math.random()-.1,this.speedY=-.2*Math.random()-.05,this.alpha=.1*Math.random()+.02,this.color=.4<Math.random()?"#fdc500":"#00509d"}update(){this.x+=this.speedX,this.y+=this.speedY,this.y<-25&&(this.y=canvas.height+25,this.x=Math.random()*canvas.width),(this.x<-25||this.x>canvas.width+25)&&(this.speedX=-this.speedX)}draw(){e.save(),e.globalAlpha=this.alpha,e.beginPath(),e.arc(this.x,this.y,this.size,0,2*Math.PI),e.fillStyle=this.color,e.filter="blur(8px)",e.fill(),e.restore()}}for(let e=0;e<15;e++)t.push(new i);function animate(){e.clearRect(0,0,canvas.width,canvas.height),t.forEach(e=>{e.update(),e.draw()}),requestAnimationFrame(animate)}animate()}document.getElementById("loginForm").addEventListener("submit",async e=>{e.preventDefault();var e=document.getElementById("email").value,t=document.getElementById("password").value,a=document.getElementById("loginAlert");let n=await api.login(e,t);n.success?(a.className="alert success",a.textContent="Login successful! Redirecting...",setTimeout(()=>{"admin"===n.data.role?window.location.href="admin.html":(alert("Dashboard not available for this role yet."),api.logout())},1e3)):(a.className="alert error",a.textContent=n.message||"Login failed.")}),document.getElementById("registerForm").addEventListener("submit",e=>{e.preventDefault(),alert("Registration request successfully recorded. Our verification team will review and approve your partner account.")});let goBackBtnEl=document.getElementById("goBackBtn");goBackBtnEl&&goBackBtnEl.addEventListener("click",e=>{e.preventDefault();try{document.referrer&&document.referrer!==window.location.href?window.history.back():window.location.href="index.html"}catch(e){window.location.href="index.html"}})</script></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Secure Authentication - Twinsure</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="preload"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      as="style"
+      onload="((this.onload = null), (this.rel = 'stylesheet'))"
+    />
+    <noscript
+      ><link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    /></noscript>
+    <style>
+      :root {
+        --primary-dark: #001533;
+        --primary-mid: #00296b;
+        --primary-light: #003f88;
+        --primary-lighter: #00509d;
+        --accent-gold: #fdc500;
+        --accent-gold-light: #ffd500;
+        --bg-glass: rgba(10, 28, 54, 0.45);
+        --border-glass: rgba(255, 255, 255, 0.08);
+        --border-focus: rgba(253, 197, 0, 0.5);
+        --text-white: #ffffff;
+        --text-grey: #94a3b8;
+        --text-light: #cbd5e1;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: clip;
+      }
+      body {
+        font-family: Inter, sans-serif;
+        background-color: var(--primary-dark);
+        color: var(--text-light);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        margin: 0;
+        padding: 0;
+      }
+      #bgCanvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 1;
+        pointer-events: none;
+      }
+      .bg-spot {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(120px);
+        pointer-events: none;
+        z-index: 2;
+      }
+      .spot-top-right {
+        top: -10%;
+        right: -10%;
+        width: 500px;
+        height: 500px;
+        background: rgba(0, 80, 157, 0.25);
+      }
+      .spot-bottom-left {
+        bottom: -10%;
+        left: -10%;
+        width: 600px;
+        height: 600px;
+        background: rgba(253, 197, 0, 0.06);
+      }
+      #cursorGlow {
+        position: fixed;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(0, 80, 157, 0.15) 0,
+          transparent 70%
+        );
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        z-index: 3;
+        transition:
+          left 0.15s ease-out,
+          top 0.15s ease-out;
+      }
+      .top-left-branding {
+        position: absolute;
+        top: 2.5rem;
+        left: 5%;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        text-decoration: none;
+      }
+      .top-logo-icon {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 80, 157, 0.3);
+      }
+      .top-logo-icon svg {
+        width: 20px;
+        height: 20px;
+      }
+      .top-logo-text {
+        font-family: Outfit, sans-serif;
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: var(--text-white);
+        letter-spacing: 0.5px;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+      }
+      .auth-container {
+        width: 90%;
+        max-width: 960px;
+        min-height: 580px;
+        background: var(--bg-glass);
+        backdrop-filter: blur(25px) saturate(180%);
+        border: 1px solid var(--border-glass);
+        border-radius: 28px;
+        box-shadow: 0 25px 65px rgba(0, 0, 0, 0.45);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        overflow: hidden;
+        position: relative;
+        z-index: 10;
+        transition: all 0.5s ease;
+      }
+      .auth-panel-left {
+        background: linear-gradient(
+          145deg,
+          rgba(0, 21, 51, 0.95) 0,
+          rgba(0, 10, 26, 0.98) 100%
+        );
+        border-right: 1px solid var(--border-glass);
+        padding: 3rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+      }
+      .auth-panel-left::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          circle at 50% 40%,
+          rgba(0, 80, 157, 0.25) 0,
+          transparent 60%
+        );
+        pointer-events: none;
+        z-index: 1;
+      }
+      .panel-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        z-index: 5;
+      }
+      .logo-icon-gold svg {
+        width: 28px;
+        height: 28px;
+        filter: drop-shadow(0 0 8px rgba(253, 197, 0, 0.4));
+      }
+      .panel-logo span {
+        font-family: Outfit, sans-serif;
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: var(--text-white);
+        letter-spacing: 0.5px;
+      }
+      .visuals-shield-assembly {
+        position: relative;
+        width: 250px;
+        height: 250px;
+        margin: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 5;
+      }
+      .glow-halo {
+        position: absolute;
+        width: 170px;
+        height: 170px;
+        background: radial-gradient(
+          circle,
+          rgba(0, 80, 157, 0.45) 0,
+          transparent 70%
+        );
+        border-radius: 50%;
+        z-index: 1;
+        filter: blur(15px);
+      }
+      .central-shield-element {
+        width: 110px;
+        height: 121px;
+        z-index: 5;
+        animation: pulseGlow 4s ease-in-out infinite;
+      }
+      @keyframes pulseGlow {
+        0% {
+          transform: scale(1);
+          filter: drop-shadow(0 0 12px rgba(0, 80, 157, 0.35));
+        }
+        50% {
+          transform: scale(1.04);
+          filter: drop-shadow(0 0 28px rgba(0, 80, 157, 0.6));
+        }
+        100% {
+          transform: scale(1);
+          filter: drop-shadow(0 0 12px rgba(0, 80, 157, 0.35));
+        }
+      }
+      .fl-mock {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(12px);
+        border: 1.5px solid rgba(255, 255, 255, 0.09);
+        border-radius: 10px;
+        padding: 0.4rem 0.6rem;
+        position: absolute;
+        z-index: 10;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+      .mock-title {
+        font-size: 0.55rem;
+        font-weight: 700;
+        color: var(--text-grey);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .mini-chart-svg {
+        width: 45px;
+        height: 15px;
+        overflow: visible;
+      }
+      .mock-tl {
+        top: 8%;
+        left: 2%;
+        flex-direction: column;
+        align-items: flex-start;
+        animation: floatUp 5.5s ease-in-out infinite;
+      }
+      .mock-tr {
+        top: 15%;
+        right: 0;
+        width: 34px;
+        height: 34px;
+        justify-content: center;
+        border-radius: 50%;
+        color: var(--accent-gold);
+        font-size: 0.95rem;
+        animation: floatDown 6s ease-in-out infinite;
+      }
+      .mock-bl {
+        bottom: 12%;
+        left: 2%;
+        width: 36px;
+        height: 36px;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 1.1rem;
+        animation: floatDown 5s ease-in-out infinite;
+      }
+      .mock-br {
+        bottom: 8%;
+        right: 2%;
+        gap: 0.5rem;
+        animation: floatUp 6.5s ease-in-out infinite;
+      }
+      .mini-pie-slice {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: conic-gradient(
+          var(--accent-gold) 0 60%,
+          var(--primary-lighter) 60% 100%
+        );
+      }
+      .mini-lines {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+      .mini-ln {
+        width: 25px;
+        height: 3px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 1px;
+      }
+      @keyframes floatUp {
+        0% {
+          transform: translateY(0) rotate(-1deg);
+        }
+        50% {
+          transform: translateY(-7px) rotate(1deg);
+        }
+        100% {
+          transform: translateY(0) rotate(-1deg);
+        }
+      }
+      @keyframes floatDown {
+        0% {
+          transform: translateY(0) rotate(1deg);
+        }
+        50% {
+          transform: translateY(7px) rotate(-1deg);
+        }
+        100% {
+          transform: translateY(0) rotate(1deg);
+        }
+      }
+      .panel-text-block {
+        z-index: 5;
+      }
+      .panel-text-block h2 {
+        font-family: Outfit, sans-serif;
+        font-size: 1.85rem;
+        font-weight: 800;
+        color: var(--text-white);
+        margin-bottom: 0.6rem;
+        line-height: 1.25;
+      }
+      .panel-text-block p {
+        font-size: 0.9rem;
+        color: var(--text-grey);
+      }
+      .auth-panel-right {
+        padding: 3rem 2.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        overflow: hidden;
+        position: relative;
+      }
+      .form-slider-container {
+        width: 100%;
+        overflow: hidden;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .form-slider-wrapper {
+        display: flex;
+        width: 200%;
+        transition: transform 0.6s cubic-bezier(0.85, 0, 0.15, 1);
+      }
+      .form-slide-pane {
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        transition: opacity 0.4s ease;
+      }
+      .form-header h2 {
+        font-size: 2.1rem;
+        font-weight: 800;
+        color: var(--text-white);
+        margin-bottom: 0.3rem;
+        letter-spacing: -0.5px;
+      }
+      .form-header p {
+        font-size: 0.88rem;
+        color: var(--text-grey);
+        line-height: 1.4;
+      }
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        position: relative;
+      }
+      .form-group label {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--text-light);
+      }
+      .input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+      .input-icon-left {
+        position: absolute;
+        left: 1.2rem;
+        color: var(--text-grey);
+        font-size: 0.95rem;
+        pointer-events: none;
+      }
+      .input-icon-right {
+        position: absolute;
+        right: 1.2rem;
+        color: var(--text-grey);
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: color 0.2s;
+      }
+      .input-icon-right:hover {
+        color: var(--text-white);
+      }
+      .input-field {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1.5px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        padding: 0.9rem 1.2rem 0.9rem 2.8rem;
+        font-size: 0.9rem;
+        color: var(--text-white);
+        outline: 0;
+        transition: all 0.3s ease;
+      }
+      .input-field::placeholder {
+        color: var(--text-grey);
+        opacity: 0.7;
+      }
+      .input-field:focus {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: var(--border-focus);
+        box-shadow: 0 0 12px rgba(253, 197, 0, 0.15);
+      }
+      .form-options-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.8rem;
+      }
+      .custom-chk {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        user-select: none;
+        color: var(--text-light);
+      }
+      .custom-chk input {
+        display: none;
+      }
+      .chk-box {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        border: 1.5px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.03);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.65rem;
+        color: transparent;
+        transition: 0.2s;
+      }
+      .custom-chk input:checked + .chk-box {
+        background: var(--accent-gold);
+        border-color: var(--accent-gold);
+        color: var(--primary-dark);
+      }
+      .text-link {
+        color: var(--text-light);
+        text-decoration: underline;
+        transition: color 0.2s;
+      }
+      .text-link:hover {
+        color: var(--accent-gold-light);
+      }
+      .btn-auth-submit {
+        width: 100%;
+        padding: 1rem;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        font-family: Inter, sans-serif;
+        cursor: pointer;
+        border: none;
+        background: linear-gradient(
+          135deg,
+          var(--accent-gold-light) 0,
+          var(--accent-gold) 100%
+        );
+        color: var(--primary-dark);
+        box-shadow: 0 4px 15px rgba(253, 197, 0, 0.25);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+      .btn-auth-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 22px rgba(253, 197, 0, 0.4);
+      }
+      .form-footer-switch {
+        text-align: center;
+        font-size: 0.82rem;
+        color: var(--text-grey);
+      }
+      .form-footer-switch a {
+        color: var(--accent-gold-light);
+        font-weight: 600;
+        text-decoration: underline;
+      }
+      .security-disclaimer-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 16px;
+        padding: 1rem 1.2rem;
+        display: flex;
+        gap: 0.9rem;
+        align-items: center;
+        position: relative;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        margin-top: 1.5rem;
+      }
+      .security-disclaimer-card::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 12px;
+        height: 12px;
+        background: var(--accent-gold);
+        clip-path: polygon(100% 0, 0 100%, 100% 100%);
+        border-bottom-right-radius: 16px;
+      }
+      .security-lock-top {
+        position: absolute;
+        top: 0.6rem;
+        right: 0.8rem;
+        font-size: 0.72rem;
+        color: rgba(253, 197, 0, 0.35);
+      }
+      .disclaimer-badge {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: rgba(253, 197, 0, 0.08);
+        border: 1px solid rgba(253, 197, 0, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        color: var(--accent-gold);
+        flex-shrink: 0;
+      }
+      .disclaimer-text {
+        font-size: 0.72rem;
+        line-height: 1.4;
+        color: var(--text-grey);
+      }
+      .encrypted-badge-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        font-size: 0.72rem;
+        color: var(--text-grey);
+        margin-top: 0.8rem;
+        font-weight: 500;
+      }
+      .encrypted-badge-row i {
+        color: #25d366;
+      }
+      .alert {
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: none;
+      }
+      .alert.success {
+        display: block;
+        background: rgba(37, 211, 102, 0.12);
+        border: 1px solid #25d366;
+        color: #25d366;
+      }
+      .alert.error {
+        display: block;
+        background: rgba(239, 68, 68, 0.12);
+        border: 1px solid #ef4444;
+        color: #ef4444;
+      }
+      @media (max-width: 992px) {
+        .auth-container {
+          grid-template-columns: 1fr;
+          max-width: 100%;
+          width: 100%;
+        }
+        .auth-panel-left {
+          display: none;
+        }
+        .top-left-branding {
+          position: static;
+          margin-bottom: 2rem;
+          justify-content: center;
+        }
+        body {
+          flex-direction: column;
+          justify-content: center;
+          padding: 3rem 1rem;
+        }
+      }
+      @media (max-width: 768px) {
+        body {
+          padding: 2rem 0.75rem;
+          justify-content: flex-start;
+        }
+        .auth-container {
+          border-radius: 22px;
+        }
+        .auth-panel-right {
+          padding: 2rem 1.25rem;
+        }
+        .form-header h2 {
+          font-size: 1.8rem;
+        }
+        .form-options-row {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.75rem;
+        }
+        .top-left-branding {
+          margin-bottom: 1.5rem;
+        }
+        .security-disclaimer-card {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cursorGlow"></div>
+    <canvas id="bgCanvas"></canvas>
+    <div class="bg-spot spot-top-right"></div>
+    <div class="bg-spot spot-bottom-left"></div>
+    <a href="index.html" class="top-left-branding"
+      ><div class="top-logo-icon">
+        <svg viewBox="0 0 100 100">
+          <path
+            d="M 50,10 Q 80,18 80,42 C 80,70 50,90 50,90 C 50,90 20,70 20,42 Q 20,18 50,10 Z"
+            fill="none"
+            stroke="url(#goldGradTop)"
+            stroke-width="8"
+          ></path>
+          <path
+            d="M 40,50 C 40,43 45,43 50,50 C 55,57 60,57 60,50 C 60,43 55,43 50,50 C 45,57 40,57 40,50 Z"
+            fill="none"
+            stroke="url(#goldGradTop)"
+            stroke-width="6"
+            stroke-linecap="round"
+          ></path>
+          <defs>
+            <linearGradient
+              id="goldGradTop"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="100%"
+            >
+              <stop offset="0%" stop-color="#ffd500" />
+              <stop offset="100%" stop-color="#fdc500" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <span class="top-logo-text">Twinsure</span></a
+    >
+    <div class="auth-container" id="authContainer">
+      <div class="auth-panel-left">
+        <div class="visuals-shield-assembly">
+          <div class="glow-halo"></div>
+          <div class="central-shield-element">
+            <svg viewBox="0 0 100 110">
+              <path
+                d="M 50,5 Q 90,15 90,45 C 90,80 50,105 50,105 C 50,105 10,80 10,45 Q 10,15 50,5 Z"
+                fill="url(#leftShieldGrad)"
+                stroke="rgba(255,255,255,0.12)"
+                stroke-width="2.5"
+              ></path>
+              <path
+                d="M 50,22 Q 76,28 76,46 C 76,66 50,82 50,82 C 50,82 24,66 24,46 Q 24,28 50,22 Z"
+                fill="url(#innerGoldGrad)"
+                stroke="rgba(253,197,0,0.3)"
+                stroke-width="1.5"
+              ></path>
+              <path
+                d="M 40,46 C 40,40 45,40 50,46 C 55,52 60,52 60,46 C 60,40 55,40 50,46 C 45,52 40,52 40,46 Z"
+                fill="none"
+                stroke="#ffffff"
+                stroke-width="3"
+                stroke-linecap="round"
+              ></path>
+              <defs>
+                <linearGradient
+                  id="leftShieldGrad"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="100%"
+                >
+                  <stop offset="0%" stop-color="#00509d" stop-opacity="0.8" />
+                  <stop
+                    offset="100%"
+                    stop-color="#001533"
+                    stop-opacity="0.95"
+                  />
+                </linearGradient>
+                <linearGradient
+                  id="innerGoldGrad"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="100%"
+                >
+                  <stop offset="0%" stop-color="#ffd500" />
+                  <stop offset="100%" stop-color="#fdc500" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <div class="fl-mock mock-tl">
+            <span class="mock-title">Analysis</span>
+            <svg viewBox="0 0 100 30" class="mini-chart-svg">
+              <path
+                d="M 0,25 Q 25,8 50,15 T 100,5"
+                fill="none"
+                stroke="var(--accent-gold)"
+                stroke-width="3"
+                stroke-linecap="round"
+              ></path>
+            </svg>
+          </div>
+          <div class="fl-mock mock-tr"><i class="fas fa-shield-alt"></i></div>
+          <div class="fl-mock mock-bl">
+            <i class="fas fa-check" style="color: #25d366"></i>
+          </div>
+          <div class="fl-mock mock-br">
+            <div class="mini-pie-slice"></div>
+            <div class="mini-lines">
+              <div class="mini-ln"></div>
+              <div class="mini-ln" style="width: 70%"></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-text-block">
+          <h2>“Secure Access To Your Insurance Ecosystem”</h2>
+          <p>Your protection journey continues here.</p>
+        </div>
+      </div>
+      <div class="auth-panel-right">
+        <div style="margin-bottom: 0.8rem">
+          <button
+            id="goBackBtn"
+            class="text-link"
+            style="
+              background: 0 0;
+              border: none;
+              padding: 0;
+              font-size: 0.95rem;
+              cursor: pointer;
+            "
+          >
+            &larr; Go Back
+          </button>
+        </div>
+        <div class="form-slider-container">
+          <div class="form-slider-wrapper" id="formSlider">
+            <div class="form-slide-pane">
+              <div class="form-header">
+                <h2>Welcome Back</h2>
+                <p>Login to continue your secure insurance experience.</p>
+              </div>
+              <div id="loginAlert" class="alert"></div>
+              <form
+                id="loginForm"
+                style="display: flex; flex-direction: column; gap: 1.2rem"
+              >
+                <div class="form-group">
+                  <label for="email">Email ID</label>
+                  <div class="input-wrapper">
+                    <i class="far fa-envelope input-icon-left"></i>
+                    <input
+                      type="email"
+                      id="email"
+                      class="input-field"
+                      placeholder="Enter your email address"
+                      required
+                      autocomplete="email"
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="password">Password</label>
+                  <div class="input-wrapper">
+                    <i class="fas fa-lock input-icon-left"></i>
+                    <input
+                      type="password"
+                      id="password"
+                      class="input-field"
+                      placeholder="Enter your password"
+                      required
+                      autocomplete="current-password"
+                    />
+                    <i
+                      class="far fa-eye-slash input-icon-right"
+                      id="loginPassEye"
+                      onclick="
+                        togglePasswordVisibility('password', 'loginPassEye')
+                      "
+                    ></i>
+                  </div>
+                </div>
+                <div class="form-options-row">
+                  <label class="custom-chk"
+                    ><input type="checkbox" id="rememberMe" />
+                    <span class="chk-box"><i class="fas fa-check"></i></span>
+                    <span>Remember Me</span></label
+                  >
+                  <a
+                    href="#"
+                    class="text-link"
+                    onclick="
+                      alert(
+                        'Forgot password link clicked. Please contact administrator to reset.',
+                      )
+                    "
+                    >Forgot Password?</a
+                  >
+                </div>
+                <button type="submit" class="btn-auth-submit">
+                  <span>Login</span>
+                  <i class="fas fa-arrow-right-to-bracket"></i>
+                </button>
+              </form>
+              <div class="form-footer-switch">
+                <span>Don’t have an account?</span>
+                <a href="#" id="goToSignUp">Sign Up</a>
+              </div>
+            </div>
+            <div class="form-slide-pane">
+              <div class="form-header">
+                <h2>Create Account</h2>
+                <p>Register to secure your customized policy recommends.</p>
+              </div>
+              <form
+                id="registerForm"
+                style="display: flex; flex-direction: column; gap: 1.1rem"
+              >
+                <div class="form-group">
+                  <label for="regName">Full Name</label>
+                  <div class="input-wrapper">
+                    <i class="far fa-user input-icon-left"></i>
+                    <input
+                      id="regName"
+                      class="input-field"
+                      placeholder="Enter your full name"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="regEmail">Email ID</label>
+                  <div class="input-wrapper">
+                    <i class="far fa-envelope input-icon-left"></i>
+                    <input
+                      type="email"
+                      id="regEmail"
+                      class="input-field"
+                      placeholder="Enter your email address"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="regPassword">Password</label>
+                  <div class="input-wrapper">
+                    <i class="fas fa-lock input-icon-left"></i>
+                    <input
+                      type="password"
+                      id="regPassword"
+                      class="input-field"
+                      placeholder="Create secure password"
+                      required
+                    />
+                    <i
+                      class="far fa-eye-slash input-icon-right"
+                      id="regPassEye"
+                      onclick="
+                        togglePasswordVisibility('regPassword', 'regPassEye')
+                      "
+                    ></i>
+                  </div>
+                </div>
+                <div class="form-options-row">
+                  <label class="custom-chk"
+                    ><input type="checkbox" id="agreeTerms" required />
+                    <span class="chk-box"><i class="fas fa-check"></i></span>
+                    <span style="font-size: 0.75rem"
+                      >I agree to Terms & Conditions</span
+                    ></label
+                  >
+                </div>
+                <button type="submit" class="btn-auth-submit">
+                  <span>Sign Up</span> <i class="fas fa-user-plus"></i>
+                </button>
+              </form>
+              <div class="form-footer-switch">
+                <span>Already have an account?</span>
+                <a href="#" id="goToLogin">Login</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="security-disclaimer-card">
+            <i class="fas fa-shield-alt security-lock-top"></i>
+            <div class="disclaimer-badge">
+              <i class="fas fa-shield-halved"></i>
+            </div>
+            <div class="disclaimer-text">
+              Ensure your surroundings are secure while entering your
+              credentials. Twinsure is not responsible for credentials exposed
+              from your side. If you suspect any unauthorized access, please
+              contact us immediately and change your credentials.
+            </div>
+          </div>
+          <div class="encrypted-badge-row">
+            <i class="fas fa-lock"></i>
+            <span>Protected by 256-bit Secure Encrypted Authentication</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+      let slider = document.getElementById("formSlider"),
+        goToSignUp = document.getElementById("goToSignUp"),
+        goToLogin = document.getElementById("goToLogin"),
+        authContainer = document.getElementById("authContainer");
+      function togglePasswordVisibility(e, t) {
+        ((e = document.getElementById(e)),
+          (t = document.getElementById(t)),
+          "password" === e.type
+            ? ((e.type = "text"),
+              t.classList.remove("fa-eye-slash"),
+              t.classList.add("fa-eye"))
+            : ((e.type = "password"),
+              t.classList.remove("fa-eye"),
+              t.classList.add("fa-eye-slash")));
+      }
+      (goToSignUp.addEventListener("click", (e) => {
+        (e.preventDefault(), (slider.style.transform = "translateX(-50%)"));
+      }),
+        goToLogin.addEventListener("click", (e) => {
+          (e.preventDefault(), (slider.style.transform = "translateX(0%)"));
+        }),
+        window.addEventListener("mousemove", (e) => {
+          var t = document.getElementById("cursorGlow");
+          t &&
+            ((t.style.left = e.clientX + "px"),
+            (t.style.top = e.clientY + "px"));
+        }));
+      let canvas = document.getElementById("bgCanvas");
+      if (canvas) {
+        let e = canvas.getContext("2d"),
+          t = [];
+        function resize() {
+          ((canvas.width = window.innerWidth),
+            (canvas.height = window.innerHeight));
+        }
+        (window.addEventListener("resize", resize), resize());
+        class i {
+          constructor() {
+            ((this.x = Math.random() * canvas.width),
+              (this.y = Math.random() * canvas.height),
+              (this.size = 20 * Math.random() + 8),
+              (this.speedX = 0.2 * Math.random() - 0.1),
+              (this.speedY = -0.2 * Math.random() - 0.05),
+              (this.alpha = 0.1 * Math.random() + 0.02),
+              (this.color = 0.4 < Math.random() ? "#fdc500" : "#00509d"));
+          }
+          update() {
+            ((this.x += this.speedX),
+              (this.y += this.speedY),
+              this.y < -25 &&
+                ((this.y = canvas.height + 25),
+                (this.x = Math.random() * canvas.width)),
+              (this.x < -25 || this.x > canvas.width + 25) &&
+                (this.speedX = -this.speedX));
+          }
+          draw() {
+            (e.save(),
+              (e.globalAlpha = this.alpha),
+              e.beginPath(),
+              e.arc(this.x, this.y, this.size, 0, 2 * Math.PI),
+              (e.fillStyle = this.color),
+              (e.filter = "blur(8px)"),
+              e.fill(),
+              e.restore());
+          }
+        }
+        for (let e = 0; e < 15; e++) t.push(new i());
+        function animate() {
+          (e.clearRect(0, 0, canvas.width, canvas.height),
+            t.forEach((e) => {
+              (e.update(), e.draw());
+            }),
+            requestAnimationFrame(animate));
+        }
+        animate();
+      }
+      (document
+        .getElementById("loginForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          var e = document.getElementById("email").value,
+            t = document.getElementById("password").value,
+            a = document.getElementById("loginAlert");
+          let n = await api.login(e, t);
+          n.success
+            ? ((a.className = "alert success"),
+              (a.textContent = "Login successful! Redirecting..."),
+              setTimeout(() => {
+                "admin" === n.data.role
+                  ? (window.location.href = "admin.html")
+                  : (alert("Dashboard not available for this role yet."),
+                    api.logout());
+              }, 1e3))
+            : ((a.className = "alert error"),
+              (a.textContent = n.message || "Login failed."));
+        }),
+        document
+          .getElementById("registerForm")
+          .addEventListener("submit", (e) => {
+            (e.preventDefault(),
+              alert(
+                "Registration request successfully recorded. Our verification team will review and approve your partner account.",
+              ));
+          }));
+      let goBackBtnEl = document.getElementById("goBackBtn");
+      goBackBtnEl &&
+        goBackBtnEl.addEventListener("click", (e) => {
+          e.preventDefault();
+          try {
+            document.referrer && document.referrer !== window.location.href
+              ? window.history.back()
+              : (window.location.href = "index.html");
+          } catch (e) {
+            window.location.href = "index.html";
+          }
+        });
+    </script>
+  </body>
+</html>

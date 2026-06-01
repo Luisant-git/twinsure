@@ -66,6 +66,24 @@ const api = {
         return parseResponseBody(response);
     },
 
+    
+    async put(endpoint, payload) {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${BASE_URL}${endpoint}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        });
+        if (response.status === 401 || response.status === 403) {
+            this.logout('login.html');
+            throw new Error('Unauthorized');
+        }
+        return parseResponseBody(response);
+    },
+
     async post(endpoint, payload) {
         const token = localStorage.getItem('token');
         const response = await fetch(`${BASE_URL}${endpoint}`, {

@@ -1,1 +1,299 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Recommendation Question Builder</title><link rel="stylesheet" href="css/builder-ui.min.css"><link rel="stylesheet" href="css/preview-ui.min.css"><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript></head><body><div class="builder-app" id="builderApp"><header class="builder-header"><div><h1>Recommendation Question Builder</h1><p>Create dynamic recommendation flows with conditional branching.</p></div><div class="header-actions"><button class="btn btn-purple" id="addQuestionBtn"><i class="fas fa-plus"></i> Add Question</button> <button class="btn btn-white" id="previewFlowBtn"><i class="fas fa-eye"></i> Preview Flow</button></div></header><div class="builder-main"><div class="builder-canvas-container" id="canvasContainer"><div class="canvas-content" id="canvasContent"><svg id="connectionSvg" class="connection-svg"></svg><div class="greeting-bar" id="greetingNode"><h3>Greeting</h3><div class="greeting-input-group"><input id="greetingInput" value="Welcome! Let's help you find the best insurance plan for your needs."> <button class="icon-btn"><i class="fas fa-pen"></i></button> <button class="btn btn-purple-small"><i class="fas fa-check"></i> Save</button></div><div class="port port-out" data-node="greeting" data-opt="greeting" style="position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);z-index:5"><i class="fas fa-plus"></i></div></div><div id="nodesContainer"></div></div></div><div class="canvas-controls"><button class="icon-btn bg-white" id="zoomOutBtn" title="Zoom Out"><i class="fas fa-minus"></i></button> <span id="zoomLevelIndicator">100%</span> <button class="icon-btn bg-white" id="zoomInBtn" title="Zoom In"><i class="fas fa-plus"></i></button></div><aside class="properties-sidebar" id="propertiesSidebar"><div class="sidebar-header"><h2>Properties</h2><button class="icon-btn" id="closeSidebar"><i class="fas fa-times"></i></button></div><div class="sidebar-content" id="sidebarContent"><div class="empty-state" id="sidebarEmpty">Select a question node to edit its properties.</div><div id="sidebarForm" style="display:none;display:flex;flex-direction:column;gap:1.5rem"><div class="prop-group"><label class="prop-label">Question title</label> <input class="prop-input" id="propQuestionTitle"></div><div class="prop-group"><label class="prop-label">Question text</label> <textarea class="prop-textarea" id="propQuestionText"></textarea></div><div class="prop-group"><label class="prop-label">Question type</label> <select class="prop-select" id="propQuestionType"><option value="radio">Radio Buttons</option><option value="checkbox">Multiple Choice</option><option value="text">Text Input</option><option value="dropdown">Dropdown</option><option value="phone">Phone Number</option><option value="email">Email ID</option><option value="dob">Date of Birth</option><option value="daterange">Date Range (Start → End)</option><option value="time">Time Picker</option></select></div><div class="prop-group" style="flex-direction:row;justify-content:space-between;align-items:center"><label class="prop-label">Required</label><div class="toggle-switch active" id="propRequired"></div></div><div class="prop-group"><label class="prop-label">Add options</label><div class="input-with-icon"><input class="prop-input" id="propNewOption" placeholder="Add options"> <button class="icon-btn-add" id="propAddOptionBtn"><i class="fas fa-plus"></i></button></div><div id="propOptionsList" class="prop-options-list"></div></div><hr style="border:0;border-top:1px solid #eaeaea;margin:.5rem 0"><div class="prop-group"><label class="prop-label">Conditional logic</label> <select class="prop-select"><option>Conditional</option></select><div class="input-with-icon" style="margin-top:.5rem;opacity:.6"><input class="prop-input" placeholder="Add options" disabled="disabled"></div></div><div class="prop-group"><label class="prop-label">Branching rules</label> <select class="prop-select"><option>Branching</option></select></div></div></div></aside></div></div><div class="preview-mode-wrapper" id="previewModeWrapper" style="display:none"><header class="preview-header"><div class="ph-left"><h2>Insurance Plan Recommendation</h2><span class="preview-badge"><i class="fas fa-circle"></i> Preview Mode</span></div><div class="ph-right"><button class="btn btn-white" onclick="window.close()">Back to Builder</button> <button class="btn btn-purple" id="publishFlowBtn">Publish</button><div class="ph-profile"><img src="https://ui-avatars.com/api/?name=Admin&background=random" alt="Admin"> Admin <i class="fas fa-chevron-down"></i></div></div></header><div class="preview-layout"><div class="preview-chat-container"><div class="preview-chat-card"><div class="chat-bot-avatar-top"><i class="fas fa-robot"></i></div><div class="chat-messages-area" id="chatMessagesArea"></div><div class="chat-bottom-actions"><div class="chat-action-buttons"><button class="btn btn-white-small" id="prevQuestionBtn" disabled="disabled">Go to Previous Question</button> <button class="btn btn-white-small" id="restartFlowBtn">Restart Flow</button></div><div class="chat-progress"><span>Flow Progress</span><div class="progress-bar-track"><div class="progress-bar-fill" id="flowProgressFill"></div></div><span id="flowProgressText">Loading...</span></div></div></div></div><div class="preview-right-analytics"><div class="analytics-card"><h3>Real-time Flow Analytics</h3><div class="analytics-section"><h4>Flow Context</h4><div class="analytics-item"><label>Current Branch</label><div class="val" id="analyticsBranch">Start</div></div><div class="analytics-item"><label>Questions Completed</label><div class="val" id="analyticsCompleted">0</div></div><div class="analytics-item"><label>Current Question ID</label><div class="val" id="analyticsCurrentId">#---</div></div><div class="analytics-item"><label>Selected Answers</label><div class="val" id="analyticsAnswers"><em>None</em></div></div></div></div></div></div></div><script defer="defer" src="js/config.js"></script><script defer="defer" src="js/api.js"></script><script defer="defer" src="js/chat-inputs.js"></script><script defer="defer" src="js/recommendation-builder.js"></script><script defer="defer" src="js/preview-engine.js"></script><script>window.location.search.includes("mode=preview")?(document.getElementById("builderApp").style.display="none",document.getElementById("previewModeWrapper").style.display="flex",window.previewEngine=new PreviewEngine):(document.getElementById("builderApp").style.display="flex",document.getElementById("previewModeWrapper").style.display="none",document.getElementById("canvasContainer")&&(window.builder=new AdvancedBuilder))</script></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Recommendation Question Builder</title>
+    <link rel="stylesheet" href="css/builder-ui.min.css" />
+    <link rel="stylesheet" href="css/preview-ui.min.css" />
+    <link
+      rel="preload"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      as="style"
+      onload="((this.onload = null), (this.rel = 'stylesheet'))"
+    />
+    <noscript
+      ><link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    /></noscript>
+    <script>
+      (() => {
+        function e() {
+          (!localStorage.getItem("token") || localStorage.getItem("role") !== "admin") &&
+            window.location.replace("login.html");
+        }
+        (e(), window.addEventListener("pageshow", e));
+      })();
+    </script>
+  
+    <script>
+      // Extra check: if missing token, clear and redirect immediately
+      if (!localStorage.getItem("token") || localStorage.getItem("role") !== "admin") {
+          localStorage.clear();
+          window.location.replace("login.html");
+      }
+    </script>
+  </head>
+  <body>
+    <div class="builder-app" id="builderApp">
+      <header class="builder-header">
+        <div>
+          <h1>Recommendation Question Builder</h1>
+          <p>Create dynamic recommendation flows with conditional branching.</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-purple" id="addQuestionBtn">
+            <i class="fas fa-plus"></i> Add Question
+          </button>
+          <button class="btn btn-white" id="previewFlowBtn">
+            <i class="fas fa-eye"></i> Preview Flow
+          </button>
+        </div>
+      </header>
+      <div class="builder-main">
+        <div class="builder-canvas-container" id="canvasContainer">
+          <div class="canvas-content" id="canvasContent">
+            <svg id="connectionSvg" class="connection-svg"></svg>
+            <div class="greeting-bar" id="greetingNode">
+              <h3>Greeting</h3>
+              <div class="greeting-input-group">
+                <input
+                  id="greetingInput"
+                  value="Welcome! Let's help you find the best insurance plan for your needs."
+                />
+                <button class="icon-btn"><i class="fas fa-pen"></i></button>
+                <button class="btn btn-purple-small">
+                  <i class="fas fa-check"></i> Save
+                </button>
+              </div>
+              <div
+                class="port port-out"
+                data-node="greeting"
+                data-opt="greeting"
+                style="
+                  position: absolute;
+                  bottom: -12px;
+                  left: 50%;
+                  transform: translateX(-50%);
+                  z-index: 5;
+                "
+              >
+                <i class="fas fa-plus"></i>
+              </div>
+            </div>
+            <div id="nodesContainer"></div>
+          </div>
+        </div>
+        <div class="canvas-controls">
+          <button class="icon-btn bg-white" id="zoomOutBtn" title="Zoom Out">
+            <i class="fas fa-minus"></i>
+          </button>
+          <span id="zoomLevelIndicator">100%</span>
+          <button class="icon-btn bg-white" id="zoomInBtn" title="Zoom In">
+            <i class="fas fa-plus"></i>
+          </button>
+        </div>
+        <aside class="properties-sidebar" id="propertiesSidebar">
+          <div class="sidebar-header">
+            <h2>Properties</h2>
+            <button class="icon-btn" id="closeSidebar">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="sidebar-content" id="sidebarContent">
+            <div class="empty-state" id="sidebarEmpty">
+              Select a question node to edit its properties.
+            </div>
+            <div
+              id="sidebarForm"
+              style="
+                display: none;
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+              "
+            >
+              <div class="prop-group">
+                <label class="prop-label">Question title</label>
+                <input class="prop-input" id="propQuestionTitle" />
+              </div>
+              <div class="prop-group">
+                <label class="prop-label">Question text</label>
+                <textarea
+                  class="prop-textarea"
+                  id="propQuestionText"
+                ></textarea>
+              </div>
+              <div class="prop-group">
+                <label class="prop-label">Question type</label>
+                <select class="prop-select" id="propQuestionType">
+                  <option value="radio">Radio Buttons</option>
+                  <option value="checkbox">Multiple Choice</option>
+                  <option value="text">Text Input</option>
+                  <option value="dropdown">Dropdown</option>
+                  <option value="phone">Phone Number</option>
+                  <option value="email">Email ID</option>
+                  <option value="dob">Date of Birth</option>
+                  <option value="daterange">Date Range (Start → End)</option>
+                  <option value="time">Time Picker</option>
+                </select>
+              </div>
+              <div
+                class="prop-group"
+                style="
+                  flex-direction: row;
+                  justify-content: space-between;
+                  align-items: center;
+                "
+              >
+                <label class="prop-label">Required</label>
+                <div class="toggle-switch active" id="propRequired"></div>
+              </div>
+              <div class="prop-group">
+                <label class="prop-label">Add options</label>
+                <div class="input-with-icon">
+                  <input
+                    class="prop-input"
+                    id="propNewOption"
+                    placeholder="Add options"
+                  />
+                  <button class="icon-btn-add" id="propAddOptionBtn">
+                    <i class="fas fa-plus"></i>
+                  </button>
+                </div>
+                <div id="propOptionsList" class="prop-options-list"></div>
+              </div>
+              <hr
+                style="
+                  border: 0;
+                  border-top: 1px solid #eaeaea;
+                  margin: 0.5rem 0;
+                "
+              />
+              <div class="prop-group">
+                <label class="prop-label">Conditional logic</label>
+                <select class="prop-select">
+                  <option>Conditional</option>
+                </select>
+                <div
+                  class="input-with-icon"
+                  style="margin-top: 0.5rem; opacity: 0.6"
+                >
+                  <input
+                    class="prop-input"
+                    placeholder="Add options"
+                    disabled="disabled"
+                  />
+                </div>
+              </div>
+              <div class="prop-group">
+                <label class="prop-label">Branching rules</label>
+                <select class="prop-select">
+                  <option>Branching</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+    <div
+      class="preview-mode-wrapper"
+      id="previewModeWrapper"
+      style="display: none"
+    >
+      <header class="preview-header">
+        <div class="ph-left">
+          <h2>Insurance Plan Recommendation</h2>
+          <span class="preview-badge"
+            ><i class="fas fa-circle"></i> Preview Mode</span
+          >
+        </div>
+        <div class="ph-right">
+          <button class="btn btn-white" onclick="window.close()">
+            Back to Builder
+          </button>
+          <button class="btn btn-purple" id="publishFlowBtn">Publish</button>
+          <div class="ph-profile">
+            <img
+              src="https://ui-avatars.com/api/?name=Admin&background=random"
+              alt="Admin"
+            />
+            Admin <i class="fas fa-chevron-down"></i>
+          </div>
+        </div>
+      </header>
+      <div class="preview-layout">
+        <div class="preview-chat-container">
+          <div class="preview-chat-card">
+            <div class="chat-bot-avatar-top"><i class="fas fa-robot"></i></div>
+            <div class="chat-messages-area" id="chatMessagesArea"></div>
+            <div class="chat-bottom-actions">
+              <div class="chat-action-buttons">
+                <button
+                  class="btn btn-white-small"
+                  id="prevQuestionBtn"
+                  disabled="disabled"
+                >
+                  Go to Previous Question
+                </button>
+                <button class="btn btn-white-small" id="restartFlowBtn">
+                  Restart Flow
+                </button>
+              </div>
+              <div class="chat-progress">
+                <span>Flow Progress</span>
+                <div class="progress-bar-track">
+                  <div class="progress-bar-fill" id="flowProgressFill"></div>
+                </div>
+                <span id="flowProgressText">Loading...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="preview-right-analytics">
+          <div class="analytics-card">
+            <h3>Real-time Flow Analytics</h3>
+            <div class="analytics-section">
+              <h4>Flow Context</h4>
+              <div class="analytics-item">
+                <label>Current Branch</label>
+                <div class="val" id="analyticsBranch">Start</div>
+              </div>
+              <div class="analytics-item">
+                <label>Questions Completed</label>
+                <div class="val" id="analyticsCompleted">0</div>
+              </div>
+              <div class="analytics-item">
+                <label>Current Question ID</label>
+                <div class="val" id="analyticsCurrentId">#---</div>
+              </div>
+              <div class="analytics-item">
+                <label>Selected Answers</label>
+                <div class="val" id="analyticsAnswers"><em>None</em></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/chat-inputs.js"></script>
+    <script src="js/recommendation-builder.js"></script>
+    <script src="js/preview-engine.js"></script>
+    <script>
+      window.location.search.includes("mode=preview")
+        ? ((document.getElementById("builderApp").style.display = "none"),
+          (document.getElementById("previewModeWrapper").style.display =
+            "flex"),
+          (window.previewEngine = new PreviewEngine()))
+        : ((document.getElementById("builderApp").style.display = "flex"),
+          (document.getElementById("previewModeWrapper").style.display =
+            "none"),
+          document.getElementById("canvasContainer") &&
+            (window.builder = new AdvancedBuilder()));
+    </script>
+  </body>
+</html>

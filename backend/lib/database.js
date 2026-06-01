@@ -43,8 +43,7 @@ const config = {
   host: process.env.HOST,
   backendPort: process.env.BACKEND_PORT,
   frontendPort: process.env.FRONTEND_PORT,
-  adminEmail: process.env.ADMIN_EMAIL || 'admin@twinsure.com',
-  adminPassword: process.env.ADMIN_PASSWORD || 'admin123'
+  jwtSecret: process.env.JWT_SECRET
 };
 
 let clientPromise = null;

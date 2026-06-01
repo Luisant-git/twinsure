@@ -2,6 +2,9 @@ const crypto = require('crypto');
 const express = require('express');
 const compression = require('compression');
 const fs = require('fs');
+const cors = require('cors');
+const rateLimit = require('express-rate-limit');
+const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const path = require('path');
 const {
@@ -89,9 +92,33 @@ function formatFileSize(size) {
   return `${Math.round(size / 1024)} KB`;
 }
 
+function validateFileSignature(buffer, expectedTypes) {
+  if (!buffer || buffer.length < 4) return false;
+  
+  const hex = buffer.toString('hex', 0, 4).toUpperCase();
+  
+  if (expectedTypes.includes('pdf')) {
+    if (hex.startsWith('25504446')) return true; // %PDF
+  }
+  
+  if (expectedTypes.includes('image')) {
+    if (hex.startsWith('FFD8FF')) return true; // JPEG
+    if (hex.startsWith('89504E47')) return true; // PNG
+  }
+  
+  return false;
+}
+
 function isPdfFile(file) {
   const originalName = file?.originalname || '';
-  return path.extname(originalName).toLowerCase() === '.pdf';
+  const ext = path.extname(originalName).toLowerCase();
+  return ext === '.pdf' && validateFileSignature(file?.buffer, ['pdf']);
+}
+
+function isImageFile(file) {
+  const originalName = file?.originalname || '';
+  const ext = path.extname(originalName).toLowerCase();
+  return ['.jpg', '.jpeg', '.png'].includes(ext) && validateFileSignature(file?.buffer, ['image']);
 }
 
 function fileBufferToPath(filePath, buffer) {
@@ -153,12 +180,22 @@ async function connectAndSeed() {
     await createCollectionIfNotExists(collectionName);
   }
 
-  const existingAdmin = await findOne('users', { email: config.adminEmail });
+  const existingAdmin = await findOne('users', { role: 'admin' });
   if (!existingAdmin) {
+    const defaultEmail = 'admin@twinsure.com';
+    const crypto = require('crypto');
+    const adminPass = crypto.randomBytes(8).toString('hex');
+    console.warn('\n========================================================');
+    console.warn('WARNING: No administrative user found in the database.');
+    console.warn(`A random password has been generated for ${defaultEmail}:`);
+    console.warn(`Password: ${adminPass}`);
+    console.warn('Please log in and change this password immediately.');
+    console.warn('========================================================\n');
+
     await insertOne('users', {
       name: 'Super Admin',
-      email: config.adminEmail,
-      password: config.adminPassword,
+      email: defaultEmail,
+      password: adminPass,
       role: 'admin',
       createdAt: new Date(),
       updatedAt: new Date()
@@ -199,18 +236,57 @@ async function connectAndSeed() {
   }
 }
 
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+const allowedOrigins = [
+  process.env.API_BASE_URL || 'http://localhost:3000',
+  'http://localhost:3000',
+  'http://127.0.0.1:3000'
+];
 
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization']
+}));
+
+const getGlobalRateLimit = async () => {
+  try {
+    const settings = await findOne('settings', { _id: 'global' });
+    return settings && settings.loginAttempts ? parseInt(settings.loginAttempts) * 20 : 100;
+  } catch (err) {
+    return 100;
   }
+};
 
-  next();
+const getLoginRateLimit = async () => {
+  try {
+    const settings = await findOne('settings', { _id: 'global' });
+    return settings && settings.loginAttempts ? parseInt(settings.loginAttempts) : 5;
+  } catch (err) {
+    return 5;
+  }
+};
+
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, 
+  limit: async (req, res) => await getGlobalRateLimit(),
+  standardHeaders: true,
+  legacyHeaders: false,
 });
+
+const strictLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: async (req, res) => await getLoginRateLimit(),
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use(globalLimiter);
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -240,7 +316,7 @@ app.get('/', (req, res) => {
 function createApiRouter() {
   const router = express.Router();
 
-  router.post('/auth/login', async (req, res) => {
+  router.post('/auth/login', strictLimiter, async (req, res) => {
     const data = collectBody(req);
     if (!data.email || !data.password) {
       sendJson(res, 400, { message: 'Incomplete data.' });
@@ -259,7 +335,11 @@ function createApiRouter() {
         return;
       }
 
-      const token = Buffer.from(JSON.stringify({ id: user._id, role: user.role, exp: Math.floor(Date.now() / 1000) + 3600 })).toString('base64');
+      if (!config.jwtSecret) {
+        sendJson(res, 500, { message: 'Server configuration error.' });
+        return;
+      }
+      const token = jwt.sign({ id: user._id, role: user.role }, config.jwtSecret, { expiresIn: '1h' });
       sendJson(res, 200, {
         message: 'Login successful.',
         token,
@@ -267,9 +347,11 @@ function createApiRouter() {
         name: user.name
       });
     } catch (error) {
-      sendJson(res, 500, { message: `Error executing query: ${error.message}` });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
     }
   });
+
 
   router.get('/public/claims', async (req, res) => {
     try {
@@ -280,11 +362,13 @@ function createApiRouter() {
         lastUpdated: claim.lastUpdated ? formatDateTime(claim.lastUpdated) : claim.lastUpdated
       })));
     } catch (error) {
-      sendJson(res, 500, { message: `Error listing active claims: ${error.message}` });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
     }
   });
 
-  router.post('/public/contact', async (req, res) => {
+
+  router.post('/public/contact', strictLimiter, async (req, res) => {
     const data = collectBody(req);
     const name = normalizeString(data.name);
     const phone = normalizeString(data.phone);
@@ -321,7 +405,8 @@ function createApiRouter() {
       });
       sendJson(res, 200, { success: true });
     } catch (error) {
-      sendJson(res, 500, { error: `Failed to save: ${error.message}` });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
     }
   });
 
@@ -337,11 +422,12 @@ function createApiRouter() {
 
       sendJson(res, 200, { greeting: '', nodes: [], edges: [] });
     } catch (error) {
-      sendJson(res, 500, { error: `Database error: ${error.message}` });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
     }
   });
 
-  router.post('/public/submit_lead', async (req, res) => {
+  router.post('/public/submit_lead', strictLimiter, async (req, res) => {
     const data = collectBody(req);
     if (!data.name || !data.phone) {
       sendJson(res, 400, { error: 'Name and phone are required.' });
@@ -360,11 +446,12 @@ function createApiRouter() {
       });
       sendJson(res, 200, { success: true, message: 'Lead submitted successfully.' });
     } catch (error) {
-      sendJson(res, 500, { error: `Failed to save lead: ${error.message}` });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
     }
   });
 
-  router.post('/public/form_help_requests', async (req, res) => {
+  router.post('/public/form_help_requests', strictLimiter, async (req, res) => {
     const data = collectBody(req);
     const name = normalizeString(data.name);
     const phone = normalizeString(data.phone);
@@ -414,9 +501,11 @@ function createApiRouter() {
         message: 'Your request has been submitted. Our team will contact you shortly.'
       });
     } catch (error) {
-      sendJson(res, 500, { message: `Failed to submit request: ${error.message}` });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
     }
   });
+
 
   router.get('/public/download_claim', async (req, res) => {
     const id = normalizeString(req.query.id);
@@ -436,7 +525,8 @@ function createApiRouter() {
       await updateOne('claims', { _id: toObjectId(id) }, { $inc: { downloads: 1 } });
       res.redirect(`/${claim.filePath}`);
     } catch (error) {
-      res.status(500).send(`Error processing download: ${error.message}`);
+      console.error('Database/Server Error:', error.message);
+      res.status(500).send('An internal server error occurred.');
     }
   });
 
@@ -449,9 +539,11 @@ function createApiRouter() {
         lastUpdated: claim.lastUpdated ? formatDateTime(claim.lastUpdated) : claim.lastUpdated
       })));
     } catch (error) {
-      sendJson(res, 500, { message: `Error listing claims: ${error.message}` });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
     }
   });
+
 
   router.post('/admin/claims', requireRole('admin'), upload.single('pdf'), async (req, res) => {
     const body = collectBody(req);
@@ -542,9 +634,11 @@ function createApiRouter() {
 
       sendJson(res, 200, { success: true, message: 'Claim form updated successfully.' });
     } catch (error) {
-      sendJson(res, 500, { message: `Database write failed: ${error.message}` });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
     }
   });
+
 
   router.delete('/admin/claims', requireRole('admin'), async (req, res) => {
     const id = normalizeString(req.query.id);
@@ -562,9 +656,11 @@ function createApiRouter() {
       await deleteOne('claims', { _id: toObjectId(id) });
       sendJson(res, 200, { success: true, message: 'Claim form deleted successfully.' });
     } catch (error) {
-      sendJson(res, 500, { message: `Failed to delete claim: ${error.message}` });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
     }
   });
+
 
   router.get('/admin/contacts', requireRole('admin'), async (req, res) => {
     try {
@@ -574,7 +670,8 @@ function createApiRouter() {
         submittedAt: contact.submittedAt ? formatDateTime(contact.submittedAt) : contact.submittedAt
       })));
     } catch (error) {
-      sendJson(res, 500, { error: error.message });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
     }
   });
 
@@ -589,7 +686,8 @@ function createApiRouter() {
       await updateOne('contacts', { _id: toObjectId(data.id) }, { $set: { status: data.status } });
       sendJson(res, 200, { success: true });
     } catch (error) {
-      sendJson(res, 500, { error: error.message });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
     }
   });
 
@@ -601,7 +699,33 @@ function createApiRouter() {
         submittedAt: lead.submittedAt ? formatDateTime(lead.submittedAt) : lead.submittedAt
       })));
     } catch (error) {
-      sendJson(res, 500, { error: error.message });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
+    }
+  });
+
+  router.post('/admin/leads/bulk-delete', requireRole('admin'), async (req, res) => {
+    try {
+      const data = collectBody(req);
+      const ids = data.ids;
+      if (!ids || !Array.isArray(ids)) {
+        sendJson(res, 400, { error: 'Invalid or missing ids array' });
+        return;
+      }
+      const db = await getDb();
+      const collection = db.collection('leads');
+      const objectIds = ids.map(id => {
+        try {
+          return new ObjectId(id);
+        } catch(e) {
+          return id;
+        }
+      });
+      const result = await collection.deleteMany({ _id: { $in: objectIds } });
+      sendJson(res, 200, { success: true, deletedCount: result.deletedCount });
+    } catch (error) {
+      console.error('Bulk Delete Error:', error.message);
+      sendJson(res, 500, { error: 'Failed to delete leads' });
     }
   });
 
@@ -616,7 +740,8 @@ function createApiRouter() {
       await updateOne('leads', { _id: toObjectId(data.id) }, { $set: { status: data.status } });
       sendJson(res, 200, { success: true });
     } catch (error) {
-      sendJson(res, 500, { error: error.message });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
     }
   });
 
@@ -625,9 +750,11 @@ function createApiRouter() {
       const requests = await findMany('form_help_requests', {}, { sort: { submittedAt: -1 } });
       sendJson(res, 200, requests);
     } catch (error) {
-      sendJson(res, 500, { message: `Error listing form filling requests: ${error.message}` });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
     }
   });
+
 
   router.post('/admin/form_help_requests', requireRole('admin'), async (req, res) => {
     const data = collectBody(req);
@@ -645,9 +772,11 @@ function createApiRouter() {
       });
       sendJson(res, 200, { success: true, message: 'Request status updated successfully.' });
     } catch (error) {
-      sendJson(res, 500, { message: `Failed to update request: ${error.message}` });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
     }
   });
+
 
   router.delete('/admin/form_help_requests', requireRole('admin'), async (req, res) => {
     const id = normalizeString(req.query.id);
@@ -660,9 +789,11 @@ function createApiRouter() {
       await deleteOne('form_help_requests', { requestId: id });
       sendJson(res, 200, { success: true, message: 'Request deleted successfully.' });
     } catch (error) {
-      sendJson(res, 500, { message: `Failed to delete request: ${error.message}` });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
     }
   });
+
 
   router.get('/admin/partners', requireRole('admin'), async (req, res) => {
     try {
@@ -670,11 +801,13 @@ function createApiRouter() {
       const rows = await findMany('partners', filter);
       sendJson(res, 200, rows);
     } catch (error) {
-      sendJson(res, 500, { message: `Error: ${error.message}` });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
     }
   });
 
-  router.post('/public/partners', upload.single('photo'), async (req, res) => {
+
+  router.post('/public/partners', strictLimiter, upload.single('photo'), async (req, res) => {
     try {
       const name = normalizeString(req.body.name);
       const phone = normalizeString(req.body.phone);
@@ -698,8 +831,13 @@ function createApiRouter() {
 
       let photoPath = null;
       if (req.file) {
+        if (!isImageFile(req.file)) {
+          sendJson(res, 400, { message: 'Invalid file type. Only JPG and PNG are allowed.' });
+          return;
+        }
+
         const originalName = sanitizeFileName(req.file.originalname);
-        const ext = path.extname(originalName);
+        const ext = path.extname(originalName).toLowerCase();
         const safe = path.basename(originalName, ext).replace(/[^a-zA-Z0-9_\-.]/g, '_');
         const filename = `${safe}_${Date.now()}${ext}`;
         const destination = path.join(partnersUploadDir, filename);
@@ -723,9 +861,11 @@ function createApiRouter() {
 
       sendJson(res, 201, { message: 'Partner created', id: String(insertedId) });
     } catch (error) {
-      sendJson(res, 500, { message: `Error: ${error.message}` });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
     }
   });
+
 
   router.put('/admin/partners', requireRole('admin'), async (req, res) => {
     const input = collectBody(req);
@@ -758,9 +898,11 @@ function createApiRouter() {
       await updateOne('partners', { _id: toObjectId(id) }, { $set: updateData });
       sendJson(res, 200, { message: 'Updated' });
     } catch (error) {
-      sendJson(res, 500, { message: `Error: ${error.message}` });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
     }
   });
+
 
   router.delete('/admin/partners', requireRole('admin'), async (req, res) => {
     const input = collectBody(req);
@@ -774,9 +916,11 @@ function createApiRouter() {
       await deleteOne('partners', { _id: toObjectId(id) });
       sendJson(res, 200, { message: 'Deleted' });
     } catch (error) {
-      sendJson(res, 500, { message: `Error: ${error.message}` });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
     }
   });
+
 
   router.get('/admin/recommendations', requireRole('admin'), async (req, res) => {
     try {
@@ -792,9 +936,11 @@ function createApiRouter() {
 
       sendJson(res, 200, flows[0]);
     } catch (error) {
-      sendJson(res, 500, { message: `Error loading flow: ${error.message}` });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
     }
   });
+
 
   router.post('/admin/recommendations', requireRole('admin'), async (req, res) => {
     const data = collectBody(req);
@@ -816,9 +962,11 @@ function createApiRouter() {
 
       sendJson(res, 200, { message: 'Recommendation flow saved successfully.' });
     } catch (error) {
-      sendJson(res, 500, { message: `Error saving flow: ${error.message}` });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
     }
   });
+
 
   router.get('/admin/settings', requireRole('admin'), async (req, res) => {
     try {
@@ -830,7 +978,8 @@ function createApiRouter() {
 
       sendJson(res, 404, { error: 'Settings not found' });
     } catch (error) {
-      sendJson(res, 500, { error: error.message });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
     }
   });
 
@@ -849,7 +998,8 @@ function createApiRouter() {
       await updateOne('settings', { _id: 'global' }, { $set: updateData }, { upsert: true });
       sendJson(res, 200, { success: true, message: 'Settings updated successfully' });
     } catch (error) {
-      sendJson(res, 500, { error: error.message });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
     }
   });
 
@@ -862,9 +1012,11 @@ function createApiRouter() {
         return clone;
       }));
     } catch (error) {
-      sendJson(res, 500, { message: `Error: ${error.message}` });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
     }
   });
+
 
   router.post('/admin/users', requireRole('admin'), async (req, res) => {
     const data = collectBody(req);
@@ -885,7 +1037,43 @@ function createApiRouter() {
 
       sendJson(res, 201, { message: 'User created successfully.' });
     } catch (error) {
-      sendJson(res, 500, { message: `Error: ${error.message}` });
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
+    }
+  });
+
+
+  router.put('/admin/users/:id', requireRole('admin'), async (req, res) => {
+    try {
+      const data = collectBody(req);
+      if (!data.name || !data.email || !data.role) {
+        sendJson(res, 400, { error: 'Incomplete data.' });
+        return;
+      }
+
+      const userId = req.params.id;
+      const updateData = {
+        name: data.name,
+        email: data.email,
+        role: data.role,
+        updatedAt: new Date()
+      };
+      
+      if (data.password && data.password.trim() !== "") {
+          updateData.password = data.password.trim();
+      }
+
+      const updated = await updateOne('users', { _id: new ObjectId(userId) }, { $set: updateData });
+      
+      if (updated && updated.modifiedCount > 0) {
+        sendJson(res, 200, { success: true, message: 'User updated successfully.' });
+      } else {
+        // Even if modifiedCount is 0, it might just be because no fields changed
+        sendJson(res, 200, { success: true, message: 'User updated.' });
+      }
+    } catch (error) {
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
     }
   });
 

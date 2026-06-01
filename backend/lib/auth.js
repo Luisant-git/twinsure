@@ -1,3 +1,6 @@
+const jwt = require('jsonwebtoken');
+const { config } = require('./database');
+
 /**
  * Extracts the authorization header from the incoming request.
  * Handles multiple common casing variations for the header name.
@@ -9,7 +12,7 @@ function getAuthorizationHeader(req) {
 }
 
 /**
- * Authenticates a request by verifying the base64 encoded JWT-like token.
+ * Authenticates a request by verifying the signed JWT token.
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  * @returns {Object|null} The decoded user object if authenticated, null otherwise.
@@ -20,8 +23,14 @@ function authenticate(req, res) {
   if (authHeader) {
     authHeader = authHeader.replace(/^Bearer\s+/i, '');
     try {
-      const decoded = JSON.parse(Buffer.from(authHeader, 'base64').toString('utf8'));
-      if (decoded && decoded.role && decoded.exp > Math.floor(Date.now() / 1000)) {
+      if (!config.jwtSecret) {
+        console.error('FATAL: JWT_SECRET is not set.');
+        res.status(500).json({ message: 'Server configuration error.' });
+        return null;
+      }
+      
+      const decoded = jwt.verify(authHeader, config.jwtSecret);
+      if (decoded && decoded.role) {
         return decoded;
       }
     } catch (error) {
