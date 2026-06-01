@@ -240,7 +240,11 @@ async function connectAndSeed() {
 const allowedOrigins = [
   process.env.API_BASE_URL || 'http://localhost:3000',
   'http://localhost:3000',
-  'http://127.0.0.1:3000'
+  'http://127.0.0.1:3000',
+  'https://twinsure.in',
+  'https://www.twinsure.in',
+  'http://twinsure.in',
+  'http://www.twinsure.in'
 ];
 
 app.use(cors({
