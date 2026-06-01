@@ -22,6 +22,7 @@ const {
 const { requireRole } = require('./lib/auth');
 
 const app = express();
+app.set('trust proxy', 1);
 
 // Enable GZIP compression to reduce network payload size (Lighthouse optimization)
 app.use(compression());
