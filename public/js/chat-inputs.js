@@ -56,6 +56,10 @@ const ChatInputs = (() => {
         window[engineName]?.selectOption(nodeId, optionId, displayText, branchTitle);
     }
 
+    function captureUndoBeforeSubmit(engineName) {
+        window[engineName]?.captureUndoState?.();
+    }
+
     /* ═══════════════════════════════════════════════
        MAIN RENDER  — the single entry point
     ═══════════════════════════════════════════════ */
@@ -400,6 +404,7 @@ const ChatInputs = (() => {
     function _submit_text(nodeId, engineName, branchTitle) {
         const val = document.getElementById(`inp_${nodeId}`)?.value.trim();
         if (!val) { ERR.show(`opts_${nodeId}`, 'Please type an answer before sending.'); return; }
+        captureUndoBeforeSubmit(engineName);
         submitAnswer(nodeId, engineName, 'default_text_opt', val, branchTitle);
     }
 
@@ -412,6 +417,7 @@ const ChatInputs = (() => {
             return;
         }
         OK.show(inp);
+        captureUndoBeforeSubmit(engineName);
         submitAnswer(nodeId, engineName, 'phone_input', val, branchTitle);
     }
 
@@ -424,6 +430,7 @@ const ChatInputs = (() => {
             return;
         }
         OK.show(inp);
+        captureUndoBeforeSubmit(engineName);
         submitAnswer(nodeId, engineName, 'email_input', val, branchTitle);
     }
 
@@ -441,6 +448,7 @@ const ChatInputs = (() => {
         }
         ERR.clear(`opts_${nodeId}`);
         const display = `${d} ${MONTHS_FULL[parseInt(m)]} ${y}`;
+        captureUndoBeforeSubmit(engineName);
         submitAnswer(nodeId, engineName, 'date_input', display, branchTitle);
     }
 
@@ -473,6 +481,7 @@ const ChatInputs = (() => {
         }
 
         ERR.clear(`opts_${nodeId}`);
+        captureUndoBeforeSubmit(engineName);
         submitAnswer(nodeId, engineName, 'daterange_input', display, branchTitle);
     }
 
@@ -486,12 +495,14 @@ const ChatInputs = (() => {
     }
 
     function _toggleAmPm(nodeId) {
+        window.previewEngine?.captureUndoState?.();
         const btn = document.getElementById(`ampm_${nodeId}`);
         if (btn.innerText === 'AM') { btn.innerText = 'PM'; btn.classList.remove('active'); }
         else                        { btn.innerText = 'AM'; btn.classList.add('active'); }
     }
 
     function _setPreset(nodeId, h, m, period) {
+        window.previewEngine?.captureUndoState?.();
         document.getElementById(`th_${nodeId}`).value = h;
         document.getElementById(`tm_${nodeId}`).value = m;
         const btn = document.getElementById(`ampm_${nodeId}`);
@@ -509,6 +520,7 @@ const ChatInputs = (() => {
         }
         ERR.clear(`opts_${nodeId}`);
         const display = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')} ${period}`;
+        captureUndoBeforeSubmit(engineName);
         submitAnswer(nodeId, engineName, 'time_input', display, branchTitle);
     }
 

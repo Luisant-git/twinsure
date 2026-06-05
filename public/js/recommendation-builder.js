@@ -17,6 +17,7 @@ class AdvancedBuilder {
 
         this.colors = ['purple', 'blue', 'orange', 'red', 'teal', 'green', 'pink', 'yellow', 'indigo', 'cyan'];
         this.scale = 1;
+        this.undoStack = [];
         
         this.initEvents();
         this.loadFlow();
@@ -26,8 +27,21 @@ class AdvancedBuilder {
         // Dragging nodes & drawing edges
         this.canvasContainer.addEventListener('mousemove', (e) => this.onMouseMove(e));
         window.addEventListener('mouseup', () => this.onMouseUp());
+        window.addEventListener('keydown', (e) => {
+            const isUndoShortcut = (e.ctrlKey || e.metaKey) && !e.shiftKey && (e.key === 'z' || e.key === 'Z');
+            if (!isUndoShortcut) return;
+
+            const active = document.activeElement;
+            if (active && (active.matches('input, textarea, select') || active.isContentEditable)) {
+                return;
+            }
+
+            e.preventDefault();
+            this.undoLastChange();
+        }, true);
         
         // Buttons
+        document.getElementById('undoBuilderChangeBtn')?.addEventListener('click', () => this.undoLastChange());
         document.getElementById('addQuestionBtn').addEventListener('click', () => { this.isDirty = true; this.addNode(); });
         document.getElementById('closeSidebar').addEventListener('click', () => this.selectNode(null));
         document.getElementById('previewFlowBtn').addEventListener('click', () => {
@@ -44,6 +58,7 @@ class AdvancedBuilder {
         });
         
         // Sidebar inputs
+        document.getElementById('greetingInput').addEventListener('beforeinput', () => this.captureUndoState());
         document.getElementById('propQuestionTitle').addEventListener('input', (e) => this.updateSelectedNode('title', e.target.value));
         document.getElementById('propQuestionText').addEventListener('input', (e) => this.updateSelectedNode('text', e.target.value));
         document.getElementById('propQuestionType').addEventListener('change', (e) => this.updateSelectedNode('type', e.target.value));
@@ -95,6 +110,52 @@ class AdvancedBuilder {
         });
     }
 
+    captureUndoState() {
+        const snapshot = {
+            nodes: JSON.parse(JSON.stringify(this.nodes)),
+            edges: JSON.parse(JSON.stringify(this.edges)),
+            selectedNodeId: this.selectedNodeId,
+            greeting: document.getElementById('greetingInput')?.value || '',
+            scale: this.scale,
+            scrollLeft: this.canvasContainer.scrollLeft,
+            scrollTop: this.canvasContainer.scrollTop
+        };
+
+        const last = this.undoStack[this.undoStack.length - 1];
+        if (last && JSON.stringify(last) === JSON.stringify(snapshot)) return;
+
+        this.undoStack.push(snapshot);
+        this.updateUndoButton();
+    }
+
+    updateUndoButton() {
+        const button = document.getElementById('undoBuilderChangeBtn');
+        if (button) button.disabled = this.undoStack.length === 0;
+    }
+
+    undoLastChange() {
+        if (!this.undoStack.length) return;
+
+        const snapshot = this.undoStack.pop();
+        this.nodes = JSON.parse(JSON.stringify(snapshot.nodes || []));
+        this.edges = JSON.parse(JSON.stringify(snapshot.edges || []));
+        this.selectedNodeId = snapshot.selectedNodeId || null;
+        this.scale = snapshot.scale || 1;
+
+        const greetingInput = document.getElementById('greetingInput');
+        if (greetingInput) greetingInput.value = snapshot.greeting || '';
+
+        this.canvasContent.style.transform = `scale(${this.scale})`;
+        this.updateCanvasSize();
+        this.renderAll();
+
+        this.canvasContainer.scrollLeft = snapshot.scrollLeft || 0;
+        this.canvasContainer.scrollTop = snapshot.scrollTop || 0;
+        this.selectNode(this.selectedNodeId);
+        this.isDirty = true;
+        this.updateUndoButton();
+    }
+
     setZoom(newScale, mouseX = null, mouseY = null) {
         newScale = Math.max(0.3, Math.min(newScale, 2)); // Clamp between 30% and 200%
         const oldScale = this.scale;
@@ -136,6 +197,7 @@ class AdvancedBuilder {
             document.getElementById('greetingInput').value = data.greeting || 'Welcome! Let\'s help you find the best insurance plan for your needs.';
             this.nodes = data.nodes || [];
             this.edges = data.edges || [];
+            this.undoStack = [];
             
             if(this.nodes.length === 0) {
                 this.addNode(300, 200, true); // creates node_1
@@ -164,6 +226,7 @@ class AdvancedBuilder {
     }
 
     addNode(x = null, y = null, isFirst = false) {
+        this.captureUndoState();
         const id = 'node_' + Date.now();
         // Calculate center of current view if x/y not provided
         if(x === null) {
@@ -195,16 +258,20 @@ class AdvancedBuilder {
     }
 
     deleteNode(id) {
+        this.captureUndoState();
         this.nodes = this.nodes.filter(n => n.id !== id);
         this.edges = this.edges.filter(e => e.fromNode !== id && e.toNode !== id);
         if(this.selectedNodeId === id) this.selectNode(null);
         this.renderAll();
+        this.isDirty = true;
     }
 
     addOptionToSelected() {
         const input = document.getElementById('propNewOption');
         const text = input.value.trim();
         if(!text || !this.selectedNodeId) return;
+
+        this.captureUndoState();
 
         const node = this.nodes.find(n => n.id === this.selectedNodeId);
         node.options.push({
@@ -215,20 +282,25 @@ class AdvancedBuilder {
         input.value = '';
         this.renderAll();
         this.updateSidebar();
+        this.isDirty = true;
     }
 
     deleteOption(nodeId, optId) {
+        this.captureUndoState();
         const node = this.nodes.find(n => n.id === nodeId);
         node.options = node.options.filter(o => o.id !== optId);
         // remove edges connected to this option
         this.edges = this.edges.filter(e => e.fromOption !== optId);
         this.renderAll();
         this.updateSidebar();
+        this.isDirty = true;
     }
 
     deleteEdge(edgeIndex) {
+        this.captureUndoState();
         this.edges.splice(edgeIndex, 1);
         this.renderConnections();
+        this.isDirty = true;
     }
 
     selectNode(id) {
@@ -242,9 +314,11 @@ class AdvancedBuilder {
 
     updateSelectedNode(field, value) {
         if(!this.selectedNodeId) return;
+        this.captureUndoState();
         const node = this.nodes.find(n => n.id === this.selectedNodeId);
         node[field] = value;
         this.renderAll();
+        this.isDirty = true;
     }
 
     renderAll() {
@@ -632,16 +706,20 @@ class AdvancedBuilder {
     }
 
     updateOptionText(nodeId, optId, val) {
+        this.captureUndoState();
         const node = this.nodes.find(n => n.id === nodeId);
         const opt = node.options.find(o => o.id === optId);
         if(opt) opt.text = val;
         this.renderAll();
+        this.isDirty = true;
     }
 
     updateOptionColor(nodeId, optId, color) {
+        this.captureUndoState();
         const node = this.nodes.find(n => n.id === nodeId);
         const opt = node.options.find(o => o.id === optId);
         if(opt) opt.color = color;
         this.renderAll();
+        this.isDirty = true;
     }
 }

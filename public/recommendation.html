@@ -12,6 +12,41 @@
       as="style"
       onload="((this.onload = null), (this.rel = 'stylesheet'))"
     />
+    <style>
+      html,
+      body {
+        background-color: #0a0a0a;
+      }
+      .builder-app {
+        background-color: #0a0a0a;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.16) 1px, transparent 1px);
+        background-size: 20px 20px;
+        background-attachment: fixed;
+        background-position: 0 0;
+      }
+      .builder-main,
+      .builder-canvas-container,
+      .canvas-content {
+        background-color: transparent;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.16) 1px, transparent 1px);
+        background-size: 20px 20px;
+        background-attachment: fixed;
+        background-position: 0 0;
+      }
+      .preview-mode-wrapper {
+        background-color: #0a0a0a;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.16) 1px, transparent 1px);
+        background-size: 20px 20px;
+        background-attachment: fixed;
+        background-position: 0 0;
+      }
+    </style>
     <noscript
       ><link
         rel="stylesheet"
@@ -43,6 +78,9 @@
           <p>Create dynamic recommendation flows with conditional branching.</p>
         </div>
         <div class="header-actions">
+          <button class="btn btn-white" id="undoBuilderChangeBtn" disabled>
+            <i class="fas fa-rotate-left"></i> Undo Last Change
+          </button>
           <button class="btn btn-purple" id="addQuestionBtn">
             <i class="fas fa-plus"></i> Add Question
           </button>
@@ -211,6 +249,9 @@
           >
         </div>
         <div class="ph-right">
+          <button class="btn btn-white" id="undoLastChangeBtn" disabled>
+            Undo Last Change
+          </button>
           <button class="btn btn-white" onclick="window.close()">
             Back to Builder
           </button>

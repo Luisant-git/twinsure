@@ -513,208 +513,118 @@
       /* Core team (professional portrait cards) */
       .core-team-grid {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         gap: 2.5rem;
-        align-items: stretch;
-        max-width: 1100px;
+        align-items: start;
+        max-width: 1000px;
         margin: 0 auto;
       }
       .member-card {
         position: relative;
-        border-radius: 12px;
-        overflow: hidden;
-        background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-        border: 1px solid rgba(255,255,255,0.06);
-        box-shadow: 0 12px 30px rgba(0,0,0,0.45);
-        min-height: 420px;
+        background: rgba(255, 255, 255, 0.03);
+        padding: 1.5rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        border-left: 1px solid rgba(255, 255, 255, 0.15);
         display: flex;
-        align-items: stretch;
+        flex-direction: column;
+        width: 100%;
+        height: 360px;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      }
+      .member-card::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 40%;
+        height: 40%;
+        background: radial-gradient(circle, var(--accent-gold) 0%, transparent 70%);
+        opacity: 0.1;
+        z-index: -1;
+        border-radius: 50%;
+        filter: blur(20px);
+        transition: all 0.4s ease;
+      }
+      .member-card:hover {
+        transform: translateY(-8px);
+      }
+      .member-card:hover::after, .member-card.active::after {
+        opacity: 0.3;
+        transform: scale(1.2);
       }
       .member-visual {
-        width: 45%;
-        min-width: 280px;
         position: relative;
+        width: 100%;
+        height: 100%;
+        border-radius: 12px;
         overflow: hidden;
+        background: rgba(0,0,0,0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
       .member-visual img {
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain; /* DO NOT CROP */
         display: block;
-        transition: filter 0.35s ease, transform 0.45s ease;
-      }
-      .member-body {
-        padding: 2.2rem 2.5rem;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        gap: 0.6rem;
-      }
-      .member-name {
-        font-family: Outfit, sans-serif;
-        font-size: 1.25rem;
-        font-weight: 800;
-        color: var(--text-white);
-        letter-spacing: 0.2px;
-      }
-      .member-role {
-        color: var(--accent-gold-light);
-        font-weight: 700;
-        text-transform: uppercase;
-        font-size: 0.82rem;
-        margin-bottom: 0.6rem;
-      }
-      .member-desc {
-        color: var(--text-gray);
-        line-height: 1.6;
-        font-size: 0.95rem;
+        transition: all 0.5s ease;
       }
       .member-overlay {
         position: absolute;
         inset: 0;
-        background: rgba(0, 21, 51, 0.7);
-        color: #fff;
+        background: linear-gradient(to top, rgba(0, 21, 51, 0.95), rgba(0, 21, 51, 0.8));
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
         text-align: center;
-        padding: 1.5rem;
-        transform: translateY(100%);
-        transition: transform 0.36s cubic-bezier(.2,.9,.2,1), opacity 0.28s ease;
+        padding: 2rem;
         opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
         pointer-events: none;
       }
       .member-card.active .member-overlay {
-        transform: translateY(0%);
         opacity: 1;
+        transform: translateY(0);
         pointer-events: auto;
       }
       .member-card.active img {
-        filter: blur(6px) brightness(0.6);
-        transform: scale(1.03);
+        transform: scale(1.05);
+        filter: grayscale(80%) opacity(0.3);
       }
       .member-overlay .overlay-content {
         max-width: 320px;
       }
       .overlay-name {
-        font-size: 1.2rem;
+        font-size: 1.5rem;
+        font-family: Outfit, sans-serif;
         font-weight: 800;
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.4rem;
         letter-spacing: 0.4px;
+        color: var(--text-white);
       }
       .overlay-role {
-        color: var(--accent-gold);
-        font-weight: 700;
-        margin-bottom: 0.6rem;
-      }
-      .overlay-desc {
-        color: rgba(255,255,255,0.9);
-        font-size: 0.95rem;
-        line-height: 1.5;
-      }
-      /* Core team (professional portrait cards) */
-      .core-team-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 2.5rem;
-        align-items: stretch;
-        max-width: 1100px;
-        margin: 0 auto;
-      }
-      .member-card {
-        position: relative;
-        border-radius: 12px;
-        overflow: hidden;
-        background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-        border: 1px solid rgba(255,255,255,0.06);
-        box-shadow: 0 12px 30px rgba(0,0,0,0.45);
-        min-height: 420px;
-        display: flex;
-        align-items: stretch;
-      }
-      .member-visual {
-        width: 45%;
-        min-width: 280px;
-        position: relative;
-        overflow: hidden;
-      }
-      .member-visual img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-        transition: filter 0.35s ease, transform 0.45s ease;
-      }
-      .member-body {
-        padding: 2.2rem 2.5rem;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        gap: 0.6rem;
-      }
-      .member-name {
-        font-family: Outfit, sans-serif;
-        font-size: 1.25rem;
-        font-weight: 800;
-        color: var(--text-white);
-        letter-spacing: 0.2px;
-      }
-      .member-role {
         color: var(--accent-gold-light);
         font-weight: 700;
         text-transform: uppercase;
-        font-size: 0.82rem;
-        margin-bottom: 0.6rem;
-      }
-      .member-desc {
-        color: var(--text-gray);
-        line-height: 1.6;
-        font-size: 0.95rem;
-      }
-      .member-overlay {
-        position: absolute;
-        inset: 0;
-        background: rgba(0, 21, 51, 0.7);
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        padding: 1.5rem;
-        transform: translateY(100%);
-        transition: transform 0.36s cubic-bezier(.2,.9,.2,1), opacity 0.28s ease;
-        opacity: 0;
-        pointer-events: none;
-      }
-      .member-card.active .member-overlay {
-        transform: translateY(0%);
-        opacity: 1;
-        pointer-events: auto;
-      }
-      .member-card.active img {
-        filter: blur(6px) brightness(0.6);
-        transform: scale(1.03);
-      }
-      .member-overlay .overlay-content {
-        max-width: 320px;
-      }
-      .overlay-name {
-        font-size: 1.2rem;
-        font-weight: 800;
-        margin-bottom: 0.25rem;
-        letter-spacing: 0.4px;
-      }
-      .overlay-role {
-        color: var(--accent-gold);
-        font-weight: 700;
-        margin-bottom: 0.6rem;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
       }
       .overlay-desc {
         color: rgba(255,255,255,0.9);
-        font-size: 0.95rem;
-        line-height: 1.5;
+        font-size: 1.05rem;
+        line-height: 1.6;
+      }
+      @media (max-width: 768px) {
+        .core-team-grid {
+          grid-template-columns: 1fr;
+        }
       }
       .team-card {
         background: linear-gradient(
@@ -2002,14 +1912,9 @@
               <div class="overlay-content">
                 <div class="overlay-name">Hariharan Gurusamy B.E.</div>
                 <div class="overlay-role">Financial Advisor</div>
-                <div class="overlay-desc">Insurance, Mutual Funds &amp; Stocks</div>
+                <div class="overlay-desc">Specialist in Insurance advisory, mutual funds and stock portfolios. Trusted advisor known for pragmatic, client-first strategies.</div>
               </div>
             </div>
-          </div>
-          <div class="member-body">
-            <div class="member-name">Hariharan Gurusamy B.E.</div>
-            <div class="member-role">Financial Advisor</div>
-            <div class="member-desc">Specialist in Insurance advisory, mutual funds and stock portfolios. Trusted advisor known for pragmatic, client-first strategies.</div>
           </div>
         </div>
         <div class="member-card" tabindex="0">
@@ -2019,14 +1924,55 @@
               <div class="overlay-content">
                 <div class="overlay-name">SIVARAMA SUBRAMANIAN S</div>
                 <div class="overlay-role">Insurance Industry</div>
-                <div class="overlay-desc">BA LLB — Experienced insurance industry practitioner with deep expertise in policy structuring and regulatory compliance.</div>
+                <div class="overlay-desc">BA LLB — Seasoned professional in insurance operations, compliance, and client relations.</div>
               </div>
             </div>
           </div>
-          <div class="member-body">
-            <div class="member-name">SIVARAMA SUBRAMANIAN S</div>
-            <div class="member-role">Insurance Industry</div>
-            <div class="member-desc">BA LLB — Seasoned professional in insurance operations, compliance, and client relations.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="mentors">
+      <div style="text-align: center; margin-bottom: 4rem">
+        <p
+          style="
+            color: var(--accent-gold-light);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+          "
+        >
+          Guiding Force
+        </p>
+        <h2 style="font-size: 3rem">
+          Our <span class="gradient-text">Mentors</span>
+        </h2>
+      </div>
+      <div class="core-team-grid">
+        <div class="member-card" tabindex="0">
+          <div class="member-visual">
+            <img src="https://ameetparekh.com/wp-content/uploads/2022/11/Ameet-Parekh-logo-white-01-1.png" alt="Dr. Ameet Parekh" loading="lazy" style="background:#000; padding:3rem; object-fit:contain;" />
+            <div class="member-overlay" aria-hidden="true">
+              <div class="overlay-content">
+                <div class="overlay-name">Dr. Ameet Parekh</div>
+                <div class="overlay-role">Best Business Coach</div>
+                <div class="overlay-desc">Award-Winning Business Coach in India, Business Management and Strategic Consultant. ICF-certified.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="member-card" tabindex="0">
+          <div class="member-visual">
+            <img src="https://ui-avatars.com/api/?name=Dr.+Tony+Jose&background=00296b&color=fdc500&size=500" alt="Dr. Tony Jose" loading="lazy" />
+            <div class="member-overlay" aria-hidden="true">
+              <div class="overlay-content">
+                <div class="overlay-name">Dr. Tony Jose</div>
+                <div class="overlay-role">Consultant &amp; Coach</div>
+                <div class="overlay-desc">Expert professional guiding leaders and organizations towards growth and excellence.</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

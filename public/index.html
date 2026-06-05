@@ -361,60 +361,70 @@
         margin: 0 auto;
       }
       .features-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
         gap: 2rem;
       }
       .feature-card {
-        background: #fff;
+        flex: 1 1 calc(33.333% - 2rem);
+        min-width: 300px;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
         border-radius: 20px;
         padding: 2.5rem 2rem;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
-        border: 1px solid #f1f5f9;
-        transition: all 0.3s ease;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         position: relative;
         overflow: hidden;
+        z-index: 1;
+      }
+      .feature-card::after {
+        content: '';
+        position: absolute;
+        bottom: -50%;
+        right: -50%;
+        width: 150px;
+        height: 150px;
+        background: radial-gradient(circle, var(--accent-gold) 0%, transparent 70%);
+        opacity: 0;
+        transition: all 0.6s ease;
+        z-index: -1;
       }
       .feature-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0, 41, 107, 0.08);
-        border-color: #e2e8f0;
+        transform: translateY(-15px) scale(1.02);
+        box-shadow: 0 25px 50px rgba(0, 41, 107, 0.15);
+        border-color: var(--accent-gold);
       }
-      .feature-card::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: linear-gradient(
-          90deg,
-          var(--primary-mid),
-          var(--accent-gold)
-        );
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: 0.3s;
-      }
-      .feature-card:hover::before {
-        transform: scaleX(1);
+      .feature-card:hover::after {
+        opacity: 0.15;
+        bottom: -20%;
+        right: -20%;
       }
       .feature-icon {
         width: 60px;
         height: 60px;
-        border-radius: 16px;
-        background: #f0f4f8;
+        border-radius: 15px;
+        background: linear-gradient(135deg, rgba(0, 41, 107, 0.1), rgba(0, 80, 157, 0.1));
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 1.5rem;
         color: var(--primary-mid);
         margin-bottom: 1.5rem;
-        transition: 0.3s;
+        transition: all 0.5s ease;
       }
       .feature-card:hover .feature-icon {
-        background: var(--primary-mid);
-        color: #fff;
+        background: var(--primary-dark);
+        border-radius: 50%;
+      }
+      .feature-card:hover .feature-icon i {
+        transform: scale(1.2) rotateY(180deg);
+        color: var(--accent-gold);
+      }
+      .feature-icon i {
+        transition: all 0.5s ease;
       }
       .feature-card h3 {
         font-size: 1.3rem;
@@ -432,9 +442,9 @@
       }
       .services-grid {
         display: grid;
-        grid-template-columns: repeat(6, 1fr);
+        grid-template-columns: repeat(3, 1fr);
         gap: 1.5rem;
-        max-width: 1400px;
+        max-width: 900px;
         margin: 0 auto;
       }
       .service-card {
@@ -525,6 +535,98 @@
         color: var(--text-muted);
         font-style: italic;
         line-height: 1.6;
+      }
+      
+      /* New Testimonial Card Styles */
+      .testimonial-new-card {
+        display: flex;
+        background: #fff;
+        border-radius: 60px 10px 60px 10px;
+        padding: 3rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        margin-bottom: 3rem;
+        gap: 3rem;
+      }
+      .testimonial-new-card.dark {
+        background: linear-gradient(135deg, #111, #222);
+        color: #e2e8f0;
+      }
+      .testimonial-left {
+        flex: 0 0 200px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+      }
+      .testimonial-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 1.5rem;
+        border: 4px solid #f8fafc;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      }
+      .testimonial-new-card.dark .testimonial-avatar {
+        border-color: #333;
+      }
+      .testimonial-name {
+        background: var(--accent-gold);
+        color: var(--primary-dark);
+        font-weight: 800;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        margin-bottom: 0.8rem;
+        font-size: 1.1rem;
+        width: 100%;
+      }
+      .testimonial-type {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text-dark);
+      }
+      .testimonial-new-card.dark .testimonial-type {
+        color: #fff;
+      }
+      .testimonial-right {
+        flex: 1;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 2rem;
+      }
+      .testimonial-section {
+        display: flex;
+        flex-direction: column;
+      }
+      .testimonial-heading {
+        background: #000;
+        color: #fff;
+        font-weight: 800;
+        font-style: italic;
+        padding: 0.4rem 1.2rem;
+        display: inline-block;
+        margin-bottom: 1.2rem;
+        align-self: flex-start;
+        text-transform: uppercase;
+        font-size: 0.95rem;
+        letter-spacing: 1px;
+      }
+      .testimonial-new-card.dark .testimonial-heading {
+        background: #fff;
+        color: #000;
+      }
+      .testimonial-content {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        text-align: justify;
+      }
+      .testimonial-content ul {
+        list-style: disc;
+        padding-left: 1.2rem;
+      }
+      .testimonial-content li {
+        margin-bottom: 0.5rem;
       }
       .partner-section {
         background: linear-gradient(
@@ -852,8 +954,17 @@
         .features-grid {
           grid-template-columns: 1fr;
         }
-        .testi-card {
-          min-width: min(320px, calc(100vw - 2rem));
+        .testimonial-new-card {
+          flex-direction: column;
+          border-radius: 30px 10px 30px 10px;
+          padding: 2rem 1.5rem;
+          gap: 2rem;
+        }
+        .testimonial-right {
+          grid-template-columns: 1fr;
+        }
+        .testimonial-left {
+          flex: auto;
         }
         .partner-section {
           margin: 3rem 1rem;
@@ -890,6 +1001,245 @@
           max-width: 100%;
           margin: 0 auto;
         }
+        .social-links {
+          justify-content: center;
+        }
+      }
+
+      /* Custom Graphics and Mockups */
+      
+      .animated-wave-divider {
+        width: 100%;
+        height: 60px;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: -2px;
+      }
+      .animated-wave-divider svg {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 200%;
+        height: 100%;
+        animation: wave-animation 12s linear infinite;
+      }
+      @keyframes wave-animation {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+      }
+
+      /* Insights Section */
+      .insights-section {
+        background: #001533;
+        color: #fff;
+        padding: 8rem 5% 6rem;
+        position: relative;
+        margin-top: 2rem;
+      }
+      .insights-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        max-width: 1400px;
+        margin: 0 auto;
+        align-items: center;
+      }
+      .insights-phones {
+        position: relative;
+        height: 450px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .iphone-mockup {
+        width: 220px;
+        height: 440px;
+        border: 14px solid #111;
+        border-radius: 35px;
+        background: #000;
+        position: absolute;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        overflow: hidden;
+      }
+      .iphone-mockup::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 120px;
+        height: 25px;
+        background: #111;
+        border-radius: 0 0 15px 15px;
+        z-index: 10;
+      }
+      .mock-1 {
+        transform: rotate(-10deg) translateX(-60px);
+        z-index: 1;
+        border-color: #222;
+        opacity: 0;
+      }
+      .mock-2 {
+        transform: rotate(10deg) translateX(60px);
+        z-index: 2;
+        border-color: #333;
+        opacity: 0;
+      }
+      .insights-phones.in-view .mock-1 {
+        animation: dropFall1 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      }
+      .insights-phones.in-view .mock-2 {
+        animation: dropFall2 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.2s;
+      }
+      @keyframes dropFall1 {
+        0% { opacity: 0; transform: translateY(-300px) rotate(0deg) translateX(-60px); }
+        40% { opacity: 1; transform: translateY(0) rotate(0deg) translateX(-60px); }
+        65% { transform: translateY(-20px) rotate(-12deg) translateX(-60px); }
+        85% { transform: translateY(0) rotate(-8deg) translateX(-60px); }
+        100% { opacity: 1; transform: rotate(-10deg) translateX(-60px); }
+      }
+      @keyframes dropFall2 {
+        0% { opacity: 0; transform: translateY(-300px) rotate(0deg) translateX(60px); }
+        40% { opacity: 1; transform: translateY(0) rotate(0deg) translateX(60px); }
+        65% { transform: translateY(-30px) rotate(12deg) translateX(60px); }
+        85% { transform: translateY(0) rotate(8deg) translateX(60px); }
+        100% { opacity: 1; transform: rotate(10deg) translateX(60px); }
+      }
+      .mock-screen {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, var(--primary-mid), var(--primary-dark));
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 1.5rem;
+        text-align: center;
+        color: #fff;
+      }
+      .mock-screen h5 {
+        color: var(--accent-gold);
+        font-size: 1.6rem;
+        margin-bottom: 1rem;
+        line-height: 1.1;
+        font-family: Outfit;
+      }
+      .mock-screen p {
+        font-size: 0.85rem;
+        color: #e2e8f0;
+      }
+
+      /* Free Audit Section */
+      .audit-section {
+        background: #f8fafc;
+        padding: 6rem 5% 8rem;
+        text-align: center;
+      }
+      .audit-header {
+        max-width: 800px;
+        margin: 0 auto 3rem;
+      }
+      .audit-header h2 {
+        font-size: 3rem;
+        color: var(--primary-dark);
+        margin-bottom: 1rem;
+      }
+      .audit-mockup-wrapper {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        height: 480px;
+        margin-top: 4rem;
+      }
+      .imac-mockup {
+        width: 700px;
+        height: 420px;
+        border: 24px solid #111;
+        border-bottom-width: 45px;
+        border-radius: 15px 15px 5px 5px;
+        background: #000;
+        position: absolute;
+        z-index: 1;
+        bottom: 50px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      }
+      .imac-mockup::after {
+        content: "";
+        position: absolute;
+        bottom: -105px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 160px;
+        height: 60px;
+        background: #ddd;
+        clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+      }
+      .imac-mockup::before {
+        content: "";
+        position: absolute;
+        bottom: -115px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 220px;
+        height: 10px;
+        background: #aaa;
+        border-radius: 10px 10px 0 0;
+      }
+      .ipad-mockup {
+        width: 280px;
+        height: 380px;
+        border: 15px solid #222;
+        border-radius: 20px;
+        background: #000;
+        position: absolute;
+        z-index: 2;
+        bottom: 0;
+        right: calc(50% - 380px);
+        box-shadow: -10px 10px 30px rgba(0,0,0,0.3);
+      }
+      .iphone-small-mockup {
+        width: 140px;
+        height: 280px;
+        border: 8px solid #333;
+        border-radius: 25px;
+        background: #000;
+        position: absolute;
+        z-index: 3;
+        bottom: -20px;
+        right: calc(50% - 440px);
+        box-shadow: -10px 10px 30px rgba(0,0,0,0.4);
+      }
+      .iphone-small-mockup::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 15px;
+        background: #333;
+        border-radius: 0 0 10px 10px;
+        z-index: 10;
+      }
+      .drawn-arrows-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
+        margin: 2rem 0;
+      }
+      
+      @media (max-width: 992px) {
+        .insights-grid {
+          grid-template-columns: 1fr;
+          text-align: center;
+        }
+        .imac-mockup { width: 90%; max-width: 500px; height: 300px; }
+        .ipad-mockup { display: none; }
+        .iphone-small-mockup { right: 5%; }
+        .drawn-arrows-container { gap: 0.5rem; }
+      }
         .social-links {
           justify-content: center;
         }
@@ -1005,6 +1355,43 @@
         </div>
       </div>
     </section>
+
+    <!-- Animated Wave Divider -->
+    <div class="animated-wave-divider">
+      <svg viewBox="0 0 2400 60" preserveAspectRatio="none">
+        <path d="M0,60 Q300,20 600,60 T1200,60 Q1500,20 1800,60 T2400,60 V120 H0 Z" fill="#003f88" opacity="0.3" />
+        <path d="M0,60 Q300,0 600,60 T1200,60 Q1500,0 1800,60 T2400,60 V120 H0 Z" fill="#001533" />
+      </svg>
+    </div>
+
+    <!-- Insights Section -->
+    <section class="insights-section">
+      <div class="insights-grid">
+        <div class="insights-content">
+          <h2 style="font-size: 3rem; margin-bottom: 1.5rem; font-family: Outfit; font-weight: 800;"><span class="gradient-text">Twinsure Insights</span></h2>
+          <p style="color: var(--text-gray); font-size: 1.15rem; margin-bottom: 2rem; line-height: 1.6;">
+            Listen, Learn, Protect. Tune in to our expert insights and adapt to a rapidly changing insurance landscape. Gain the knowledge you need to secure what matters most.
+          </p>
+          <a href="#" class="btn btn-gold" style="font-size: 1.1rem; padding: 1rem 2.5rem;"><i class="fas fa-play-circle"></i> Start Listening</a>
+        </div>
+        <div class="insights-phones">
+          <div class="iphone-mockup mock-1">
+            <div class="mock-screen">
+              <i class="fas fa-podcast" style="font-size: 3rem; color: var(--accent-gold); margin-bottom: 1rem;"></i>
+              <h5>INSURANCE<br>MOMENTUM<br>PODCAST</h5>
+              <p style="margin-top: 1rem; color: #fff;">Hosted by<br><strong style="color: var(--accent-gold);">Twinsure Experts</strong></p>
+            </div>
+          </div>
+          <div class="iphone-mockup mock-2">
+            <div class="mock-screen" style="background: linear-gradient(135deg, #111, #222);">
+              <h5 style="font-size: 2rem; color: #fff;">LISTEN.<br><span style="color: var(--accent-gold);">LEARN.</span><br>ADAPT.</h5>
+              <p style="margin-top: 1.5rem; font-style: italic; color: #ccc;">"Fix your policy gaps with expert advice..."</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="services-section">
       <div class="section-header">
         <h2>Our Expertise / <span class="gradient-text">Services</span></h2>
@@ -1049,89 +1436,95 @@
         </p>
       </div>
       <div class="testimonials">
-        <div class="testi-grid">
-          <div class="testi-card">
-            <i class="fas fa-quote-right quote-icon"></i>
-            <div class="testi-user">
-              <div
-                class="testi-avatar"
-                style="
-                  background: url(https://ui-avatars.com/api/?name=Eleanor+Pena&background=random)
-                    center/cover;
-                "
-              ></div>
-              <div>
-                <div class="testi-name">Eleanor Pena</div>
-                <div class="testi-type">Health Insurance</div>
-                <div class="stars">
-                  <i class="fas fa-star"></i><i class="fas fa-star"></i
-                  ><i class="fas fa-star"></i><i class="fas fa-star"></i
-                  ><i class="fas fa-star"></i>
-                </div>
-              </div>
-            </div>
-            <p class="testi-text">
-              "The AI recommender found a policy I didn't even know existed that
-              perfectly covered my pre-existing conditions. Absolutely fantastic
-              service from the entire team!"
-            </p>
+        <!-- New Testimonial 1 -->
+        <div class="testimonial-new-card">
+          <div class="testimonial-left">
+            <div class="testimonial-avatar" style="background: url(https://ui-avatars.com/api/?name=Murugan&background=random) center/cover;"></div>
+            <div class="testimonial-name">Murugan</div>
+            <div class="testimonial-type">from Karur</div>
           </div>
-          <div class="testi-card">
-            <i class="fas fa-quote-right quote-icon"></i>
-            <div class="testi-user">
-              <div
-                class="testi-avatar"
-                style="
-                  background: url(https://ui-avatars.com/api/?name=James+Names&background=random)
-                    center/cover;
-                "
-              ></div>
-              <div>
-                <div class="testi-name">James Names</div>
-                <div class="testi-type">Business Cover</div>
-                <div class="stars">
-                  <i class="fas fa-star"></i><i class="fas fa-star"></i
-                  ><i class="fas fa-star"></i><i class="fas fa-star"></i
-                  ><i class="fas fa-star-half-alt"></i>
-                </div>
+          <div class="testimonial-right">
+            <div class="testimonial-section">
+              <div class="testimonial-heading">Before</div>
+              <div class="testimonial-content">
+                <p>I am Murugan from Karur. About six months ago, I suffered a heart attack and was advised to undergo heart surgery at a hospital in Coimbatore. The surgery would cost around ₹6 lakh. Since I had a Star Health Insurance policy, I submitted a claim, but it was rejected. After being discharged and returning home, I submitted the claim again, but it was rejected once more for different reasons.</p>
               </div>
             </div>
-            <p class="testi-text">
-              "Transitioning our corporate insurance to Twinsure was seamless.
-              Their expert advice saved us 20% on annual premiums while actually
-              increasing our total liability coverage."
-            </p>
+            <div class="testimonial-section">
+              <div class="testimonial-heading">How Twins Consultancy Helped</div>
+              <div class="testimonial-content">
+                <p>At that point, a friend recommended Twins Consultancy. I immediately contacted them and shared all the necessary details. From the very beginning, their team guided me with speed and clarity. They explained exactly what needed to be done, how to submit the documents correctly, and what corrections were required. They carefully reviewed my case, corrected every mistake, and handled the entire process efficiently.</p>
+              </div>
+            </div>
+            <div class="testimonial-section">
+              <div class="testimonial-heading">Result</div>
+              <div class="testimonial-content">
+                <p>Thanks to the efforts of Twins Consultancy, I successfully received my insurance claim amount of ₹6 lakh this week. I am extremely happy and satisfied with the support they provided. Their guidance made a difficult process much easier, and I highly recommend Twins Consultancy to anyone seeking assistance with insurance claims.</p>
+              </div>
+            </div>
           </div>
-          <div class="testi-card">
-            <i class="fas fa-quote-right quote-icon"></i>
-            <div class="testi-user">
-              <div
-                class="testi-avatar"
-                style="
-                  background: url(https://ui-avatars.com/api/?name=Leslie+Alexander&background=random)
-                    center/cover;
-                "
-              ></div>
-              <div>
-                <div class="testi-name">Leslie Alexander</div>
-                <div class="testi-type">Life Insurance</div>
-                <div class="stars">
-                  <i class="fas fa-star"></i><i class="fas fa-star"></i
-                  ><i class="fas fa-star"></i><i class="fas fa-star"></i
-                  ><i class="fas fa-star"></i>
-                </div>
+        </div>
+
+        <!-- New Testimonial 2 -->
+        <div class="testimonial-new-card dark">
+          <div class="testimonial-left">
+            <div class="testimonial-avatar" style="background: url(https://ui-avatars.com/api/?name=Lokanathan&background=random) center/cover;"></div>
+            <div class="testimonial-name">Lokanathan</div>
+            <div class="testimonial-type">Teacher from Chinnatharapuram</div>
+          </div>
+          <div class="testimonial-right">
+            <div class="testimonial-section">
+              <div class="testimonial-heading">Before</div>
+              <div class="testimonial-content">
+                <p>I am Lokanathan, a teacher from Chinnatharapuram. I had taken the Star Super Plus Policy through Twins Consultancy. Recently, I underwent surgical treatment at Royal Care Hospital. At that time, I was unable to receive the payment directly through the policy. Since I am a government employee, the policy was not directly applicable, and I had to seek reimbursement through the government scheme. Additionally, there were challenges in obtaining the eligible amount through my Star Health Policy.</p>
               </div>
             </div>
-            <p class="testi-text">
-              "I felt overwhelmed looking for life insurance until I used
-              Twinsure. Their clear communication and transparent process made
-              everything easy to understand and secure."
-            </p>
+            <div class="testimonial-section">
+              <div class="testimonial-heading">How Twins Consultancy Helped</div>
+              <div class="testimonial-content">
+                <p>I am extremely grateful to Mr. Lakshmanan from Twins Consultancy, who personally guided and assisted me throughout the reimbursement process. He carefully handled the complexities involved in claiming benefits under the government policy and also addressed the issues related to my Star Health Policy. Even though it was a top-up policy and I initially considered leaving the matter as it was, Mr. Lakshmanan remained committed to ensuring that I received the amount I was rightfully entitled to. He continuously followed up and worked diligently until the reimbursement process was completed successfully.</p>
+              </div>
+            </div>
+            <div class="testimonial-section">
+              <div class="testimonial-heading">Result</div>
+              <div class="testimonial-content">
+                <p>Thanks to the dedicated efforts of Mr. Lakshmanan and the team at Twins Consultancy, I successfully received the reimbursement amount that I was eligible for. I will always remain thankful for their support, dedication, and persistence. I highly appreciate the service provided by Twins Consultancy and sincerely thank Mr. Lakshmanan for his invaluable assistance.</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </section>
-    
+
+    <!-- Free Policy Audit Section -->
+    <section class="audit-section">
+      <div class="audit-header">
+        <h2>Business <span class="gradient-text">Scale-up Audit</span></h2>
+        <p>Get a comprehensive review from a Team of Experts led by Twinsure Analytics. Identify critical gaps and optimize your coverage.</p>
+      </div>
+      <div class="audit-mockup-wrapper">
+        <div class="imac-mockup">
+          <div class="mock-screen" style="background: url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=800&q=80'); background-size: cover; background-position: center;">
+            <div style="background: rgba(0,0,0,0.8); padding: 2rem; border-radius: 15px; text-align: left; width: 85%; backdrop-filter: blur(5px);">
+              <h3 style="font-size: 2.2rem; margin-bottom: 0.5rem; font-family: Outfit; font-weight: 800;"><span class="gradient-text">Twinsure</span> Audit</h3>
+              <p style="font-size: 1.2rem; color: #fff;">Team of Experts Led by<br><strong style="color: var(--accent-gold); font-size: 1.5rem;">Twinsure Analysts</strong></p>
+            </div>
+          </div>
+        </div>
+        <div class="ipad-mockup">
+          <div class="mock-screen" style="background: linear-gradient(135deg, #001533, #003f88);">
+            <i class="fas fa-search-dollar" style="font-size: 3.5rem; color: var(--accent-gold); margin-bottom: 1.5rem;"></i>
+            <h4 style="font-size: 1.8rem; font-family: Outfit;">Detailed<br>Reporting</h4>
+          </div>
+        </div>
+        <div class="iphone-small-mockup">
+          <div class="mock-screen" style="background: #111;">
+            <h5 style="font-size: 1.3rem; color: #fff;">1-on-1<br><span class="gradient-text">Consult</span></h5>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <footer class="footer">
       <div class="footer-grid">
         <div>
@@ -1303,6 +1696,20 @@
                 heroHeading.classList.add("visible"));
             }, 400));
         }, 4e3);
+
+      /* New observer for phones dropping animation */
+      const phonesEl = document.querySelector('.insights-phones');
+      if (phonesEl) {
+        const phonesObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('in-view');
+              phonesObserver.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.4 });
+        phonesObserver.observe(phonesEl);
+      }
     </script>
   </body>
 </html>

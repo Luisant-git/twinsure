@@ -7,6 +7,8 @@ class PreviewEngine {
         this.selectedOptions = {}; // nodeId -> { text, branchText }
         this.currentNodeId = null;
         this.greetingText = "Welcome! Let's help you find the best insurance plan for your needs.";
+        this.undoStack = [];
+        this.pendingTimers = new Set();
         
         this.loadFlow();
         this.initEvents();
@@ -15,8 +17,116 @@ class PreviewEngine {
     initEvents() {
         document.getElementById('restartFlowBtn').addEventListener('click', () => this.startFlow());
         document.getElementById('prevQuestionBtn').addEventListener('click', () => this.goBack());
+        document.getElementById('undoLastChangeBtn')?.addEventListener('click', () => this.undoLastChange());
         const pubBtn = document.getElementById('publishFlowBtn');
         if(pubBtn) pubBtn.addEventListener('click', () => this.publishFlow());
+
+        window.addEventListener('keydown', (e) => {
+            const isUndoShortcut = (e.ctrlKey || e.metaKey) && !e.shiftKey && (e.key === 'z' || e.key === 'Z');
+            if (!isUndoShortcut) return;
+            e.preventDefault();
+            this.undoLastChange();
+        }, true);
+
+        const chatArea = document.getElementById('chatMessagesArea');
+        chatArea?.addEventListener('beforeinput', (e) => {
+            const target = e.target;
+            if (!target || !target.matches) return;
+            if (target.matches('input, textarea, select')) {
+                this.captureUndoState();
+            }
+        }, true);
+        chatArea?.addEventListener('pointerdown', (e) => {
+            const target = e.target;
+            if (!target || !target.matches) return;
+            if (target.matches('select')) {
+                this.captureUndoState();
+            }
+        }, true);
+        chatArea?.addEventListener('keydown', (e) => {
+            const target = e.target;
+            if (!target || !target.matches || !target.matches('select')) return;
+            if (['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'PageUp', 'PageDown', 'Enter', ' '].includes(e.key)) {
+                this.captureUndoState();
+            }
+        }, true);
+    }
+
+    captureUndoState() {
+        const chatArea = document.getElementById('chatMessagesArea');
+        if (!chatArea) return;
+
+        const snapshot = {
+            history: [...this.history],
+            selectedOptions: JSON.parse(JSON.stringify(this.selectedOptions || {})),
+            currentNodeId: this.currentNodeId,
+            chatHTML: chatArea.innerHTML,
+            scrollTop: chatArea.scrollTop,
+            fieldState: {}
+        };
+
+        chatArea.querySelectorAll('[id]').forEach((el) => {
+            snapshot.fieldState[el.id] = {
+                className: el.className,
+                style: el.getAttribute('style') || '',
+                value: 'value' in el ? el.value : undefined,
+                checked: 'checked' in el ? el.checked : undefined,
+                disabled: 'disabled' in el ? el.disabled : undefined,
+                textContent: el.tagName === 'BUTTON' && el.id.startsWith('ampm_') ? el.textContent : undefined
+            };
+        });
+
+        const last = this.undoStack[this.undoStack.length - 1];
+        if (last && JSON.stringify(last) === JSON.stringify(snapshot)) return;
+
+        this.undoStack.push(snapshot);
+        this.updateUndoButton();
+    }
+
+    updateUndoButton() {
+        const btn = document.getElementById('undoLastChangeBtn');
+        if (!btn) return;
+        btn.disabled = this.undoStack.length === 0;
+    }
+
+    clearPendingTimers() {
+        this.pendingTimers.forEach((timerId) => clearTimeout(timerId));
+        this.pendingTimers.clear();
+    }
+
+    restoreSnapshot(snapshot) {
+        if (!snapshot) return;
+
+        this.clearPendingTimers();
+
+        this.history = [...snapshot.history];
+        this.selectedOptions = JSON.parse(JSON.stringify(snapshot.selectedOptions || {}));
+        this.currentNodeId = snapshot.currentNodeId;
+
+        const chatArea = document.getElementById('chatMessagesArea');
+        if (chatArea) {
+            chatArea.innerHTML = snapshot.chatHTML || '';
+            Object.entries(snapshot.fieldState || {}).forEach(([id, state]) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.className = state.className || el.className;
+                if (state.style !== undefined) el.setAttribute('style', state.style);
+                if ('value' in state && state.value !== undefined && 'value' in el) el.value = state.value;
+                if ('checked' in state && state.checked !== undefined && 'checked' in el) el.checked = state.checked;
+                if ('disabled' in state && state.disabled !== undefined && 'disabled' in el) el.disabled = state.disabled;
+                if (state.textContent !== undefined) el.textContent = state.textContent;
+            });
+            chatArea.scrollTop = snapshot.scrollTop || 0;
+        }
+
+        this.updateAnalytics();
+        this.updateUndoButton();
+    }
+
+    undoLastChange() {
+        if (!this.undoStack.length) return;
+        const snapshot = this.undoStack.pop();
+        this.restoreSnapshot(snapshot);
     }
 
     async publishFlow() {
@@ -52,6 +162,7 @@ class PreviewEngine {
                 this.nodes = data.nodes || [];
                 this.edges = data.edges || [];
                 if(data.greeting) this.greetingText = data.greeting;
+                this.undoStack = [];
                 this.startFlow();
             } else {
                 this.renderBotMessage("No draft flow found. Go back to builder and click Preview Flow.");
@@ -62,8 +173,10 @@ class PreviewEngine {
     }
     
     startFlow() {
+        this.clearPendingTimers();
         this.history = [];
         this.selectedOptions = {};
+        this.undoStack = [];
         document.getElementById('chatMessagesArea').innerHTML = '';
         
         // 1. Render greeting
@@ -127,12 +240,14 @@ class PreviewEngine {
         if(!node) return;
         
         const typingId = this.showTypingIndicator();
-        setTimeout(() => {
+        const timerId = setTimeout(() => {
+            this.pendingTimers.delete(timerId);
             this.removeTypingIndicator(typingId);
             this.renderBotMessage(node.text);
             this.renderOptions(node);
             this.updateAnalytics();
         }, 600);
+        this.pendingTimers.add(timerId);
     }
     
     renderBotMessage(text) {
@@ -164,6 +279,7 @@ class PreviewEngine {
     
     selectOption(nodeId, optionId, optionText, branchTitle) {
         if(!optionText) return;
+        this.captureUndoState();
         
         // Disable existing options
         const container = document.getElementById(`opts_${nodeId}`);
@@ -180,11 +296,13 @@ class PreviewEngine {
             this.renderCurrentNode();
         } else {
             const typingId = this.showTypingIndicator();
-            setTimeout(() => {
+            const timerId = setTimeout(() => {
+                this.pendingTimers.delete(timerId);
                 this.removeTypingIndicator(typingId);
                 this.renderBotMessage("Thank you! That's all the information we need. We are generating your recommendation.");
                 this.updateAnalytics();
             }, 600);
+            this.pendingTimers.add(timerId);
         }
         this.updateAnalytics();
     }
