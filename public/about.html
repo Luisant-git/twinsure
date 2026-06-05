@@ -510,6 +510,212 @@
         grid-template-columns: repeat(4, 1fr);
         gap: 2rem;
       }
+      /* Core team (professional portrait cards) */
+      .core-team-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2.5rem;
+        align-items: stretch;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .member-card {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+        border: 1px solid rgba(255,255,255,0.06);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+        min-height: 420px;
+        display: flex;
+        align-items: stretch;
+      }
+      .member-visual {
+        width: 45%;
+        min-width: 280px;
+        position: relative;
+        overflow: hidden;
+      }
+      .member-visual img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: filter 0.35s ease, transform 0.45s ease;
+      }
+      .member-body {
+        padding: 2.2rem 2.5rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 0.6rem;
+      }
+      .member-name {
+        font-family: Outfit, sans-serif;
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--text-white);
+        letter-spacing: 0.2px;
+      }
+      .member-role {
+        color: var(--accent-gold-light);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.82rem;
+        margin-bottom: 0.6rem;
+      }
+      .member-desc {
+        color: var(--text-gray);
+        line-height: 1.6;
+        font-size: 0.95rem;
+      }
+      .member-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 21, 51, 0.7);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 1.5rem;
+        transform: translateY(100%);
+        transition: transform 0.36s cubic-bezier(.2,.9,.2,1), opacity 0.28s ease;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .member-card.active .member-overlay {
+        transform: translateY(0%);
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .member-card.active img {
+        filter: blur(6px) brightness(0.6);
+        transform: scale(1.03);
+      }
+      .member-overlay .overlay-content {
+        max-width: 320px;
+      }
+      .overlay-name {
+        font-size: 1.2rem;
+        font-weight: 800;
+        margin-bottom: 0.25rem;
+        letter-spacing: 0.4px;
+      }
+      .overlay-role {
+        color: var(--accent-gold);
+        font-weight: 700;
+        margin-bottom: 0.6rem;
+      }
+      .overlay-desc {
+        color: rgba(255,255,255,0.9);
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+      /* Core team (professional portrait cards) */
+      .core-team-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2.5rem;
+        align-items: stretch;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .member-card {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+        border: 1px solid rgba(255,255,255,0.06);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+        min-height: 420px;
+        display: flex;
+        align-items: stretch;
+      }
+      .member-visual {
+        width: 45%;
+        min-width: 280px;
+        position: relative;
+        overflow: hidden;
+      }
+      .member-visual img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: filter 0.35s ease, transform 0.45s ease;
+      }
+      .member-body {
+        padding: 2.2rem 2.5rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 0.6rem;
+      }
+      .member-name {
+        font-family: Outfit, sans-serif;
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--text-white);
+        letter-spacing: 0.2px;
+      }
+      .member-role {
+        color: var(--accent-gold-light);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.82rem;
+        margin-bottom: 0.6rem;
+      }
+      .member-desc {
+        color: var(--text-gray);
+        line-height: 1.6;
+        font-size: 0.95rem;
+      }
+      .member-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 21, 51, 0.7);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 1.5rem;
+        transform: translateY(100%);
+        transition: transform 0.36s cubic-bezier(.2,.9,.2,1), opacity 0.28s ease;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .member-card.active .member-overlay {
+        transform: translateY(0%);
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .member-card.active img {
+        filter: blur(6px) brightness(0.6);
+        transform: scale(1.03);
+      }
+      .member-overlay .overlay-content {
+        max-width: 320px;
+      }
+      .overlay-name {
+        font-size: 1.2rem;
+        font-weight: 800;
+        margin-bottom: 0.25rem;
+        letter-spacing: 0.4px;
+      }
+      .overlay-role {
+        color: var(--accent-gold);
+        font-weight: 700;
+        margin-bottom: 0.6rem;
+      }
+      .overlay-desc {
+        color: rgba(255,255,255,0.9);
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
       .team-card {
         background: linear-gradient(
           135deg,
@@ -1447,9 +1653,7 @@
             <span class="gradient-text">Every Tomorrow.</span>
           </h1>
           <p>
-            Twinsure combines intelligent insurance solutions, trusted
-            partnerships, and customer-first experiences to redefine the future
-            of protection.
+            We ensure promise to what was actually promissed from the insurance provider
           </p>
           <div class="hero-quote">
             "Every policy we build carries a promise of security, trust, and
@@ -1523,9 +1727,7 @@
             <div class="mv-badge"><i class="fas fa-bullseye"></i></div>
             <h3>MISSION</h3>
             <p>
-              Our mission is to simplify insurance through intelligent
-              technology, trusted guidance, and customer-first solutions. We
-              strip away the jargon to deliver clarity and confidence.
+              To safeguard policyholders through expert guidance, mis-selling rectification, and claim advocacy, ensuring they receive the protection and benefits they deserve.
             </p>
           </div>
           <div class="mv-nav-arrows">
@@ -1538,9 +1740,7 @@
             <div class="mv-badge"><i class="fas fa-eye"></i></div>
             <h3>VISION</h3>
             <p>
-              To become the most trusted AI-powered insurance ecosystem
-              globally, empowering millions of families and businesses with
-              smarter, proactive protection decisions.
+              To build a future where every insurance policyholder is informed, protected, and empowered.
             </p>
           </div>
           <div class="vision-visual">
@@ -1794,248 +1994,44 @@
           Meet Our <span class="gradient-text">Core Team</span>
         </h2>
       </div>
-      <div class="team-grid">
-        <div class="team-card">
-          <div class="team-avatar-wrapper">
-            <div
-              class="team-avatar"
-              style="
-                background: url(https://ui-avatars.com/api/?name=David+Chen&background=00296b&color=fff)
-                  center/cover;
-              "
-            ></div>
+      <div class="core-team-grid">
+        <div class="member-card" tabindex="0">
+          <div class="member-visual">
+            <img src="assets/hariharan.jpeg" alt="Hariharan Gurusamy" loading="lazy" />
+            <div class="member-overlay" aria-hidden="true">
+              <div class="overlay-content">
+                <div class="overlay-name">Hariharan Gurusamy B.E.</div>
+                <div class="overlay-role">Financial Advisor</div>
+                <div class="overlay-desc">Insurance, Mutual Funds &amp; Stocks</div>
+              </div>
+            </div>
           </div>
-          <h4>David Chen</h4>
-          <div class="role">AI & Recommendation Systems</div>
-          <p>Architect behind our intelligent policy matching engine.</p>
-          <div class="team-socials">
-            <a href="#"><i class="fab fa-linkedin-in"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-          </div>
-        </div>
-        <div class="team-card">
-          <div class="team-avatar-wrapper">
-            <div
-              class="team-avatar"
-              style="
-                background: url(https://ui-avatars.com/api/?name=Elena+Gomez&background=00296b&color=fff)
-                  center/cover;
-              "
-            ></div>
-          </div>
-          <h4>Elena Gomez</h4>
-          <div class="role">Claims Management</div>
-          <p>Ensuring every payout is swift, fair, and transparent.</p>
-          <div class="team-socials">
-            <a href="#"><i class="fab fa-linkedin-in"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
+          <div class="member-body">
+            <div class="member-name">Hariharan Gurusamy B.E.</div>
+            <div class="member-role">Financial Advisor</div>
+            <div class="member-desc">Specialist in Insurance advisory, mutual funds and stock portfolios. Trusted advisor known for pragmatic, client-first strategies.</div>
           </div>
         </div>
-        <div class="team-card">
-          <div class="team-avatar-wrapper">
-            <div
-              class="team-avatar"
-              style="
-                background: url(https://ui-avatars.com/api/?name=Marcus+Johnson&background=00296b&color=fff)
-                  center/cover;
-              "
-            ></div>
+        <div class="member-card" tabindex="0">
+          <div class="member-visual">
+            <img src="assets/sivarama.jpeg" alt="SIVARAMA SUBRAMANIAN S" loading="lazy" />
+            <div class="member-overlay" aria-hidden="true">
+              <div class="overlay-content">
+                <div class="overlay-name">SIVARAMA SUBRAMANIAN S</div>
+                <div class="overlay-role">Insurance Industry</div>
+                <div class="overlay-desc">BA LLB — Experienced insurance industry practitioner with deep expertise in policy structuring and regulatory compliance.</div>
+              </div>
+            </div>
           </div>
-          <h4>Marcus Johnson</h4>
-          <div class="role">Partner Relations</div>
-          <p>Expanding our global network of top-tier insurance providers.</p>
-          <div class="team-socials">
-            <a href="#"><i class="fab fa-linkedin-in"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-          </div>
-        </div>
-        <div class="team-card">
-          <div class="team-avatar-wrapper">
-            <div
-              class="team-avatar"
-              style="
-                background: url(https://ui-avatars.com/api/?name=Sophia+Patel&background=00296b&color=fff)
-                  center/cover;
-              "
-            ></div>
-          </div>
-          <h4>Sophia Patel</h4>
-          <div class="role">UI/UX Engineering</div>
-          <p>Designing the seamless digital experiences our clients love.</p>
-          <div class="team-socials">
-            <a href="#"><i class="fab fa-linkedin-in"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-          </div>
-        </div>
-        <div class="team-card">
-          <div class="team-avatar-wrapper">
-            <div
-              class="team-avatar"
-              style="
-                background: url(https://ui-avatars.com/api/?name=Thomas+Wright&background=00296b&color=fff)
-                  center/cover;
-              "
-            ></div>
-          </div>
-          <h4>Thomas Wright</h4>
-          <div class="role">Technology Operations</div>
-          <p>Supervising secure cloud scaling and system reliability.</p>
-          <div class="team-socials">
-            <a href="#"><i class="fab fa-linkedin-in"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-          </div>
-        </div>
-        <div class="team-card">
-          <div class="team-avatar-wrapper">
-            <div
-              class="team-avatar"
-              style="
-                background: url(https://ui-avatars.com/api/?name=Rebecca+Martinez&background=00296b&color=fff)
-                  center/cover;
-              "
-            ></div>
-          </div>
-          <h4>Rebecca Martinez</h4>
-          <div class="role">Customer Support</div>
-          <p>Providing compassionate customer care at all times.</p>
-          <div class="team-socials">
-            <a href="#"><i class="fab fa-linkedin-in"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-          </div>
-        </div>
-        <div class="team-card">
-          <div class="team-avatar-wrapper">
-            <div
-              class="team-avatar"
-              style="
-                background: url(https://ui-avatars.com/api/?name=Peter+Hawkins&background=00296b&color=fff)
-                  center/cover;
-              "
-            ></div>
-          </div>
-          <h4>Peter Hawkins</h4>
-          <div class="role">Insurance Strategy</div>
-          <p>Aligning modern fintech solutions with regulatory standards.</p>
-          <div class="team-socials">
-            <a href="#"><i class="fab fa-linkedin-in"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-          </div>
-        </div>
-        <div class="team-card">
-          <div class="team-avatar-wrapper">
-            <div
-              class="team-avatar"
-              style="
-                background: url(https://ui-avatars.com/api/?name=Andrew+Foster&background=00296b&color=fff)
-                  center/cover;
-              "
-            ></div>
-          </div>
-          <h4>Andrew Foster</h4>
-          <div class="role">Business Development</div>
-          <p>Pioneering key global enterprise integrations and partnerships.</p>
-          <div class="team-socials">
-            <a href="#"><i class="fab fa-linkedin-in"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
+          <div class="member-body">
+            <div class="member-name">SIVARAMA SUBRAMANIAN S</div>
+            <div class="member-role">Insurance Industry</div>
+            <div class="member-desc">BA LLB — Seasoned professional in insurance operations, compliance, and client relations.</div>
           </div>
         </div>
       </div>
     </section>
-    <section class="section">
-      <div class="section-header">
-        <h2>Why People <span class="gradient-text">Trust Us</span></h2>
-      </div>
-      <ol class="trust-clean-list">
-        <li class="trust-clean-item">
-          <header class="trust-clean-item-header">
-            <span class="trust-clean-item-num">01 //</span>
-            <i class="fas fa-shoe-prints trust-clean-item-icon"></i>
-            <h4>Stand in Your Shoes</h4>
-          </header>
-          <p>
-            We understand your problems as if they were our own, putting
-            ourselves in your position to serve you best.
-          </p>
-        </li>
-        <li class="trust-clean-item">
-          <header class="trust-clean-item-header">
-            <span class="trust-clean-item-num">02 //</span>
-            <i class="fas fa-user-tie trust-clean-item-icon"></i>
-            <h4>Professional Recommendations</h4>
-          </header>
-          <p>
-            Get highly specialized, unbiased advice tailored strictly to your
-            financial security and personal health needs.
-          </p>
-        </li>
-        <li class="trust-clean-item">
-          <header class="trust-clean-item-header">
-            <span class="trust-clean-item-num">03 //</span>
-            <i class="fas fa-bolt trust-clean-item-icon"></i>
-            <h4>Fast Claim Support</h4>
-          </header>
-          <p>
-            Our dedicated rapid-response team ensures your insurance claims are
-            approved and processed at lightning speed.
-          </p>
-        </li>
-        <li class="trust-clean-item">
-          <header class="trust-clean-item-header">
-            <span class="trust-clean-item-num">04 //</span>
-            <i class="fas fa-file-invoice-dollar trust-clean-item-icon"></i>
-            <h4>Personalized Assistance</h4>
-          </header>
-          <p>
-            Full assistance: we collect all necessary documents, prepare your
-            application files, and handle the entire submission process.
-          </p>
-        </li>
-        <li class="trust-clean-item">
-          <header class="trust-clean-item-header">
-            <span class="trust-clean-item-num">05 //</span>
-            <i class="fas fa-running trust-clean-item-icon"></i>
-            <h4>Aggressive Follow-Ups</h4>
-          </header>
-          <p>
-            We relentlessly follow up with insurance providers on your behalf to
-            guarantee zero delays in policy decisions.
-          </p>
-        </li>
-        <li class="trust-clean-item">
-          <header class="trust-clean-item-header">
-            <span class="trust-clean-item-num">06 //</span>
-            <i class="fas fa-gavel trust-clean-item-icon"></i>
-            <h4>Escalation Till the End</h4>
-          </header>
-          <p>
-            We fight for you: 1st approach through insurer grievance channels,
-            2nd via the Insurance Ombudsman, and 3rd via Consumer Court.
-          </p>
-        </li>
-        <li class="trust-clean-item">
-          <header class="trust-clean-item-header">
-            <span class="trust-clean-item-num">07 //</span>
-            <i class="fas fa-headset trust-clean-item-icon"></i>
-            <h4>24X7 Service & Support</h4>
-          </header>
-          <p>
-            Our customer support lines are open 24 hours a day, 7 days a week,
-            providing you with emergency claim guidance anytime.
-          </p>
-        </li>
-        <li class="trust-clean-item">
-          <header class="trust-clean-item-header">
-            <span class="trust-clean-item-num">08 //</span>
-            <i class="fas fa-briefcase trust-clean-item-icon"></i>
-            <h4>Experience & Expertise</h4>
-          </header>
-          <p>
-            Backed by 19+ years of industry-leading insurance expertise to
-            navigate even the most complex coverage scenarios.
-          </p>
-        </li>
-      </ol>
-    </section>
+    
     <div class="testimonial-container">
       <div class="sparkle-star star-left">✦</div>
       <div class="testi-badge">Testimonial / Message</div>
@@ -2055,8 +2051,7 @@
             ><i class="fas fa-shield-alt"></i> Twinsure</a
           >
           <p>
-            Securing futures through intelligent insurance solutions, trusted
-            partnerships, and unwavering support.
+            taking a policy is not important climing / using that policy was very important.
           </p>
           <div class="social-links">
             <a href="#"><i class="fab fa-facebook-f"></i></a>
@@ -2077,11 +2072,9 @@
         <div class="footer-col">
           <h4>Services</h4>
           <ul>
-            <li><a href="services.html">Health Insurance</a></li>
-            <li><a href="services.html">Life Insurance</a></li>
-            <li><a href="services.html">Vehicle Insurance</a></li>
-            <li><a href="services.html">Business Insurance</a></li>
-            <li><a href="services.html">Travel Insurance</a></li>
+            <li><a href="services.html">ReNewall</a></li>
+            <li><a href="services.html">hospos</a></li>
+            <li><a href="services.html">icare</a></li>
           </ul>
         </div>
         <div class="footer-col">
@@ -2168,6 +2161,34 @@
             navLinks) &&
             navLinks.setAttribute("aria-hidden", "true");
         }));
+        // Core team: image click -> blur + overlay
+        (function () {
+          const members = document.querySelectorAll('.member-card');
+          if (!members || members.length === 0) return;
+          members.forEach((card) => {
+            const visual = card.querySelector('.member-visual');
+            const overlay = card.querySelector('.member-overlay');
+            // clicking the image area toggles the overlay
+            visual?.addEventListener('click', (ev) => {
+              const open = document.querySelector('.member-card.active');
+              if (open && open !== card) open.classList.remove('active');
+              card.classList.toggle('active');
+            });
+            // allow keyboard activation
+            card.addEventListener('keydown', (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                visual?.dispatchEvent(new Event('click'));
+              }
+              if (e.key === 'Escape') card.classList.remove('active');
+            });
+            // clicking overlay hides it
+            overlay?.addEventListener('click', (e) => {
+              e.stopPropagation();
+              card.classList.remove('active');
+            });
+          });
+        })();
     </script>
   </body>
 </html>

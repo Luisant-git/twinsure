@@ -1632,6 +1632,38 @@
         padding: 4.5rem 2.5% 6rem 2.5%;
         background: linear-gradient(180deg, var(--primary-dark), #000c1f);
       }
+      /* Scoped layout fixes for Insurance Discovery Hub (no sidebar) */
+      .discovery-hub-section .hub-container {
+        grid-template-columns: 1fr !important;
+        gap: 2.5rem;
+      }
+      .discovery-hub-section .hub-workspace {
+        width: 100%;
+      }
+      /* Specialized grid: large left card (iCARE) and stacked right column */
+      .discovery-hub-section .specialized-grid {
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        gap: 2.5rem;
+        align-items: start;
+      }
+      .discovery-hub-section .specialized-grid .module-card.module-fullwidth {
+        grid-column: 1 / 2;
+        grid-row: 1 / span 2;
+      }
+      .discovery-hub-section .specialized-grid .module-card {
+        margin: 0;
+      }
+      @media (max-width: 1024px) {
+        .discovery-hub-section .specialized-grid {
+          grid-template-columns: 1fr !important;
+          gap: 1.5rem;
+        }
+        .discovery-hub-section .specialized-grid .module-card.module-fullwidth {
+          grid-row: auto;
+          grid-column: auto;
+        }
+      }
       .hub-workspace .products-grid,
       .hub-workspace .solutions-grid {
         display: grid;
@@ -2559,8 +2591,11 @@
               <i class="fas fa-times"></i>
             </button>
           </div>
-          <div class="results-badge" id="results-count">
-            Showing all 12 services
+          <div style="display:flex; align-items:center; gap:0.8rem;">
+            <div class="results-badge" id="results-count">
+              Showing all 12 services
+            </div>
+            <a href="https://twinsconsultancy.com" class="btn btn-gold" target="_blank" rel="noopener" style="padding:0.6rem 1rem; font-size:0.95rem">Get more insurance</a>
           </div>
         </div>
         <div class="filter-row">
@@ -2590,400 +2625,7 @@
         </div>
       </div>
       <div class="hub-container">
-        <aside class="hub-sidebar glass-mock" id="hubSidebar">
-          <div class="tree-title-head">
-            <i class="fas fa-network-wired text-gold"></i> Service Navigator
-          </div>
-          <div class="tree-container">
-            <div class="tree-node parent active" data-target-category="all">
-              <span class="tree-node-title"
-                ><i class="fas fa-folder-open"></i> All Services</span
-              >
-            </div>
-            <div class="tree-group">
-              <div class="tree-node parent" data-target-category="core">
-                <span class="tree-toggle"
-                  ><i class="fas fa-chevron-down"></i
-                ></span>
-                <span class="tree-node-title"
-                  ><i class="fas fa-shield-alt text-gold"></i> Core
-                  Products</span
-                >
-              </div>
-              <div class="tree-children">
-                <div class="tree-node leaf" data-target-id="life-insurance">
-                  <span class="tree-node-title"
-                    ><i class="fas fa-heart"></i> Life Insurance</span
-                  >
-                </div>
-                <div class="tree-node leaf" data-target-id="health-insurance">
-                  <span class="tree-node-title"
-                    ><i class="fas fa-file-medical"></i> Health Insurance</span
-                  >
-                </div>
-                <div class="tree-node leaf" data-target-id="general-insurance">
-                  <span class="tree-node-title"
-                    ><i class="fas fa-car"></i> General Insurance</span
-                  >
-                </div>
-              </div>
-            </div>
-            <div class="tree-group">
-              <div class="tree-node parent" data-target-category="specialized">
-                <span class="tree-toggle"
-                  ><i class="fas fa-chevron-down"></i
-                ></span>
-                <span class="tree-node-title"
-                  ><i class="fas fa-cogs text-gold"></i> Specialized
-                  Modules</span
-                >
-              </div>
-              <div class="tree-children">
-                <div class="tree-node leaf" data-target-id="icare">
-                  <span class="tree-node-title"
-                    ><i class="fas fa-file-invoice-dollar"></i> iCARE Desk</span
-                  >
-                </div>
-                <div class="tree-node leaf" data-target-id="renew-all">
-                  <span class="tree-node-title"
-                    ><i class="fas fa-calendar-alt"></i> Re.New.All</span
-                  >
-                </div>
-                <div class="tree-node leaf" data-target-id="hospos">
-                  <span class="tree-node-title"
-                    ><i class="fas fa-hospital-user"></i> HosPos</span
-                  >
-                </div>
-              </div>
-            </div>
-            <div class="tree-group">
-              <div class="tree-node parent" data-target-category="solutions">
-                <span class="tree-toggle"
-                  ><i class="fas fa-chevron-down"></i
-                ></span>
-                <span class="tree-node-title"
-                  ><i class="fas fa-magic text-gold"></i> Custom Solutions</span
-                >
-              </div>
-              <div class="tree-children">
-                <div
-                  class="tree-node leaf"
-                  data-target-id="maternity-framework"
-                >
-                  <span class="tree-node-title"
-                    ><i class="fas fa-baby-carriage"></i> Maternity Cover</span
-                  >
-                </div>
-                <div class="tree-node leaf" data-target-id="adverse-health">
-                  <span class="tree-node-title"
-                    ><i class="fas fa-user-shield"></i> Adverse Health</span
-                  >
-                </div>
-                <div class="tree-node leaf" data-target-id="corporate-packages">
-                  <span class="tree-node-title"
-                    ><i class="fas fa-building"></i> Corporate Plans</span
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-        </aside>
         <div class="hub-workspace" id="hubWorkspace">
-          <div class="workspace-section" data-section-category="core">
-            <h3 class="workspace-section-title">Core Insurance Products</h3>
-            <div class="products-grid" style="margin-top: 0">
-              <div
-                class="product-card"
-                id="life-insurance"
-                data-card-category="core"
-                data-card-tags="tax-benefit,investment,protection"
-              >
-                <div class="card-glow-overlay gold-glow"></div>
-                <div class="card-visual-wrapper">
-                  <svg class="custom-svg-art" viewBox="0 0 200 150">
-                    <circle
-                      cx="100"
-                      cy="85"
-                      r="45"
-                      fill="none"
-                      stroke="rgba(253, 197, 0, 0.25)"
-                      stroke-width="2"
-                      stroke-dasharray="6,4"
-                    ></circle>
-                    <path
-                      d="M 60 75 Q 100 35 140 75 Z"
-                      fill="var(--accent-gold)"
-                      opacity="0.9"
-                    ></path>
-                    <path
-                      d="M 100 75 L 100 110 Q 100 115 95 115"
-                      fill="none"
-                      stroke="#fff"
-                      stroke-width="4"
-                      stroke-linecap="round"
-                    ></path>
-                    <circle cx="85" cy="90" r="8" fill="#fff"></circle>
-                    <rect
-                      x="80"
-                      y="100"
-                      width="10"
-                      height="20"
-                      rx="3"
-                      fill="#fff"
-                    ></rect>
-                    <circle cx="105" cy="92" r="7" fill="#fff"></circle>
-                    <rect
-                      x="101"
-                      y="101"
-                      width="8"
-                      height="19"
-                      rx="3"
-                      fill="#fff"
-                    ></rect>
-                    <circle
-                      cx="120"
-                      cy="98"
-                      r="5"
-                      fill="var(--accent-gold-light)"
-                    ></circle>
-                    <rect
-                      x="117"
-                      y="105"
-                      width="6"
-                      height="15"
-                      rx="2"
-                      fill="var(--accent-gold-light)"
-                    ></rect>
-                  </svg>
-                </div>
-                <h3>Life Insurance</h3>
-                <ul class="product-bullets">
-                  <li>
-                    <i class="fas fa-check"></i>
-                    <strong>Pure Term Insurance:</strong> High coverage life
-                    security, optional with premium returns.
-                  </li>
-                  <li>
-                    <i class="fas fa-check"></i>
-                    <strong>Endowment Maturity:</strong> Structured savings
-                    plans combined with lifecycle risk protection.
-                  </li>
-                  <li>
-                    <i class="fas fa-check"></i>
-                    <strong>Money Back Plans:</strong> Periodic cash payouts to
-                    support recurring capital objectives.
-                  </li>
-                  <li>
-                    <i class="fas fa-check"></i>
-                    <strong>Pension & Retirement:</strong> Dedicated income
-                    protection systems for post-retirement health.
-                  </li>
-                  <li>
-                    <i class="fas fa-check"></i>
-                    <strong>ULIP (Unit Linked Plans):</strong> The perfect blend
-                    of growth investment and robust life protection.
-                  </li>
-                </ul>
-                <div class="product-card-footer">
-                  <span class="product-badge-icon" title="Life protection"
-                    ><i class="fas fa-heart"></i
-                  ></span>
-                  <span class="product-badge-icon" title="Pension support"
-                    ><i class="fas fa-piggy-bank"></i
-                  ></span>
-                  <span class="product-badge-icon" title="Future growth"
-                    ><i class="fas fa-chart-line"></i
-                  ></span>
-                </div>
-              </div>
-              <div
-                class="product-card"
-                id="health-insurance"
-                data-card-category="core"
-                data-card-tags="cashless,critical-care,protection"
-              >
-                <div class="card-glow-overlay blue-glow"></div>
-                <div class="card-visual-wrapper">
-                  <svg class="custom-svg-art" viewBox="0 0 200 150">
-                    <path
-                      d="M 100 30 L 140 45 L 140 95 Q 100 130 60 95 L 60 45 Z"
-                      fill="none"
-                      stroke="#0070f3"
-                      stroke-width="3"
-                      filter="drop-shadow(0 0 8px #0070f3)"
-                    ></path>
-                    <path
-                      d="M 100 45 L 130 55 L 130 90 Q 100 115 70 90 L 70 55 Z"
-                      fill="rgba(0,112,243,0.15)"
-                    ></path>
-                    <path
-                      d="M 93 65 H 107 V 79 H 121 V 93 H 107 V 107 H 93 V 93 H 79 V 79 H 93 Z"
-                      fill="var(--accent-gold)"
-                    ></path>
-                    <path
-                      d="M 40 100 H 65 L 75 80 L 85 120 L 95 90 L 105 105 L 115 100 H 160"
-                      fill="none"
-                      stroke="rgba(255,255,255,0.3)"
-                      stroke-width="2"
-                    ></path>
-                  </svg>
-                </div>
-                <h3>Health Insurance</h3>
-                <ul class="product-bullets">
-                  <li>
-                    <i class="fas fa-check"></i>
-                    <strong>Pure Mediclaim:</strong> Full hospitalisation
-                    cashless shields for families & individuals.
-                  </li>
-                  <li>
-                    <i class="fas fa-check"></i>
-                    <strong>Personal Accident (PA):</strong> Security payouts
-                    covering accidental death and disabilities.
-                  </li>
-                  <li>
-                    <i class="fas fa-check"></i>
-                    <strong>Cash Allowance Benefit:</strong> Continuous daily
-                    cash payouts during hospital stays.
-                  </li>
-                  <li>
-                    <i class="fas fa-check"></i>
-                    <strong>Critical Illness Shield:</strong> Lump-sum payouts
-                    upon major life health diagnoses.
-                  </li>
-                  <li>
-                    <i class="fas fa-check"></i>
-                    <strong>Overseas Travel Cover:</strong> Emergency medical
-                    and travel disruption coverage globally.
-                  </li>
-                </ul>
-                <div class="product-card-footer">
-                  <span class="product-badge-icon" title="Cashless Mediclaim"
-                    ><i class="fas fa-file-medical"></i
-                  ></span>
-                  <span class="product-badge-icon" title="Critical Illness"
-                    ><i class="fas fa-briefcase-medical"></i
-                  ></span>
-                  <span class="product-badge-icon" title="Worldwide Travel"
-                    ><i class="fas fa-plane"></i
-                  ></span>
-                </div>
-              </div>
-              <div
-                class="product-card"
-                id="general-insurance"
-                data-card-category="core"
-                data-card-tags="business-assets,protection"
-              >
-                <div class="card-glow-overlay gold-glow"></div>
-                <div class="card-visual-wrapper">
-                  <svg class="custom-svg-art" viewBox="0 0 200 150">
-                    <rect
-                      x="50"
-                      y="40"
-                      width="35"
-                      height="80"
-                      rx="4"
-                      fill="none"
-                      stroke="rgba(255,255,255,0.2)"
-                      stroke-width="2"
-                    ></rect>
-                    <line
-                      x1="58"
-                      y1="50"
-                      x2="68"
-                      y2="50"
-                      stroke="rgba(255,255,255,0.2)"
-                      stroke-width="2"
-                    ></line>
-                    <line
-                      x1="58"
-                      y1="65"
-                      x2="68"
-                      y2="65"
-                      stroke="rgba(255,255,255,0.2)"
-                      stroke-width="2"
-                    ></line>
-                    <line
-                      x1="58"
-                      y1="80"
-                      x2="68"
-                      y2="80"
-                      stroke="rgba(255,255,255,0.2)"
-                      stroke-width="2"
-                    ></line>
-                    <path
-                      d="M 90 70 L 125 45 L 160 70 Z"
-                      fill="none"
-                      stroke="var(--accent-gold)"
-                      stroke-width="2"
-                    ></path>
-                    <rect
-                      x="100"
-                      y="70"
-                      width="50"
-                      height="50"
-                      rx="3"
-                      fill="none"
-                      stroke="var(--accent-gold)"
-                      stroke-width="2"
-                    ></rect>
-                    <rect
-                      x="110"
-                      y="100"
-                      width="50"
-                      height="15"
-                      rx="4"
-                      fill="var(--primary-lighter)"
-                    ></rect>
-                    <circle cx="120" cy="115" r="5" fill="#fff"></circle>
-                    <circle cx="150" cy="115" r="5" fill="#fff"></circle>
-                  </svg>
-                </div>
-                <h3>General Insurance</h3>
-                <ul class="product-bullets">
-                  <li>
-                    <i class="fas fa-check"></i>
-                    <strong>Vehicle Protection:</strong> Complete motor
-                    third-party and own damage coverage.
-                  </li>
-                  <li>
-                    <i class="fas fa-check"></i>
-                    <strong>Asset & Machinery:</strong> Shield commercial
-                    machinery, goods, and factories from losses.
-                  </li>
-                  <li>
-                    <i class="fas fa-check"></i>
-                    <strong>Household Cover:</strong> Protection against home
-                    damages, fires, burglaries, and natural events.
-                  </li>
-                  <li>
-                    <i class="fas fa-check"></i>
-                    <strong>Professional Indemnity:</strong> Legal liability
-                    coverage tailored for doctors and corporate managers.
-                  </li>
-                  <li>
-                    <i class="fas fa-check"></i>
-                    <strong>Public & Employee Liability:</strong> Shield
-                    operations from public accidents and employee workplace
-                    cases.
-                  </li>
-                </ul>
-                <div class="product-card-footer">
-                  <span class="product-badge-icon" title="Vehicle protection"
-                    ><i class="fas fa-car"></i
-                  ></span>
-                  <span class="product-badge-icon" title="Asset shield"
-                    ><i class="fas fa-home"></i
-                  ></span>
-                  <span
-                    class="product-badge-icon"
-                    title="Professional liability"
-                    ><i class="fas fa-gavel"></i
-                  ></span>
-                </div>
-              </div>
-            </div>
-          </div>
           <div class="workspace-section" data-section-category="specialized">
             <h3 class="workspace-section-title">Specialized Service Modules</h3>
             <div class="specialized-grid" style="margin-top: 0">
@@ -3132,121 +2774,7 @@
               </div>
             </div>
           </div>
-          <div class="workspace-section" data-section-category="solutions">
-            <h3 class="workspace-section-title">
-              Specialized Custom Solutions
-            </h3>
-            <div class="solutions-grid" style="margin-top: 0">
-              <div
-                class="sol-card"
-                id="maternity-framework"
-                data-card-category="solutions"
-                data-card-tags="critical-care"
-              >
-                <div class="sol-header-wrapper">
-                  <div class="sol-header-icon">
-                    <i class="fas fa-baby-carriage"></i>
-                  </div>
-                  <h3>Maternity Framework</h3>
-                </div>
-                <div class="sol-group-title">Specialized Coverages</div>
-                <ul class="sol-bullets">
-                  <li>
-                    <i class="fas fa-chevron-right"></i>
-                    <strong>Unmarried Coverage:</strong> Any female from 18
-                    years can opt for maternity cover alone.
-                  </li>
-                  <li>
-                    <i class="fas fa-chevron-right"></i>
-                    <strong>ART Framework:</strong> Dedicated coverage for
-                    Artificial Reproductive Treatments.
-                  </li>
-                  <li>
-                    <i class="fas fa-chevron-right"></i>
-                    <strong>Newly Married:</strong> Tailored security for newly
-                    married couples.
-                  </li>
-                  <li>
-                    <i class="fas fa-chevron-right"></i>
-                    <strong>Looking Next:</strong> Comprehensive coverage for
-                    expecting mothers' second child.
-                  </li>
-                </ul>
-              </div>
-              <div
-                class="sol-card"
-                id="adverse-health"
-                data-card-category="solutions"
-                data-card-tags="critical-care"
-              >
-                <div class="sol-header-wrapper">
-                  <div class="sol-header-icon">
-                    <i class="fas fa-user-shield"></i>
-                  </div>
-                  <h3>Adverse Health</h3>
-                </div>
-                <div class="sol-group-title">Acceptance Framework</div>
-                <ul class="sol-bullets">
-                  <li>
-                    <i class="fas fa-chevron-right"></i>
-                    <strong>Health Challenges:</strong> Visual, Hearing,
-                    Speaking, Learning, & Autism.
-                  </li>
-                  <li>
-                    <i class="fas fa-chevron-right"></i>
-                    <strong>Chronic Disorders:</strong> BP, Asthma, Thyroid,
-                    Diabetes, & Cholesterol.
-                  </li>
-                  <li>
-                    <i class="fas fa-chevron-right"></i>
-                    <strong>Physical Disables:</strong> Polio, Acid attack
-                    survivors, Accidental limb loss.
-                  </li>
-                  <li>
-                    <i class="fas fa-chevron-right"></i>
-                    <strong>Previously Refused:</strong> Cancer/TB cured, HIV
-                    affected, Heart under treatment.
-                  </li>
-                </ul>
-              </div>
-              <div
-                class="sol-card"
-                id="corporate-packages"
-                data-card-category="solutions"
-                data-card-tags="business-assets,tax-benefit"
-              >
-                <div class="sol-header-wrapper">
-                  <div class="sol-header-icon">
-                    <i class="fas fa-building"></i>
-                  </div>
-                  <h3>Corporate Packages</h3>
-                </div>
-                <div class="sol-group-title">Business Protections</div>
-                <ul class="sol-bullets">
-                  <li>
-                    <i class="fas fa-chevron-right"></i>
-                    <strong>Staff Security:</strong> Unnamed Group, Named Group
-                    PA, and Group Mediclaim.
-                  </li>
-                  <li>
-                    <i class="fas fa-chevron-right"></i>
-                    <strong>Tax Savings:</strong> Employer-Employee plans &
-                    Keyman Insurance setups.
-                  </li>
-                  <li>
-                    <i class="fas fa-chevron-right"></i>
-                    <strong>Assets Coverage:</strong> Machinery, Goods,
-                    Building, Vehicles, and Electrical.
-                  </li>
-                  <li>
-                    <i class="fas fa-chevron-right"></i>
-                    <strong>Liability:</strong> Professional Indemnity, Public,
-                    Product, Contractor's All Risk.
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
+          
           <div class="no-results-card" id="no-results">
             <i class="fas fa-search-minus no-results-icon"></i>
             <h4>No Matching Services Found</h4>
@@ -3263,14 +2791,14 @@
       </div>
     </section>
     <div class="mobile-filter-trigger" id="mobileFilterTrigger">
-      <i class="fas fa-filter"></i> Filters & Tree
+      <i class="fas fa-filter"></i> Filters
     </div>
     <div class="mobile-tree-overlay" id="mobileTreeOverlay"></div>
     <div class="mobile-tree-drawer" id="mobileTreeDrawer">
       <div class="drawer-header">
         <h3>
-          <i class="fas fa-network-wired text-gold"></i> Service Navigator
-        </h3>
+            <i class="fas fa-filter text-gold"></i> Filters
+          </h3>
         <button class="drawer-close" id="drawerClose" aria-label="Close drawer">
           <i class="fas fa-times"></i>
         </button>
@@ -3449,8 +2977,7 @@
             ><i class="fas fa-shield-alt"></i> Twinsure</a
           >
           <p>
-            Securing futures through intelligent insurance solutions, trusted
-            partnerships, and unwavering support.
+            taking a policy is not important climing / using that policy was very important.
           </p>
           <div class="social-links">
             <a href="#"><i class="fab fa-facebook-f"></i></a>
@@ -3471,11 +2998,9 @@
         <div class="footer-col">
           <h4>Services</h4>
           <ul>
-            <li><a href="services.html">Health Insurance</a></li>
-            <li><a href="services.html">Life Insurance</a></li>
-            <li><a href="services.html">Vehicle Insurance</a></li>
-            <li><a href="services.html">Business Insurance</a></li>
-            <li><a href="services.html">Travel Insurance</a></li>
+            <li><a href="services.html">ReNewall</a></li>
+            <li><a href="services.html">hospos</a></li>
+            <li><a href="services.html">icare</a></li>
           </ul>
         </div>
         <div class="footer-col">
