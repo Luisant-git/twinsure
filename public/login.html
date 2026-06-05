@@ -57,6 +57,17 @@
         position: relative;
         margin: 0;
         padding: 0;
+        background-image: 
+          radial-gradient(rgba(255, 255, 255, 0.06) 1.5px, transparent 1.5px),
+          radial-gradient(rgba(253, 197, 0, 0.06) 1.5px, transparent 1.5px),
+          linear-gradient(135deg, rgba(255, 255, 255, 0.015) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.015) 50%, rgba(255, 255, 255, 0.015) 75%, transparent 75%, transparent);
+        background-size: 30px 30px, 45px 45px, 120px 120px;
+        background-position: 0 0, 15px 15px, 0 0;
+        animation: patternFloat 45s linear infinite;
+      }
+      @keyframes patternFloat {
+        0% { background-position: 0 0, 15px 15px, 0 0; }
+        100% { background-position: 300px 300px, -300px 330px, 600px 600px; }
       }
       #bgCanvas {
         position: absolute;

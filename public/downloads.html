@@ -54,6 +54,17 @@
         color: var(--text-white);
         overflow-x: hidden;
         scroll-behavior: smooth;
+        background-image: 
+          radial-gradient(rgba(255, 255, 255, 0.06) 1.5px, transparent 1.5px),
+          radial-gradient(rgba(253, 197, 0, 0.06) 1.5px, transparent 1.5px),
+          linear-gradient(135deg, rgba(255, 255, 255, 0.015) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.015) 50%, rgba(255, 255, 255, 0.015) 75%, transparent 75%, transparent);
+        background-size: 30px 30px, 45px 45px, 120px 120px;
+        background-position: 0 0, 15px 15px, 0 0;
+        animation: patternFloat 45s linear infinite;
+      }
+      @keyframes patternFloat {
+        0% { background-position: 0 0, 15px 15px, 0 0; }
+        100% { background-position: 300px 300px, -300px 330px, 600px 600px; }
       }
       h1,
       h2,
@@ -1852,7 +1863,7 @@
       <div class="nav-links" role="menu" aria-hidden="true">
         <a href="index.html">Home</a> <a href="about.html">About</a>
         <a href="services.html">Services</a>
-        <a href="downloads.html" class="active">Claims</a>
+        <a href="downloads.html" class="active">Downloads</a>
         <a href="contact.html">Contact</a
         ><a
           href="login.html"
@@ -2624,18 +2635,16 @@
               support@twinsure.in
             </li>
             <li style="color: #94a3b8">
-              <i
-                class="fas fa-phone-alt"
-                style="margin-right: 8px; color: var(--accent-gold)"
-              ></i>
-              +91 9750003600
+              <a href="tel:+919750003600" style="color: inherit; text-decoration: none; display: flex; align-items: flex-start;">
+                <i class="fas fa-phone-alt" style="margin-right: 8px; margin-top: 4px; color: var(--accent-gold)"></i>
+                +91 9750003600
+              </a>
             </li>
             <li style="color: #94a3b8">
-              <i
-                class="fas fa-map-marker-alt"
-                style="margin-right: 8px; color: var(--accent-gold)"
-              ></i>
-               6, 2nd cross, Gowripuram Extension, Gowripuram, Karur, Tamil Nadu 639002
+              <a href="https://maps.google.com/maps?q=Twins%20Consultancy,%20Karur,%20Tamil%20Nadu,%20India" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none; display: flex; align-items: flex-start;">
+                <i class="fas fa-map-marker-alt" style="margin-right: 8px; margin-top: 4px; color: var(--accent-gold)"></i>
+                6, 2nd cross, Gowripuram Extension, Gowripuram, Karur, Tamil Nadu 639002
+              </a>
             </li>
           </ul>
         </div>
@@ -2655,9 +2664,11 @@
         data-tooltip="Insurance Recommender"
         ><i class="fas fa-robot"></i> </a
       ><a
-        href="https://wa.me/"
+        href="https://wa.me/919750003600?text=Hello,%20I%20would%20like%20to%20know%20more%20about%20Twinsure%20services."
         class="float-btn float-wa"
         data-tooltip="Professional WhatsApp"
+        target="_blank"
+        rel="noopener noreferrer"
         ><i class="fab fa-whatsapp"></i
       ></a>
     </div>
