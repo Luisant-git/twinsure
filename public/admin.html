@@ -1384,7 +1384,7 @@
                   align-items: center;
                   gap: 0.6rem;
                 "
-                onclick="alert('Open Create User Modal')"
+                onclick="openAddUserModal()"
               >
                 <i class="fas fa-user-plus"></i> Add New User
               </button>
@@ -7321,38 +7321,40 @@ function openLeadDetail(a) {
     </script>
     
   
-    <!-- Edit User Modal -->
-    <div class="claim-modal-overlay" id="editUserModal">
+    <!-- User Modal (Add/Edit) -->
+    <div class="claim-modal-overlay" id="userModal">
       <div class="claim-modal-window">
-        <button class="modal-close-global" onclick="closeEditUserModal()">
+        <button class="modal-close-global" onclick="closeUserModal()">
           <i class="fas fa-times"></i>
         </button>
         <div class="claim-modal-header">
-          <h3>Edit User</h3>
+          <h3 id="userModalTitle">Edit User</h3>
         </div>
-        <form id="editUserForm" onsubmit="submitUserEdit(event)" style="padding: 1.5rem;">
+        <form id="userForm" onsubmit="submitUser(event)" style="padding: 1.5rem;">
           <div class="claim-form-group">
             <label>Full Name</label>
-            <input type="text" id="editUserName" class="claim-form-control" required />
+            <input type="text" id="userName" class="claim-form-control" required />
           </div>
           <div class="claim-form-group">
             <label>Email Address</label>
-            <input type="email" id="editUserEmail" class="claim-form-control" required />
+            <input type="email" id="userEmail" class="claim-form-control" required />
           </div>
           <div class="claim-form-group">
             <label>Role</label>
-            <select id="editUserRole" class="claim-form-control" required>
+            <select id="userRole" class="claim-form-control" required>
               <option value="user">User</option>
               <option value="admin">Admin</option>
+              <option value="partner">Partner</option>
+              <option value="employee">Employee</option>
             </select>
           </div>
           <div class="claim-form-group">
-            <label>New Password (Optional)</label>
-            <input type="password" id="editUserPassword" class="claim-form-control" placeholder="Leave blank to keep unchanged" />
+            <label id="userPasswordLabel">New Password (Optional)</label>
+            <input type="password" id="userPassword" class="claim-form-control" placeholder="Leave blank to keep unchanged" />
           </div>
           <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
-            <button type="button" class="btn btn-white" onclick="closeEditUserModal()">Cancel</button>
-            <button type="submit" class="btn btn-purple">Save Changes</button>
+            <button type="button" class="btn btn-white" onclick="closeUserModal()">Cancel</button>
+            <button type="submit" class="btn btn-purple" id="userSubmitBtn">Save Changes</button>
           </div>
         </form>
       </div>
@@ -7361,53 +7363,84 @@ function openLeadDetail(a) {
     <script>
       let currentEditUserId = null;
 
-      function openEditUserModal(userId) {
-        const user = allUsers.find(u => u._id === userId);
-        if (!user) return;
+      function openAddUserModal() {
+        currentEditUserId = null;
+        document.getElementById('userModalTitle').innerText = 'Add New User';
+        document.getElementById('userName').value = '';
+        document.getElementById('userEmail').value = '';
+        document.getElementById('userRole').value = 'user';
+        document.getElementById('userPassword').value = '';
+        document.getElementById('userPassword').required = true;
+        document.getElementById('userPasswordLabel').innerText = 'Password';
+        document.getElementById('userPassword').placeholder = 'Enter password';
+        document.getElementById('userSubmitBtn').innerText = 'Create User';
         
-        currentEditUserId = userId;
-        document.getElementById('editUserName').value = user.name || '';
-        document.getElementById('editUserEmail').value = user.email || '';
-        document.getElementById('editUserRole').value = user.role || 'user';
-        document.getElementById('editUserPassword').value = '';
-        
-        const modal = document.getElementById('editUserModal');
+        const modal = document.getElementById('userModal');
         modal.style.display = 'flex';
         // Add a tiny delay to allow display:flex to apply before adding opacity class
         setTimeout(() => modal.classList.add('active'), 10);
       }
 
-      function closeEditUserModal() {
-        const modal = document.getElementById('editUserModal');
+      function openEditUserModal(userId) {
+        const user = allUsers.find(u => u._id === userId);
+        if (!user) return;
+        
+        currentEditUserId = userId;
+        document.getElementById('userModalTitle').innerText = 'Edit User';
+        document.getElementById('userName').value = user.name || '';
+        document.getElementById('userEmail').value = user.email || '';
+        document.getElementById('userRole').value = user.role || 'user';
+        document.getElementById('userPassword').value = '';
+        document.getElementById('userPassword').required = false;
+        document.getElementById('userPasswordLabel').innerText = 'New Password (Optional)';
+        document.getElementById('userPassword').placeholder = 'Leave blank to keep unchanged';
+        document.getElementById('userSubmitBtn').innerText = 'Save Changes';
+        
+        const modal = document.getElementById('userModal');
+        modal.style.display = 'flex';
+        setTimeout(() => modal.classList.add('active'), 10);
+      }
+
+      function closeUserModal() {
+        const modal = document.getElementById('userModal');
         modal.classList.remove('active');
         setTimeout(() => modal.style.display = 'none', 300);
         currentEditUserId = null;
       }
 
-      async function submitUserEdit(e) {
+      async function submitUser(e) {
         e.preventDefault();
-        if (!currentEditUserId) return;
         
         const payload = {
-          name: document.getElementById('editUserName').value,
-          email: document.getElementById('editUserEmail').value,
-          role: document.getElementById('editUserRole').value,
-          password: document.getElementById('editUserPassword').value
+          name: document.getElementById('userName').value,
+          email: document.getElementById('userEmail').value,
+          role: document.getElementById('userRole').value,
+          password: document.getElementById('userPassword').value
         };
 
         try {
-          const res = await api.put("/admin/users/" + currentEditUserId, payload);
-          if (res && res.success) {
-             alert(res.message || "User updated successfully");
-             closeEditUserModal();
-             // Reload users
-             loadUsers();
+          if (currentEditUserId) {
+            const res = await api.put("/admin/users/" + currentEditUserId, payload);
+            if (res && res.success) {
+               alert(res.message || "User updated successfully");
+               closeUserModal();
+               if (typeof loadUsers === 'function') loadUsers();
+            } else {
+               alert("Error: " + (res.error || res.message));
+            }
           } else {
-             alert("Error: " + (res.error || res.message));
+            const res = await api.post("/admin/users", payload);
+            if (res && (res.success || res.message === 'User created successfully.')) {
+               alert(res.message || "User created successfully");
+               closeUserModal();
+               if (typeof loadUsers === 'function') loadUsers();
+            } else {
+               alert("Error: " + (res.error || res.message));
+            }
           }
         } catch (error) {
            console.error(error);
-           alert("An error occurred while updating the user.");
+           alert("An error occurred while saving the user.");
         }
       }
     </script>
