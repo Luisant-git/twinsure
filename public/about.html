@@ -44,13 +44,13 @@
       html {
         width: 100%;
         max-width: 100%;
-        overflow-x: hidden;
+        overflow-x: clip;
       }
       body {
         font-family: Inter, sans-serif;
         background-color: var(--primary-dark);
         color: var(--text-white);
-        overflow-x: hidden;
+        overflow-x: clip;
         background-image: 
           radial-gradient(rgba(255, 255, 255, 0.06) 1.5px, transparent 1.5px),
           radial-gradient(rgba(253, 197, 0, 0.06) 1.5px, transparent 1.5px),
@@ -1535,6 +1535,47 @@
           display: none;
         }
       }
+
+      /* Global Mobile Anti-Overflow Patch */
+      @media (max-width: 768px) {
+        /* Prevent containers from exceeding viewport width */
+        body, html, .section, .hero, .culture-section, .exec-section, .footer, .h-panel {
+          max-width: 100vw;
+          box-sizing: border-box;
+        }
+        /* Ensure long headings don't break grid width */
+        .hero h1, .section-header h2, .culture-section h2, .testimonial-text, .h-intro h2 {
+          font-size: clamp(2.2rem, 8vw, 3.5rem) !important;
+          word-break: break-word;
+          overflow-wrap: anywhere;
+        }
+        /* Fix any left-margin or wide padding causing overflow on cards */
+        .exec-card-glass, .mv-card {
+          padding: 1.5rem !important;
+          margin-left: 0 !important;
+          margin-right: 0 !important;
+          width: 100% !important;
+          box-sizing: border-box;
+        }
+        /* Fix the shield positioning overlay bug causing vertical/horizontal overlap */
+        .shield-wrapper {
+          transform: none !important;
+          left: 0 !important;
+          top: 0 !important;
+          margin: 0 auto 1.5rem auto !important;
+          position: relative !important;
+          width: 100% !important;
+          max-width: 250px;
+        }
+      }
+      @media (max-width: 480px) {
+        .floating-actions {
+          bottom: 15px;
+          right: 15px;
+          transform: scale(0.85);
+          transform-origin: bottom right;
+        }
+      }
     </style>
   </head>
   <body>
@@ -1681,65 +1722,389 @@
         </div>
       </div>
     </section>
-    <section class="section">
-      <div class="story-split">
-        <div class="story-content">
-          <h2>Our <span class="gradient-text">Story</span></h2>
-          <p>
-            Twinsure started with a simple observation: navigating the insurance
-            world was too complex, opaque, and intimidating for the average
-            person. We believed it didn't have to be this way.
-          </p>
-          <p>
-            Founded by a team of technology innovators and insurance veterans,
-            we set out to build an ecosystem that places the customer at the
-            center. By integrating artificial intelligence, we eliminated the
-            guesswork, providing personalized recommendations that align
-            perfectly with each individual's life stage and risk profile.
-          </p>
-          <p>
-            Today, Twinsure stands as a beacon of trust, having grown from a
-            small disruptive startup into an enterprise-grade platform
-            protecting thousands of families and businesses.
-          </p>
-        </div>
-        <div class="story-visual">
-          <div class="story-image-placeholder">
-            <i
-              class="fas fa-rocket"
-              style="font-size: 5rem; color: rgba(255, 255, 255, 0.2)"
-            ></i>
-          </div>
-          <div class="floating-stat float-stat-1">
-            <h3
-              style="
-                color: var(--accent-gold);
-                font-size: 1.8rem;
-                margin-bottom: 0.2rem;
-              "
-            >
-              15+
-            </h3>
-            <p style="font-size: 0.85rem; color: var(--text-gray)">
-              Years Experience
-            </p>
-          </div>
-          <div class="floating-stat float-stat-2">
-            <h3
-              style="
-                color: var(--accent-gold);
-                font-size: 1.8rem;
-                margin-bottom: 0.2rem;
-              "
-            >
-              10,000+
-            </h3>
-            <p style="font-size: 0.85rem; color: var(--text-gray)">
-              Happy Clients
-            </p>
+    <section class="section" style="padding: 0; margin: 0; width: 100%; max-width: 100%;">
+      <style>
+        .h-scroll-wrapper {
+          position: relative;
+          height: 600vh;
+          width: 100%;
+          background: transparent;
+        }
+        .h-sticky-container {
+          position: sticky;
+          top: 0;
+          height: 100vh;
+          width: 100%;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+        }
+        .h-track {
+          display: flex;
+          height: 100%;
+          width: max-content;
+          will-change: transform;
+        }
+        .h-bg-text {
+          position: absolute;
+          top: 50%;
+          left: 0;
+          transform: translateY(-50%);
+          font-size: clamp(8rem, 25vw, 25rem);
+          font-weight: 900;
+          background: linear-gradient(90deg, #0ea5e9, #10b981, #8b5cf6, #f59e0b, #0ea5e9);
+          background-size: 200% auto;
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+          opacity: 0.05;
+          white-space: nowrap;
+          pointer-events: none;
+          font-family: Outfit, sans-serif;
+          z-index: 0;
+          line-height: 1;
+          animation: gradientText 20s linear infinite;
+        }
+        @keyframes gradientText {
+          0% { background-position: 0% center; }
+          100% { background-position: 200% center; }
+        }
+        .h-panel {
+          width: 100vw;
+          height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 5vw;
+          position: relative;
+          z-index: 2;
+        }
+        .h-panel-content {
+          max-width: 900px;
+          width: 100%;
+          background: rgba(15, 23, 42, 0.6);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border: 1px solid var(--glass-border);
+          border-top: 1px solid var(--card-accent, rgba(255, 255, 255, 0.15));
+          border-left: 1px solid var(--card-accent, rgba(255, 255, 255, 0.15));
+          padding: clamp(1.5rem, 4vh, 4rem) clamp(1.5rem, 5vw, 4rem);
+          border-radius: 24px;
+          box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+          position: relative;
+          transform: translateY(50px) scale(0.95);
+          opacity: 0;
+          transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+          max-height: 85vh;
+          overflow-y: auto;
+          overflow-x: hidden;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .h-panel-content::-webkit-scrollbar {
+          display: none;
+        }
+        .h-panel-content::before {
+          content: '';
+          position: absolute;
+          top: 0; left: 0; width: 100%; height: 100%;
+          background: radial-gradient(circle at center, var(--card-accent, rgba(253, 197, 0, 0.05)) 0%, transparent 60%);
+          background-size: 200% 200%;
+          opacity: 0.15;
+          pointer-events: none;
+          animation: blobMove 15s ease infinite alternate;
+          z-index: -1;
+        }
+        @keyframes blobMove {
+          0% { background-position: 0% 0%; }
+          100% { background-position: 100% 100%; }
+        }
+        .h-panel.active .h-panel-content {
+          transform: translateY(0) scale(1);
+          opacity: 1;
+        }
+
+        .h-card-split {
+          display: grid;
+          grid-template-columns: 200px 1fr;
+          gap: 3rem;
+          align-items: center;
+        }
+        .h-card-left {
+          text-align: center;
+          border-right: 1px dashed var(--card-accent, rgba(255, 255, 255, 0.1));
+          padding-right: 2rem;
+          position: relative;
+        }
+        .h-card-right {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+
+        .h-card-left, .h-card-right > * {
+          opacity: 0;
+          transform: translateY(20px);
+          transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .h-panel.active .h-card-left { opacity: 1; transform: translateY(0); transition-delay: 0.2s; }
+        .h-panel.active .h-card-right > *:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0.3s; }
+        .h-panel.active .h-card-right > *:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.4s; }
+        .h-panel.active .h-card-right > *:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.5s; }
+
+        .h-panel-icon {
+          font-size: clamp(3rem, 5vw, 4.5rem);
+          color: var(--card-accent, var(--accent-gold));
+          margin-bottom: 1rem;
+          filter: drop-shadow(0 0 15px var(--card-accent, rgba(253, 197, 0, 0.3)));
+        }
+        .h-panel.active .h-panel-icon {
+          animation: iconFloat 4s ease-in-out infinite;
+        }
+        @keyframes iconFloat {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+
+        .h-panel-year-large {
+          font-family: Outfit, sans-serif;
+          font-size: clamp(2rem, 4vw, 3rem);
+          font-weight: 800;
+          color: transparent;
+          -webkit-text-stroke: 1px var(--card-accent, rgba(253, 197, 0, 0.5));
+          opacity: 0.8;
+          line-height: 1;
+        }
+
+        .h-panel h3 {
+          font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+          color: var(--text-white);
+          margin: 0;
+          font-weight: 800;
+        }
+        .h-panel p {
+          font-size: clamp(1rem, 1.8vw, 1.25rem);
+          color: var(--text-gray);
+          line-height: 1.7;
+          margin: 0;
+        }
+        .h-stand-for {
+          display: flex;
+          flex-direction: column;
+          gap: 1.2rem;
+        }
+        .h-val-item {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          background: rgba(0,0,0,0.2);
+          padding: 1.2rem 1.5rem;
+          border-radius: 15px;
+          border-left: 4px solid var(--card-accent, var(--accent-gold));
+          transition: transform 0.3s ease, background 0.3s ease;
+        }
+        .h-val-item:hover {
+          transform: translateX(8px);
+          background: rgba(0,0,0,0.4);
+        }
+        .h-val-item i {
+          font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+          color: var(--card-accent, var(--accent-gold));
+        }
+        .h-val-item h4 {
+          margin-bottom: 0.2rem;
+          font-size: clamp(1.1rem, 2vw, 1.3rem);
+          color: #fff;
+        }
+        .h-val-item span {
+          font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+          color: rgba(255,255,255,0.6);
+        }
+        .h-intro h2 {
+          font-size: clamp(3rem, 6vw, 5rem);
+          font-weight: 900;
+          margin-bottom: 1.5rem;
+          line-height: 1.1;
+        }
+        @keyframes subtleBounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(15px); }
+        }
+        @media (max-width: 768px) {
+          .h-panel-content { padding: 2rem 1.5rem; }
+          .h-card-split {
+            grid-template-columns: 1fr;
+            text-align: center;
+            gap: 1.5rem;
+          }
+          .h-card-left {
+            border-right: none;
+            border-bottom: 1px dashed var(--card-accent, rgba(255, 255, 255, 0.1));
+            padding-right: 0;
+            padding-bottom: 1.5rem;
+          }
+        }
+      </style>
+
+      <div class="h-scroll-wrapper" id="h-wrapper">
+        <div class="h-sticky-container">
+          <div class="h-bg-text" id="h-bg-text">OUR STORY • TWINSURE • TRUST • NO COMMISSIONS • RIGHTS PROTECTED</div>
+          <div class="h-track" id="h-track">
+            
+            <div class="h-panel active">
+              <div class="h-panel-content h-intro" style="background: none; border: none; box-shadow: none; text-align: center;">
+                <h2>Built on <span class="gradient-text">Trust</span><br>Not Commissions</h2>
+                <p style="font-size: 1.5rem; color: var(--text-gray);">Scroll down to explore our journey</p>
+                <div style="font-size: 2.5rem; color: var(--accent-gold); margin-top: 3rem; animation: subtleBounce 2s infinite ease-in-out;">
+                  <i class="fas fa-chevron-down"></i>
+                </div>
+              </div>
+            </div>
+
+            <div class="h-panel" style="--card-accent: #0ea5e9;">
+              <div class="h-panel-content">
+                <div class="h-card-split">
+                  <div class="h-card-left">
+                    <div class="h-panel-icon"><i class="fas fa-industry"></i></div>
+                    <div class="h-panel-year-large">1976</div>
+                  </div>
+                  <div class="h-card-right">
+                    <h3>A Legacy of Honest Work</h3>
+                    <p>We come from a middle-class family rooted in agriculture. My grandfather and father were known in our village for working hard and helping others without expecting anything in return.</p>
+                    <p>In 1976, my father started a dyeing unit. For decades, we ran it with honesty and built strong goodwill. But when we saw the environmental impact, we made a hard call — we shut it down. Pollution was not a legacy we wanted to leave behind.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="h-panel" style="--card-accent: #10b981;">
+              <div class="h-panel-content">
+                <div class="h-card-split">
+                  <div class="h-card-left">
+                    <div class="h-panel-icon"><i class="fas fa-leaf"></i></div>
+                    <div class="h-panel-year-large">PIVOT</div>
+                  </div>
+                  <div class="h-card-right">
+                    <h3>From Dyeing to Doing the Right Thing</h3>
+                    <p>With no business to fall back on, we started fresh as life insurance agents. We had no big network, just one thing: transparency. While many agents pushed ULIPs for high commissions, we took it slow.</p>
+                    <p>We explained what worked, what didn't, and what people actually needed. That's how we found our calling in health insurance — the cover most agents avoided because it paid less. But families needed it most.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="h-panel" style="--card-accent: #8b5cf6;">
+              <div class="h-panel-content">
+                <div class="h-card-split">
+                  <div class="h-card-left">
+                    <div class="h-panel-icon"><i class="fas fa-lightbulb"></i></div>
+                    <div class="h-panel-year-large">FOUNDING</div>
+                  </div>
+                  <div class="h-card-right">
+                    <h3>TwinSure Was Born From Frustration</h3>
+                    <p>Over the years, we met too many people who had bought the wrong policy or were left alone during a claim. Agents had disappeared. Companies were quoting fine print.</p>
+                    <p>We couldn't ignore it. We started helping — fixing claims, decoding policies, fighting mis-selling — even for people who weren't our clients. Word spread.</p>
+                    <p>Today, that same mission has grown into <strong>TwinSure</strong>. We don't sell policies. We make sure you get what you're owed.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="h-panel" style="--card-accent: #f59e0b;">
+              <div class="h-panel-content">
+                <div class="h-card-split">
+                  <div class="h-card-left">
+                    <div class="h-panel-icon"><i class="fas fa-handshake"></i></div>
+                    <div class="h-panel-year-large">VALUES</div>
+                  </div>
+                  <div class="h-card-right">
+                    <h3>What We Stand For</h3>
+                    <div class="h-stand-for">
+                      <div class="h-val-item">
+                        <i class="fas fa-eye"></i>
+                        <div>
+                          <h4>Transparency over Targets</h4>
+                          <span>We explain the gaps, not just the benefits.</span>
+                        </div>
+                      </div>
+                      <div class="h-val-item">
+                        <i class="fas fa-file-signature"></i>
+                        <div>
+                          <h4>Claims over Commissions</h4>
+                          <span>If your claim is at risk, we step in.</span>
+                        </div>
+                      </div>
+                      <div class="h-val-item">
+                        <i class="fas fa-users"></i>
+                        <div>
+                          <h4>People over Products</h4>
+                          <span>Every genuine client deserves their right, period.</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="h-panel">
+              <div class="h-panel-content h-intro" style="background: none; border: none; box-shadow: none; text-align: center;">
+                <i class="fas fa-shield-alt" style="font-size: 5rem; color: var(--accent-gold); margin-bottom: 2rem;"></i>
+                <h3 style="font-size: 3.5rem; margin-bottom: 0;">TwinSure</h3>
+                <p style="font-size: 1.8rem; color: var(--accent-gold); font-family: Outfit, sans-serif; font-weight: 700; margin-bottom: 2rem;">Insurance Rights, Protected.</p>
+                <p style="font-size: 1.25rem; max-width: 700px; margin: 0 auto; color: var(--text-gray);">From a dyeing unit in 1976 to TwinSure today — our business has changed, but our values haven't. If you've been mis-sold, denied a claim, or just want to understand your policy without the jargon, talk to us. We're here to protect your rights.</p>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
+
+      <script>
+        document.addEventListener("DOMContentLoaded", () => {
+          const wrapper = document.getElementById('h-wrapper');
+          const track = document.getElementById('h-track');
+          const bgText = document.getElementById('h-bg-text');
+          const panels = document.querySelectorAll('.h-panel');
+
+          if(!wrapper || !track) return;
+
+          const setPanelWidths = () => {
+            const viewportWidth = document.documentElement.clientWidth;
+            panels.forEach(p => p.style.width = `${viewportWidth}px`);
+          };
+          setPanelWidths();
+          window.addEventListener('resize', setPanelWidths);
+
+          window.addEventListener('scroll', () => {
+            const rect = wrapper.getBoundingClientRect();
+            const scrollDistance = -rect.top;
+            const maxScroll = wrapper.offsetHeight - window.innerHeight;
+            
+            let progress = scrollDistance / maxScroll;
+            if(progress < 0) progress = 0;
+            if(progress > 1) progress = 1;
+            
+            const trackMaxMove = track.scrollWidth - document.documentElement.clientWidth;
+            const moveX = trackMaxMove * progress;
+            
+            track.style.transform = `translate3d(-${moveX}px, 0, 0)`;
+            if(bgText) bgText.style.transform = `translate3d(-${moveX * 0.4}px, -50%, 0)`;
+
+            panels.forEach((panel) => {
+              const panelRect = panel.getBoundingClientRect();
+              const panelCenter = panelRect.left + panelRect.width / 2;
+              if(panelCenter > document.documentElement.clientWidth * 0.1 && panelCenter < document.documentElement.clientWidth * 0.9) {
+                panel.classList.add('active');
+              } else {
+                panel.classList.remove('active');
+              }
+            });
+          });
+          
+          window.dispatchEvent(new Event('scroll'));
+        });
+      </script>
     </section>
     <section class="section exec-section">
       <h3 style="text-align: center; font-size: 2.2rem; margin-bottom: 3rem">
