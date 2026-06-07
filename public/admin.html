@@ -715,13 +715,6 @@
                 ><i class="fas fa-cog"></i> Settings</a
               >
             </li>
-            <li>
-              <a
-                href="javascript:void(0)"
-                onclick="showSection('testimonials', this)"
-                ><i class="fas fa-quote-left"></i> Testimonials</a
-              >
-            </li>
           </ul>
         </div>
       </aside>
@@ -1739,6 +1732,12 @@
             >
               Partner Program
             </button>
+            <button
+              class="settings-tab"
+              onclick="switchSettingsTab('testimonials', this)"
+            >
+              Testimonials
+            </button>
           </div>
           <div
             class="settings-layout"
@@ -2364,6 +2363,36 @@
                   </div>
                 </div>
               </div>
+              <div
+                id="tab-testimonials"
+                class="settings-tab-pane"
+                style="display: none"
+              >
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 1.2rem;
+                  "
+                >
+                  <h3 style="font-size: 1.1rem; color: #111; margin: 0">
+                    Testimonials Settings
+                  </h3>
+                  <button
+                    class="btn btn-gold"
+                    onclick="openAddTestimonialModal()"
+                    style="padding: 0.5rem 1rem; font-size: 0.85rem;"
+                  >
+                    <i class="fas fa-plus"></i> Add New Testimonial
+                  </button>
+                </div>
+                <div class="premium-table-card" style="border: 1px solid #e2e8f0; border-radius: 12px; background: #fff;">
+                  <div id="testimonialsListContainer" style="padding: 1.5rem">
+                    <p style="color: #999; text-align: center">Loading testimonials...</p>
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="settings-quick-panel">
               <div
@@ -2970,70 +2999,6 @@
                 </thead>
                 <tbody id="premiumLeadsTableBody"></tbody>
               </table>
-            </div>
-          </div>
-        </section>
-
-        <!-- Testimonials Section -->
-        <section
-          id="testimonials"
-          class="content-section"
-          style="display: none; padding-top: 0"
-        >
-          <div style="margin-bottom: 1.5rem">
-            <div
-              style="
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-end;
-                flex-wrap: wrap;
-                gap: 1rem;
-              "
-            >
-              <div>
-                <span
-                  style="
-                    font-size: 0.8rem;
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
-                    color: var(--text-muted);
-                    font-weight: 700;
-                  "
-                  >Client Stories</span
-                >
-                <h2
-                  style="
-                    font-size: 2rem;
-                    margin: 0.5rem 0 0 0;
-                    color: var(--primary-dark);
-                    font-family: 'Outfit', sans-serif;
-                    font-weight: 800;
-                  "
-                >
-                  Manage Testimonials
-                </h2>
-                <p
-                  style="
-                    margin: 0.5rem 0 0 0;
-                    color: var(--text-muted);
-                    font-size: 0.9rem;
-                  "
-                >
-                  Add, edit, or remove client testimonials displayed on the website.
-                </p>
-              </div>
-              <button
-                class="btn btn-gold"
-                onclick="openAddTestimonialModal()"
-              >
-                <i class="fas fa-plus"></i> Add New Testimonial
-              </button>
-            </div>
-          </div>
-
-          <div class="premium-table-card">
-            <div id="testimonialsListContainer" style="padding: 1.5rem">
-              <p style="color: #999; text-align: center">Loading testimonials...</p>
             </div>
           </div>
         </section>
@@ -7377,6 +7342,9 @@ function openLeadDetail(a) {
             .forEach((e) => e.classList.remove("active")),
           (document.getElementById("tab-" + e).style.display = "block"),
           t && t.classList.add("active"));
+        if (e === "testimonials") {
+          loadTestimonials();
+        }
       }
       async function loadSettings() {
         try {
