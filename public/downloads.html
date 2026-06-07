@@ -2432,12 +2432,12 @@
         <div class="ai-left">
           <h2>Need Smart <span class="gradient-text">Claim Guidance?</span></h2>
           <p>
-            Our AI assistant can help you understand claim requirements and
+            Our smart assistant can help you understand claim requirements and
             guide you through the process instantly.
           </p>
           <div class="hero-btns">
             <a href="userchat.html" class="btn btn-gold"
-              ><i class="fas fa-robot"></i> Open AI Assistant </a
+              ><i class="fas fa-robot"></i> Open Smart Assistant </a
             ><a href="userchat.html" class="btn btn-outline"
               ><i class="fas fa-compass"></i> Start Recommendation Journey</a
             >
@@ -2453,7 +2453,7 @@
             </div>
             <div class="ai-stat-card">
               <span class="ai-stat-num" data-val="24">0</span>
-              <span class="ai-stat-lbl">/7 AI Assistance</span>
+              <span class="ai-stat-lbl">/7 Support Desk</span>
             </div>
           </div>
         </div>
@@ -2807,17 +2807,20 @@
       }
       function animateCounters() {
         document.querySelectorAll(".ai-stat-num").forEach((e) => {
+          const initialText = e.innerText;
+          const hasPercent = initialText.includes("%");
+          const hasKPlus = initialText.includes("K+");
           let t = parseFloat(e.getAttribute("data-val")),
             a = e.getAttribute("data-val").includes("."),
             n = 0,
             r = t / 60,
             l = () => {
               (n += r) < t
-                ? ((e.innerText = a
+                ? ((e.innerText = hasPercent
                     ? n.toFixed(1) + "%"
-                    : Math.floor(n) + (e.innerText.includes("K") ? "K+" : "")),
+                    : Math.floor(n) + (hasKPlus ? "K+" : "")),
                   setTimeout(l, 20))
-                : (e.innerText = a ? t + "%" : t + (10 <= t ? "K+" : ""));
+                : (e.innerText = hasPercent ? t + "%" : t + (hasKPlus ? "K+" : ""));
             };
           l();
         });
