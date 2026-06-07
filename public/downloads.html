@@ -548,6 +548,122 @@
           transform: translateY(0) rotate(0);
         }
       }
+      /* Empty State Contact Styles */
+      .empty-state-container {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 4.5rem 2rem;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.005));
+        border: 1px dashed rgba(255, 255, 255, 0.08);
+        border-radius: 24px;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        max-width: 750px;
+        margin: 1.8rem auto;
+        width: 100%;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      }
+
+      .empty-state-icon {
+        font-size: 3.5rem;
+        color: var(--accent-gold);
+        margin-bottom: 1.5rem;
+        filter: drop-shadow(0 0 10px rgba(253, 197, 0, 0.3));
+        animation: emptyPulse 2s infinite ease-in-out;
+        display: block;
+      }
+
+      .empty-state-title {
+        color: #fff;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.6rem;
+        font-family: Outfit, sans-serif;
+        letter-spacing: -0.3px;
+      }
+
+      .empty-state-subtitle {
+        color: var(--text-gray);
+        font-size: 1rem;
+        opacity: 0.85;
+        margin-bottom: 2rem;
+        line-height: 1.5;
+        max-width: 550px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .empty-state-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1.25rem;
+      }
+
+      .empty-state-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.85rem 1.6rem;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      }
+
+      .empty-state-btn-gold {
+        background: var(--accent-gold);
+        color: var(--primary-dark);
+        border: 1px solid var(--accent-gold);
+      }
+
+      .empty-state-btn-gold:hover {
+        background: #fff;
+        color: var(--primary-dark);
+        border-color: #fff;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(253, 197, 0, 0.4);
+      }
+
+      .empty-state-btn-wa {
+        background: #25d366;
+        color: #fff;
+        border: 1px solid #25d366;
+      }
+
+      .empty-state-btn-wa:hover {
+        background: #1ebd58;
+        border-color: #1ebd58;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);
+      }
+
+      .empty-state-btn-outline {
+        background: transparent;
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+      }
+
+      .empty-state-btn-outline:hover {
+        background: rgba(255, 255, 255, 0.06);
+        border-color: #fff;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(255, 255, 255, 0.1);
+      }
+
+      @keyframes emptyPulse {
+        0%, 100% {
+          transform: scale(1);
+          opacity: 0.9;
+        }
+        50% {
+          transform: scale(1.05);
+          opacity: 1;
+        }
+      }
+
       .claims-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -2832,10 +2948,21 @@
               })
               .join(""))
           : (t.innerHTML = `
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 2rem;">
-                        <i class="fas fa-search" style="font-size: 3rem; color: var(--text-gray); margin-bottom: 1rem; display: block; opacity: 0.4;"></i>
-                        <h3 style="color: var(--text-gray); font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem;">No Matching Forms Found</h3>
-                        <p style="color: var(--text-gray); font-size: 0.9rem; opacity: 0.7;">Try a different search keyword or category filter.</p>
+                    <div class="empty-state-container">
+                        <i class="fas fa-search-minus empty-state-icon"></i>
+                        <h3 class="empty-state-title">Can't find your product? contact us now</h3>
+                        <p class="empty-state-subtitle">If you can't find the form or document you're looking for, reach out to our claims consultants and we'll help you immediately.</p>
+                        <div class="empty-state-actions">
+                            <a href="https://wa.me/919750003600?text=Hello,%20I%20could%20not%20find%20the%20form%20for%20my%20product%20on%20the%20downloads%20page.%20Can%20you%20help%20me?" class="empty-state-btn empty-state-btn-wa" target="_blank" rel="noopener noreferrer">
+                                <i class="fab fa-whatsapp"></i> Chat on WhatsApp
+                            </a>
+                            <a href="tel:+919750003600" class="empty-state-btn empty-state-btn-gold">
+                                <i class="fas fa-phone-alt"></i> Call Hotline
+                            </a>
+                            <a href="contact.html" class="empty-state-btn empty-state-btn-outline">
+                                <i class="fas fa-envelope"></i> Go to Contact Page
+                            </a>
+                        </div>
                     </div>`);
       }
       function filterPublicClaims() {
