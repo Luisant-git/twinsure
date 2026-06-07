@@ -2953,17 +2953,20 @@
                         <h3 class="empty-state-title">Can't find your product? contact us now</h3>
                         <p class="empty-state-subtitle">If you can't find the form or document you're looking for, reach out to our claims consultants and we'll help you immediately.</p>
                         <div class="empty-state-actions">
-                            <a href="https://wa.me/919750003600?text=Hello,%20I%20could%20not%20find%20the%20form%20for%20my%20product%20on%20the%20downloads%20page.%20Can%20you%20help%20me?" class="empty-state-btn empty-state-btn-wa" target="_blank" rel="noopener noreferrer">
+                            <a href="https://wa.me/" class="empty-state-btn empty-state-btn-wa" target="_blank" rel="noopener noreferrer">
                                 <i class="fab fa-whatsapp"></i> Chat on WhatsApp
                             </a>
-                            <a href="tel:+919750003600" class="empty-state-btn empty-state-btn-gold">
-                                <i class="fas fa-phone-alt"></i> Call Hotline
+                            <a href="tel:" class="empty-state-btn empty-state-btn-gold">
+                                <i class="fas fa-phone-alt"></i> +91 9750003600
                             </a>
                             <a href="contact.html" class="empty-state-btn empty-state-btn-outline">
                                 <i class="fas fa-envelope"></i> Go to Contact Page
                             </a>
                         </div>
                     </div>`);
+        if (typeof window.applySettings === "function") {
+          window.applySettings(window.contactSettings || {});
+        }
       }
       function filterPublicClaims() {
         let t = document

@@ -146,6 +146,7 @@
       }
 
       const settings = await response.json();
+      window.contactSettings = settings || {};
       applySettings(settings || {});
     } catch (error) {
       console.warn('Failed to load public contact settings:', error);
@@ -153,6 +154,7 @@
   }
 
   function init() {
+    window.applySettings = applySettings;
     loadSettings();
     loadTestimonials();
   }
