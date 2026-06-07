@@ -321,9 +321,9 @@ app.use(cors({
 const getGlobalRateLimit = async () => {
   try {
     const settings = await findOne('settings', { _id: 'global' });
-    return settings && settings.loginAttempts ? parseInt(settings.loginAttempts) * 20 : 100;
+    return settings && settings.loginAttempts ? parseInt(settings.loginAttempts) * 200 : 1000;
   } catch (err) {
-    return 100;
+    return 1000;
   }
 };
 
@@ -341,6 +341,10 @@ const globalLimiter = rateLimit({
   limit: async (req, res) => await getGlobalRateLimit(),
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => {
+    const ip = req.ip || req.connection?.remoteAddress || '';
+    return ip.includes('127.0.0.1') || ip.includes('::1') || ip.includes('localhost');
+  }
 });
 
 const strictLimiter = rateLimit({
