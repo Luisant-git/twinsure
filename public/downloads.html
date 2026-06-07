@@ -2023,23 +2023,6 @@
           </button>
           <button
             class="btn btn-outline"
-            onclick="filterCategory('Health', this)"
-            style="
-              padding: 0.6rem 1.4rem;
-              border-radius: 20px;
-              font-size: 0.85rem;
-              font-weight: 600;
-              border-color: var(--glass-border);
-              background: var(--glass-bg);
-              color: var(--text-gray);
-              cursor: pointer;
-              transition: 0.3s;
-            "
-          >
-            Health
-          </button>
-          <button
-            class="btn btn-outline"
             onclick="filterCategory('Life', this)"
             style="
               padding: 0.6rem 1.4rem;
@@ -2054,6 +2037,23 @@
             "
           >
             Life
+          </button>
+          <button
+            class="btn btn-outline"
+            onclick="filterCategory('Health', this)"
+            style="
+              padding: 0.6rem 1.4rem;
+              border-radius: 20px;
+              font-size: 0.85rem;
+              font-weight: 600;
+              border-color: var(--glass-border);
+              background: var(--glass-bg);
+              color: var(--text-gray);
+              cursor: pointer;
+              transition: 0.3s;
+            "
+          >
+            Health
           </button>
           <button
             class="btn btn-outline"
@@ -2091,7 +2091,7 @@
           </button>
           <button
             class="btn btn-outline"
-            onclick="filterCategory('Reimbursement', this)"
+            onclick="filterCategory('Others', this)"
             style="
               padding: 0.6rem 1.4rem;
               border-radius: 20px;
@@ -2104,24 +2104,7 @@
               transition: 0.3s;
             "
           >
-            Reimbursement
-          </button>
-          <button
-            class="btn btn-outline"
-            onclick="filterCategory('Accident Claims', this)"
-            style="
-              padding: 0.6rem 1.4rem;
-              border-radius: 20px;
-              font-size: 0.85rem;
-              font-weight: 600;
-              border-color: var(--glass-border);
-              background: var(--glass-bg);
-              color: var(--text-gray);
-              cursor: pointer;
-              transition: 0.3s;
-            "
-          >
-            Accident
+            Others
           </button>
         </div>
       </div>
@@ -2131,7 +2114,7 @@
       <div class="help-banner">
         <div class="help-left">
           <h2>
-            Need Help <span class="gradient-text">Filling the Form?</span>
+            Need Help <span class="gradient-text" style="white-space: nowrap;">for Micro to Macro?</span>
           </h2>
           <p>
             Our experts will guide you end-to-end through the entire claim
@@ -2157,7 +2140,6 @@
                 <div class="live-dot-pulse"></div>
                 <span>Live Support Available</span>
               </div>
-              <span class="live-sub">Average response rate: 3 minutes</span>
             </div>
           </div>
           <div class="help-btns-wrapper">
@@ -2166,40 +2148,52 @@
             ><a href="https://wa.me/" class="btn btn-wa-green"
               ><i class="fab fa-whatsapp"></i> Chat on WhatsApp </a
             ><a href="userchat.html" class="btn btn-outline"
-              ><i class="fas fa-robot"></i> Start AI Assistance</a
+              ><i class="fas fa-user-check"></i> Personalised Assistance</a
             >
           </div>
         </div>
         <div class="help-right-visual">
           <div class="timeline-box-mock">
-            <div class="timeline-mini-step">
+            <div class="timeline-mini-step" style="align-items: center;">
               <div class="mini-step-num">1</div>
               <div class="mini-step-text">
-                <span class="title">Expert Consultation</span>
-                <span class="desc"
-                  >Quick assessment of your claim eligibility and
-                  benefits.</span
-                >
+                <span class="title">Help to check claim eligibility</span>
               </div>
             </div>
-            <div class="timeline-mini-step">
+            <div class="timeline-mini-step" style="align-items: center;">
               <div class="mini-step-num">2</div>
               <div class="mini-step-text">
-                <span class="title">Document Verification</span>
-                <span class="desc"
-                  >A thorough audit of bills, certificates, and ID
-                  documents.</span
-                >
+                <span class="title">Help for Planned Admission</span>
               </div>
             </div>
-            <div class="timeline-mini-step">
+            <div class="timeline-mini-step" style="align-items: center;">
               <div class="mini-step-num">3</div>
               <div class="mini-step-text">
-                <span class="title">Seamless Filing</span>
-                <span class="desc"
-                  >Direct submission of files to ensure quick, approved
-                  payouts.</span
-                >
+                <span class="title">Help for Cashless claim (booking to settlement)</span>
+              </div>
+            </div>
+            <div class="timeline-mini-step" style="align-items: center;">
+              <div class="mini-step-num">4</div>
+              <div class="mini-step-text">
+                <span class="title">Help for Form Filling</span>
+              </div>
+            </div>
+            <div class="timeline-mini-step" style="align-items: center;">
+              <div class="mini-step-num">5</div>
+              <div class="mini-step-text">
+                <span class="title">Help for Document Collection</span>
+              </div>
+            </div>
+            <div class="timeline-mini-step" style="align-items: center;">
+              <div class="mini-step-num">6</div>
+              <div class="mini-step-text">
+                <span class="title">Help for Query Reply</span>
+              </div>
+            </div>
+            <div class="timeline-mini-step" style="align-items: center;">
+              <div class="mini-step-num">7</div>
+              <div class="mini-step-text">
+                <span class="title">Help for Follow up</span>
               </div>
             </div>
           </div>
@@ -2850,21 +2844,24 @@
             .value.toLowerCase()
             .trim(),
           e = allClaims;
-        ("all" !== activeCategory &&
-          (e = e.filter(
-            (e) =>
-              (e.category || "").toLowerCase() === activeCategory.toLowerCase(),
-          )),
-          renderClaims(
-            (e = t
-              ? e.filter(
-                  (e) =>
-                    (e.name || e.title || "").toLowerCase().includes(t) ||
-                    (e.description || "").toLowerCase().includes(t) ||
-                    (e.category || "").toLowerCase().includes(t),
-                )
-              : e),
-          ));
+        if ("all" !== activeCategory) {
+          if (activeCategory.toLowerCase() === "others") {
+            const mainCategories = ["life", "health", "vehicle", "travel"];
+            e = e.filter((c) => !mainCategories.includes((c.category || "").toLowerCase()));
+          } else {
+            e = e.filter((c) => (c.category || "").toLowerCase() === activeCategory.toLowerCase());
+          }
+        }
+        renderClaims(
+          (e = t
+            ? e.filter(
+                (e) =>
+                  (e.name || e.title || "").toLowerCase().includes(t) ||
+                  (e.description || "").toLowerCase().includes(t) ||
+                  (e.category || "").toLowerCase().includes(t),
+              )
+            : e),
+        );
       }
       function filterCategory(e, t) {
         ((activeCategory = e),
@@ -3043,5 +3040,6 @@
           }),
         fetchPublicClaims());
     </script>
+    <script src="js/site-contact.js"></script>
   </body>
 </html>

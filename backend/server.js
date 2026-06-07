@@ -176,7 +176,7 @@ async function connectAndSeed() {
   ensureDirectory(claimsUploadDir);
   ensureDirectory(partnersUploadDir);
 
-  const collectionsToCreate = ['users', 'services', 'partners', 'recommendation_questions', 'leads', 'form_help_requests', 'settings', 'contacts', 'claims'];
+  const collectionsToCreate = ['users', 'services', 'partners', 'recommendation_questions', 'leads', 'form_help_requests', 'settings', 'contacts', 'claims', 'testimonials'];
   for (const collectionName of collectionsToCreate) {
     await createCollectionIfNotExists(collectionName);
   }
@@ -208,7 +208,9 @@ async function connectAndSeed() {
     await insertOne('settings', {
       _id: 'global',
       supportEmail: 'support@twinsure.com',
-      supportPhone: '+91 9999988888',
+      supportPhone: '+91 9750003600',
+      whatsappGroupLink:
+        'https://wa.me/919750003600?text=Hello,%20I%20would%20like%20to%20know%20more%20about%20Twinsure%20services.',
       officeAddress: 'Twinsure H.Q., Chennai, Tamil Nadu - 600xxx',
       workingHours: 'Mon-Fri: 9AM - 6PM',
       timeZone: 'IST',
@@ -235,6 +237,63 @@ async function connectAndSeed() {
       updatedAt: new Date().toISOString().replace('T', ' ').slice(0, 19)
     });
   }
+      const settingsDefaults = {
+        supportEmail: 'support@twinsure.com',
+        supportPhone: '+91 9750003600',
+        whatsappGroupLink:
+          'https://wa.me/919750003600?text=Hello,%20I%20would%20like%20to%20know%20more%20about%20Twinsure%20services.',
+        officeAddress: 'Twinsure H.Q., Chennai, Tamil Nadu - 600xxx',
+        workingHours: 'Mon-Fri: 9AM - 6PM',
+        timeZone: 'IST',
+        defaultLanguage: 'English'
+      };
+
+      const settingsPatch = {};
+      for (const [key, value] of Object.entries(settingsDefaults)) {
+        const currentValue = existingSettings[key];
+        if (currentValue === undefined || currentValue === null || String(currentValue).trim() === '') {
+          settingsPatch[key] = value;
+        }
+      }
+
+      if (Object.keys(settingsPatch).length > 0) {
+        await updateOne('settings', { _id: 'global' }, { $set: settingsPatch });
+      }
+
+      const existingTestimonial = await findOne('testimonials', {});
+      if (!existingTestimonial) {
+        console.log('Seeding initial testimonials...');
+        const initialTestimonials = [
+          {
+            name: 'Murugan',
+            from: 'from Karur',
+            before: 'I am Murugan from Karur. About six months ago, I suffered a heart attack and was advised to undergo heart surgery at a hospital in Coimbatore. The surgery would cost around ₹6 lakh. Since I had a Star Health Insurance policy, I submitted a claim, but it was rejected. After being discharged and returning home, I submitted the claim again, but it was rejected once more for different reasons.',
+            helped: 'At that point, a friend recommended Twins Consultancy. I immediately contacted them and shared all the necessary details. From the very beginning, their team guided me with speed and clarity. They explained exactly what needed to be done, how to submit the documents correctly, and what corrections were required. They carefully reviewed my case, corrected every mistake, and handled the entire process efficiently.',
+            after: 'Thanks to the efforts of Twins Consultancy, I successfully received my insurance claim amount of ₹6 lakh this week. I am extremely happy and satisfied with the support they provided. Their guidance made a difficult process much easier, and I highly recommend Twins Consultancy to anyone seeking assistance with insurance claims.',
+            avatarUrl: 'https://ui-avatars.com/api/?name=Murugan&background=random',
+            displayOrder: 1,
+            isActive: true,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          },
+          {
+            name: 'Lokanathan',
+            from: 'Teacher from Chinnatharapuram',
+            before: 'I am Lokanathan, a teacher from Chinnatharapuram. I had taken the Star Super Plus Policy through Twins Consultancy. Recently, I underwent surgical treatment at Royal Care Hospital. At that time, I was unable to receive the payment directly through the policy. Since I am a government employee, the policy was not directly applicable, and I had to seek reimbursement through the government scheme. Additionally, there were challenges in obtaining the eligible amount through my Star Health Policy.',
+            helped: 'I am extremely grateful to Mr. Lakshmanan from Twins Consultancy, who personally guided and assisted me throughout the reimbursement process. He carefully handled the complexities involved in claiming benefits under the government policy and also addressed the issues related to my Star Health Policy. Even though it was a top-up policy and I initially considered leaving the matter as it was, Mr. Lakshmanan remained committed to ensuring that I received the amount I was rightfully entitled to. He continuously followed up and worked diligently until the reimbursement process was completed successfully.',
+            after: 'Thanks to the dedicated efforts of Mr. Lakshmanan and the team at Twins Consultancy, I successfully received the reimbursement amount that I was eligible for. I will always remain thankful for their support, dedication, and persistence. I highly appreciate the service provided by Twins Consultancy and sincerely thank Mr. Lakshmanan for his invaluable assistance.',
+            avatarUrl: 'https://ui-avatars.com/api/?name=Lokanathan&background=random',
+            displayOrder: 2,
+            isActive: true,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          }
+        ];
+
+        for (const testimonial of initialTestimonials) {
+          await insertOne('testimonials', testimonial);
+        }
+      }
 }
 
 const allowedOrigins = [
@@ -291,8 +350,6 @@ const strictLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-app.use(globalLimiter);
-
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -320,6 +377,7 @@ app.get('/', (req, res) => {
 
 function createApiRouter() {
   const router = express.Router();
+  router.use(globalLimiter);
 
   router.post('/auth/login', strictLimiter, async (req, res) => {
     const data = collectBody(req);
@@ -409,6 +467,21 @@ function createApiRouter() {
         status: 'new'
       });
       sendJson(res, 200, { success: true });
+    } catch (error) {
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
+    }
+  });
+
+  router.get('/public/settings', async (req, res) => {
+    try {
+      const settings = await findOne('settings', { _id: 'global' });
+      sendJson(res, 200, {
+        supportPhone: settings?.supportPhone || '+91 9750003600',
+        whatsappGroupLink:
+          settings?.whatsappGroupLink ||
+          'https://wa.me/919750003600?text=Hello,%20I%20would%20like%20to%20know%20more%20about%20Twinsure%20services.'
+      });
     } catch (error) {
       console.error('Database/Server Error:', error.message);
       sendJson(res, 500, { error: 'An internal server error occurred.' });
@@ -1075,6 +1148,142 @@ function createApiRouter() {
       } else {
         // Even if modifiedCount is 0, it might just be because no fields changed
         sendJson(res, 200, { success: true, message: 'User updated.' });
+      }
+    } catch (error) {
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
+    }
+  });
+
+  // Testimonials endpoints
+  router.get('/public/testimonials', async (req, res) => {
+    try {
+      const testimonials = await findMany('testimonials', { isActive: true }, { sort: { displayOrder: 1 } });
+      sendJson(res, 200, testimonials || []);
+    } catch (error) {
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 200, []); // Return empty array on error for public endpoint
+    }
+  });
+
+  router.get('/admin/testimonials', requireRole('admin'), async (req, res) => {
+    try {
+      const testimonials = await findMany('testimonials', {}, { sort: { displayOrder: 1 } });
+      sendJson(res, 200, testimonials || []);
+    } catch (error) {
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
+    }
+  });
+
+  router.post('/admin/testimonials', requireRole('admin'), async (req, res) => {
+    const data = collectBody(req);
+    if (!data.name || !data.from || !data.before || !data.helped || !data.after) {
+      sendJson(res, 400, { error: 'Missing required fields: name, from, before, helped, after' });
+      return;
+    }
+
+    // Validate character limits: before (500), helped (500), after (400)
+    if (data.before.length > 500) {
+      sendJson(res, 400, { error: 'Before field cannot exceed 500 characters' });
+      return;
+    }
+    if (data.helped.length > 500) {
+      sendJson(res, 400, { error: 'How Twins Consultancy Helped field cannot exceed 500 characters' });
+      return;
+    }
+    if (data.after.length > 400) {
+      sendJson(res, 400, { error: 'Result field cannot exceed 400 characters' });
+      return;
+    }
+
+    try {
+      const maxOrder = await findOne('testimonials', {}, { sort: { displayOrder: -1 } });
+      const nextOrder = (maxOrder && maxOrder.displayOrder) ? maxOrder.displayOrder + 1 : 1;
+
+      const testimonial = {
+        name: data.name,
+        from: data.from,
+        before: data.before,
+        helped: data.helped,
+        after: data.after,
+        avatarUrl: data.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}&background=random`,
+        displayOrder: nextOrder,
+        isActive: data.isActive !== undefined ? data.isActive : true,
+        createdAt: formatDateTime(new Date()),
+        updatedAt: formatDateTime(new Date())
+      };
+
+      await insertOne('testimonials', testimonial);
+      sendJson(res, 201, { success: true, message: 'Testimonial added successfully' });
+    } catch (error) {
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
+    }
+  });
+
+  router.put('/admin/testimonials/:id', requireRole('admin'), async (req, res) => {
+    const testimonialId = req.params.id;
+    const data = collectBody(req);
+
+    if (!data.name || !data.from || !data.before || !data.helped || !data.after) {
+      sendJson(res, 400, { error: 'Missing required fields: name, from, before, helped, after' });
+      return;
+    }
+
+    // Validate character limits
+    if (data.before.length > 500) {
+      sendJson(res, 400, { error: 'Before field cannot exceed 500 characters' });
+      return;
+    }
+    if (data.helped.length > 500) {
+      sendJson(res, 400, { error: 'How Twins Consultancy Helped field cannot exceed 500 characters' });
+      return;
+    }
+    if (data.after.length > 400) {
+      sendJson(res, 400, { error: 'Result field cannot exceed 400 characters' });
+      return;
+    }
+
+    try {
+      const updateData = {
+        name: data.name,
+        from: data.from,
+        before: data.before,
+        helped: data.helped,
+        after: data.after,
+        avatarUrl: data.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}&background=random`,
+        isActive: data.isActive !== undefined ? data.isActive : true,
+        updatedAt: formatDateTime(new Date())
+      };
+
+      if (data.displayOrder !== undefined) {
+        updateData.displayOrder = data.displayOrder;
+      }
+
+      const result = await updateOne('testimonials', { _id: new ObjectId(testimonialId) }, { $set: updateData });
+
+      if (result && result.modifiedCount > 0) {
+        sendJson(res, 200, { success: true, message: 'Testimonial updated successfully' });
+      } else {
+        sendJson(res, 200, { success: true, message: 'Testimonial updated' });
+      }
+    } catch (error) {
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
+    }
+  });
+
+  router.delete('/admin/testimonials/:id', requireRole('admin'), async (req, res) => {
+    const testimonialId = req.params.id;
+
+    try {
+      const result = await deleteOne('testimonials', { _id: new ObjectId(testimonialId) });
+
+      if (result && result.deletedCount > 0) {
+        sendJson(res, 200, { success: true, message: 'Testimonial deleted successfully' });
+      } else {
+        sendJson(res, 404, { error: 'Testimonial not found' });
       }
     } catch (error) {
       console.error('Database/Server Error:', error.message);

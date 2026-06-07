@@ -574,10 +574,12 @@
         width: 120px;
         height: 120px;
         border-radius: 50%;
-        object-fit: cover;
         margin-bottom: 1.5rem;
         border: 4px solid #f8fafc;
         box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
       }
       .testimonial-new-card.dark .testimonial-avatar {
         border-color: #333;
@@ -591,11 +593,17 @@
         margin-bottom: 0.8rem;
         font-size: 1.1rem;
         width: 100%;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        word-break: break-word;
       }
       .testimonial-type {
         font-size: 0.95rem;
         font-weight: 600;
         color: var(--text-dark);
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        word-break: break-word;
       }
       .testimonial-new-card.dark .testimonial-type {
         color: #fff;
@@ -603,7 +611,7 @@
       .testimonial-right {
         flex: 1;
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
         gap: 2rem;
       }
       .testimonial-section {
@@ -631,6 +639,10 @@
         font-size: 0.95rem;
         line-height: 1.7;
         text-align: justify;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        word-break: break-word;
+        white-space: pre-line;
       }
       .testimonial-content ul {
         list-style: disc;
@@ -1445,7 +1457,7 @@
           about their Twinsure experience.
         </p>
       </div>
-      <div class="testimonials">
+      <div class="testimonials" id="testimonialsContainer">
         <!-- New Testimonial 1 -->
         <div class="testimonial-new-card">
           <div class="testimonial-left">
@@ -1509,15 +1521,15 @@
     <!-- Free Policy Audit Section -->
     <section class="audit-section">
       <div class="audit-header">
-        <h2>Business <span class="gradient-text">Scale-up Audit</span></h2>
-        <p>Get a comprehensive review from a Team of Experts led by Twinsure Analytics. Identify critical gaps and optimize your coverage.</p>
+        <h2>Insurance <span class="gradient-text">Analyst</span></h2>
+        <p>Policy Audit & Mis-selling Rectification Specialist, protecting policyholders with transparent and expert guidance.</p>
       </div>
       <div class="audit-mockup-wrapper">
         <div class="imac-mockup">
           <div class="mock-screen" style="background: url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=800&q=80'); background-size: cover; background-position: center;">
             <div style="background: rgba(0,0,0,0.8); padding: 2rem; border-radius: 15px; text-align: left; width: 85%; backdrop-filter: blur(5px);">
-              <h3 style="font-size: 2.2rem; margin-bottom: 0.5rem; font-family: Outfit; font-weight: 800;"><span class="gradient-text">Twinsure</span> Audit</h3>
-              <p style="font-size: 1.2rem; color: #fff;">Team of Experts Led by<br><strong style="color: var(--accent-gold); font-size: 1.5rem;">Twinsure Analysts</strong></p>
+              <h3 style="font-size: 2.2rem; margin-bottom: 0.5rem; font-family: Outfit; font-weight: 800;"><span class="gradient-text">Insurance</span> Analyst</h3>
+              <p style="font-size: 1.2rem; color: #fff; line-height: 1.6;">Policy Audit & Mis-selling Rectification Specialist, protecting policyholders with transparent and expert guidance.</p>
             </div>
           </div>
         </div>
@@ -1721,5 +1733,6 @@
         phonesObserver.observe(phonesEl);
       }
     </script>
+    <script src="js/site-contact.js"></script>
   </body>
 </html>

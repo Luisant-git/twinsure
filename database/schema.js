@@ -192,6 +192,7 @@ createCollectionWithSchema(
       _id: { bsonType: 'string', description: 'Document ID, usually global.' },
       supportEmail: { bsonType: 'string', description: 'Support contact email.' },
       supportPhone: { bsonType: 'string', description: 'Support contact phone.' },
+      whatsappGroupLink: { bsonType: 'string', description: 'Public WhatsApp group or chat link.' },
       officeAddress: { bsonType: 'string', description: 'Office address text.' },
       workingHours: { bsonType: 'string', description: 'Working hours text.' },
       timeZone: { bsonType: 'string', description: 'Time zone label.' },
@@ -276,5 +277,31 @@ createCollectionWithSchema(
   ]
 );
 
+// 10. testimonials
+// Client testimonials with before/after scenarios and how Twins Consultancy helped.
+createCollectionWithSchema(
+  'testimonials',
+  {
+    bsonType: 'object',
+    additionalProperties: true,
+    properties: {
+      name: { bsonType: 'string', description: 'Client name.' },
+      from: { bsonType: 'string', description: 'Client location or designation.' },
+      before: { bsonType: 'string', description: 'Situation before Twins Consultancy helped (max 500 chars).' },
+      helped: { bsonType: 'string', description: 'How Twins Consultancy helped (max 500 chars).' },
+      after: { bsonType: 'string', description: 'Result/outcome after help (max 400 chars).' },
+      avatarUrl: { bsonType: 'string', description: 'Avatar image URL.' },
+      displayOrder: { bsonType: 'int', description: 'Display order in testimonials section.' },
+      isActive: { bsonType: 'bool', description: 'Whether to display on public pages.' },
+      createdAt: { bsonType: ['date', 'string'], description: 'Creation timestamp.' },
+      updatedAt: { bsonType: ['date', 'string'], description: 'Last update timestamp.' }
+    }
+  },
+  [
+    { keys: { displayOrder: 1 }, options: {} },
+    { keys: { isActive: 1 }, options: {} }
+  ]
+);
+
 print('\nDatabase schema creation complete.');
-print('Collections created: users, services, partners, recommendation_questions, leads, form_help_requests, settings, contacts, claims');
+print('Collections created: users, services, partners, recommendation_questions, leads, form_help_requests, settings, contacts, claims, testimonials');

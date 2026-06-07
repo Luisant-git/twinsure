@@ -600,12 +600,12 @@
         transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
         pointer-events: none;
       }
-      .member-card.active .member-overlay {
+      .member-card:hover .member-overlay, .member-card.active .member-overlay {
         opacity: 1;
         transform: translateY(0);
         pointer-events: auto;
       }
-      .member-card.active img {
+      .member-card:hover img, .member-card.active img {
         transform: scale(1.05);
         filter: grayscale(80%) opacity(0.3);
       }
@@ -2287,8 +2287,8 @@
             <div class="member-overlay" aria-hidden="true">
               <div class="overlay-content">
                 <div class="overlay-name">Hariharan Gurusamy B.E.</div>
-                <div class="overlay-role">Financial Advisor</div>
-                <div class="overlay-desc">Specialist in Insurance advisory, mutual funds and stock portfolios. Trusted advisor known for pragmatic, client-first strategies.</div>
+                <div class="overlay-role">INSURANCE ANALYST</div>
+                <div class="overlay-desc">Policy Audit & Mis-selling Rectification Specialist, protecting policyholders with transparent and expert guidance.</div>
               </div>
             </div>
           </div>
@@ -2492,6 +2492,7 @@
             const overlay = card.querySelector('.member-overlay');
             // clicking the image area toggles the overlay
             visual?.addEventListener('click', (ev) => {
+              ev.stopPropagation();
               const open = document.querySelector('.member-card.active');
               if (open && open !== card) open.classList.remove('active');
               card.classList.toggle('active');
@@ -2510,7 +2511,16 @@
               card.classList.remove('active');
             });
           });
+          // Hide overlay when clicking outside the card
+          document.addEventListener('click', (e) => {
+            if (!e.target.closest('.member-card')) {
+              document.querySelectorAll('.member-card.active').forEach((card) => {
+                card.classList.remove('active');
+              });
+            }
+          });
         })();
     </script>
+    <script src="js/site-contact.js"></script>
   </body>
 </html>
