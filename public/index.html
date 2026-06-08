@@ -463,9 +463,9 @@
       }
       .services-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 1.5rem;
-        max-width: 900px;
+        max-width: 1120px;
         margin: 0 auto;
       }
       .service-card {
@@ -896,7 +896,7 @@
           font-size: 3.5rem;
         }
         .services-grid {
-          grid-template-columns: repeat(3, 1fr);
+          max-width: 960px;
         }
         .stats-grid {
           grid-template-columns: repeat(2, 1fr);
@@ -982,7 +982,8 @@
           grid-template-columns: 1fr 1fr;
         }
         .services-grid {
-          grid-template-columns: repeat(2, 1fr);
+          grid-template-columns: 1fr;
+          max-width: 420px;
         }
         .features-grid {
           grid-template-columns: 1fr;
@@ -1362,12 +1363,17 @@
         <div class="feature-card">
           <div class="feature-icon"><i class="fas fa-eye"></i></div>
           <h3>Professional View</h3>
-          <p>We recommend by understanding your perspective — not just by rigid rules.</p>
+          <p>Because we know the policy, we recommend with context, clarity, and care.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
           <h3>Prevention First Process</h3>
           <p>Even if a choice goes wrong, we work proactively to correct it on your behalf.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-hand-holding-usd"></i></div>
+          <h3>Cashback Guarantee</h3>
+          <p>If our service does not deliver the expected result under the agreed terms, we review the case and refund the applicable fee.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon"><i class="fas fa-user-check"></i></div>
@@ -1445,6 +1451,11 @@
         <div class="service-card">
           <div class="service-icon"><i class="fas fa-hospital"></i></div>
           <h4>hospos</h4>
+          <a href="services.html" class="btn-link">Learn More <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="service-card">
+          <div class="service-icon"><i class="fas fa-clipboard-check"></i></div>
+          <h4>pre policy audit</h4>
           <a href="services.html" class="btn-link">Learn More <i class="fas fa-arrow-right"></i></a>
         </div>
       </div>
@@ -1550,7 +1561,7 @@
         </div>
         <div class="iphone-small-mockup">
           <div class="mock-screen" style="background: #111;">
-            <h5 style="font-size: 1.3rem; color: #fff;">1-on-1<br><span class="gradient-text">Consult</span></h5>
+            <h5 style="font-size: 1.3rem; color: #fff;">Book<br><span class="gradient-text">Now</span></h5>
           </div>
         </div>
       </div>
@@ -1584,9 +1595,9 @@
         <div class="footer-col">
           <h4>Services</h4>
           <ul>
-            <li><a href="services.html">ReNewall</a></li>
-            <li><a href="services.html">hospos</a></li>
-            <li><a href="services.html">icare</a></li>
+            <li><a href="services.html">iCARE</a></li>
+            <li><a href="services.html">Re.New.All</a></li>
+            <li><a href="services.html">HosPos</a></li>
           </ul>
         </div>
         <div class="footer-col">
