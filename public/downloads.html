@@ -2461,8 +2461,8 @@
               <span class="ai-stat-lbl">Claims Guided</span>
             </div>
             <div class="ai-stat-card">
-              <span class="ai-stat-num" data-val="24">0</span>
-              <span class="ai-stat-lbl">/7 Support Desk</span>
+              <span class="ai-stat-num" data-val="24" data-suffix="/7">0</span>
+              <span class="ai-stat-lbl">Support Desk</span>
             </div>
           </div>
         </div>
@@ -2819,6 +2819,7 @@
           const initialText = e.innerText;
           const hasPercent = initialText.includes("%");
           const hasKPlus = initialText.includes("K+");
+          const customSuffix = e.getAttribute("data-suffix") || "";
           let t = parseFloat(e.getAttribute("data-val")),
             a = e.getAttribute("data-val").includes("."),
             n = 0,
@@ -2827,9 +2828,9 @@
               (n += r) < t
                 ? ((e.innerText = hasPercent
                     ? n.toFixed(1) + "%"
-                    : Math.floor(n) + (hasKPlus ? "K+" : "")),
+                    : Math.floor(n) + (customSuffix || (hasKPlus ? "K+" : ""))),
                   setTimeout(l, 20))
-                : (e.innerText = hasPercent ? t + "%" : t + (hasKPlus ? "K+" : ""));
+                : (e.innerText = hasPercent ? t + "%" : t + (customSuffix || (hasKPlus ? "K+" : "")));
             };
           l();
         });

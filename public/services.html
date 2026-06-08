@@ -849,7 +849,7 @@
 
     .specialized-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 2.5rem;
     }
 
@@ -869,7 +869,43 @@
     }
 
     .module-fullwidth {
-      grid-column: 1 / span 2;
+      grid-column: span 2;
+    }
+
+    /* Claim visual styling */
+    .claim-visual .claim-badge {
+      width: 96px;
+      height: 96px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(253,197,0,0.12), rgba(0,80,157,0.06));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: var(--accent-gold);
+      border: 1px solid rgba(253,197,0,0.12);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    }
+
+    /* Keep claim-support compact and remove unused right-side space */
+    #claim-support {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    #claim-support .module-visual {
+      width: fit-content;
+      padding: 0.6rem;
+      border-radius: 16px;
+      align-self: flex-start;
+    }
+
+    #claim-support .claim-badge {
+      width: 56px;
+      height: 56px;
+      border-radius: 10px;
+      font-size: 1.35rem;
+      box-shadow: none;
     }
 
     .module-card:hover {
@@ -2050,10 +2086,10 @@
       width: 100%;
     }
 
-    /* Specialized grid: balanced 2-column layout */
+    /* Specialized grid: balanced 4-column layout */
     .discovery-hub-section .specialized-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 2.5rem;
       align-items: stretch;
     }
@@ -3125,7 +3161,7 @@
                 </div>
               </div>
             </div>
-            <div class="module-card module-fullwidth" id="profit" data-card-category="specialized" data-card-tags="protection">
+            <div class="module-card" id="profit" data-card-category="specialized" data-card-tags="protection">
               <div class="module-content">
                 <div class="module-icon-badge" style="background: rgba(253, 197, 0, 0.15);">
                   <i class="fas fa-file-contract" style="color: var(--accent-gold);"></i>
@@ -3146,6 +3182,25 @@
                   <span style="color: #ff9f43; font-weight: 700;"><i class="fas fa-exclamation-triangle"></i> 2 Critical
                     Gaps Found</span>
                   <span>Ambulance sub-limit & room rent restriction optimized</span>
+                </div>
+              </div>
+            </div>
+            <div class="module-card" id="claim-support" data-card-category="specialized" data-card-tags="claims,support,audit">
+              <div class="module-content">
+                <div class="module-icon-badge" style="background: rgba(253,197,0,0.12);">
+                  <i class="fas fa-file-medical" style="color: var(--accent-gold);"></i>
+                </div>
+                <h3>Claim Support / Audit</h3>
+                <p>
+                  <strong>Claims Assistance & Audit:</strong> End-to-end claim support including document audits, query responses, and settlement follow-ups to maximise recoveries and reduce rejections.
+                </p>
+                <div>
+                  <a href="downloads.html" class="btn btn-gold" style="padding: 0.6rem 1.4rem">Learn About Claims <i class="fas fa-arrow-right"></i></a>
+                </div>
+              </div>
+              <div class="module-visual claim-visual" style="justify-content: center;">
+                <div class="claim-badge">
+                  <i class="fas fa-file-medical"></i>
                 </div>
               </div>
             </div>
@@ -3457,7 +3512,7 @@
         <p>Claim Success Rate</p>
       </div>
       <div class="stat-card">
-        <h3>19+</h3>
+        <h3>20+</h3>
         <p>Years of Experience</p>
       </div>
       <div class="stat-card">
