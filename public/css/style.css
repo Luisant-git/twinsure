@@ -45,6 +45,21 @@ header {
     text-decoration: none;
 }
 
+/* Site logo sizing when used as an <img> in nav/footer */
+.logo img.site-logo {
+    height: 34px;
+    width: auto;
+    vertical-align: middle;
+    margin-right: 0.5rem;
+}
+
+.footer-logo-img {
+    height: 28px;
+    width: auto;
+    vertical-align: middle;
+    margin-right: 0.5rem;
+}
+
 nav ul {
     list-style: none;
     display: flex;
