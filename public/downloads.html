@@ -2938,11 +2938,12 @@
                 var t = getCategoryIcon(e.category || ""),
                   a = formatFileSize(e.fileSize),
                   n = e.name || e.title || "Claim Form",
-                  r = n.replace(/'/g, "\\'").replace(/"/g, "&quot;"),
+                  r = n.replace(/'/g, "\\'").replace(/"/g, "&quot;").replace(/\r?\n/g, " "),
                   l = (e.description || "")
                     .replace(/'/g, "\\'")
-                    .replace(/"/g, "&quot;"),
-                  i = (e.category || "General").replace(/'/g, "\\'");
+                    .replace(/"/g, "&quot;")
+                    .replace(/\r?\n/g, "\\n"),
+                  i = (e.category || "General").replace(/'/g, "\\'").replace(/\r?\n/g, " ");
                 return `
                 <div class="claim-card" onclick="openClaimModal('${e._id || ""}', '${r}', '${l}', '${i}', '${a}', '${(e.lastUpdated || "").replace(/'/g, "\\'")}', '${(e.filePath || "").replace(/'/g, "\\'")}')">
                     <div class="card-top">
