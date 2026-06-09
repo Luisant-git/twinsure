@@ -3020,11 +3020,10 @@
         currentModalCategory = "",
         currentClaimPdfUrl = "";
       function buildClaimFileUrl(e) {
-        return e
-          ? /^https?:\/\//i.test(e)
-            ? e
-            : "/" + e.replace(/^\//, "")
-          : "";
+        if (!e) return "";
+        if (/^https?:\/\//i.test(e)) return e;
+        let root = "undefined" != typeof BACKEND_ROOT ? BACKEND_ROOT : ("undefined" != typeof API_BASE_URL ? API_BASE_URL.replace(/\/backend\/api\/?$/, "") : "");
+        return root + "/" + e.replace(/^\//, "");
       }
       function openClaimModal(e, t, a, n, r, l, i) {
         ((currentClaimId = e),

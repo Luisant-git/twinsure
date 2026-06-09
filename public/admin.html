@@ -6625,12 +6625,12 @@ function openLeadDetail(a) {
       }
       function openPdfViewerModal(e, t) {
         var a = document.getElementById("pdfViewerModal"),
-          t =
+          tElem =
             ((document.getElementById("pdfViewerTitle").textContent = t),
             document.getElementById("pdfViewerIframe")),
-          n =
-            "undefined" != typeof API_BASE_URL ? API_BASE_URL : "/backend/api";
-        ((t.src = n + "/" + e), a.classList.add("active"));
+          root = "undefined" != typeof BACKEND_ROOT ? BACKEND_ROOT : ("undefined" != typeof API_BASE_URL ? API_BASE_URL.replace(/\/backend\/api\/?$/, "") : "");
+        if (e && !/^https?:\/\//i.test(e)) e = root + "/" + e.replace(/^\//, "");
+        ((tElem.src = e || ""), a.classList.add("active"));
       }
       function closePdfViewerModal() {
         (document.getElementById("pdfViewerModal").classList.remove("active"),
@@ -7204,7 +7204,7 @@ function openLeadDetail(a) {
               document.getElementById("partnerDetailPhoto"));
           (n &&
             (a.photo
-              ? (n.style.backgroundImage = 'url("' + a.photo + '")')
+              ? (n.style.backgroundImage = 'url("' + (/^https?:\/\//i.test(a.photo) ? a.photo : ("undefined" != typeof BACKEND_ROOT ? BACKEND_ROOT : ("undefined" != typeof API_BASE_URL ? API_BASE_URL.replace(/\/backend\/api\/?$/, "") : "")) + "/" + a.photo.replace(/^\//, "")) + '")')
               : (n.style.backgroundImage = "none")),
             document
               .getElementById("partnerDetailModal")

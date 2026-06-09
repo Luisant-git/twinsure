@@ -1303,7 +1303,6 @@ function createApiRouter() {
 }
 
 app.use('/backend/api', createApiRouter());
-app.use(createApiRouter());
 
 app.use((req, res) => {
   if (req.path.startsWith('/backend/api') || req.path.endsWith('.php')) {
