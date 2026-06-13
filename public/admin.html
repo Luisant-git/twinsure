@@ -6850,56 +6850,52 @@ function openLeadDetail(a) {
         try {
           var t = JSON.parse(decodeURIComponent(e)),
             a = normalizeFormHelpRequestStatus(t.status || "new");
-          ((currentOpenFormHelpRequestId = t.requestId || ""),
-            (currentOpenFormHelpRequestStatus = a),
-            (document.getElementById("formHelpRequestModalId").textContent =
-              t.displayRequestId ? "#" + t.displayRequestId : "—"),
-            (document.getElementById("formHelpRequestModalStatus").textContent =
-              a ? a.charAt(0).toUpperCase() + a.slice(1) : "—"),
-            (document.getElementById("formHelpRequestStatusHint").textContent =
-              a ? a.charAt(0).toUpperCase() + a.slice(1) : "New"),
-            (document.getElementById(
-              "formHelpRequestModalCustomer",
-            ).textContent = t.name || "Anonymous"),
-            (document.getElementById("formHelpRequestModalPhone").textContent =
-              t.phone || "—");
-            
-            var emailElem = document.getElementById("formHelpRequestModalEmail");
-            var emailRow = document.getElementById("formHelpRequestModalEmailRow");
-            if (emailElem && emailRow) {
-              if (t.email) {
-                emailElem.textContent = t.email;
-                emailRow.style.display = "flex";
-              } else {
-                emailRow.style.display = "none";
-              }
+          
+          currentOpenFormHelpRequestId = t.requestId || "";
+          currentOpenFormHelpRequestStatus = a;
+          document.getElementById("formHelpRequestModalId").textContent =
+            t.displayRequestId ? "#" + t.displayRequestId : "—";
+          document.getElementById("formHelpRequestModalStatus").textContent =
+            a ? a.charAt(0).toUpperCase() + a.slice(1) : "—";
+          document.getElementById("formHelpRequestStatusHint").textContent =
+            a ? a.charAt(0).toUpperCase() + a.slice(1) : "New";
+          document.getElementById("formHelpRequestModalCustomer").textContent =
+            t.name || "Anonymous";
+          document.getElementById("formHelpRequestModalPhone").textContent =
+            t.phone || "—";
+          
+          var emailElem = document.getElementById("formHelpRequestModalEmail");
+          var emailRow = document.getElementById("formHelpRequestModalEmailRow");
+          if (emailElem && emailRow) {
+            if (t.email) {
+              emailElem.textContent = t.email;
+              emailRow.style.display = "flex";
+            } else {
+              emailRow.style.display = "none";
             }
-            (document.getElementById("formHelpRequestModalClaim").textContent =
-              t.claimName || "Claim Form"),
-            (document.getElementById("formHelpRequestModalDate").textContent =
-              t.submittedAt || "—"),
-            (document.getElementById("formHelpRequestModalNote").textContent =
-              t.description || "No additional description provided."),
-            (document.getElementById("formHelpRequestModalTitle").textContent =
-              t.displayRequestId
-                ? "Form filling request #" + t.displayRequestId
-                : t.claimName || "Form filling request"),
-            document
-              .getElementById("formHelpRequestModal")
-              .classList.add("active"),
-            t.requestId &&
-              "new" === a &&
-              (await updateFormHelpRequestStatus(t.requestId, "pending"),
-              (currentOpenFormHelpRequestStatus = "pending"),
-              (document.getElementById(
-                "formHelpRequestModalStatus",
-              ).textContent = "Pending"),
-              (document.getElementById(
-                "formHelpRequestStatusHint",
-              ).textContent = "Pending")));
+          }
+
+          document.getElementById("formHelpRequestModalClaim").textContent =
+            t.claimName || "Claim Form";
+          document.getElementById("formHelpRequestModalDate").textContent =
+            t.submittedAt || "—";
+          document.getElementById("formHelpRequestModalNote").textContent =
+            t.description || "No additional description provided.";
+          document.getElementById("formHelpRequestModalTitle").textContent =
+            t.displayRequestId
+              ? "Form filling request #" + t.displayRequestId
+              : t.claimName || "Form filling request";
+          document.getElementById("formHelpRequestModal").classList.add("active");
+
+          if (t.requestId && "new" === a) {
+            await updateFormHelpRequestStatus(t.requestId, "pending");
+            currentOpenFormHelpRequestStatus = "pending";
+            document.getElementById("formHelpRequestModalStatus").textContent = "Pending";
+            document.getElementById("formHelpRequestStatusHint").textContent = "Pending";
+          }
         } catch (e) {
-          (console.error("Failed to open request details", e),
-            alert("Unable to open request details."));
+          console.error("Failed to open request details", e);
+          alert("Unable to open request details.");
         }
       }
       function closeFormHelpRequestModal() {
