@@ -2540,7 +2540,7 @@
             </div>
           </div>
           <div class="modal-actions-wrapper">
-            <div class="download-progress-wrap" id="downloadProgressWrap">
+            <div class="download-progress-wrap" id="downloadProgressWrap" style="display: none;">
               <div class="progress-header">
                 <span style="color: var(--accent-gold)"
                   ><i class="fas fa-spinner fa-spin"></i> Downloading
@@ -2555,12 +2555,60 @@
                 ></div>
               </div>
             </div>
-            <button class="btn btn-gold btn-full" onclick="simulateDownload()">
-              <i class="fas fa-download"></i> Download Claim Form
-            </button>
+            
+            <div id="downloadFormContainer" style="display: flex; flex-direction: column; gap: 0.8rem; width: 100%;">
+              <div style="font-size: 0.9rem; font-weight: 600; color: #fff; margin-bottom: 0.2rem; display: flex; align-items: center; gap: 0.4rem;">
+                <i class="fas fa-file-download" style="color: var(--accent-gold);"></i> Get Claim Form
+              </div>
+              
+              <input
+                type="text"
+                id="dlClientName"
+                class="claim-form-control"
+                placeholder="Enter your full name"
+                required
+                style="width: 100%;"
+              />
+
+              <div style="display: flex; gap: 0.5rem; background: rgba(255, 255, 255, 0.05); padding: 4px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08);">
+                <button type="button" id="tabPhone" onclick="setDlMethod('phone')" style="flex: 1; padding: 0.5rem; border: none; border-radius: 6px; background: var(--accent-gold); color: #000; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: all 0.2s;">
+                  <i class="fas fa-mobile-alt"></i> Web Download
+                </button>
+                <button type="button" id="tabEmail" onclick="setDlMethod('email')" style="flex: 1; padding: 0.5rem; border: none; border-radius: 6px; background: transparent; color: #ccc; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: all 0.2s;">
+                  <i class="fas fa-envelope"></i> Send to Email
+                </button>
+              </div>
+
+              <div id="dlPhoneWrapper" style="display: block; width: 100%;">
+                <input
+                  type="text"
+                  id="dlClientPhone"
+                  class="claim-form-control"
+                  placeholder="Enter mobile number (10-12 digits)"
+                  maxlength="12"
+                  inputmode="numeric"
+                  style="width: 100%;"
+                />
+              </div>
+              <div id="dlEmailWrapper" style="display: none; width: 100%;">
+                <input
+                  type="email"
+                  id="dlClientEmail"
+                  class="claim-form-control"
+                  placeholder="Enter your email address"
+                  style="width: 100%;"
+                />
+              </div>
+
+              <button class="btn btn-gold btn-full" onclick="handleDownloadSubmit()" style="margin-top: 0.2rem;">
+                <i class="fas fa-paper-plane"></i> <span id="dlSubmitBtnText">Verify & Download</span>
+              </button>
+            </div>
+
             <button
               class="btn btn-outline btn-full"
               onclick="openHelpRequestModal()"
+              style="margin-top: 0.4rem;"
             >
               <i class="fas fa-hands-helping"></i> Request Help for Filling
             </button>
@@ -2570,6 +2618,7 @@
               style="
                 border-color: rgba(255, 255, 255, 0.1);
                 color: var(--text-gray) !important;
+                margin-top: 0.2rem;
               "
             >
               Close Popup
@@ -3154,6 +3203,14 @@
           (document.getElementById("downloadPercent").innerText = "0%"),
           document.getElementById("claimModalOverlay").classList.add("active"),
           (document.body.style.overflow = "hidden"));
+          
+          const dlName = document.getElementById("dlClientName");
+          if (dlName) dlName.value = "";
+          const dlPhone = document.getElementById("dlClientPhone");
+          if (dlPhone) dlPhone.value = "";
+          const dlEmail = document.getElementById("dlClientEmail");
+          if (dlEmail) dlEmail.value = "";
+          setDlMethod("phone");
       }
       function closeClaimModal() {
         (document
@@ -3165,6 +3222,120 @@
           (document.body.style.overflow = ""));
         var e = document.getElementById("claimPdfPreview");
         e && (e.src = "");
+      }
+      
+      let dlMethod = 'phone';
+      function setDlMethod(method) {
+        dlMethod = method;
+        const tabPhone = document.getElementById('tabPhone');
+        const tabEmail = document.getElementById('tabEmail');
+        const dlPhoneWrapper = document.getElementById('dlPhoneWrapper');
+        const dlEmailWrapper = document.getElementById('dlEmailWrapper');
+        const dlSubmitBtnText = document.getElementById('dlSubmitBtnText');
+        
+        if (method === 'phone') {
+          tabPhone.style.background = 'var(--accent-gold)';
+          tabPhone.style.color = '#000';
+          tabPhone.style.fontWeight = '700';
+          
+          tabEmail.style.background = 'transparent';
+          tabEmail.style.color = '#ccc';
+          tabEmail.style.fontWeight = '600';
+          
+          dlPhoneWrapper.style.display = 'block';
+          dlEmailWrapper.style.display = 'none';
+          dlSubmitBtnText.textContent = 'Verify & Download';
+        } else {
+          tabEmail.style.background = 'var(--accent-gold)';
+          tabEmail.style.color = '#000';
+          tabEmail.style.fontWeight = '700';
+          
+          tabPhone.style.background = 'transparent';
+          tabPhone.style.color = '#ccc';
+          tabPhone.style.fontWeight = '600';
+          
+          dlPhoneWrapper.style.display = 'none';
+          dlEmailWrapper.style.display = 'block';
+          dlSubmitBtnText.textContent = 'Send PDF to Inbox';
+        }
+      }
+
+      async function handleDownloadSubmit() {
+        const nameInput = document.getElementById('dlClientName');
+        const name = nameInput.value.trim();
+        const phoneInput = document.getElementById('dlClientPhone');
+        const phone = phoneInput.value.trim();
+        const emailInput = document.getElementById('dlClientEmail');
+        const email = emailInput.value.trim();
+
+        if (!name) {
+          alert('Please enter your name.');
+          nameInput.focus();
+          return;
+        }
+
+        if (dlMethod === 'phone') {
+          if (!phone || phone.length < 10) {
+            alert('Please enter a valid 10-12 digit mobile number.');
+            phoneInput.focus();
+            return;
+          }
+        } else {
+          if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            alert('Please enter a valid email address.');
+            emailInput.focus();
+            return;
+          }
+        }
+
+        const isStaticHost = window.location.hostname.includes('github.io') || 
+                             window.location.hostname.includes('vercel.app') || 
+                             window.location.protocol === 'file:' ||
+                             currentClaimId.startsWith('static_');
+        const isLocalhost = window.location.hostname === 'localhost' || 
+                            window.location.hostname === '127.0.0.1';
+
+        if (isStaticHost && !isLocalhost) {
+          console.warn("Statically hosted environment. Mocking API request and downloading directly.");
+          if (dlMethod === 'email') {
+            alert("Email dispatch is not supported in this static environment. We will download the form to your device instead!");
+          }
+          simulateDownload();
+          return;
+        }
+
+        try {
+          const response = await fetch(API_BASE + '/public/download_request', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              name,
+              method: dlMethod,
+              phone: dlMethod === 'phone' ? phone : '',
+              email: dlMethod === 'email' ? email : '',
+              claimId: currentClaimId,
+              claimName: currentModalFormName,
+              claimCategory: currentModalCategory
+            })
+          });
+
+          const resData = await response.json();
+          if (!response.ok) {
+            throw new Error(resData.message || 'Failed to submit download request.');
+          }
+
+          if (dlMethod === 'phone') {
+            simulateDownload();
+          } else {
+            alert(resData.message || 'Claim form has been sent to your email successfully!');
+            closeClaimModal();
+          }
+        } catch (error) {
+          console.error(error);
+          alert(error.message || 'An error occurred while processing your request.');
+        }
       }
       function simulateDownload() {
         if (currentClaimId) {

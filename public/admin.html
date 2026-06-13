@@ -4985,6 +4985,10 @@
                 <span class="label">Phone</span>
                 <span class="value" id="formHelpRequestModalPhone">—</span>
               </div>
+              <div class="form-request-detail-item" id="formHelpRequestModalEmailRow" style="display: none;">
+                <span class="label">Email</span>
+                <span class="value" id="formHelpRequestModalEmail">—</span>
+              </div>
               <div class="form-request-detail-item">
                 <span class="label">Claim Form</span>
                 <span class="value" id="formHelpRequestModalClaim">—</span>
@@ -6804,6 +6808,7 @@ function openLeadDetail(a) {
                       displayRequestId: n,
                       name: t.name || "Anonymous",
                       phone: t.phone || "—",
+                      email: t.email || "",
                       description: e,
                       claimName: r,
                       claimCategory: t.claimCategory || "Claim Support",
@@ -6817,7 +6822,10 @@ function openLeadDetail(a) {
                         <td style="font-family: monospace; font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">#${n}</td>
                         <td>
                             <div style="font-weight: 700; color: #111;">${t.name || "Anonymous"}</div>
-                            <div style="font-size: 0.78rem; color: #666;">${t.phone || "—"}</div>
+                            <div style="font-size: 0.78rem; color: #666;">
+                              ${t.phone ? `Phone: ${t.phone}` : ''}
+                              ${t.email ? `${t.phone ? '<br>' : ''}Email: ${t.email}` : (!t.phone ? '—' : '')}
+                            </div>
                         </td>
                         <td>
                             <div style="font-weight: 600; color: var(--primary-purple);">${r}</div>
@@ -6854,7 +6862,18 @@ function openLeadDetail(a) {
               "formHelpRequestModalCustomer",
             ).textContent = t.name || "Anonymous"),
             (document.getElementById("formHelpRequestModalPhone").textContent =
-              t.phone || "—"),
+              t.phone || "—");
+            
+            var emailElem = document.getElementById("formHelpRequestModalEmail");
+            var emailRow = document.getElementById("formHelpRequestModalEmailRow");
+            if (emailElem && emailRow) {
+              if (t.email) {
+                emailElem.textContent = t.email;
+                emailRow.style.display = "flex";
+              } else {
+                emailRow.style.display = "none";
+              }
+            }
             (document.getElementById("formHelpRequestModalClaim").textContent =
               t.claimName || "Claim Form"),
             (document.getElementById("formHelpRequestModalDate").textContent =

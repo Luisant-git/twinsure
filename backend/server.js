@@ -47,6 +47,17 @@ const claimsUploadDir = path.join(publicDir, 'uploads', 'claims');
 const partnersUploadDir = path.join(publicDir, 'uploads', 'partners');
 const upload = multer({ storage: multer.memoryStorage() });
 
+const nodemailer = require('nodemailer');
+const mailTransporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST || 'smtp.gmail.com',
+  port: parseInt(process.env.SMTP_PORT || '587', 10),
+  secure: process.env.SMTP_PORT === '465',
+  auth: {
+    user: process.env.SMTP_USER || '',
+    pass: process.env.SMTP_PASS || ''
+  }
+});
+
 // --- Global Error Handlers ---
 process.on('uncaughtException', (err) => {
   console.error('FATAL: Uncaught Exception:', err);
@@ -738,6 +749,119 @@ function createApiRouter() {
     }
   });
 
+  router.post('/public/download_request', strictLimiter, async (req, res) => {
+    const data = collectBody(req);
+    const name = normalizeString(data.name);
+    const method = normalizeString(data.method); // 'phone' or 'email'
+    const phone = normalizeString(data.phone);
+    const email = normalizeString(data.email);
+    const claimId = normalizeString(data.claimId);
+    const claimName = normalizeString(data.claimName) || 'Claim Form';
+    const claimCategory = normalizeString(data.claimCategory);
+
+    const namePattern = /^[A-Za-z][A-Za-z\s.'-]{1,79}$/;
+    if (!name || !namePattern.test(name)) {
+      sendJson(res, 400, { message: 'Please enter a valid name.' });
+      return;
+    }
+
+    if (method === 'phone') {
+      const phonePattern = /^[0-9+\-()\s]{10,18}$/;
+      if (!phone || !phonePattern.test(phone) || (phone.match(/\d/g) || []).length < 10) {
+        sendJson(res, 400, { message: 'Please enter a valid phone number with at least 10 digits.' });
+        return;
+      }
+    } else if (method === 'email') {
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!email || !emailPattern.test(email)) {
+        sendJson(res, 400, { message: 'Please enter a valid email address.' });
+        return;
+      }
+    } else {
+      sendJson(res, 400, { message: 'Invalid download method.' });
+      return;
+    }
+
+    try {
+      const claim = await findOne('claims', { _id: toObjectId(claimId) });
+      if (!claim) {
+        sendJson(res, 404, { message: 'Claim form not found.' });
+        return;
+      }
+
+      const requestId = `fhr_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
+      const timestamp = formatDateTime(new Date());
+
+      const description = method === 'email' 
+        ? `Sent Claim Form to Email: ${email}` 
+        : `Downloaded Claim Form to Web (Phone: ${phone})`;
+
+      await insertOne('form_help_requests', {
+        requestId,
+        name,
+        phone: method === 'phone' ? phone : '',
+        email: method === 'email' ? email : '',
+        description,
+        claimId,
+        claimName,
+        claimCategory,
+        status: 'new',
+        submittedAt: timestamp,
+        updatedAt: timestamp,
+        source: method === 'email' ? 'download_email' : 'download_phone'
+      });
+
+      await updateOne('claims', { _id: toObjectId(claimId) }, { $inc: { downloads: 1 } });
+
+      if (method === 'email') {
+        const smtpUser = process.env.SMTP_USER || '';
+        const smtpPass = process.env.SMTP_PASS || '';
+        
+        if (!smtpUser || !smtpPass) {
+          console.warn('SMTP Credentials not configured in .env. Email simulated successfully.');
+          sendJson(res, 200, {
+            success: true,
+            simulated: true,
+            message: 'Email dispatch simulated (SMTP credentials not configured in environment).'
+          });
+          return;
+        }
+
+        const absoluteFilePath = path.join(publicDir, claim.filePath);
+        if (!fs.existsSync(absoluteFilePath)) {
+          console.error(`PDF file not found at path: ${absoluteFilePath}`);
+          sendJson(res, 404, { message: 'PDF file not found on server.' });
+          return;
+        }
+
+        const mailOptions = {
+          from: `"Twinsure Claims" <${smtpUser}>`,
+          to: email,
+          subject: `Your Requested Claim Form: ${claimName}`,
+          text: `Dear ${name},\n\nPlease find attached the claim form "${claimName}" you requested from Twinsure.\n\nBest regards,\nTwinsure Team`,
+          html: `<p>Dear <strong>${name}</strong>,</p><p>Please find attached the claim form <strong>"${claimName}"</strong> you requested from Twinsure.</p><br><p>Best regards,<br>Twinsure Team</p>`,
+          attachments: [
+            {
+              filename: claim.fileName || `${claimName}.pdf`,
+              path: absoluteFilePath
+            }
+          ]
+        };
+
+        await mailTransporter.sendMail(mailOptions);
+      }
+
+      sendJson(res, 200, {
+        success: true,
+        message: method === 'email' 
+          ? 'Claim form has been sent to your email successfully.'
+          : 'Verification successful. Your download will start now.'
+      });
+    } catch (error) {
+      console.error('Database/Mail Server Error:', error.message);
+      sendJson(res, 500, { message: 'An internal error occurred while processing your request.' });
+    }
+  });
 
   router.get('/public/download_claim', async (req, res) => {
     const id = normalizeString(req.query.id);
