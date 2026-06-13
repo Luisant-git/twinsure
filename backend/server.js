@@ -794,7 +794,7 @@ function createApiRouter() {
 
       const description = method === 'email' 
         ? `Sent Claim Form to Email: ${email}` 
-        : `Downloaded Claim Form to Web (Phone: ${phone})`;
+        : `Downloaded Claim Form (Phone: ${phone})`;
 
       await insertOne('form_help_requests', {
         requestId,

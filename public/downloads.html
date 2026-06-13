@@ -2572,10 +2572,10 @@
 
               <div style="display: flex; gap: 0.5rem; background: rgba(255, 255, 255, 0.05); padding: 4px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08);">
                 <button type="button" id="tabPhone" onclick="setDlMethod('phone')" style="flex: 1; padding: 0.5rem; border: none; border-radius: 6px; background: var(--accent-gold); color: #000; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: all 0.2s;">
-                  <i class="fas fa-mobile-alt"></i> Web Download
+                  <i class="fas fa-mobile-alt"></i> Mobile Number
                 </button>
                 <button type="button" id="tabEmail" onclick="setDlMethod('email')" style="flex: 1; padding: 0.5rem; border: none; border-radius: 6px; background: transparent; color: #ccc; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: all 0.2s;">
-                  <i class="fas fa-envelope"></i> Send to Email
+                  <i class="fas fa-envelope"></i> Email Address
                 </button>
               </div>
 
@@ -2601,7 +2601,7 @@
               </div>
 
               <button class="btn btn-gold btn-full" onclick="handleDownloadSubmit()" style="margin-top: 0.2rem;">
-                <i class="fas fa-paper-plane"></i> <span id="dlSubmitBtnText">Verify & Download</span>
+                <i class="fas fa-paper-plane"></i> <span id="dlSubmitBtnText">Download Form</span>
               </button>
             </div>
 
@@ -3244,7 +3244,7 @@
           
           dlPhoneWrapper.style.display = 'block';
           dlEmailWrapper.style.display = 'none';
-          dlSubmitBtnText.textContent = 'Verify & Download';
+          dlSubmitBtnText.textContent = 'Download Form';
         } else {
           tabEmail.style.background = 'var(--accent-gold)';
           tabEmail.style.color = '#000';
