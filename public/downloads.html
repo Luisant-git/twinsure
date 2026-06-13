@@ -2910,13 +2910,109 @@
           var a = await t.json();
           renderClaims((allClaims = Array.isArray(a) ? a : []));
         } catch (t) {
-          ((allClaims = []),
-            (e.innerHTML = `
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 2rem;">
-                        <i class="fas fa-folder-open" style="font-size: 3rem; color: var(--text-gray); margin-bottom: 1rem; display: block; opacity: 0.5;"></i>
-                        <h3 style="color: var(--text-gray); font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem;">No Forms Available Yet</h3>
-                        <p style="color: var(--text-gray); font-size: 0.9rem; opacity: 0.7;">Claim forms will appear here once published by the administrator.</p>
-                    </div>`));
+          console.warn("Backend API not reachable. Loading static claims fallback for GitHub Pages.", t);
+          allClaims = [
+            {
+              _id: "6a2849c79c64d9a23efcd2fe",
+              name: "Care Health: Claim Form (Reimbursement)",
+              category: "Health",
+              description: "Standard Care Health claim form for reimbursement. Part A to be filled by the insured, Part B by the hospital.",
+              status: "active",
+              fileName: "1781025223_CARE_HEALTH_CLAIM_FORM.pdf",
+              filePath: "uploads/claims/1781025223_CARE_HEALTH_CLAIM_FORM.pdf",
+              fileSize: "1.5 MB",
+              lastUpdated: "2026-06-09 17:13:43"
+            },
+            {
+              _id: "6a276d18e8bb34d38376685d",
+              name: "Care Health: Pre-Authorization Form",
+              category: "Health",
+              description: "FAX/SCAN Page 1 & 2 only to Care Health for cashless approval. Page 3 (Declaration) should NOT be faxed.\n\nPage 1 & 2 மட்டும் FAX/SCAN செய்யுங்கள். Page 3 (Declaration) fax செய்யாதீர்கள்.",
+              status: "active",
+              fileName: "1780968728_care-pre-authorization-form.pdf",
+              filePath: "uploads/claims/1780968728_care-pre-authorization-form.pdf",
+              fileSize: "100 KB",
+              lastUpdated: "2026-06-09 01:32:08"
+            },
+            {
+              _id: "6a276cece8bb34d38376685c",
+              name: "Chola MS: Health Claim Form (Reimbursement)",
+              category: "Health",
+              description: "Submit claim documents within 30 days of discharge. NEFT cannot be done without a cancelled cheque — always attach one.\n\nDischarge-ஆன 30 நாட்களில் submit செய்யுங்கள். Cancelled cheque இல்லாமல் NEFT முடியாது — எப்போதும் attach செய்யுங்கள்.",
+              status: "active",
+              fileName: "1780968684_CHOLA_Health-Claim-Form.pdf",
+              filePath: "uploads/claims/1780968684_CHOLA_Health-Claim-Form.pdf",
+              fileSize: "3.1 MB",
+              lastUpdated: "2026-06-09 01:31:24"
+            },
+            {
+              _id: "6a276cbde8bb34d38376685b",
+              name: "Chola MS: Pre-Authorization Form for Cashless",
+              category: "Others",
+              description: "FAX/SCAN PAGE 1 ONLY to Chola MS for cashless approval before or during hospital admission.\n\nCashless approval-க்கு PAGE 1 மட்டும் FAX/SCAN செய்யுங்கள் — hospitalization-க்கு முன்பு அல்லது நேரத்தில்.",
+              status: "active",
+              fileName: "1780968637_Chola-MS-Pre-Authorisation-Form.pdf",
+              filePath: "uploads/claims/1780968637_Chola-MS-Pre-Authorisation-Form.pdf",
+              fileSize: "926 KB",
+              lastUpdated: "2026-06-09 01:30:37"
+            },
+            {
+              _id: "6a276c8ee8bb34d38376685a",
+              name: "ICICI Lombard: Hospitalization Claim Form",
+              category: "Health",
+              description: "Full reimbursement claim form with 4 parts. Submit with all original bills within 30 days of discharge.\n\n4 parts உள்ள complete reimbursement claim form. Discharge-ஆன 30 நாட்களில் original bills-உடன் submit செய்யவும்.",
+              status: "active",
+              fileName: "1780968590_icici_claim_form.pdf",
+              filePath: "uploads/claims/1780968590_icici_claim_form.pdf",
+              fileSize: "367 KB",
+              lastUpdated: "2026-06-09 01:29:50"
+            },
+            {
+              _id: "6a276c49e8bb34d383766859",
+              name: "ICICI Lombard: Cashless Authorization Request Form",
+              category: "Others",
+              description: "Used to request cashless treatment before or during hospitalization. Send by fax or email to ICICI Lombard's cashless team.\n\nHospitalization-க்கு முன்பு அல்லது நேரத்தில் cashless கோர பயன்படும். Fax / email மூலம் ICICI-க்கு அனுப்பவும்.",
+              status: "active",
+              fileName: "1780968521_ICICI_LOMBOARD-pre-authorisation-form.pdf",
+              filePath: "uploads/claims/1780968521_ICICI_LOMBOARD-pre-authorisation-form.pdf",
+              fileSize: "55 KB",
+              lastUpdated: "2026-06-09 01:28:41"
+            },
+            {
+              _id: "6a276c16e8bb34d383766858",
+              name: "Niva Bupa: Health Insurance Claim Form",
+              category: "Health",
+              description: "Standard health claim form. Part A filled by insured. Part B filled by hospital. Submit within 30 days of discharge.\n\nStandard health claim form. Part A-வை insured, Part B-வை hospital fill செய்யும். Discharge-ஆன 30 நாட்களில் submit செய்யுங்கள்.",
+              status: "active",
+              fileName: "1780968470_NIVA_BUPA_claim-form.pdf",
+              filePath: "uploads/claims/1780968470_NIVA_BUPA_claim-form.pdf",
+              fileSize: "453 KB",
+              lastUpdated: "2026-06-09 01:27:50"
+            },
+            {
+              _id: "6a276b7fe8bb34d383766857",
+              name: "Star Health: Accident Care Insurance Claim Form",
+              category: "Health",
+              description: "Used for accident-related insurance claims. Submit after accident to claim compensation for injury, disability, or death.\n\nவிபத்து காரணமாக ஏற்பட்ட காயம், மரணம் அல்லது disability-க்கு பணம் கோர பயன்படும்.",
+              status: "active",
+              fileName: "1780968319_STAR_accident_claim_form.pdf",
+              filePath: "uploads/claims/1780968319_STAR_accident_claim_form.pdf",
+              fileSize: "327 KB",
+              lastUpdated: "2026-06-09 01:25:19"
+            },
+            {
+              _id: "6a276b30e8bb34d383766856",
+              name: "Star Health: Pre-Authorization Form for Cashless",
+              category: "Health",
+              description: "This form is sent to Star Health BEFORE admission for cashless treatment. Hospital fills most of it. Patient fills personal details.\n\nஇந்த form hospitalization-க்கு முன்பே cashless-க்கு அனுமதி கேட்க பயன்படுகிறது. Hospital பெரும்பாலும் fill செய்யும்.",
+              status: "active",
+              fileName: "1780968240_StarHealthPreAuthForm.pdf",
+              filePath: "uploads/claims/1780968240_StarHealthPreAuthForm.pdf",
+              fileSize: "642 KB",
+              lastUpdated: "2026-06-09 01:24:00"
+            }
+          ];
+          renderClaims(allClaims);
         }
       }
       function formatFileSize(e) {
@@ -3024,7 +3120,14 @@
         if (!e) return "";
         if (/^https?:\/\//i.test(e)) return e;
         let root = "undefined" != typeof BACKEND_ROOT ? BACKEND_ROOT : ("undefined" != typeof API_BASE_URL ? API_BASE_URL.replace(/\/backend\/api\/?$/, "") : "");
-        return root + "/" + e.replace(/^\//, "");
+        let cleanPath = e.replace(/^\//, "");
+        let isStaticHost = window.location.hostname.includes('github.io') || 
+                           window.location.hostname.includes('vercel.app') ||
+                           window.location.protocol === 'file:';
+        if (isStaticHost) {
+          return cleanPath;
+        }
+        return root + "/" + cleanPath;
       }
       function openClaimModal(e, t, a, n, r, l, i) {
         ((currentClaimId = e),
@@ -3076,20 +3179,43 @@
                 100 <= e &&
                   (clearInterval(t),
                   setTimeout(() => {
-                    var e =
-                        API_BASE +
-                        "/public/download_claim?id=" +
-                        encodeURIComponent(currentClaimId),
-                      t = document.createElement("a");
-                    ((t.href = e),
-                      (t.target = "_blank"),
-                      (t.rel = "noopener noreferrer"),
-                      document.body.appendChild(t),
-                      t.click(),
-                      document.body.removeChild(t),
-                      (a.style.display = "none"),
-                      (n.style.width = "0%"),
-                      (r.innerText = "0%"));
+                    var isStaticHost = window.location.hostname.includes('github.io') || 
+                                       window.location.hostname.includes('vercel.app') || 
+                                       window.location.protocol === 'file:' ||
+                                       currentClaimId.startsWith('static_');
+                    var isLocalhost = window.location.hostname === 'localhost' || 
+                                      window.location.hostname === '127.0.0.1';
+                    
+                    if (isStaticHost && !isLocalhost) {
+                      // Trigger direct download from the static path
+                      var t = document.createElement("a");
+                      t.href = currentClaimPdfUrl;
+                      t.download = currentModalFormName + ".pdf";
+                      t.target = "_blank";
+                      t.rel = "noopener noreferrer";
+                      document.body.appendChild(t);
+                      t.click();
+                      document.body.removeChild(t);
+                      a.style.display = "none";
+                      n.style.width = "0%";
+                      r.innerText = "0%";
+                    } else {
+                      // Call backend download endpoint
+                      var e_url =
+                          API_BASE +
+                          "/public/download_claim?id=" +
+                          encodeURIComponent(currentClaimId),
+                        t = document.createElement("a");
+                      ((t.href = e_url),
+                        (t.target = "_blank"),
+                        (t.rel = "noopener noreferrer"),
+                        document.body.appendChild(t),
+                        t.click(),
+                        document.body.removeChild(t),
+                        (a.style.display = "none"),
+                        (n.style.width = "0%"),
+                        (r.innerText = "0%"));
+                    }
                   }, 400)));
             }, 40);
         } else alert("No form selected. Please select a claim form first.");

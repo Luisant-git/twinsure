@@ -32,7 +32,7 @@ done < "$ENV_FILE"
 : "${HOST:=127.0.0.1}"
 : "${BACKEND_PORT:=8000}"
 : "${FRONTEND_PORT:=3000}"
-: "${API_BASE_URL:=http://$HOST:$BACKEND_PORT}"
+: "${API_BASE_URL:=http://$HOST:$BACKEND_PORT/backend/api}"
 
 if ! command -v node &> /dev/null; then
     echo -e "\033[0;31mError: node command not found. Please install Node.js first.\033[0m"
@@ -47,9 +47,10 @@ var API_BASE_URL = (function() {
     var isLocal = window.location.port === '$FRONTEND_PORT' || 
                   window.location.hostname === 'localhost' || 
                   window.location.hostname === '127.0.0.1';
-    return isLocal ? (window.location.protocol + '//' + window.location.hostname + ':$BACKEND_PORT') : '/backend/api';
+    return isLocal ? (window.location.protocol + '//' + window.location.hostname + ':$BACKEND_PORT/backend/api') : '/backend/api';
 })();
 window.API_BASE_URL = API_BASE_URL;
+window.BACKEND_ROOT = window.API_BASE_URL.replace(/\/backend\/api\/?$/, "");
 EOF
 
 echo -e "\033[0;34m========================================================\033[0m"

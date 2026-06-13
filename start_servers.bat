@@ -22,7 +22,7 @@ for /f "usebackq tokens=1,* delims==" %%A in ("%ENV_FILE%") do (
 if "%HOST%"=="" set HOST=127.0.0.1
 if "%BACKEND_PORT%"=="" set BACKEND_PORT=8000
 if "%FRONTEND_PORT%"=="" set FRONTEND_PORT=3000
-if "%API_BASE_URL%"=="" set API_BASE_URL=http://%HOST%:%BACKEND_PORT%
+if "%API_BASE_URL%"=="" set API_BASE_URL=http://%HOST%:%BACKEND_PORT%/backend/api
 
 echo Generating frontend config.js...
 if not exist "public\js" mkdir "public\js"

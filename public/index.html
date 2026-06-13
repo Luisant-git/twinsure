@@ -1,1666 +1,2028 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Twinsure - Premium Insurance Solutions</title>
-    <link rel="icon" href="assets/logo.png" type="image/png" />
-    <meta property="og:title" content="Twinsure" />
-    <meta property="og:description" content="It’s not about having policy—it’s about knowing when it matters." />
-    <meta property="og:image" content="assets/logo.png" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="assets/logo.png" />
-    <style>
-      .logo img.site-logo, .logo img { height: 34px !important; width: auto !important; max-height: 40px; }
-      .footer-logo-img { height: 28px !important; width: auto !important; max-height: 32px; }
-    </style>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="preload"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-      as="style"
-      onload="((this.onload = null), (this.rel = 'stylesheet'))"
-    />
-    <noscript
-      ><link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    /></noscript>
-    <style>
-      :root {
-        --primary-dark: #00296b;
-        --primary-mid: #003f88;
-        --primary-light: #00509d;
-        --accent-gold: #fdc500;
-        --accent-gold-light: #ffd500;
-        --text-white: #ffffff;
-        --text-gray: #e2e8f0;
-        --text-dark: #1e293b;
-        --text-muted: #64748b;
-        --glass-bg: rgba(255, 255, 255, 0.08);
-        --glass-border: rgba(255, 255, 255, 0.15);
-        --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
-      }
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      body,
-      html {
-        width: 100%;
-        max-width: 100%;
-        overflow-x: hidden;
-      }
-      body {
-        font-family: Inter, sans-serif;
-        background-color: #f8fafc;
-        color: var(--text-dark);
-        overflow-x: hidden;
-        background-image: 
-          radial-gradient(rgba(0, 41, 107, 0.05) 1.5px, transparent 1.5px),
-          radial-gradient(rgba(253, 197, 0, 0.05) 1.5px, transparent 1.5px),
-          linear-gradient(135deg, rgba(0, 41, 107, 0.02) 25%, transparent 25%, transparent 50%, rgba(0, 41, 107, 0.02) 50%, rgba(0, 41, 107, 0.02) 75%, transparent 75%, transparent);
-        background-size: 30px 30px, 45px 45px, 120px 120px;
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Twinsure - Premium Insurance Solutions</title>
+  <link rel="icon" href="assets/logo.png" type="image/png" />
+  <meta property="og:title" content="Twinsure" />
+  <meta property="og:description" content="It’s not about having policy—it’s about knowing when it matters." />
+  <meta property="og:image" content="assets/logo.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="assets/logo.png" />
+  <style>
+    .logo img.site-logo,
+    .logo img {
+      height: 34px !important;
+      width: auto !important;
+      max-height: 40px;
+    }
+
+    .footer-logo-img {
+      height: 28px !important;
+      width: auto !important;
+      max-height: 32px;
+    }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style"
+    onload="((this.onload = null), (this.rel = 'stylesheet'))" />
+  <noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  </noscript>
+  <style>
+    :root {
+      --primary-dark: #00296b;
+      --primary-mid: #003f88;
+      --primary-light: #00509d;
+      --accent-gold: #fdc500;
+      --accent-gold-light: #ffd500;
+      --text-white: #ffffff;
+      --text-gray: #e2e8f0;
+      --text-dark: #1e293b;
+      --text-muted: #64748b;
+      --glass-bg: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.15);
+      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body,
+    html {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: Inter, sans-serif;
+      background-color: #f8fafc;
+      color: var(--text-dark);
+      overflow-x: hidden;
+      background-image:
+        radial-gradient(rgba(0, 41, 107, 0.05) 1.5px, transparent 1.5px),
+        radial-gradient(rgba(253, 197, 0, 0.05) 1.5px, transparent 1.5px),
+        linear-gradient(135deg, rgba(0, 41, 107, 0.02) 25%, transparent 25%, transparent 50%, rgba(0, 41, 107, 0.02) 50%, rgba(0, 41, 107, 0.02) 75%, transparent 75%, transparent);
+      background-size: 30px 30px, 45px 45px, 120px 120px;
+      background-position: 0 0, 15px 15px, 0 0;
+      animation: patternFloatLight 45s linear infinite;
+    }
+
+    @keyframes patternFloatLight {
+      0% {
         background-position: 0 0, 15px 15px, 0 0;
-        animation: patternFloatLight 45s linear infinite;
       }
-      @keyframes patternFloatLight {
-        0% { background-position: 0 0, 15px 15px, 0 0; }
-        100% { background-position: 300px 300px, -300px 330px, 600px 600px; }
+
+      100% {
+        background-position: 300px 300px, -300px 330px, 600px 600px;
       }
-      h1,
-      h2,
-      h3,
-      h4,
-      h5,
-      h6 {
-        font-family: Outfit, sans-serif;
-      }
-      a {
-        text-decoration: none;
-      }
-      ul {
-        list-style: none;
-      }
-      .gradient-text {
-        background: linear-gradient(
-          135deg,
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: Outfit, sans-serif;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg,
           var(--accent-gold-light),
-          var(--accent-gold)
-        );
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
-      .navbar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        width: 100%;
-        z-index: 1000;
-        padding: 1.5rem 5%;
-        transition: all 0.3s ease;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 1rem;
-        position: fixed;
-      }
-      .navbar.scrolled {
-        background: rgba(0, 41, 107, 0.85);
-        backdrop-filter: blur(12px);
-        padding: 1rem 5%;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-      }
-      .logo {
-        font-size: 1.8rem;
-        font-weight: 800;
-        color: var(--text-white);
-        font-family: Outfit;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-      .logo i {
-        color: var(--accent-gold);
-      }
-      .nav-links {
-        display: flex;
-        gap: 2.5rem;
-        align-items: center;
-      }
-      .nav-links a {
-        color: var(--text-gray);
-        font-weight: 500;
-        font-size: 0.95rem;
-        transition: 0.3s;
-        position: relative;
-      }
-      .nav-links a.active,
-      .nav-links a:hover {
-        color: var(--accent-gold-light) !important;
-        font-weight: 700 !important;
-      }
-      .nav-links .btn-gold:hover {
-        color: var(--primary-dark) !important;
-      }
-      .nav-links a::after {
-        content: "";
-        position: absolute;
-        width: 0;
-        height: 2px;
-        bottom: -4px;
-        left: 0;
-        background: var(--accent-gold);
-        transition: 0.3s;
-      }
-      .nav-links a.active::after,
-      .nav-links a:hover::after {
-        width: 100%;
-      }
-      .nav-toggle {
-        display: none;
-        width: 44px;
-        height: 44px;
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        background: rgba(255, 255, 255, 0.05);
-        color: var(--text-white);
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        flex-shrink: 0;
-      }
-      .btn {
-        padding: 0.8rem 1.8rem;
-        border-radius: 30px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: 0.3s;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-      }
-      .btn-gold {
-        background: linear-gradient(
-          135deg,
+          var(--accent-gold));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      z-index: 1000;
+      padding: 1.5rem 5%;
+      transition: all 0.3s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      position: fixed;
+    }
+
+    .navbar.scrolled {
+      background: rgba(0, 41, 107, 0.85);
+      backdrop-filter: blur(12px);
+      padding: 1rem 5%;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--text-white);
+      font-family: Outfit;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logo i {
+      color: var(--accent-gold);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: var(--text-gray);
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: 0.3s;
+      position: relative;
+    }
+
+    .nav-links a.active,
+    .nav-links a:hover {
+      color: var(--accent-gold-light) !important;
+      font-weight: 700 !important;
+    }
+
+    .nav-links .btn-gold:hover {
+      color: var(--primary-dark) !important;
+    }
+
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -4px;
+      left: 0;
+      background: var(--accent-gold);
+      transition: 0.3s;
+    }
+
+    .nav-links a.active::after,
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-toggle {
+      display: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-white);
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .btn {
+      padding: 0.8rem 1.8rem;
+      border-radius: 30px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg,
           var(--accent-gold-light),
-          var(--accent-gold)
-        );
-        color: var(--primary-dark) !important;
-        box-shadow: 0 4px 15px rgba(253, 197, 0, 0.3);
-        border: none;
-      }
-      .btn-gold:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(253, 197, 0, 0.4);
-      }
-      .btn-outline {
-        background: 0 0;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        color: #fff !important;
-      }
-      .btn-outline:hover {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: #fff;
-      }
-      .btn-blue {
-        background: linear-gradient(
-          135deg,
+          var(--accent-gold));
+      color: var(--primary-dark) !important;
+      box-shadow: 0 4px 15px rgba(253, 197, 0, 0.3);
+      border: none;
+    }
+
+    .btn-gold:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(253, 197, 0, 0.4);
+    }
+
+    .btn-outline {
+      background: 0 0;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #fff !important;
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: #fff;
+    }
+
+    .btn-blue {
+      background: linear-gradient(135deg,
           var(--primary-light),
-          var(--primary-mid)
-        );
-        color: #fff !important;
-        box-shadow: 0 4px 15px rgba(0, 80, 157, 0.3);
-        border: none;
-      }
-      .btn-blue:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0, 80, 157, 0.4);
-      }
-      .hero {
-        min-height: 100vh;
-        background:
-          radial-gradient(
-            circle at 80% 20%,
-            rgba(0, 80, 157, 0.4) 0,
-            transparent 50%
-          ),
-          radial-gradient(
-            circle at 20% 80%,
-            rgba(253, 197, 0, 0.1) 0,
-            transparent 40%
-          ),
-          #001533;
-        padding: 10rem 5% 8rem 5%;
-        position: relative;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-      }
-      .hero::before {
-        content: none;
-      }
-      .hero-container {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr);
-        gap: 4rem;
-        max-width: 1100px;
-        margin: 0 auto;
-        position: relative;
-        z-index: 2;
-        width: 100%;
-      }
-      .hero-content {
-        color: #fff;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
-      .badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: var(--glass-bg);
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        border: 1px solid var(--glass-border);
-        font-size: 0.85rem;
-        color: var(--accent-gold-light);
-        width: fit-content;
-        margin-bottom: 1.5rem;
-      }
-      .hero h1 {
-        font-size: 4.5rem;
-        line-height: 1.1;
-        margin-bottom: 1.5rem;
-        letter-spacing: -1.5px;
-        opacity: 0;
-        transform: translateY(30px);
-        will-change: transform, opacity;
-      }
-      .hero h1.visible {
-        opacity: 1;
-        transform: translateY(0);
-        transition:
-          opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
-          transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-      }
-      .hero h1.exit {
-        opacity: 0;
-        transform: translateY(-30px);
-        transition:
-          opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-          transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      }
-      .hero p {
-        font-size: 1.1rem;
-        color: var(--text-gray);
-        line-height: 1.6;
-        margin-bottom: 2rem;
-        max-width: 90%;
-      }
-      .hero-quote {
-        border-left: 3px solid var(--accent-gold);
-        padding-left: 1rem;
-        font-style: italic;
-        color: rgba(255, 255, 255, 0.8);
-        margin-bottom: 2.5rem;
-        font-size: 1.05rem;
-      }
-      .hero-btns {
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-      }
-      .stats-section {
-        margin-top: -60px;
-        position: relative;
-        z-index: 10;
-        padding: 0 5%;
-      }
-      .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1.5rem;
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-      .stat-card {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(15px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 16px;
-        padding: 1.5rem;
-        text-align: center;
-        color: #fff;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        transition: 0.3s;
-      }
-      .stat-card:hover {
-        transform: translateY(-5px);
-        border-color: var(--accent-gold);
-        background: rgba(255, 255, 255, 0.15);
-      }
-      .stat-card h3 {
-        font-size: 2rem;
-        color: var(--accent-gold-light);
-        margin-bottom: 0.2rem;
-      }
-      .stat-card p {
-        font-size: 0.85rem;
-        color: var(--primary-light);
-        font-weight: 600;
-      }
-      .section {
-        padding: 6rem 5%;
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-      .section-header {
-        text-align: center;
-        margin-bottom: 4rem;
-      }
-      .section-header h2 {
-        font-size: 2.8rem;
-        color: var(--primary-dark);
-        margin-bottom: 1rem;
-      }
-      .section-header p {
-        color: var(--text-muted);
-        font-size: 1.1rem;
-        max-width: 600px;
-        margin: 0 auto;
-      }
-      .features-grid {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 2rem;
-      }
-      .feature-card {
-        flex: 1 1 calc(33.333% - 2rem);
-        min-width: 300px;
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(10px);
-        border-radius: 20px;
-        padding: 2.5rem 2rem;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.5);
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        position: relative;
-        overflow: hidden;
-        z-index: 1;
-      }
-      .feature-card::after {
-        content: '';
-        position: absolute;
-        bottom: -50%;
-        right: -50%;
-        width: 150px;
-        height: 150px;
-        background: radial-gradient(circle, var(--accent-gold) 0%, transparent 70%);
-        opacity: 0;
-        transition: all 0.6s ease;
-        z-index: -1;
-      }
-      .feature-card:hover {
-        transform: translateY(-15px) scale(1.02);
-        box-shadow: 0 25px 50px rgba(0, 41, 107, 0.15);
-        border-color: var(--accent-gold);
-      }
-      .feature-card:hover::after {
-        opacity: 0.15;
-        bottom: -20%;
-        right: -20%;
-      }
-      .feature-icon {
-        width: 60px;
-        height: 60px;
-        border-radius: 15px;
-        background: linear-gradient(135deg, rgba(0, 41, 107, 0.1), rgba(0, 80, 157, 0.1));
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        color: var(--primary-mid);
-        margin-bottom: 1.5rem;
-        transition: all 0.5s ease;
-      }
-      .feature-card:hover .feature-icon {
-        background: var(--primary-dark);
-        border-radius: 50%;
-      }
-      .feature-card:hover .feature-icon i {
-        transform: scale(1.2) rotateY(180deg);
-        color: var(--accent-gold);
-      }
-      .feature-icon i {
-        transition: all 0.5s ease;
-      }
-      .feature-card h3 {
-        font-size: 1.3rem;
-        margin-bottom: 1rem;
-        color: var(--text-dark);
-      }
-      .feature-card p {
-        color: var(--text-muted);
-        line-height: 1.6;
-        font-size: 0.95rem;
-      }
-      .services-section {
-        background: #f0f4f8;
-        padding: 6rem 5%;
-      }
-      .services-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 1.5rem;
-        max-width: 1120px;
-        margin: 0 auto;
-      }
-      .service-card {
-        background: #fff;
-        border-radius: 16px;
-        padding: 2rem 1rem;
-        text-align: center;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
-        transition: 0.3s;
-      }
-      .service-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 30px rgba(0, 41, 107, 0.1);
-      }
-      .service-icon {
-        font-size: 2.5rem;
-        color: var(--primary-light);
-        margin-bottom: 1rem;
-      }
-      .service-card h4 {
-        font-size: 1.1rem;
-        margin-bottom: 0.5rem;
-      }
-      .service-card .btn-link {
-        font-size: 0.85rem;
-        color: var(--primary-mid);
-        font-weight: 600;
-        margin-top: 1rem;
-        display: inline-block;
-      }
-      .testimonials {
-        overflow: hidden;
-        padding-bottom: 2rem;
-      }
-      .testi-grid {
-        display: flex;
-        gap: 2rem;
-        overflow-x: auto;
-        padding-bottom: 2rem;
-        scroll-snap-type: x mandatory;
-      }
-      .testi-grid::-webkit-scrollbar {
-        display: none;
-      }
-      .testi-card {
-        min-width: 350px;
-        background: #fff;
-        border-radius: 20px;
-        padding: 2rem;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        scroll-snap-align: start;
-        position: relative;
-      }
-      .quote-icon {
-        position: absolute;
-        top: 1.5rem;
-        right: 1.5rem;
-        font-size: 2rem;
-        color: rgba(253, 197, 0, 0.2);
-      }
-      .testi-user {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-      }
-      .testi-avatar {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: #eee;
-      }
-      .testi-name {
-        font-weight: 600;
-        color: var(--text-dark);
-      }
-      .testi-type {
-        font-size: 0.8rem;
-        color: var(--primary-mid);
-        font-weight: 500;
-      }
-      .stars {
-        color: var(--accent-gold);
-        font-size: 0.8rem;
-        margin-bottom: 1rem;
-      }
-      .testi-text {
-        color: var(--text-muted);
-        font-style: italic;
-        line-height: 1.6;
-      }
-      
-      /* New Testimonial Card Styles */
-      .testimonial-new-card {
-        display: flex;
-        background: #fff;
-        border-radius: 60px 10px 60px 10px;
-        padding: 3rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        margin-bottom: 3rem;
-        gap: 3rem;
-      }
-      .testimonial-new-card.dark {
-        background: linear-gradient(135deg, #111, #222);
-        color: #e2e8f0;
-      }
-      .testimonial-left {
-        flex: 0 0 200px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        justify-content: center;
-      }
-      .testimonial-avatar {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        margin-bottom: 1.5rem;
-        border: 4px solid #f8fafc;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-      }
-      .testimonial-new-card.dark .testimonial-avatar {
-        border-color: #333;
-      }
-      .testimonial-name {
-        background: var(--accent-gold);
-        color: var(--primary-dark);
-        font-weight: 800;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        margin-bottom: 0.8rem;
-        font-size: 1.1rem;
-        width: 100%;
-        overflow-wrap: break-word;
-        word-wrap: break-word;
-        word-break: break-word;
-      }
-      .testimonial-type {
-        font-size: 0.95rem;
-        font-weight: 600;
-        color: var(--text-dark);
-        overflow-wrap: break-word;
-        word-wrap: break-word;
-        word-break: break-word;
-      }
-      .testimonial-new-card.dark .testimonial-type {
-        color: #fff;
-      }
-      .testimonial-right {
-        flex: 1;
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
-        gap: 2rem;
-      }
-      .testimonial-section {
-        display: flex;
-        flex-direction: column;
-      }
-      .testimonial-heading {
-        background: #000;
-        color: #fff;
-        font-weight: 800;
-        font-style: italic;
-        padding: 0.4rem 1.2rem;
-        display: inline-block;
-        margin-bottom: 1.2rem;
-        align-self: flex-start;
-        text-transform: uppercase;
-        font-size: 0.95rem;
-        letter-spacing: 1px;
-      }
-      .testimonial-new-card.dark .testimonial-heading {
-        background: #fff;
-        color: #000;
-      }
-      .testimonial-content {
-        font-size: 0.95rem;
-        line-height: 1.7;
-        text-align: justify;
-        overflow-wrap: break-word;
-        word-wrap: break-word;
-        word-break: break-word;
-        white-space: pre-line;
-      }
-      .testimonial-content ul {
-        list-style: disc;
-        padding-left: 1.2rem;
-      }
-      .testimonial-content li {
-        margin-bottom: 0.5rem;
-      }
-      .partner-section {
-        background: linear-gradient(
-          135deg,
+          var(--primary-mid));
+      color: #fff !important;
+      box-shadow: 0 4px 15px rgba(0, 80, 157, 0.3);
+      border: none;
+    }
+
+    .btn-blue:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 80, 157, 0.4);
+    }
+
+    .hero {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 80% 20%,
+          rgba(0, 80, 157, 0.4) 0,
+          transparent 50%),
+        radial-gradient(circle at 20% 80%,
+          rgba(253, 197, 0, 0.1) 0,
+          transparent 40%),
+        #001533;
+      padding: 10rem 5% 8rem 5%;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+
+    .hero::before {
+      content: none;
+    }
+
+    .hero-container {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 4rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+      width: 100%;
+    }
+
+    .hero-content {
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--glass-bg);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      border: 1px solid var(--glass-border);
+      font-size: 0.85rem;
+      color: var(--accent-gold-light);
+      width: fit-content;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h1 {
+      font-size: 4.5rem;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      letter-spacing: -1.5px;
+      opacity: 0;
+      transform: translateY(30px);
+      will-change: transform, opacity;
+    }
+
+    .hero h1.visible {
+      opacity: 1;
+      transform: translateY(0);
+      transition:
+        opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .hero h1.exit {
+      opacity: 0;
+      transform: translateY(-30px);
+      transition:
+        opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--text-gray);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      max-width: 90%;
+    }
+
+    .hero-quote {
+      border-left: 3px solid var(--accent-gold);
+      padding-left: 1rem;
+      font-style: italic;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 2.5rem;
+      font-size: 1.05rem;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .stats-section {
+      margin-top: -60px;
+      position: relative;
+      z-index: 10;
+      padding: 0 5%;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      padding: 1.5rem;
+      text-align: center;
+      color: #fff;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      transition: 0.3s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent-gold);
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .stat-card h3 {
+      font-size: 2rem;
+      color: var(--accent-gold-light);
+      margin-bottom: 0.2rem;
+    }
+
+    .stat-card p {
+      font-size: 0.85rem;
+      color: var(--primary-light);
+      font-weight: 600;
+    }
+
+    .section {
+      padding: 6rem 5%;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-header h2 {
+      font-size: 2.8rem;
+      color: var(--primary-dark);
+      margin-bottom: 1rem;
+    }
+
+    .section-header p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+    }
+
+    .feature-card {
+      flex: 1 1 calc(33.333% - 2rem);
+      min-width: 300px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .feature-card::after {
+      content: '';
+      position: absolute;
+      bottom: -50%;
+      right: -50%;
+      width: 150px;
+      height: 150px;
+      background: radial-gradient(circle, var(--accent-gold) 0%, transparent 70%);
+      opacity: 0;
+      transition: all 0.6s ease;
+      z-index: -1;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-15px) scale(1.02);
+      box-shadow: 0 25px 50px rgba(0, 41, 107, 0.15);
+      border-color: var(--accent-gold);
+    }
+
+    .feature-card:hover::after {
+      opacity: 0.15;
+      bottom: -20%;
+      right: -20%;
+    }
+
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, rgba(0, 41, 107, 0.1), rgba(0, 80, 157, 0.1));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: var(--primary-mid);
+      margin-bottom: 1.5rem;
+      transition: all 0.5s ease;
+    }
+
+    .feature-card:hover .feature-icon {
+      background: var(--primary-dark);
+      border-radius: 50%;
+    }
+
+    .feature-card:hover .feature-icon i {
+      transform: scale(1.2) rotateY(180deg);
+      color: var(--accent-gold);
+    }
+
+    .feature-icon i {
+      transition: all 0.5s ease;
+    }
+
+    .feature-card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      color: var(--text-dark);
+    }
+
+    .feature-card p {
+      color: var(--text-muted);
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .services-section {
+      background: #f0f4f8;
+      padding: 6rem 5%;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.5rem;
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .service-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 2rem 1rem;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+      transition: 0.3s;
+    }
+
+    .service-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0, 41, 107, 0.1);
+    }
+
+    .service-icon {
+      font-size: 2.5rem;
+      color: var(--primary-light);
+      margin-bottom: 1rem;
+    }
+
+    .service-card h4 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .service-card .btn-link {
+      font-size: 0.85rem;
+      color: var(--primary-mid);
+      font-weight: 600;
+      margin-top: 1rem;
+      display: inline-block;
+    }
+
+    .testimonials {
+      overflow: hidden;
+      padding-bottom: 2rem;
+    }
+
+    .testi-grid {
+      display: flex;
+      gap: 2rem;
+      overflow-x: auto;
+      padding-bottom: 2rem;
+      scroll-snap-type: x mandatory;
+    }
+
+    .testi-grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    .testi-card {
+      min-width: 350px;
+      background: #fff;
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      scroll-snap-align: start;
+      position: relative;
+    }
+
+    .quote-icon {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      font-size: 2rem;
+      color: rgba(253, 197, 0, 0.2);
+    }
+
+    .testi-user {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .testi-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #eee;
+    }
+
+    .testi-name {
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .testi-type {
+      font-size: 0.8rem;
+      color: var(--primary-mid);
+      font-weight: 500;
+    }
+
+    .stars {
+      color: var(--accent-gold);
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .testi-text {
+      color: var(--text-muted);
+      font-style: italic;
+      line-height: 1.6;
+    }
+
+    /* New Testimonial Card Styles */
+    .testimonial-new-card {
+      display: flex;
+      background: #fff;
+      border-radius: 60px 10px 60px 10px;
+      padding: 3rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      margin-bottom: 3rem;
+      gap: 3rem;
+    }
+
+    .testimonial-new-card.dark {
+      background: linear-gradient(135deg, #111, #222);
+      color: #e2e8f0;
+    }
+
+    .testimonial-left {
+      flex: 0 0 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      justify-content: center;
+    }
+
+    .testimonial-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin-bottom: 1.5rem;
+      border: 4px solid #f8fafc;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .testimonial-new-card.dark .testimonial-avatar {
+      border-color: #333;
+    }
+
+    .testimonial-name {
+      background: var(--accent-gold);
+      color: var(--primary-dark);
+      font-weight: 800;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      margin-bottom: 0.8rem;
+      font-size: 1.1rem;
+      width: 100%;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      word-break: break-word;
+    }
+
+    .testimonial-type {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      word-break: break-word;
+    }
+
+    .testimonial-new-card.dark .testimonial-type {
+      color: #fff;
+    }
+
+    .testimonial-right {
+      flex: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2rem;
+    }
+
+    .testimonial-section {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .testimonial-heading {
+      background: #000;
+      color: #fff;
+      font-weight: 800;
+      font-style: italic;
+      padding: 0.4rem 1.2rem;
+      display: inline-block;
+      margin-bottom: 1.2rem;
+      align-self: flex-start;
+      text-transform: uppercase;
+      font-size: 0.95rem;
+      letter-spacing: 1px;
+    }
+
+    .testimonial-new-card.dark .testimonial-heading {
+      background: #fff;
+      color: #000;
+    }
+
+    .testimonial-content {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      text-align: justify;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      word-break: break-word;
+      white-space: pre-line;
+    }
+
+    .testimonial-content ul {
+      list-style: disc;
+      padding-left: 1.2rem;
+    }
+
+    .testimonial-content li {
+      margin-bottom: 0.5rem;
+    }
+
+    .partner-section {
+      background: linear-gradient(135deg,
           var(--primary-mid),
-          var(--primary-dark)
-        );
-        border-radius: 30px;
-        margin: 4rem 5%;
-        padding: 4rem;
-        display: flex;
+          var(--primary-dark));
+      border-radius: 30px;
+      margin: 4rem 5%;
+      padding: 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #fff;
+      box-shadow: 0 20px 50px rgba(0, 41, 107, 0.3);
+      position: relative;
+      overflow: hidden;
+      max-width: 1400px;
+    }
+
+    .partner-content {
+      max-width: 500px;
+      z-index: 2;
+    }
+
+    .partner-content h2 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .partner-content p {
+      font-size: 1.1rem;
+      color: var(--text-gray);
+      margin-bottom: 2.5rem;
+      line-height: 1.6;
+    }
+
+    .partner-visual {
+      z-index: 2;
+    }
+
+    .partner-dashboard-mock {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      width: min(100%, 400px);
+      transform: rotate(-2deg);
+      transition: 0.3s;
+    }
+
+    .partner-dashboard-mock:hover {
+      transform: rotate(0) scale(1.02);
+    }
+
+    .claims-steps {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin-top: 3rem;
+    }
+
+    .claims-steps::before {
+      content: "";
+      position: absolute;
+      top: 30px;
+      left: 15%;
+      width: 70%;
+      height: 2px;
+      background: #e2e8f0;
+      z-index: 0;
+    }
+
+    .step {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      flex: 1;
+    }
+
+    .step-icon {
+      width: 60px;
+      height: 60px;
+      background: #fff;
+      border: 2px solid var(--primary-mid);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: var(--primary-mid);
+      margin: 0 auto 1rem auto;
+      box-shadow: 0 0 0 10px #fff;
+    }
+
+    .step h4 {
+      color: var(--text-dark);
+      margin-bottom: 0.5rem;
+      font-size: 1.2rem;
+    }
+
+    .step p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      max-width: 250px;
+      margin: 0 auto;
+    }
+
+    .footer {
+      background: #001533;
+      color: #fff;
+      padding: 5rem 5% 2rem 5%;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 4rem;
+      margin-bottom: 3rem;
+      max-width: 1400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .footer-logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      font-family: Outfit;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #fff;
+    }
+
+    .footer-logo i {
+      color: var(--accent-gold);
+    }
+
+    .footer p {
+      color: #94a3b8;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      max-width: 300px;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .social-links a {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      transition: 0.3s;
+    }
+
+    .social-links a:hover {
+      background: var(--primary-mid);
+      transform: translateY(-3px);
+    }
+
+    .footer-col h4 {
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-col ul li {
+      margin-bottom: 0.8rem;
+    }
+
+    .footer-col ul a {
+      color: #94a3b8;
+      transition: 0.3s;
+    }
+
+    .footer-col ul a:hover {
+      color: var(--accent-gold);
+      padding-left: 5px;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+      color: #94a3b8;
+      font-size: 0.9rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .floating-actions {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      z-index: 1000;
+    }
+
+    .float-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      transition: 0.3s;
+      position: relative;
+      text-decoration: none;
+    }
+
+    .float-ai {
+      background: linear-gradient(135deg,
+          var(--primary-light),
+          var(--primary-mid));
+    }
+
+    .float-wa {
+      background: #25d366;
+    }
+
+    .float-btn:hover {
+      transform: scale(1.1);
+      color: #fff;
+    }
+
+    .float-btn::before {
+      content: attr(data-tooltip);
+      position: absolute;
+      right: 80px;
+      background: #fff;
+      color: var(--text-dark);
+      font-size: 0.85rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.3s;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      font-family: Inter;
+    }
+
+    .float-btn:hover::before {
+      opacity: 1;
+      right: 75px;
+    }
+
+    @media (max-width: 1200px) {
+      .hero h1 {
+        font-size: 3.5rem;
+      }
+
+      .services-grid {
+        max-width: 960px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 992px) {
+      .hero-container {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .hero-content {
         align-items: center;
-        justify-content: space-between;
-        color: #fff;
-        box-shadow: 0 20px 50px rgba(0, 41, 107, 0.3);
-        position: relative;
-        overflow: hidden;
-        max-width: 1400px;
       }
-      .partner-content {
-        max-width: 500px;
-        z-index: 2;
+
+      .hero p {
+        max-width: 100%;
       }
-      .partner-content h2 {
-        font-size: 3rem;
-        margin-bottom: 1rem;
+
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
       }
-      .partner-content p {
-        font-size: 1.1rem;
-        color: var(--text-gray);
-        margin-bottom: 2.5rem;
-        line-height: 1.6;
+
+      .partner-section {
+        flex-direction: column;
+        text-align: center;
+        padding: 3rem 2rem;
       }
+
       .partner-visual {
-        z-index: 2;
-      }
-      .partner-dashboard-mock {
-        background: #fff;
-        border-radius: 12px;
-        padding: 1.5rem;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-        width: min(100%, 400px);
-        transform: rotate(-2deg);
-        transition: 0.3s;
-      }
-      .partner-dashboard-mock:hover {
-        transform: rotate(0) scale(1.02);
-      }
-      .claims-steps {
-        display: flex;
-        justify-content: space-between;
-        position: relative;
         margin-top: 3rem;
       }
-      .claims-steps::before {
-        content: "";
-        position: absolute;
-        top: 30px;
-        left: 15%;
-        width: 70%;
-        height: 2px;
-        background: #e2e8f0;
-        z-index: 0;
-      }
-      .step {
-        text-align: center;
-        position: relative;
-        z-index: 1;
-        flex: 1;
-      }
-      .step-icon {
-        width: 60px;
-        height: 60px;
-        background: #fff;
-        border: 2px solid var(--primary-mid);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        color: var(--primary-mid);
-        margin: 0 auto 1rem auto;
-        box-shadow: 0 0 0 10px #fff;
-      }
-      .step h4 {
-        color: var(--text-dark);
-        margin-bottom: 0.5rem;
-        font-size: 1.2rem;
-      }
-      .step p {
-        color: var(--text-muted);
-        font-size: 0.95rem;
-        max-width: 250px;
-        margin: 0 auto;
-      }
-      .footer {
-        background: #001533;
-        color: #fff;
-        padding: 5rem 5% 2rem 5%;
-      }
+
       .footer-grid {
-        display: grid;
-        grid-template-columns: 2fr 1fr 1fr 1fr;
-        gap: 4rem;
-        margin-bottom: 3rem;
-        max-width: 1400px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-      .footer-logo {
-        font-size: 1.8rem;
-        font-weight: 800;
-        font-family: Outfit;
-        margin-bottom: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: #fff;
-      }
-      .footer-logo i {
-        color: var(--accent-gold);
-      }
-      .footer p {
-        color: #94a3b8;
-        line-height: 1.6;
-        margin-bottom: 1.5rem;
-        max-width: 300px;
-      }
-      .social-links {
-        display: flex;
-        gap: 1rem;
-      }
-      .social-links a {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.05);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #fff;
-        transition: 0.3s;
-      }
-      .social-links a:hover {
-        background: var(--primary-mid);
-        transform: translateY(-3px);
-      }
-      .footer-col h4 {
-        font-size: 1.2rem;
-        margin-bottom: 1.5rem;
-      }
-      .footer-col ul li {
-        margin-bottom: 0.8rem;
-      }
-      .footer-col ul a {
-        color: #94a3b8;
-        transition: 0.3s;
-      }
-      .footer-col ul a:hover {
-        color: var(--accent-gold);
-        padding-left: 5px;
-      }
-      .footer-bottom {
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        padding-top: 2rem;
-        display: flex;
-        justify-content: space-between;
-        color: #94a3b8;
-        font-size: 0.9rem;
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-      .floating-actions {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        z-index: 1000;
-      }
-      .float-btn {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.8rem;
-        color: #fff;
-        cursor: pointer;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        transition: 0.3s;
-        position: relative;
-        text-decoration: none;
-      }
-      .float-ai {
-        background: linear-gradient(
-          135deg,
-          var(--primary-light),
-          var(--primary-mid)
-        );
-      }
-      .float-wa {
-        background: #25d366;
-      }
-      .float-btn:hover {
-        transform: scale(1.1);
-        color: #fff;
-      }
-      .float-btn::before {
-        content: attr(data-tooltip);
-        position: absolute;
-        right: 80px;
-        background: #fff;
-        color: var(--text-dark);
-        font-size: 0.85rem;
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        font-weight: 600;
-        white-space: nowrap;
-        opacity: 0;
-        pointer-events: none;
-        transition: 0.3s;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        font-family: Inter;
-      }
-      .float-btn:hover::before {
-        opacity: 1;
-        right: 75px;
-      }
-      @media (max-width: 1200px) {
-        .hero h1 {
-          font-size: 3.5rem;
-        }
-        .services-grid {
-          max-width: 960px;
-        }
-        .stats-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
-      @media (max-width: 992px) {
-        .hero-container {
-          grid-template-columns: 1fr;
-          text-align: center;
-        }
-        .hero-content {
-          align-items: center;
-        }
-        .hero p {
-          max-width: 100%;
-        }
-        .features-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-        .partner-section {
-          flex-direction: column;
-          text-align: center;
-          padding: 3rem 2rem;
-        }
-        .partner-visual {
-          margin-top: 3rem;
-        }
-        .footer-grid {
-          grid-template-columns: 1fr 1fr;
-        }
-      }
-      @media (max-width: 768px) {
-        .navbar {
-          flex-wrap: nowrap;
-          padding: 0.75rem 1rem;
-          align-items: center;
-        }
-        .nav-toggle {
-          display: inline-flex;
-        }
-        .footer,
-        .hero,
-        .section,
-        .services-section,
-        .stats-section {
-          padding-left: 1rem;
-          padding-right: 1rem;
-        }
-        .nav-links {
-          display: none;
-          position: absolute;
-          top: calc(100% + 8px);
-          left: 1rem;
-          right: 1rem;
-          z-index: 999;
-          flex-direction: column;
-          align-items: stretch;
-          gap: 0.75rem;
-          padding: 0.75rem;
-          border-radius: 12px;
-          background: rgba(0, 21, 51, 0.98);
-          border: 1px solid rgba(255, 255, 255, 0.08);
-          backdrop-filter: blur(12px);
-          max-height: 60vh;
-          overflow: auto;
-        }
-        .navbar.nav-open .nav-links {
-          display: flex;
-        }
-        .nav-links a {
-          padding: 0.75rem 0.9rem;
-          width: 100%;
-          border-radius: 12px;
-        }
-        .nav-links a::after {
-          display: none;
-        }
-        .nav-links .btn {
-          width: 100%;
-          margin-left: 0 !important;
-        }
-        .stats-grid {
-          grid-template-columns: 1fr 1fr;
-        }
-        .services-grid {
-          grid-template-columns: 1fr;
-          max-width: 420px;
-        }
-        .features-grid {
-          grid-template-columns: 1fr;
-        }
-        .testimonial-new-card {
-          flex-direction: column;
-          border-radius: 30px 10px 30px 10px;
-          padding: 2rem 1.5rem;
-          gap: 2rem;
-        }
-        .testimonial-right {
-          grid-template-columns: 1fr;
-        }
-        .testimonial-left {
-          flex: auto;
-        }
-        .partner-section {
-          margin: 3rem 1rem;
-          padding: 2rem 1.25rem;
-        }
-        .partner-dashboard-mock {
-          width: 100%;
-          max-width: 100%;
-        }
-        .claims-steps {
-          flex-direction: column;
-          gap: 2rem;
-        }
-        .claims-steps::before {
-          display: none;
-        }
-        .footer-bottom {
-          flex-direction: column;
-          gap: 1rem;
-          text-align: center;
-        }
-        body.nav-open {
-          overflow: hidden;
-        }
-        .footer {
-          padding: 3rem 5% 2rem 5%;
-        }
-        .footer-grid {
-          grid-template-columns: 1fr;
-          gap: 2rem;
-          text-align: center;
-        }
-        .footer p {
-          max-width: 100%;
-          margin: 0 auto;
-        }
-        .social-links {
-          justify-content: center;
-        }
-      }
-
-      /* Custom Graphics and Mockups */
-      
-      .animated-wave-divider {
-        width: 100%;
-        height: 60px;
-        position: relative;
-        overflow: hidden;
-        margin-bottom: -2px;
-      }
-      .animated-wave-divider svg {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 200%;
-        height: 100%;
-        animation: wave-animation 12s linear infinite;
-      }
-      @keyframes wave-animation {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-50%); }
-      }
-
-      /* Insights Section */
-      .insights-section {
-        background: #001533;
-        color: #fff;
-        padding: 8rem 5% 6rem;
-        position: relative;
-        margin-top: 2rem;
-      }
-      .insights-grid {
-        display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 4rem;
-        max-width: 1400px;
-        margin: 0 auto;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        flex-wrap: nowrap;
+        padding: 0.75rem 1rem;
         align-items: center;
       }
-      .insights-phones {
-        position: relative;
-        height: 450px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+
+      .nav-toggle {
+        display: inline-flex;
       }
-      .iphone-mockup {
-        width: 220px;
-        height: 440px;
-        border: 14px solid #111;
-        border-radius: 35px;
-        background: #000;
+
+      .footer,
+      .hero,
+      .section,
+      .services-section,
+      .stats-section {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+
+      .nav-links {
+        display: none;
         position: absolute;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        top: calc(100% + 8px);
+        left: 1rem;
+        right: 1rem;
+        z-index: 999;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        border-radius: 12px;
+        background: rgba(0, 21, 51, 0.98);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(12px);
+        max-height: 60vh;
+        overflow: auto;
+      }
+
+      .navbar.nav-open .nav-links {
+        display: flex;
+      }
+
+      .nav-links a {
+        padding: 0.75rem 0.9rem;
+        width: 100%;
+        border-radius: 12px;
+      }
+
+      .nav-links a::after {
+        display: none;
+      }
+
+      .nav-links .btn {
+        width: 100%;
+        margin-left: 0 !important;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .services-grid {
+        grid-template-columns: 1fr;
+        max-width: 420px;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .testimonial-new-card {
+        flex-direction: column;
+        border-radius: 30px 10px 30px 10px;
+        padding: 2rem 1.5rem;
+        gap: 2rem;
+      }
+
+      .testimonial-right {
+        grid-template-columns: 1fr;
+      }
+
+      .testimonial-left {
+        flex: auto;
+      }
+
+      .partner-section {
+        margin: 3rem 1rem;
+        padding: 2rem 1.25rem;
+      }
+
+      .partner-dashboard-mock {
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .claims-steps {
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      .claims-steps::before {
+        display: none;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+
+      body.nav-open {
         overflow: hidden;
       }
-      .iphone-mockup::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 120px;
-        height: 25px;
-        background: #111;
-        border-radius: 0 0 15px 15px;
-        z-index: 10;
-      }
-      .mock-1 {
-        transform: rotate(-10deg) translateX(-60px);
-        z-index: 1;
-        border-color: #222;
-        opacity: 0;
-      }
-      .mock-2 {
-        transform: rotate(10deg) translateX(60px);
-        z-index: 2;
-        border-color: #333;
-        opacity: 0;
-      }
-      .insights-phones.in-view .mock-1 {
-        animation: dropFall1 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-      }
-      .insights-phones.in-view .mock-2 {
-        animation: dropFall2 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.2s;
-      }
-      @keyframes dropFall1 {
-        0% { opacity: 0; transform: translateY(-300px) rotate(0deg) translateX(-60px); }
-        40% { opacity: 1; transform: translateY(0) rotate(0deg) translateX(-60px); }
-        65% { transform: translateY(-20px) rotate(-12deg) translateX(-60px); }
-        85% { transform: translateY(0) rotate(-8deg) translateX(-60px); }
-        100% { opacity: 1; transform: rotate(-10deg) translateX(-60px); }
-      }
-      @keyframes dropFall2 {
-        0% { opacity: 0; transform: translateY(-300px) rotate(0deg) translateX(60px); }
-        40% { opacity: 1; transform: translateY(0) rotate(0deg) translateX(60px); }
-        65% { transform: translateY(-30px) rotate(12deg) translateX(60px); }
-        85% { transform: translateY(0) rotate(8deg) translateX(60px); }
-        100% { opacity: 1; transform: rotate(10deg) translateX(60px); }
-      }
-      .mock-screen {
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, var(--primary-mid), var(--primary-dark));
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 1.5rem;
-        text-align: center;
-        color: #fff;
-      }
-      .mock-screen h5 {
-        color: var(--accent-gold);
-        font-size: 1.6rem;
-        margin-bottom: 1rem;
-        line-height: 1.1;
-        font-family: Outfit;
-      }
-      .mock-screen p {
-        font-size: 0.85rem;
-        color: #e2e8f0;
+
+      .footer {
+        padding: 3rem 5% 2rem 5%;
       }
 
-      /* Free Audit Section */
-      .audit-section {
-        background: #f8fafc;
-        padding: 6rem 5% 8rem;
-        text-align: center;
-      }
-      .audit-header {
-        max-width: 800px;
-        margin: 0 auto 3rem;
-      }
-      .audit-header h2 {
-        font-size: 3rem;
-        color: var(--primary-dark);
-        margin-bottom: 1rem;
-      }
-      .audit-mockup-wrapper {
-        position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: flex-end;
-        height: 480px;
-        margin-top: 4rem;
-      }
-      .imac-mockup {
-        width: 700px;
-        height: 420px;
-        border: 24px solid #111;
-        border-bottom-width: 45px;
-        border-radius: 15px 15px 5px 5px;
-        background: #000;
-        position: absolute;
-        z-index: 1;
-        bottom: 50px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-      }
-      .imac-mockup::after {
-        content: "";
-        position: absolute;
-        bottom: -105px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 160px;
-        height: 60px;
-        background: #ddd;
-        clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
-      }
-      .imac-mockup::before {
-        content: "";
-        position: absolute;
-        bottom: -115px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 220px;
-        height: 10px;
-        background: #aaa;
-        border-radius: 10px 10px 0 0;
-      }
-      .ipad-mockup {
-        width: 280px;
-        height: 380px;
-        border: 15px solid #222;
-        border-radius: 20px;
-        background: #000;
-        position: absolute;
-        z-index: 2;
-        bottom: 0;
-        right: calc(50% - 380px);
-        box-shadow: -10px 10px 30px rgba(0,0,0,0.3);
-      }
-      .iphone-small-mockup {
-        width: 140px;
-        height: 280px;
-        border: 8px solid #333;
-        border-radius: 25px;
-        background: #000;
-        position: absolute;
-        z-index: 3;
-        bottom: -20px;
-        right: calc(50% - 440px);
-        box-shadow: -10px 10px 30px rgba(0,0,0,0.4);
-      }
-      .iphone-small-mockup::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 60px;
-        height: 15px;
-        background: #333;
-        border-radius: 0 0 10px 10px;
-        z-index: 10;
-      }
-      .drawn-arrows-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+      .footer-grid {
+        grid-template-columns: 1fr;
         gap: 2rem;
-        margin: 2rem 0;
+        text-align: center;
       }
-      
-      @media (max-width: 992px) {
-        .insights-grid {
-          grid-template-columns: 1fr;
-          text-align: center;
-        }
-        .imac-mockup { width: 90%; max-width: 500px; height: 300px; }
-        .ipad-mockup { display: none; }
-        .iphone-small-mockup { right: 5%; }
-        .drawn-arrows-container { gap: 0.5rem; }
-        .social-links {
-          justify-content: center;
-        }
+
+      .footer p {
+        max-width: 100%;
+        margin: 0 auto;
       }
-    </style>
-  </head>
-  <body>
-    <nav class="navbar" id="navbar">
-      <a href="index.html" class="logo"><img src="assets/logo.png" alt="Twinsure" class="site-logo"/> Twinsure</a>
-      <button
-        class="nav-toggle"
-        id="navToggle"
-        type="button"
-        aria-label="Toggle navigation"
-        aria-expanded="false"
-      >
-        <i class="fas fa-bars"></i>
-      </button>
-      <div class="nav-links" role="menu" aria-hidden="true">
-        <a href="index.html" class="active">Home</a>
-        <a href="about.html">About</a> <a href="services.html">Services</a>
-        <a href="downloads.html">Downloads</a> <a href="contact.html">Contact</a
-        ><a
-          href="login.html"
-          class="btn btn-gold"
-          style="padding: 0.5rem 1.5rem; margin-left: 1rem"
-          >Login</a
-        >
-      </div>
-    </nav>
-    <section class="hero">
-      <div class="hero-container">
-        <div class="hero-content">
-          <div class="badge">
-            <i class="fas fa-check-circle"></i> Trusted Insurance Solutions
-          </div>
-          <h1 id="hero-heading" class="visible">
-            Uncompromising Surety<br /><span class="gradient-text"
-              >For What Lies Ahead.</span
-            >
-          </h1>
-          <p>
-            Smart insurance solutions powered by intelligent recommendations,
-            trusted partnerships, and seamless claims support.
-          </p>
-          <div class="hero-quote">
-            "Security is not just a policy. It's peace of mind for every
-            tomorrow."
-          </div>
-          <div class="hero-btns">
-            <a href="services.html" class="btn btn-gold">Know more</a>
-            <a href="userchat.html" class="btn btn-blue"
-              ><i class="fas fa-robot"></i> Insurance Recommender</a
-            >
-          </div>
+
+      .social-links {
+        justify-content: center;
+      }
+    }
+
+    /* Custom Graphics and Mockups */
+
+    .animated-wave-divider {
+      width: 100%;
+      height: 60px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: -2px;
+    }
+
+    .animated-wave-divider svg {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 200%;
+      height: 100%;
+      animation: wave-animation 12s linear infinite;
+    }
+
+    @keyframes wave-animation {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* Insights Section */
+    .insights-section {
+      background: #001533;
+      color: #fff;
+      padding: 8rem 5% 6rem;
+      position: relative;
+      margin-top: 2rem;
+    }
+
+    .insights-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      align-items: center;
+    }
+
+    .insights-phones {
+      position: relative;
+      height: 450px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .iphone-mockup {
+      width: 220px;
+      height: 440px;
+      border: 14px solid #111;
+      border-radius: 35px;
+      background: #000;
+      position: absolute;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+    }
+
+    .iphone-mockup::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 25px;
+      background: #111;
+      border-radius: 0 0 15px 15px;
+      z-index: 10;
+    }
+
+    .mock-1 {
+      transform: rotate(-10deg) translateX(-60px);
+      z-index: 1;
+      border-color: #222;
+      opacity: 0;
+    }
+
+    .mock-2 {
+      transform: rotate(10deg) translateX(60px);
+      z-index: 2;
+      border-color: #333;
+      opacity: 0;
+    }
+
+    .insights-phones.in-view .mock-1 {
+      animation: dropFall1 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    .insights-phones.in-view .mock-2 {
+      animation: dropFall2 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.2s;
+    }
+
+    @keyframes dropFall1 {
+      0% {
+        opacity: 0;
+        transform: translateY(-300px) rotate(0deg) translateX(-60px);
+      }
+
+      40% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg) translateX(-60px);
+      }
+
+      65% {
+        transform: translateY(-20px) rotate(-12deg) translateX(-60px);
+      }
+
+      85% {
+        transform: translateY(0) rotate(-8deg) translateX(-60px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: rotate(-10deg) translateX(-60px);
+      }
+    }
+
+    @keyframes dropFall2 {
+      0% {
+        opacity: 0;
+        transform: translateY(-300px) rotate(0deg) translateX(60px);
+      }
+
+      40% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg) translateX(60px);
+      }
+
+      65% {
+        transform: translateY(-30px) rotate(12deg) translateX(60px);
+      }
+
+      85% {
+        transform: translateY(0) rotate(8deg) translateX(60px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: rotate(10deg) translateX(60px);
+      }
+    }
+
+    .mock-screen {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--primary-mid), var(--primary-dark));
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+      text-align: center;
+      color: #fff;
+    }
+
+    .mock-screen h5 {
+      color: var(--accent-gold);
+      font-size: 1.6rem;
+      margin-bottom: 1rem;
+      line-height: 1.1;
+      font-family: Outfit;
+    }
+
+    .mock-screen p {
+      font-size: 0.85rem;
+      color: #e2e8f0;
+    }
+
+    /* Free Audit Section */
+    .audit-section {
+      background: #f8fafc;
+      padding: 6rem 5% 8rem;
+      text-align: center;
+    }
+
+    .audit-header {
+      max-width: 800px;
+      margin: 0 auto 3rem;
+    }
+
+    .audit-header h2 {
+      font-size: 3rem;
+      color: var(--primary-dark);
+      margin-bottom: 1rem;
+    }
+
+    .audit-mockup-wrapper {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      height: 480px;
+      margin-top: 4rem;
+    }
+
+    .imac-mockup {
+      width: 700px;
+      height: 420px;
+      border: 24px solid #111;
+      border-bottom-width: 45px;
+      border-radius: 15px 15px 5px 5px;
+      background: #000;
+      position: absolute;
+      z-index: 1;
+      bottom: 50px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .imac-mockup::after {
+      content: "";
+      position: absolute;
+      bottom: -105px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 160px;
+      height: 60px;
+      background: #ddd;
+      clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+    }
+
+    .imac-mockup::before {
+      content: "";
+      position: absolute;
+      bottom: -115px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 220px;
+      height: 10px;
+      background: #aaa;
+      border-radius: 10px 10px 0 0;
+    }
+
+    .ipad-mockup {
+      width: 280px;
+      height: 380px;
+      border: 15px solid #222;
+      border-radius: 20px;
+      background: #000;
+      position: absolute;
+      z-index: 2;
+      bottom: 0;
+      right: calc(50% - 380px);
+      box-shadow: -10px 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .iphone-small-mockup {
+      width: 140px;
+      height: 280px;
+      border: 8px solid #333;
+      border-radius: 25px;
+      background: #000;
+      position: absolute;
+      z-index: 3;
+      bottom: -20px;
+      right: calc(50% - 440px);
+      box-shadow: -10px 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .iphone-small-mockup::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 15px;
+      background: #333;
+      border-radius: 0 0 10px 10px;
+      z-index: 10;
+    }
+
+    .drawn-arrows-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+
+    @media (max-width: 992px) {
+      .insights-grid {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .imac-mockup {
+        width: 90%;
+        max-width: 500px;
+        height: 300px;
+      }
+
+      .ipad-mockup {
+        display: none;
+      }
+
+      .iphone-small-mockup {
+        right: 5%;
+      }
+
+      .drawn-arrows-container {
+        gap: 0.5rem;
+      }
+
+      .social-links {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.5rem !important;
+        line-height: 1.2 !important;
+      }
+
+      .hero p {
+        font-size: 1rem !important;
+      }
+
+      .hero-btns {
+        justify-content: center !important;
+      }
+
+      .audit-mockup-wrapper {
+        height: auto !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 2.5rem !important;
+        margin-top: 2rem !important;
+      }
+
+      .imac-mockup {
+        position: relative !important;
+        width: 95% !important;
+        max-width: 420px !important;
+        height: 240px !important;
+        bottom: auto !important;
+        left: auto !important;
+        right: auto !important;
+        margin-bottom: 60px !important;
+        border-width: 12px !important;
+        border-bottom-width: 24px !important;
+      }
+
+      .imac-mockup::after {
+        bottom: -60px !important;
+        width: 90px !important;
+        height: 36px !important;
+      }
+
+      .imac-mockup::before {
+        bottom: -66px !important;
+        width: 120px !important;
+        height: 6px !important;
+      }
+
+      .imac-mockup .mock-screen>div {
+        padding: 1rem !important;
+        width: 90% !important;
+      }
+
+      .imac-mockup .mock-screen h3 {
+        font-size: 1.2rem !important;
+        margin-bottom: 0.25rem !important;
+      }
+
+      .imac-mockup .mock-screen p {
+        font-size: 0.8rem !important;
+        line-height: 1.4 !important;
+      }
+
+      .ipad-mockup {
+        display: flex !important;
+        position: relative !important;
+        width: 70% !important;
+        max-width: 220px !important;
+        height: 300px !important;
+        bottom: auto !important;
+        left: auto !important;
+        right: auto !important;
+        border-width: 10px !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+      }
+
+      .ipad-mockup .mock-screen {
+        padding: 1.5rem !important;
+      }
+
+      .ipad-mockup .mock-screen i {
+        font-size: 2rem !important;
+        margin-bottom: 1rem !important;
+      }
+
+      .ipad-mockup .mock-screen h4 {
+        font-size: 1.1rem !important;
+      }
+
+      .iphone-small-mockup {
+        position: relative !important;
+        width: 50% !important;
+        max-width: 130px !important;
+        height: 250px !important;
+        bottom: auto !important;
+        left: auto !important;
+        right: auto !important;
+        border-width: 6px !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+      }
+
+      .iphone-small-mockup .mock-screen {
+        padding: 1rem !important;
+      }
+
+      .iphone-small-mockup .mock-screen h5 {
+        font-size: 1rem !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="logo"><img src="assets/logo.png" alt="Twinsure" class="site-logo" /> Twinsure</a>
+    <button class="nav-toggle" id="navToggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="nav-links" role="menu" aria-hidden="true">
+      <a href="index.html" class="active">Home</a>
+      <a href="about.html">About</a> <a href="services.html">Services</a>
+      <a href="downloads.html">Downloads</a> <a href="contact.html">Contact</a><a href="login.html" class="btn btn-gold"
+        style="padding: 0.5rem 1.5rem; margin-left: 1rem">Login</a>
+    </div>
+  </nav>
+  <section class="hero">
+    <div class="hero-container">
+      <div class="hero-content">
+        <div class="badge">
+          <i class="fas fa-check-circle"></i> Trusted Insurance Solutions
         </div>
-      </div>
-    </section>
-    <div class="stats-section">
-      <div class="stats-grid">
-        <div class="stat-card">
-          <h3 class="stat-value" data-target="1357" data-suffix="+">0</h3>
-          <p>Happy Clients</p>
+        <h1 id="hero-heading" class="visible">
+          Uncompromising Surety<br /><span class="gradient-text">For What Lies Ahead.</span>
+        </h1>
+        <p>
+          Smart insurance solutions powered by intelligent recommendations,
+          trusted partnerships, and seamless claims support.
+        </p>
+        <div class="hero-quote">
+          "Security is not just a policy. It's peace of mind for every
+          tomorrow."
         </div>
-        <div class="stat-card">
-          <h3 class="stat-value" data-target="98.62" data-suffix="%">0</h3>
-          <p>Claim Success Rate</p>
-        </div>
-        <div class="stat-card">
-          <h3 class="stat-value" data-target="20" data-suffix="+">0</h3>
-          <p>Years of Experience</p>
-        </div>
-        <div class="stat-card">
-          <h3 class="stat-value" data-target="24" data-suffix="/7">0</h3>
-          <p>Customer Support</p>
+        <div class="hero-btns">
+          <a href="services.html" class="btn btn-gold">Know more</a>
+          <a href="userchat.html" class="btn btn-blue"><i class="fas fa-robot"></i> Insurance Recommender</a>
         </div>
       </div>
     </div>
-    <section class="section">
-      <div class="section-header">
-        <h2>Why Choose <span class="gradient-text">Twinsure?</span></h2>
-        <p>
-          We combine deep industry expertise with cutting-edge AI technology to
-          deliver the best insurance solutions tailored just for you.
-        </p>
+  </section>
+  <div class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3 class="stat-value" data-target="1357" data-suffix="+">0</h3>
+        <p>Happy Clients</p>
       </div>
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon"><i class="fas fa-eye"></i></div>
-          <h3>Professional View</h3>
-          <p>Because we know the policy, we recommend with context, clarity, and care.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
-          <h3>Prevention First Process</h3>
-          <p>Even if a choice goes wrong, we work proactively to correct it on your behalf.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon"><i class="fas fa-hand-holding-usd"></i></div>
-          <h3>Cashback Guarantee</h3>
-          <p>If our service does not deliver the expected result under the agreed terms, we review the case and refund the applicable fee.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon"><i class="fas fa-user-check"></i></div>
-          <h3>Expert Guidance</h3>
-          <p>End-to-end support: from selecting policies to fast follow-up on approvals and claims.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon"><i class="fas fa-gavel"></i></div>
-          <h3>We Stand With You</h3>
-          <p>We support you through escalation — even to court — until a final resolution.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon"><i class="fas fa-lock"></i></div>
-          <h3>Secure & Transparent</h3>
-          <p>Clear terms and secure handling of your data and claims at every step.</p>
-        </div>
+      <div class="stat-card">
+        <h3 class="stat-value" data-target="98.62" data-suffix="%">0</h3>
+        <p>Claim Success Rate</p>
       </div>
-    </section>
-
-    <!-- Animated Wave Divider -->
-    <div class="animated-wave-divider">
-      <svg viewBox="0 0 2400 60" preserveAspectRatio="none">
-        <path d="M0,60 Q300,20 600,60 T1200,60 Q1500,20 1800,60 T2400,60 V120 H0 Z" fill="#003f88" opacity="0.3" />
-        <path d="M0,60 Q300,0 600,60 T1200,60 Q1500,0 1800,60 T2400,60 V120 H0 Z" fill="#001533" />
-      </svg>
+      <div class="stat-card">
+        <h3 class="stat-value" data-target="20" data-suffix="+">0</h3>
+        <p>Years of Experience</p>
+      </div>
+      <div class="stat-card">
+        <h3 class="stat-value" data-target="24" data-suffix="/7">0</h3>
+        <p>Customer Support</p>
+      </div>
     </div>
-
-    <!-- Insights Section -->
-    <section class="insights-section">
-      <div class="insights-grid">
-        <div class="insights-content">
-          <h2 style="font-size: 3rem; margin-bottom: 1.5rem; font-family: Outfit; font-weight: 800;"><span class="gradient-text">Twinsure Insights</span></h2>
-          <p style="color: var(--text-gray); font-size: 1.15rem; margin-bottom: 2rem; line-height: 1.6;">
-            Listen, Learn, Protect. Tune in to our expert insights and adapt to a rapidly changing insurance landscape. Gain the knowledge you need to secure what matters most.
-          </p>
-          <a href="#" class="btn btn-gold" style="font-size: 1.1rem; padding: 1rem 2.5rem;"><i class="fas fa-play-circle"></i> Start Listening</a>
-        </div>
-        <div class="insights-phones">
-          <div class="iphone-mockup mock-1">
-            <div class="mock-screen">
-              <i class="fas fa-podcast" style="font-size: 3rem; color: var(--accent-gold); margin-bottom: 1rem;"></i>
-              <h5>INSURANCE<br>MOMENTUM<br>PODCAST</h5>
-              <p style="margin-top: 1rem; color: #fff;">Hosted by<br><strong style="color: var(--accent-gold);">Twinsure Experts</strong></p>
-            </div>
-          </div>
-          <div class="iphone-mockup mock-2">
-            <div class="mock-screen" style="background: linear-gradient(135deg, #111, #222);">
-              <h5 style="font-size: 2rem; color: #fff;">LISTEN.<br><span style="color: var(--accent-gold);">LEARN.</span><br>ADAPT.</h5>
-              <p style="margin-top: 1.5rem; font-style: italic; color: #ccc;">"Fix your policy gaps with expert advice..."</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="services-section">
-      <div class="section-header">
-        <h2>Our Expertise / <span class="gradient-text">Services</span></h2>
-        <p>
-          Comprehensive protection plans designed for every aspect of your life
-          and business.
-        </p>
-      </div>
-      <div class="services-grid">
-        <div class="service-card">
-          <div class="service-icon"><i class="fas fa-heart"></i></div>
-          <h4>icare</h4>
-          <a href="services.html" class="btn-link">Learn More <i class="fas fa-arrow-right"></i></a>
-        </div>
-        <div class="service-card">
-          <div class="service-icon"><i class="fas fa-sync-alt"></i></div>
-          <h4>re.new.all</h4>
-          <a href="services.html" class="btn-link">Learn More <i class="fas fa-arrow-right"></i></a>
-        </div>
-        <div class="service-card">
-          <div class="service-icon"><i class="fas fa-hospital"></i></div>
-          <h4>hospos</h4>
-          <a href="services.html" class="btn-link">Learn More <i class="fas fa-arrow-right"></i></a>
-        </div>
-        <div class="service-card">
-          <div class="service-icon"><i class="fas fa-clipboard-check"></i></div>
-          <h4>pre policy audit</h4>
-          <a href="services.html" class="btn-link">Learn More <i class="fas fa-arrow-right"></i></a>
-        </div>
-      </div>
-      <div style="text-align: center; margin-top: 2rem">
-        <p style="color:var(--text-muted); max-width:800px; margin:0 auto;">
-          We also provide <strong>policy auditing</strong> for all cases — from the best policies to the worst ones — to help you benefit from optimal coverage and corrective recommendations.
-        </p>
-      </div>
-      <div style="text-align: center; margin-top: 2.5rem">
-        <h3 style="font-size: 1.8rem; margin-bottom: 1.5rem; color: var(--primary-dark);">Find the Perfect Insurance in Minutes.</h3>
-        <a href="userchat.html" class="btn btn-blue" style="padding: 1rem 2.5rem; font-size: 1.1rem"><i class="fas fa-robot"></i> Try Recommender Now</a>
-      </div>
-    </section>
-    <section class="section">
-      <div class="section-header">
-        <h2>Client <span class="gradient-text">Testimonials</span></h2>
-        <p>
-          Don't just take our word for it. Hear what our clients have to say
-          about their Twinsure experience.
-        </p>
-      </div>
-      <div class="testimonials" id="testimonialsContainer">
-        <!-- New Testimonial 1 -->
-        <div class="testimonial-new-card">
-          <div class="testimonial-left">
-            <div class="testimonial-avatar" style="background: url(https://ui-avatars.com/api/?name=Murugan&background=random) center/cover;"></div>
-            <div class="testimonial-name">Murugan</div>
-            <div class="testimonial-type">from Karur</div>
-          </div>
-          <div class="testimonial-right">
-            <div class="testimonial-section">
-              <div class="testimonial-heading">Before</div>
-              <div class="testimonial-content">
-                <p>I am Murugan from Karur. About six months ago, I suffered a heart attack and was advised to undergo heart surgery at a hospital in Coimbatore. The surgery would cost around ₹6 lakh. Since I had a Star Health Insurance policy, I submitted a claim, but it was rejected. After being discharged and returning home, I submitted the claim again, but it was rejected once more for different reasons.</p>
-              </div>
-            </div>
-            <div class="testimonial-section">
-              <div class="testimonial-heading">How Twins Consultancy Helped</div>
-              <div class="testimonial-content">
-                <p>At that point, a friend recommended Twins Consultancy. I immediately contacted them and shared all the necessary details. From the very beginning, their team guided me with speed and clarity. They explained exactly what needed to be done, how to submit the documents correctly, and what corrections were required. They carefully reviewed my case, corrected every mistake, and handled the entire process efficiently.</p>
-              </div>
-            </div>
-            <div class="testimonial-section">
-              <div class="testimonial-heading">Result</div>
-              <div class="testimonial-content">
-                <p>Thanks to the efforts of Twins Consultancy, I successfully received my insurance claim amount of ₹6 lakh this week. I am extremely happy and satisfied with the support they provided. Their guidance made a difficult process much easier, and I highly recommend Twins Consultancy to anyone seeking assistance with insurance claims.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- New Testimonial 2 -->
-        <div class="testimonial-new-card dark">
-          <div class="testimonial-left">
-            <div class="testimonial-avatar" style="background: url(https://ui-avatars.com/api/?name=Lokanathan&background=random) center/cover;"></div>
-            <div class="testimonial-name">Lokanathan</div>
-            <div class="testimonial-type">Teacher from Chinnatharapuram</div>
-          </div>
-          <div class="testimonial-right">
-            <div class="testimonial-section">
-              <div class="testimonial-heading">Before</div>
-              <div class="testimonial-content">
-                <p>I am Lokanathan, a teacher from Chinnatharapuram. I had taken the Star Super Plus Policy through Twins Consultancy. Recently, I underwent surgical treatment at Royal Care Hospital. At that time, I was unable to receive the payment directly through the policy. Since I am a government employee, the policy was not directly applicable, and I had to seek reimbursement through the government scheme. Additionally, there were challenges in obtaining the eligible amount through my Star Health Policy.</p>
-              </div>
-            </div>
-            <div class="testimonial-section">
-              <div class="testimonial-heading">How Twins Consultancy Helped</div>
-              <div class="testimonial-content">
-                <p>I am extremely grateful to Mr. Lakshmanan from Twins Consultancy, who personally guided and assisted me throughout the reimbursement process. He carefully handled the complexities involved in claiming benefits under the government policy and also addressed the issues related to my Star Health Policy. Even though it was a top-up policy and I initially considered leaving the matter as it was, Mr. Lakshmanan remained committed to ensuring that I received the amount I was rightfully entitled to. He continuously followed up and worked diligently until the reimbursement process was completed successfully.</p>
-              </div>
-            </div>
-            <div class="testimonial-section">
-              <div class="testimonial-heading">Result</div>
-              <div class="testimonial-content">
-                <p>Thanks to the dedicated efforts of Mr. Lakshmanan and the team at Twins Consultancy, I successfully received the reimbursement amount that I was eligible for. I will always remain thankful for their support, dedication, and persistence. I highly appreciate the service provided by Twins Consultancy and sincerely thank Mr. Lakshmanan for his invaluable assistance.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Free Policy Audit Section -->
-    <section class="audit-section">
-      <div class="audit-header">
-        <h2>Insurance <span class="gradient-text">Analyst</span></h2>
-        <p>Policy Audit & Mis-selling Rectification Specialist, protecting policyholders with transparent and expert guidance.</p>
-      </div>
-      <div class="audit-mockup-wrapper">
-        <div class="imac-mockup">
-          <div class="mock-screen" style="background: url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=800&q=80'); background-size: cover; background-position: center;">
-            <div style="background: rgba(0,0,0,0.8); padding: 2rem; border-radius: 15px; text-align: left; width: 85%; backdrop-filter: blur(5px);">
-              <h3 style="font-size: 2.2rem; margin-bottom: 0.5rem; font-family: Outfit; font-weight: 800;"><span class="gradient-text">Insurance</span> Analyst</h3>
-              <p style="font-size: 1.2rem; color: #fff; line-height: 1.6;">Policy Audit & Mis-selling Rectification Specialist, protecting policyholders with transparent and expert guidance.</p>
-            </div>
-          </div>
-        </div>
-        <div class="ipad-mockup">
-          <div class="mock-screen" style="background: linear-gradient(135deg, #001533, #003f88);">
-            <i class="fas fa-search-dollar" style="font-size: 3.5rem; color: var(--accent-gold); margin-bottom: 1.5rem;"></i>
-            <h4 style="font-size: 1.8rem; font-family: Outfit;">Detailed<br>Reporting</h4>
-          </div>
-        </div>
-        <div class="iphone-small-mockup">
-          <div class="mock-screen" style="background: #111;">
-            <h5 style="font-size: 1.3rem; color: #fff;">Book<br><span class="gradient-text">Now</span></h5>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <footer class="footer">
-      <div class="footer-grid">
-        <div>
-          <a href="index.html" class="footer-logo"
-            ><img src="assets/logo.png" alt="Twinsure" class="footer-logo-img"/> Twinsure</a
-          >
-          <p>
-            It’s not about having policy—it’s about knowing when it matters.
-          </p>
-          <div class="social-links">
-            <a href="#"><i class="fab fa-facebook-f"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-linkedin-in"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-          </div>
-        </div>
-        <div class="footer-col">
-          <h4>Quick Links</h4>
-          <ul>
-            <li><a href="about.html">About Us</a></li>
-            <li><a href="services.html">Our Services</a></li>
-            <li><a href="downloads.html">Claims Support</a></li>
-            <li><a href="contact.html">Contact Us</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4>Services</h4>
-          <ul>
-            <li><a href="services.html">iCARE</a></li>
-            <li><a href="services.html">Re.New.All</a></li>
-            <li><a href="services.html">HosPos</a></li>
-            <li><a href="services.html">ProFIT</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4>Contact Info</h4>
-          <ul>
-            <li style="color: #94a3b8">
-              <i
-                class="fas fa-envelope"
-                style="margin-right: 8px; color: var(--accent-gold)"
-              ></i>
-              support@twinsure.in
-            </li>
-            <li style="color: #94a3b8">
-              <a href="tel:+919750003600" style="color: inherit; text-decoration: none; display: flex; align-items: flex-start;">
-                <i class="fas fa-phone-alt" style="margin-right: 8px; margin-top: 4px; color: var(--accent-gold)"></i>
-                +91 9750003600
-              </a>
-            </li>
-            <li style="color: #94a3b8">
-              <a href="https://maps.google.com/maps?q=Twins%20Consultancy,%20Karur,%20Tamil%20Nadu,%20India" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none; display: flex; align-items: flex-start;">
-                <i class="fas fa-map-marker-alt" style="margin-right: 8px; margin-top: 4px; color: var(--accent-gold)"></i>
-                6, 2nd cross, Gowripuram Extension, Gowripuram, Karur, Tamil Nadu 639002
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <div><a href="https://path-makers.vercel.app" style="color: #94a3b8; text-decoration: none;">Transforming Ideas into Solutions — <strong style="text-transform:uppercase; font-weight:800; color:#ffd500; letter-spacing:0.5px">PATHMAKERS</strong></a></div>
-        <div style="display: flex; gap: 1.5rem">
-          <a href="privacy.html" style="color: #94a3b8">Privacy Policy</a>
-          <a href="terms.html" style="color: #94a3b8">Terms of Service</a>
-        </div>
-      </div>
-    </footer>
-    <div class="floating-actions">
-      <a
-        href="userchat.html"
-        class="float-btn float-ai"
-        data-tooltip="Insurance Recommender"
-        ><i class="fas fa-robot"></i> </a
-      ><a
-        href="https://wa.me/919750003600?text=Hello,%20I%20would%20like%20to%20know%20more%20about%20Twinsure%20services."
-        class="float-btn float-wa"
-        data-tooltip="Professional WhatsApp"
-        target="_blank"
-        rel="noopener noreferrer"
-        ><i class="fab fa-whatsapp"></i
-      ></a>
+  </div>
+  <section class="section">
+    <div class="section-header">
+      <h2>Why Choose <span class="gradient-text">Twinsure?</span></h2>
+      <p>
+        We combine deep industry expertise with cutting-edge AI technology to
+        deliver the best insurance solutions tailored just for you.
+      </p>
     </div>
-    <script>
-      window.addEventListener("scroll", () => {
-        var e = document.getElementById("navbar");
-        50 < window.scrollY
-          ? e.classList.add("scrolled")
-          : e.classList.remove("scrolled");
-      });
-      let navbar = document.getElementById("navbar"),
-        navToggle = document.getElementById("navToggle"),
-        navLinks = navbar.querySelector(".nav-links"),
-        statValues =
-          (navLinks && navLinks.setAttribute("aria-hidden", "true"),
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-eye"></i></div>
+        <h3>Professional View</h3>
+        <p>Because we know the policy, we recommend with context, clarity, and care.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+        <h3>Prevention First Process</h3>
+        <p>Even if a choice goes wrong, we work proactively to correct it on your behalf.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-hand-holding-usd"></i></div>
+        <h3>Cashback Guarantee</h3>
+        <p>If our service does not deliver the expected result under the agreed terms, we review the case and refund the
+          applicable fee.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-user-check"></i></div>
+        <h3>Expert Guidance</h3>
+        <p>End-to-end support: from selecting policies to fast follow-up on approvals and claims.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-gavel"></i></div>
+        <h3>We Stand With You</h3>
+        <p>We support you through escalation — even to court — until a final resolution.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-lock"></i></div>
+        <h3>Secure & Transparent</h3>
+        <p>Clear terms and secure handling of your data and claims at every step.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Animated Wave Divider -->
+  <div class="animated-wave-divider">
+    <svg viewBox="0 0 2400 60" preserveAspectRatio="none">
+      <path d="M0,60 Q300,20 600,60 T1200,60 Q1500,20 1800,60 T2400,60 V120 H0 Z" fill="#003f88" opacity="0.3" />
+      <path d="M0,60 Q300,0 600,60 T1200,60 Q1500,0 1800,60 T2400,60 V120 H0 Z" fill="#001533" />
+    </svg>
+  </div>
+
+  <!-- Insights Section -->
+  <section class="insights-section">
+    <div class="insights-grid">
+      <div class="insights-content">
+        <h2 style="font-size: 3rem; margin-bottom: 1.5rem; font-family: Outfit; font-weight: 800;"><span
+            class="gradient-text">Twinsure Insights</span></h2>
+        <p style="color: var(--text-gray); font-size: 1.15rem; margin-bottom: 2rem; line-height: 1.6;">
+          Listen, Learn, Protect. Tune in to our expert insights and adapt to a rapidly changing insurance landscape.
+          Gain the knowledge you need to secure what matters most.
+        </p>
+        <a href="#" class="btn btn-gold" style="font-size: 1.1rem; padding: 1rem 2.5rem;"><i
+            class="fas fa-play-circle"></i> Start Listening</a>
+      </div>
+      <div class="insights-phones">
+        <div class="iphone-mockup mock-1">
+          <div class="mock-screen">
+            <i class="fas fa-podcast" style="font-size: 3rem; color: var(--accent-gold); margin-bottom: 1rem;"></i>
+            <h5>INSURANCE<br>MOMENTUM<br>PODCAST</h5>
+            <p style="margin-top: 1rem; color: #fff;">Hosted by<br><strong style="color: var(--accent-gold);">Twinsure
+                Experts</strong></p>
+          </div>
+        </div>
+        <div class="iphone-mockup mock-2">
+          <div class="mock-screen" style="background: linear-gradient(135deg, #111, #222);">
+            <h5 style="font-size: 2rem; color: #fff;">LISTEN.<br><span
+                style="color: var(--accent-gold);">LEARN.</span><br>ADAPT.</h5>
+            <p style="margin-top: 1.5rem; font-style: italic; color: #ccc;">"Fix your policy gaps with expert advice..."
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="services-section">
+    <div class="section-header">
+      <h2>Our Expertise / <span class="gradient-text">Services</span></h2>
+      <p>
+        Comprehensive protection plans designed for every aspect of your life
+        and business.
+      </p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-heart"></i></div>
+        <h4>icare</h4>
+        <a href="services.html" class="btn-link">Learn More <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-sync-alt"></i></div>
+        <h4>re.new.all</h4>
+        <a href="services.html" class="btn-link">Learn More <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-hospital"></i></div>
+        <h4>hospos</h4>
+        <a href="services.html" class="btn-link">Learn More <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-clipboard-check"></i></div>
+        <h4>pre policy audit</h4>
+        <a href="services.html" class="btn-link">Learn More <i class="fas fa-arrow-right"></i></a>
+      </div>
+    </div>
+    <div style="text-align: center; margin-top: 2rem">
+      <p style="color:var(--text-muted); max-width:800px; margin:0 auto;">
+        We also provide <strong>policy auditing</strong> for all cases — from the best policies to the worst ones — to
+        help you benefit from optimal coverage and corrective recommendations.
+      </p>
+    </div>
+    <div style="text-align: center; margin-top: 2.5rem">
+      <h3 style="font-size: 1.8rem; margin-bottom: 1.5rem; color: var(--primary-dark);">Find the Perfect Insurance in
+        Minutes.</h3>
+      <a href="userchat.html" class="btn btn-blue" style="padding: 1rem 2.5rem; font-size: 1.1rem"><i
+          class="fas fa-robot"></i> Try Recommender Now</a>
+    </div>
+  </section>
+  <section class="section">
+    <div class="section-header">
+      <h2>Client <span class="gradient-text">Testimonials</span></h2>
+      <p>
+        Don't just take our word for it. Hear what our clients have to say
+        about their Twinsure experience.
+      </p>
+    </div>
+    <div class="testimonials" id="testimonialsContainer">
+      <!-- New Testimonial 1 -->
+      <div class="testimonial-new-card">
+        <div class="testimonial-left">
+          <div class="testimonial-avatar"
+            style="background: url(https://ui-avatars.com/api/?name=Murugan&background=random) center/cover;"></div>
+          <div class="testimonial-name">Murugan</div>
+          <div class="testimonial-type">from Karur</div>
+        </div>
+        <div class="testimonial-right">
+          <div class="testimonial-section">
+            <div class="testimonial-heading">Before</div>
+            <div class="testimonial-content">
+              <p>I am Murugan from Karur. About six months ago, I suffered a heart attack and was advised to undergo
+                heart surgery at a hospital in Coimbatore. The surgery would cost around ₹6 lakh. Since I had a Star
+                Health Insurance policy, I submitted a claim, but it was rejected. After being discharged and returning
+                home, I submitted the claim again, but it was rejected once more for different reasons.</p>
+            </div>
+          </div>
+          <div class="testimonial-section">
+            <div class="testimonial-heading">How Twins Consultancy Helped</div>
+            <div class="testimonial-content">
+              <p>At that point, a friend recommended Twins Consultancy. I immediately contacted them and shared all the
+                necessary details. From the very beginning, their team guided me with speed and clarity. They explained
+                exactly what needed to be done, how to submit the documents correctly, and what corrections were
+                required. They carefully reviewed my case, corrected every mistake, and handled the entire process
+                efficiently.</p>
+            </div>
+          </div>
+          <div class="testimonial-section">
+            <div class="testimonial-heading">Result</div>
+            <div class="testimonial-content">
+              <p>Thanks to the efforts of Twins Consultancy, I successfully received my insurance claim amount of ₹6
+                lakh this week. I am extremely happy and satisfied with the support they provided. Their guidance made a
+                difficult process much easier, and I highly recommend Twins Consultancy to anyone seeking assistance
+                with insurance claims.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- New Testimonial 2 -->
+      <div class="testimonial-new-card dark">
+        <div class="testimonial-left">
+          <div class="testimonial-avatar"
+            style="background: url(https://ui-avatars.com/api/?name=Lokanathan&background=random) center/cover;"></div>
+          <div class="testimonial-name">Lokanathan</div>
+          <div class="testimonial-type">Teacher from Chinnatharapuram</div>
+        </div>
+        <div class="testimonial-right">
+          <div class="testimonial-section">
+            <div class="testimonial-heading">Before</div>
+            <div class="testimonial-content">
+              <p>I am Lokanathan, a teacher from Chinnatharapuram. I had taken the Star Super Plus Policy through Twins
+                Consultancy. Recently, I underwent surgical treatment at Royal Care Hospital. At that time, I was unable
+                to receive the payment directly through the policy. Since I am a government employee, the policy was not
+                directly applicable, and I had to seek reimbursement through the government scheme. Additionally, there
+                were challenges in obtaining the eligible amount through my Star Health Policy.</p>
+            </div>
+          </div>
+          <div class="testimonial-section">
+            <div class="testimonial-heading">How Twins Consultancy Helped</div>
+            <div class="testimonial-content">
+              <p>I am extremely grateful to Mr. Lakshmanan from Twins Consultancy, who personally guided and assisted me
+                throughout the reimbursement process. He carefully handled the complexities involved in claiming
+                benefits under the government policy and also addressed the issues related to my Star Health Policy.
+                Even though it was a top-up policy and I initially considered leaving the matter as it was, Mr.
+                Lakshmanan remained committed to ensuring that I received the amount I was rightfully entitled to. He
+                continuously followed up and worked diligently until the reimbursement process was completed
+                successfully.</p>
+            </div>
+          </div>
+          <div class="testimonial-section">
+            <div class="testimonial-heading">Result</div>
+            <div class="testimonial-content">
+              <p>Thanks to the dedicated efforts of Mr. Lakshmanan and the team at Twins Consultancy, I successfully
+                received the reimbursement amount that I was eligible for. I will always remain thankful for their
+                support, dedication, and persistence. I highly appreciate the service provided by Twins Consultancy and
+                sincerely thank Mr. Lakshmanan for his invaluable assistance.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Free Policy Audit Section -->
+  <section class="audit-section">
+    <div class="audit-header">
+      <h2>Insurance <span class="gradient-text">Analyst</span></h2>
+      <p>Policy Audit & Mis-selling Rectification Specialist, protecting policyholders with transparent and expert
+        guidance.</p>
+    </div>
+    <div class="audit-mockup-wrapper">
+      <div class="imac-mockup">
+        <div class="mock-screen"
+          style="background: url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=800&q=80'); background-size: cover; background-position: center;">
+          <div
+            style="background: rgba(0,0,0,0.8); padding: 2rem; border-radius: 15px; text-align: left; width: 85%; backdrop-filter: blur(5px);">
+            <h3 style="font-size: 2.2rem; margin-bottom: 0.5rem; font-family: Outfit; font-weight: 800;"><span
+                class="gradient-text">Insurance</span> Analyst</h3>
+            <p style="font-size: 1.2rem; color: #fff; line-height: 1.6;">Policy Audit & Mis-selling Rectification
+              Specialist, protecting policyholders with transparent and expert guidance.</p>
+          </div>
+        </div>
+      </div>
+      <div class="ipad-mockup">
+        <div class="mock-screen" style="background: linear-gradient(135deg, #001533, #003f88);">
+          <i class="fas fa-search-dollar"
+            style="font-size: 3.5rem; color: var(--accent-gold); margin-bottom: 1.5rem;"></i>
+          <h4 style="font-size: 1.8rem; font-family: Outfit;">Detailed<br>Reporting</h4>
+        </div>
+      </div>
+      <div class="iphone-small-mockup">
+        <div class="mock-screen" style="background: #111;">
+          <h5 style="font-size: 1.3rem; color: #fff;">Book<br><span class="gradient-text">Now</span></h5>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="footer-logo"><img src="assets/logo.png" alt="Twinsure" class="footer-logo-img" />
+          Twinsure</a>
+        <p>
+          It’s not about having policy—it’s about knowing when it matters.
+        </p>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="services.html">Our Services</a></li>
+          <li><a href="downloads.html">Claims Support</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services.html">iCARE</a></li>
+          <li><a href="services.html">Re.New.All</a></li>
+          <li><a href="services.html">HosPos</a></li>
+          <li><a href="services.html">ProFIT</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact Info</h4>
+        <ul>
+          <li style="color: #94a3b8">
+            <i class="fas fa-envelope" style="margin-right: 8px; color: var(--accent-gold)"></i>
+            support@twinsure.in
+          </li>
+          <li style="color: #94a3b8">
+            <a href="tel:+919750003600"
+              style="color: inherit; text-decoration: none; display: flex; align-items: flex-start;">
+              <i class="fas fa-phone-alt" style="margin-right: 8px; margin-top: 4px; color: var(--accent-gold)"></i>
+              +91 9750003600
+            </a>
+          </li>
+          <li style="color: #94a3b8">
+            <a href="https://maps.google.com/maps?q=Twins%20Consultancy,%20Karur,%20Tamil%20Nadu,%20India"
+              target="_blank" rel="noopener noreferrer"
+              style="color: inherit; text-decoration: none; display: flex; align-items: flex-start;">
+              <i class="fas fa-map-marker-alt"
+                style="margin-right: 8px; margin-top: 4px; color: var(--accent-gold)"></i>
+              6, 2nd cross, Gowripuram Extension, Gowripuram, Karur, Tamil Nadu 639002
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div><a href="https://path-makers.vercel.app" style="color: #94a3b8; text-decoration: none;">Transforming Ideas
+          into Solutions — <strong
+            style="text-transform:uppercase; font-weight:800; color:#ffd500; letter-spacing:0.5px">PATHMAKERS</strong></a>
+      </div>
+      <div style="display: flex; gap: 1.5rem">
+        <a href="privacy.html" style="color: #94a3b8">Privacy Policy</a>
+        <a href="terms.html" style="color: #94a3b8">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
+  <div class="floating-actions">
+    <a href="userchat.html" class="float-btn float-ai" data-tooltip="Insurance Recommender"><i class="fas fa-robot"></i>
+    </a><a
+      href="https://wa.me/919750003600?text=Hello,%20I%20would%20like%20to%20know%20more%20about%20Twinsure%20services."
+      class="float-btn float-wa" data-tooltip="Professional WhatsApp" target="_blank" rel="noopener noreferrer"><i
+        class="fab fa-whatsapp"></i></a>
+  </div>
+  <script>
+    window.addEventListener("scroll", () => {
+      var e = document.getElementById("navbar");
+      50 < window.scrollY
+        ? e.classList.add("scrolled")
+        : e.classList.remove("scrolled");
+    });
+    let navbar = document.getElementById("navbar"),
+      navToggle = document.getElementById("navToggle"),
+      navLinks = navbar.querySelector(".nav-links"),
+      statValues =
+        (navLinks && navLinks.setAttribute("aria-hidden", "true"),
           navToggle?.addEventListener("click", () => {
             var e = navbar.classList.toggle("nav-open");
             (document.body.classList.toggle("nav-open", e),
@@ -1672,88 +2034,89 @@
             e.addEventListener("click", () => {
               window.innerWidth <= 768 &&
                 (navbar.classList.remove("nav-open"),
-                document.body.classList.remove("nav-open"),
-                navToggle.setAttribute("aria-expanded", "false"),
-                navLinks) &&
+                  document.body.classList.remove("nav-open"),
+                  navToggle.setAttribute("aria-expanded", "false"),
+                  navLinks) &&
                 navLinks.setAttribute("aria-hidden", "true");
             });
           }),
           window.addEventListener("resize", () => {
             768 < window.innerWidth &&
               (navbar.classList.remove("nav-open"),
-              document.body.classList.remove("nav-open"),
-              navToggle.setAttribute("aria-expanded", "false"),
-              navLinks) &&
+                document.body.classList.remove("nav-open"),
+                navToggle.setAttribute("aria-expanded", "false"),
+                navLinks) &&
               navLinks.setAttribute("aria-hidden", "true");
           }),
           document.querySelectorAll(".stat-value")),
-        formatStatValue = (e, t) => "" + Number(e).toLocaleString("en-US") + t,
-        animateStatValue = (i) => {
-          if ("true" !== i.dataset.animated) {
-            i.dataset.animated = "true";
-            let a = Number(i.dataset.target || 0),
-              n = i.dataset.suffix || "",
-              r = performance.now(),
-              s = (e) => {
-                var e = Math.min((e - r) / 1600, 1),
-                  t = 1 - Math.pow(1 - e, 3),
-                  t = Math.round(a * t);
-                ((i.textContent = formatStatValue(t, n)),
-                  e < 1
-                    ? requestAnimationFrame(s)
-                    : (i.textContent = formatStatValue(a, n)));
-              };
-            requestAnimationFrame(s);
-          }
+      formatStatValue = (e, t) => "" + Number(e).toLocaleString("en-US") + t,
+      animateStatValue = (i) => {
+        if ("true" !== i.dataset.animated) {
+          i.dataset.animated = "true";
+          let a = Number(i.dataset.target || 0),
+            n = i.dataset.suffix || "",
+            r = performance.now(),
+            s = (e) => {
+              var e = Math.min((e - r) / 1600, 1),
+                t = 1 - Math.pow(1 - e, 3),
+                t = Math.round(a * t);
+              ((i.textContent = formatStatValue(t, n)),
+                e < 1
+                  ? requestAnimationFrame(s)
+                  : (i.textContent = formatStatValue(a, n)));
+            };
+          requestAnimationFrame(s);
+        }
+      },
+      statObserver = new IntersectionObserver(
+        (e, t) => {
+          e.forEach((e) => {
+            e.isIntersecting &&
+              (animateStatValue(e.target), t.unobserve(e.target));
+          });
         },
-        statObserver = new IntersectionObserver(
-          (e, t) => {
-            e.forEach((e) => {
-              e.isIntersecting &&
-                (animateStatValue(e.target), t.unobserve(e.target));
-            });
-          },
-          { threshold: 0.4 },
-        ),
-        heroLines =
-          (statValues.forEach((e) => {
-            statObserver.observe(e);
-          }),
+        { threshold: 0.4 },
+      ),
+      heroLines =
+        (statValues.forEach((e) => {
+          statObserver.observe(e);
+        }),
           [
             "Uncompromising Surety <br><span class='gradient-text'>For What Lies Ahead</span>",
             "100% Claim Assurance <br><span class='gradient-text'>When You Need It Most</span>",
             "Empowering Benefits <br><span class='gradient-text'>Designed to Protect You</span>",
             "Intelligent Solutions <br><span class='gradient-text'>Tailored for Ultimate Care</span>",
           ]),
-        currentLineIndex = 0,
-        heroHeading = document.getElementById("hero-heading");
-      heroHeading &&
-        setInterval(() => {
-          (heroHeading.classList.remove("visible"),
-            heroHeading.classList.add("exit"),
-            setTimeout(() => {
-              ((currentLineIndex = (currentLineIndex + 1) % heroLines.length),
-                (heroHeading.innerHTML = heroLines[currentLineIndex]),
-                heroHeading.classList.remove("exit"),
-                heroHeading.offsetWidth,
-                heroHeading.classList.add("visible"));
-            }, 400));
-        }, 4e3);
+      currentLineIndex = 0,
+      heroHeading = document.getElementById("hero-heading");
+    heroHeading &&
+      setInterval(() => {
+        (heroHeading.classList.remove("visible"),
+          heroHeading.classList.add("exit"),
+          setTimeout(() => {
+            ((currentLineIndex = (currentLineIndex + 1) % heroLines.length),
+              (heroHeading.innerHTML = heroLines[currentLineIndex]),
+              heroHeading.classList.remove("exit"),
+              heroHeading.offsetWidth,
+              heroHeading.classList.add("visible"));
+          }, 400));
+      }, 4e3);
 
-      /* New observer for phones dropping animation */
-      const phonesEl = document.querySelector('.insights-phones');
-      if (phonesEl) {
-        const phonesObserver = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('in-view');
-              phonesObserver.unobserve(entry.target);
-            }
-          });
-        }, { threshold: 0.4 });
-        phonesObserver.observe(phonesEl);
-      }
-    </script>
-    <script src="js/site-contact.js"></script>
-  </body>
+    /* New observer for phones dropping animation */
+    const phonesEl = document.querySelector('.insights-phones');
+    if (phonesEl) {
+      const phonesObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            phonesObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.4 });
+      phonesObserver.observe(phonesEl);
+    }
+  </script>
+  <script src="js/site-contact.js"></script>
+</body>
+
 </html>
