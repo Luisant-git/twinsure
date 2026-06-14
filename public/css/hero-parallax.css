@@ -1,5 +1,20 @@
 /* Home page hero and navbar refinements */
 
+/*
+  ======================================================
+  EASILY EDIT HERO BACKGROUND VIDEO CONFIGURATION HERE:
+  ======================================================
+  You can modify these variables to change the video scale, 
+  width, and X/Y positioning offset on the screen.
+*/
+:root {
+  --hero-video-width: 65vw;        /* Video width (takes up ~65% of viewport width) */
+  --hero-video-max-width: 1150px;  /* Max width cap on extremely wide screens */
+  --hero-video-scale: 1.0;         /* Video scale size (e.g. 1.0 is default, 1.1 is larger) */
+  --hero-video-x: 69%;             /* Horizontal axis: 50% is center, 68% puts it perfectly on the right */
+  --hero-video-y: 65%;             /* Vertical axis: 50% is center */
+}
+
 .navbar {
   top: 0;
   left: 0;
@@ -15,11 +30,21 @@
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.25);
 }
 
+/* Scrolled logo & link contrast rules */
+.navbar.scrolled .logo {
+  color: var(--text-white) !important;
+}
+
+.navbar.scrolled .nav-links a {
+  color: var(--text-gray) !important;
+}
+
 .nav-cta {
   padding: 0.55rem 1.5rem !important;
   margin-left: 1rem;
 }
 
+/* Hero Section Base */
 .hero {
   min-height: 100vh;
   padding: 10rem 5% 6rem;
@@ -27,35 +52,27 @@
   overflow: hidden;
   display: flex;
   align-items: center;
-  background:
-    radial-gradient(circle at 16% 18%, rgba(253, 197, 0, 0.18), transparent 22%),
-    radial-gradient(circle at 84% 20%, rgba(0, 80, 157, 0.38), transparent 30%),
-    radial-gradient(circle at 80% 78%, rgba(255, 255, 255, 0.1), transparent 18%),
-    linear-gradient(145deg, #001533 0%, #00296b 58%, #003f88 100%);
+  background: #e3e3e7; /* Light gray background */
 }
 
+/* Hide old dark-gradient circles */
 .hero::before,
 .hero::after {
-  content: "";
+  display: none;
+}
+
+/* Seamless Background Video */
+.hero-video-bg {
   position: absolute;
-  border-radius: 999px;
+  top: var(--hero-video-y);
+  left: var(--hero-video-x);
+  transform: translate(-50%, -50%) scale(var(--hero-video-scale));
+  width: var(--hero-video-width);
+  max-width: var(--hero-video-max-width);
+  height: auto;
+  border: none;
+  z-index: 0;
   pointer-events: none;
-}
-
-.hero::before {
-  width: 22rem;
-  height: 22rem;
-  top: -6rem;
-  right: -4rem;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0));
-}
-
-.hero::after {
-  width: 18rem;
-  height: 18rem;
-  bottom: -5rem;
-  left: -4rem;
-  background: radial-gradient(circle, rgba(253, 197, 0, 0.12), rgba(253, 197, 0, 0));
 }
 
 .hero-container {
@@ -72,6 +89,8 @@
 
 .hero-content {
   color: #fff;
+  position: relative;
+  z-index: 2;
 }
 
 .hero-content h1 {
@@ -79,11 +98,11 @@
   line-height: 1.04;
   letter-spacing: -1.8px;
   margin-bottom: 1.4rem;
-  color: #fff;
+  color: #001533; /* Deep navy color for contrast */
 }
 
 .hero-content .accent-text {
-  background: linear-gradient(135deg, #ffe082 0%, #fdc500 100%);
+  background: linear-gradient(135deg, #003f88 0%, #00509d 100%); /* Vibrant blue gradient */
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -93,10 +112,11 @@
   max-width: 36rem;
   font-size: 1.08rem;
   line-height: 1.72;
-  color: rgba(226, 232, 240, 0.92);
+  color: #334155; /* Slate gray color for contrast */
   margin-bottom: 2rem;
 }
 
+/* Premium light-glassmorphic quote card */
 .hero-quote-card {
   display: flex;
   align-items: center;
@@ -104,11 +124,13 @@
   max-width: 35rem;
   padding: 1.15rem 1.25rem;
   margin-bottom: 2rem;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.65); /* Light glassmorphism */
+  border: 1px solid rgba(0, 21, 51, 0.08); /* Subtle border */
   border-radius: 24px;
   backdrop-filter: blur(14px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 20px 40px rgba(0, 21, 51, 0.05); /* Soft shadow */
+  position: relative;
+  z-index: 2;
 }
 
 .quote-icon-circle {
@@ -119,23 +141,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #ffe082 0%, #fdc500 100%);
-  color: #001533;
+  background: linear-gradient(135deg, #003f88 0%, #00509d 100%); /* Deep blue gradient */
+  color: #fff;
   font-size: 1rem;
   font-weight: 800;
 }
 
 .quote-text {
-  color: #fff;
+  color: #0f172a;
 }
 
 .quote-text strong {
   display: block;
   margin-bottom: 0.1rem;
+  color: #001533;
 }
 
 .quote-text span {
-  color: rgba(226, 232, 240, 0.84);
+  color: #475569;
   font-size: 0.96rem;
 }
 
@@ -146,32 +169,7 @@
 }
 
 .hero-btns .btn-blue {
-  border: 1px solid rgba(255, 255, 255, 0.18);
-}
-
-.hero-graphic-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.hero-static-scene {
-  position: relative;
-  width: 100%;
-  max-width: 620px;
-  aspect-ratio: 3 / 2;
-}
-
-.hero-layer {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  user-select: none;
-  -webkit-user-drag: none;
-  pointer-events: none;
-  transform-origin: 50% 50%;
+  border: none;
 }
 
 .stats-section {
@@ -180,37 +178,19 @@
   z-index: 5;
 }
 
-.layer-bg {
-  z-index: 1;
-  transform: translate(0, 0) scale(2);
-}
-
-.layer-shield {
-  z-index: 2;
-  transform: translate(-300px, -180px) scale(1.5);
-}
-
-.layer-checklist {
-  z-index: 3;
-  transform: translate(-50px, 0) scale(1.5);
-}
-
-.layer-plant {
-  z-index: 4;
-  transform: translate(100px, 100px) scale(1.1);
-}
-
-.layer-man {
-  z-index: 5;
-  transform: translate(-200px, 80px) scale(1);
-}
-
-.layer-woman {
-  z-index: 6;
-  transform: translate(140px, 100px) scale(1);
-}
-
+/* Responsive adjustments */
 @media (max-width: 992px) {
+  :root {
+    --hero-video-width: 95vw;
+    --hero-video-x: 50%;
+    --hero-video-y: 50%;
+    --hero-video-scale: 1.0;
+  }
+
+  .hero-video-bg {
+    opacity: 0.25; /* Subtle watermark on mobile so text is perfectly readable */
+  }
+
   .hero {
     min-height: auto;
     padding-top: 8.75rem;
@@ -235,10 +215,6 @@
 
   .hero-btns {
     justify-content: center;
-  }
-
-  .hero-graphic-container {
-    order: 2;
   }
 
   .stats-section {
@@ -287,10 +263,6 @@
     width: 100%;
     padding: 1rem;
   }
-
-  .hero-static-scene {
-    max-width: 520px;
-  }
 }
 
 @media (max-width: 576px) {
@@ -314,33 +286,5 @@
     width: 2.65rem;
     height: 2.65rem;
     font-size: 0.92rem;
-  }
-
-  .hero-static-scene {
-    max-width: 360px;
-  }
-
-  .layer-bg {
-    transform: translate(0, 0) scale(1.7);
-  }
-
-  .layer-shield {
-    transform: translate(-170px, -100px) scale(1.2);
-  }
-
-  .layer-checklist {
-    transform: translate(-28px, 0) scale(1.28);
-  }
-
-  .layer-plant {
-    transform: translate(64px, 64px) scale(0.92);
-  }
-
-  .layer-man {
-    transform: translate(-118px, 50px) scale(0.88);
-  }
-
-  .layer-woman {
-    transform: translate(82px, 64px) scale(0.88);
   }
 }

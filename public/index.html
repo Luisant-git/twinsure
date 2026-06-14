@@ -141,7 +141,7 @@
     .logo {
       font-size: 1.8rem;
       font-weight: 800;
-      color: var(--text-white);
+      color: #0f172a; /* Dark slate by default for the light hero background */
       font-family: Outfit;
       display: flex;
       align-items: center;
@@ -159,7 +159,7 @@
     }
 
     .nav-links a {
-      color: var(--text-gray);
+      color: #334155; /* Slate gray by default for the light hero background */
       font-weight: 500;
       font-size: 0.95rem;
       transition: 0.3s;
@@ -259,14 +259,7 @@
 
     .hero {
       min-height: 100vh;
-      background:
-        radial-gradient(circle at 80% 20%,
-          rgba(0, 80, 157, 0.4) 0,
-          transparent 50%),
-        radial-gradient(circle at 20% 80%,
-          rgba(253, 197, 0, 0.1) 0,
-          transparent 40%),
-        #001533;
+      background: #e3e3e7;
       padding: 10rem 5% 8rem 5%;
       position: relative;
       overflow: hidden;
@@ -318,6 +311,7 @@
       opacity: 0;
       transform: translateY(30px);
       will-change: transform, opacity;
+      color: #001533; /* Dark theme contrast color */
     }
 
     .hero h1.visible {
@@ -338,7 +332,7 @@
 
     .hero p {
       font-size: 1.1rem;
-      color: var(--text-gray);
+      color: #334155; /* Medium dark slate gray */
       line-height: 1.6;
       margin-bottom: 2rem;
       max-width: 90%;
@@ -348,7 +342,7 @@
       border-left: 3px solid var(--accent-gold);
       padding-left: 1rem;
       font-style: italic;
-      color: rgba(255, 255, 255, 0.8);
+      color: #475569; /* Slate quote color */
       margin-bottom: 2.5rem;
       font-size: 1.05rem;
     }
@@ -1629,17 +1623,23 @@
     </button>
     <div class="nav-links" role="menu" aria-hidden="true">
       <a href="index.html" class="active">Home</a>
-      <a href="services.html">Solutions</a>
-      <a href="downloads.html">Claims Support</a>
-      <a href="about.html">About Us</a>
+      <a href="about.html">About</a>
+      <a href="services.html">Services</a>
+      <a href="downloads.html">Downloads</a>
       <a href="contact.html">Contact</a>
-      <a href="userchat.html" class="btn btn-gold nav-cta">Get Protected <i class="fas fa-arrow-right"></i></a>
+      <a href="login.html" class="btn btn-gold nav-cta">Login</a>
     </div>
   </nav>
   <section class="hero">
+    <!-- Seamless background video -->
+    <video class="hero-video-bg" autoplay loop muted playsinline poster="assets/hero-section/hero-thumbnail.jpg">
+      <source src="assets/hero-section/hero-video.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+
     <div class="hero-container">
       <div class="hero-content">
-        <h1>
+        <h1 id="hero-heading" class="visible">
           Insurance Help<br /><span class="accent-text">That Actually Works</span>
         </h1>
         <p>
@@ -1657,17 +1657,6 @@
         <div class="hero-btns">
           <a href="userchat.html" class="btn btn-gold">Get Protected <i class="fas fa-arrow-right"></i></a>
           <a href="services.html" class="btn btn-blue">Know More</a>
-        </div>
-      </div>
-      
-      <div class="hero-graphic-container">
-        <div class="hero-static-scene" aria-hidden="true">
-          <img src="assets/hero-section/background-cloud.svg" class="hero-layer layer-bg" alt="" />
-          <img src="assets/hero-section/shield.svg" class="hero-layer layer-shield" alt="" />
-          <img src="assets/hero-section/checklist.svg" class="hero-layer layer-checklist" alt="" />
-          <img src="assets/hero-section/plant.svg" class="hero-layer layer-plant" alt="" />
-          <img src="assets/hero-section/man.svg" class="hero-layer layer-man" alt="" />
-          <img src="assets/hero-section/woman.svg" class="hero-layer layer-woman" alt="" />
         </div>
       </div>
     </div>
