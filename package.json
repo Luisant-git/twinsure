@@ -12,6 +12,7 @@
     "cors": "^2.8.6",
     "express": "^4.21.2",
     "express-rate-limit": "^8.5.2",
+    "gsap": "^3.15.0",
     "jsonwebtoken": "^9.0.3",
     "mongodb": "^6.16.0",
     "multer": "^2.1.1",
