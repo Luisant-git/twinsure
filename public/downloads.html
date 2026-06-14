@@ -695,7 +695,7 @@
         transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         position: relative;
         overflow: hidden;
-        height: 260px;
+        min-height: 260px;
         cursor: pointer;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
       }
@@ -873,6 +873,7 @@
         flex-direction: column;
         gap: 1rem;
         overflow: hidden;
+        min-height: 0;
       }
       .preview-frame-shell {
         flex: 1;
@@ -910,6 +911,7 @@
         flex-direction: column;
         justify-content: space-between;
         overflow-y: auto;
+        min-height: 0;
       }
       .modal-category-badge {
         background: rgba(0, 80, 157, 0.15);
