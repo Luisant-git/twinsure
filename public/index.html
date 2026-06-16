@@ -308,13 +308,17 @@
       line-height: 1.1;
       margin-bottom: 1.5rem;
       letter-spacing: -1.5px;
-      opacity: 0;
-      transform: translateY(30px);
-      will-change: transform, opacity;
       color: #001533; /* Dark theme contrast color */
     }
 
-    .hero h1.visible {
+    /* Transition styles for hero dynamic elements */
+    .hero-fade-slide {
+      opacity: 0;
+      transform: translateY(30px);
+      will-change: transform, opacity;
+    }
+
+    .hero-fade-slide.visible {
       opacity: 1;
       transform: translateY(0);
       transition:
@@ -322,7 +326,19 @@
         transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .hero h1.exit {
+    #hero-heading.hero-fade-slide.visible {
+      transition-delay: 0s;
+    }
+
+    #hero-subheading.hero-fade-slide.visible {
+      transition-delay: 0.1s;
+    }
+
+    #hero-quote-card.hero-fade-slide.visible {
+      transition-delay: 0.2s;
+    }
+
+    .hero-fade-slide.exit {
       opacity: 0;
       transform: translateY(-30px);
       transition:
@@ -1639,18 +1655,18 @@
 
     <div class="hero-container">
       <div class="hero-content">
-        <h1 id="hero-heading" class="visible">
+        <h1 id="hero-heading" class="hero-fade-slide visible">
           Insurance Help<br /><span class="accent-text">That Actually Works</span>
         </h1>
-        <p>
+        <p id="hero-subheading" class="hero-fade-slide visible">
           From Policy Audit to Claim Approval, We Guide, Guard, and Grow Your Coverage
         </p>
         
-        <div class="hero-quote-card">
+        <div class="hero-quote-card hero-fade-slide visible" id="hero-quote-card">
           <div class="quote-icon-circle">66</div>
           <div class="quote-text">
-            <strong>Security is not just a policy.</strong>
-            <span>It's peace of mind when you need it most.</span>
+            <strong id="hero-tagline-bold">Security is not just a policy.</strong>
+            <span id="hero-tagline-normal">It’s peace of mind when you need it most.</span>
           </div>
         </div>
         
@@ -2080,31 +2096,74 @@
           });
         },
         { threshold: 0.4 },
-      ),
-      heroLines =
-        (statValues.forEach((e) => {
-          statObserver.observe(e);
-        }),
-          [
-            "Uncompromising Surety <br><span class='gradient-text'>For What Lies Ahead</span>",
-            "100% Claim Assurance <br><span class='gradient-text'>When You Need It Most</span>",
-            "Empowering Benefits <br><span class='gradient-text'>Designed to Protect You</span>",
-            "Intelligent Solutions <br><span class='gradient-text'>Tailored for Ultimate Care</span>",
-          ]),
-      currentLineIndex = 0,
-      heroHeading = document.getElementById("hero-heading");
-    heroHeading &&
+      );
+
+    // Observe stats
+    statValues.forEach((e) => {
+      statObserver.observe(e);
+    });
+
+    // Dynamic Hero Content Slider
+    const heroSlides = [
+      {
+        heading: 'Insurance Help<br /><span class="accent-text">That Actually Works</span>',
+        subheading: 'From Policy Audit to Claim Approval, We Guide, Guard, and Grow Your Coverage',
+        taglineBold: 'Security is not just a policy.',
+        taglineNormal: 'It’s peace of mind when you need it most.'
+      },
+      {
+        heading: 'Mis-sold? Claim Stuck?<br /><span class="accent-text">We Fix It.</span>',
+        subheading: 'iCARE + Policy Audit + Hospital Claim Support – End-to-end insurance solutions since 2006',
+        taglineBold: 'Don’t let insurance companies decide your claim.',
+        taglineNormal: 'Let us fight for you.'
+      },
+      {
+        heading: 'Trusted Insurance Partner<br /><span class="accent-text">for Complete Protection</span>',
+        subheading: 'iCARE, Mis-selling Rectification, Policy Audit, and 24/7 Hospital Claim Support',
+        taglineBold: '20+ years of experience. 100+ claims approved.',
+        taglineNormal: 'One promise – your money, your right.'
+      },
+      {
+        heading: 'Your Policy, Perfected.<br /><span class="accent-text">Your Claim, Paid.</span>',
+        subheading: 'We audit, rectify mis-selling, and support hospital claims so you get what you deserve',
+        taglineBold: 'Because insurance should protect you,',
+        taglineNormal: 'not confuse you.'
+      }
+    ];
+
+    let currentSlideIndex = 0;
+    const heroHeading = document.getElementById("hero-heading");
+    const heroSubheading = document.getElementById("hero-subheading");
+    const heroQuoteCard = document.getElementById("hero-quote-card");
+    const heroTaglineBold = document.getElementById("hero-tagline-bold");
+    const heroTaglineNormal = document.getElementById("hero-tagline-normal");
+
+    if (heroHeading && heroSubheading && heroQuoteCard) {
       setInterval(() => {
-        (heroHeading.classList.remove("visible"),
-          heroHeading.classList.add("exit"),
-          setTimeout(() => {
-            ((currentLineIndex = (currentLineIndex + 1) % heroLines.length),
-              (heroHeading.innerHTML = heroLines[currentLineIndex]),
-              heroHeading.classList.remove("exit"),
-              heroHeading.offsetWidth,
-              heroHeading.classList.add("visible"));
-          }, 400));
-      }, 4e3);
+        const elements = [heroHeading, heroSubheading, heroQuoteCard];
+        
+        elements.forEach(el => {
+          el.classList.remove("visible");
+          el.classList.add("exit");
+        });
+
+        setTimeout(() => {
+          currentSlideIndex = (currentSlideIndex + 1) % heroSlides.length;
+          const slide = heroSlides[currentSlideIndex];
+
+          heroHeading.innerHTML = slide.heading;
+          heroSubheading.textContent = slide.subheading;
+          if (heroTaglineBold) heroTaglineBold.textContent = slide.taglineBold;
+          if (heroTaglineNormal) heroTaglineNormal.textContent = slide.taglineNormal;
+
+          elements.forEach(el => {
+            el.classList.remove("exit");
+            el.offsetWidth; // Trigger reflow
+            el.classList.add("visible");
+          });
+        }, 400);
+      }, 5000);
+    }
 
     /* New observer for phones dropping animation */
     const phonesEl = document.querySelector('.insights-phones');
