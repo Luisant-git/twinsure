@@ -584,7 +584,7 @@ function createApiRouter() {
       sendJson(res, 500, { message: 'An internal server error occurred.' });
     }
   });
-  router.post('/auth/forgot-password-otp', strictLimiter, async (req, res) => {
+  router.post('/auth/forgot-password-otp', globalLimiter, async (req, res) => {
     const data = collectBody(req);
     if (!data.email) {
       sendJson(res, 400, { message: 'Try again' });
@@ -605,9 +605,9 @@ function createApiRouter() {
       }
 
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
-      const otpExpiry = new Date(Date.now() + 5 * 60000);
+      const otpExpiry = new Date(Date.now() + 15 * 60000);
 
-      await updateOne('users', { _id: user._id }, {
+      await updateOne('users', { _id: toObjectId(user._id) }, {
         $set: {
           otp,
           otpExpiry,
@@ -658,7 +658,7 @@ function createApiRouter() {
     }
   });
 
-  router.post('/auth/verify-otp', strictLimiter, async (req, res) => {
+  router.post('/auth/verify-otp', globalLimiter, async (req, res) => {
     const data = collectBody(req);
     if (!data.email || !data.otp) {
       sendJson(res, 400, { message: 'Incomplete data.' });
@@ -682,17 +682,17 @@ function createApiRouter() {
         let updateData = { failedOtpAttempts: attempts };
         let message = 'Invalid or expired OTP.';
 
-        if (attempts >= 3) {
+        if (attempts >= 5) {
           updateData.lockoutUntil = new Date(Date.now() + 60 * 60000); // 1 hour
-          message = 'Try after 60 minutes. If this issue persists then contact the admin.';
+          message = 'You have reached the limit of attempts. Try after 60 minutes. If this issue persists then contact the admin.';
         }
 
-        await updateOne('users', { _id: user._id }, { $set: updateData });
+        await updateOne('users', { _id: toObjectId(user._id) }, { $set: updateData });
         sendJson(res, 400, { message });
         return;
       }
 
-      await updateOne('users', { _id: user._id }, {
+      await updateOne('users', { _id: toObjectId(user._id) }, {
         $set: { otp: null, otpExpiry: null, failedOtpAttempts: 0 },
         $unset: { lockoutUntil: "" }
       });
@@ -706,7 +706,7 @@ function createApiRouter() {
     }
   });
 
-  router.post('/auth/reset-password', strictLimiter, async (req, res) => {
+  router.post('/auth/reset-password', globalLimiter, async (req, res) => {
     const data = collectBody(req);
     if (!data.resetToken || !data.newPassword) {
       sendJson(res, 400, { message: 'Incomplete data.' });
@@ -724,7 +724,7 @@ function createApiRouter() {
         return;
       }
 
-      await updateOne('users', { _id: user._id }, {
+      await updateOne('users', { _id: toObjectId(user._id) }, {
         $set: { password: data.newPassword }
       });
 
@@ -750,7 +750,7 @@ function createApiRouter() {
   <div style="background-color: #f1f5f9; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b;">
     <p style="margin: 0 0 5px 0;"><strong>Twinsure Admin Contact</strong></p>
     <p style="margin: 0 0 5px 0;">Email: support@twinsure.com | Phone: +91 9750003600</p>
-    <p style="margin: 0;">Twinsure H.Q., Karur, Tamil Nadu - 600xxx</p>
+    <p style="margin: 0;">Twinsure H.Q., 6, 2nd cross, Gowripuram Extension, Gowripuram, Karur, Tamil Nadu - 639002</p>
   </div>
 </div>
         `
