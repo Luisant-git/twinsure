@@ -27,6 +27,9 @@ app.set('trust proxy', 1);
 // Enable GZIP compression to reduce network payload size (Lighthouse optimization)
 app.use(compression());
 
+// Enable CORS for cross-origin requests
+app.use(cors());
+
 // Simple request logger to aid debugging of routing and methods
 app.use((req, res, next) => {
   try {
@@ -84,10 +87,12 @@ function sendJson(res, statusCode, payload) {
   res.status(statusCode).type('application/json').send(JSON.stringify(payload));
 }
 
-function methodNotAllowed(res, message = 'Method not allowed.') {
+function methodNotAllowed(res, req = null, message = 'Method not allowed.') {
+  if (req) {
+    console.error(`[405 ERROR] Method Not Allowed. Method: ${req.method}, Path: ${req.path}, OriginalUrl: ${req.originalUrl}`);
+  }
   sendJson(res, 405, { message });
 }
-
 function normalizeString(value) {
   return typeof value === 'string' ? value.trim() : '';
 }
@@ -106,18 +111,18 @@ function formatFileSize(size) {
 
 function validateFileSignature(buffer, expectedTypes) {
   if (!buffer || buffer.length < 4) return false;
-  
+
   const hex = buffer.toString('hex', 0, 4).toUpperCase();
-  
+
   if (expectedTypes.includes('pdf')) {
     if (hex.startsWith('25504446')) return true; // %PDF
   }
-  
+
   if (expectedTypes.includes('image')) {
     if (hex.startsWith('FFD8FF')) return true; // JPEG
     if (hex.startsWith('89504E47')) return true; // PNG
   }
-  
+
   return false;
 }
 
@@ -248,211 +253,211 @@ async function connectAndSeed() {
       updatedAt: new Date().toISOString().replace('T', ' ').slice(0, 19)
     });
   }
-      const settingsDefaults = {
-        supportEmail: 'support@twinsure.com',
-        supportPhone: '+91 9750003600',
-        whatsappGroupLink:
-          'https://wa.me/919750003600?text=Hello,%20I%20would%20like%20to%20know%20more%20about%20Twinsure%20services.',
-        officeAddress: 'Twinsure H.Q., Chennai, Tamil Nadu - 600xxx',
-        workingHours: 'Mon-Fri: 9AM - 6PM',
-        timeZone: 'IST',
-        defaultLanguage: 'English'
-      };
+  const settingsDefaults = {
+    supportEmail: 'support@twinsure.com',
+    supportPhone: '+91 9750003600',
+    whatsappGroupLink:
+      'https://wa.me/919750003600?text=Hello,%20I%20would%20like%20to%20know%20more%20about%20Twinsure%20services.',
+    officeAddress: 'Twinsure H.Q., Chennai, Tamil Nadu - 600xxx',
+    workingHours: 'Mon-Fri: 9AM - 6PM',
+    timeZone: 'IST',
+    defaultLanguage: 'English'
+  };
 
-      const settingsPatch = {};
-      for (const [key, value] of Object.entries(settingsDefaults)) {
-        const currentValue = existingSettings[key];
-        if (currentValue === undefined || currentValue === null || String(currentValue).trim() === '') {
-          settingsPatch[key] = value;
-        }
+  const settingsPatch = {};
+  for (const [key, value] of Object.entries(settingsDefaults)) {
+    const currentValue = existingSettings[key];
+    if (currentValue === undefined || currentValue === null || String(currentValue).trim() === '') {
+      settingsPatch[key] = value;
+    }
+  }
+
+  if (Object.keys(settingsPatch).length > 0) {
+    await updateOne('settings', { _id: 'global' }, { $set: settingsPatch });
+  }
+
+  const existingTestimonial = await findOne('testimonials', {});
+  if (!existingTestimonial) {
+    console.log('Seeding initial testimonials...');
+    const initialTestimonials = [
+      {
+        name: 'Murugan',
+        from: 'from Karur',
+        before: 'I am Murugan from Karur. About six months ago, I suffered a heart attack and was advised to undergo heart surgery at a hospital in Coimbatore. The surgery would cost around ₹6 lakh. Since I had a Star Health Insurance policy, I submitted a claim, but it was rejected. After being discharged and returning home, I submitted the claim again, but it was rejected once more for different reasons.',
+        helped: 'At that point, a friend recommended Twins Consultancy. I immediately contacted them and shared all the necessary details. From the very beginning, their team guided me with speed and clarity. They explained exactly what needed to be done, how to submit the documents correctly, and what corrections were required. They carefully reviewed my case, corrected every mistake, and handled the entire process efficiently.',
+        after: 'Thanks to the efforts of Twins Consultancy, I successfully received my insurance claim amount of ₹6 lakh this week. I am extremely happy and satisfied with the support they provided. Their guidance made a difficult process much easier, and I highly recommend Twins Consultancy to anyone seeking assistance with insurance claims.',
+        avatarUrl: 'https://ui-avatars.com/api/?name=Murugan&background=random',
+        displayOrder: 1,
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        name: 'Lokanathan',
+        from: 'Teacher from Chinnatharapuram',
+        before: 'I am Lokanathan, a teacher from Chinnatharapuram. I had taken the Star Super Plus Policy through Twins Consultancy. Recently, I underwent surgical treatment at Royal Care Hospital. At that time, I was unable to receive the payment directly through the policy. Since I am a government employee, the policy was not directly applicable, and I had to seek reimbursement through the government scheme. Additionally, there were challenges in obtaining the eligible amount through my Star Health Policy.',
+        helped: 'I am extremely grateful to Mr. Lakshmanan from Twins Consultancy, who personally guided and assisted me throughout the reimbursement process. He carefully handled the complexities involved in claiming benefits under the government policy and also addressed the issues related to my Star Health Policy. Even though it was a top-up policy and I initially considered leaving the matter as it was, Mr. Lakshmanan remained committed to ensuring that I received the amount I was rightfully entitled to. He continuously followed up and worked diligently until the reimbursement process was completed successfully.',
+        after: 'Thanks to the dedicated efforts of Mr. Lakshmanan and the team at Twins Consultancy, I successfully received the reimbursement amount that I was eligible for. I will always remain thankful for their support, dedication, and persistence. I highly appreciate the service provided by Twins Consultancy and sincerely thank Mr. Lakshmanan for his invaluable assistance.',
+        avatarUrl: 'https://ui-avatars.com/api/?name=Lokanathan&background=random',
+        displayOrder: 2,
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date()
       }
+    ];
 
-      if (Object.keys(settingsPatch).length > 0) {
-        await updateOne('settings', { _id: 'global' }, { $set: settingsPatch });
+    for (const testimonial of initialTestimonials) {
+      await insertOne('testimonials', testimonial);
+    }
+  }
+
+  const existingClaim = await findOne('claims', {});
+  if (!existingClaim) {
+    console.log('Seeding initial claims...');
+    const initialClaims = [
+      {
+        _id: toObjectId("6a2849c79c64d9a23efcd2fe"),
+        name: "Care Health: Claim Form (Reimbursement)",
+        category: "Health",
+        description: "Standard Care Health claim form for reimbursement. Part A to be filled by the insured, Part B by the hospital.",
+        status: "active",
+        fileName: "1781025223_CARE_HEALTH_CLAIM_FORM.pdf",
+        filePath: "uploads/claims/1781025223_CARE_HEALTH_CLAIM_FORM.pdf",
+        fileSize: "1.5 MB",
+        downloads: 2,
+        uploadedBy: "Naresh",
+        createdAt: new Date(),
+        lastUpdated: new Date()
+      },
+      {
+        _id: toObjectId("6a276d18e8bb34d38376685d"),
+        name: "Care Health: Pre-Authorization Form",
+        category: "Health",
+        description: "FAX/SCAN Page 1 & 2 only to Care Health for cashless approval. Page 3 (Declaration) should NOT be faxed.\n\nPage 1 & 2 மட்டும் FAX/SCAN செய்யுங்கள். Page 3 (Declaration) fax செய்யாதீர்கள்.",
+        status: "active",
+        fileName: "1780968728_care-pre-authorization-form.pdf",
+        filePath: "uploads/claims/1780968728_care-pre-authorization-form.pdf",
+        fileSize: "100 KB",
+        downloads: 1,
+        uploadedBy: "Naresh",
+        createdAt: new Date(),
+        lastUpdated: new Date()
+      },
+      {
+        _id: toObjectId("6a276cece8bb34d38376685c"),
+        name: "Chola MS: Health Claim Form (Reimbursement)",
+        category: "Health",
+        description: "Submit claim documents within 30 days of discharge. NEFT cannot be done without a cancelled cheque — always attach one.\n\nDischarge-ஆன 30 நாட்களில் submit செய்யுங்கள். Cancelled cheque இல்லாமல் NEFT முடியாது — எப்போதும் attach செய்யுங்கள்.",
+        status: "active",
+        fileName: "1780968684_CHOLA_Health-Claim-Form.pdf",
+        filePath: "uploads/claims/1780968684_CHOLA_Health-Claim-Form.pdf",
+        fileSize: "3.1 MB",
+        downloads: 0,
+        uploadedBy: "Naresh",
+        createdAt: new Date(),
+        lastUpdated: new Date()
+      },
+      {
+        _id: toObjectId("6a276cbde8bb34d38376685b"),
+        name: "Chola MS: Pre-Authorization Form for Cashless",
+        category: "Others",
+        description: "FAX/SCAN PAGE 1 ONLY to Chola MS for cashless approval before or during hospital admission.\n\nCashless approval-க்கு PAGE 1 மட்டும் FAX/SCAN செய்யுங்கள் — hospitalization-க்கு முன்பு அல்லது நேரத்தில்.",
+        status: "active",
+        fileName: "1780968637_Chola-MS-Pre-Authorisation-Form.pdf",
+        filePath: "uploads/claims/1780968637_Chola-MS-Pre-Authorisation-Form.pdf",
+        fileSize: "926 KB",
+        downloads: 0,
+        uploadedBy: "Naresh",
+        createdAt: new Date(),
+        lastUpdated: new Date()
+      },
+      {
+        _id: toObjectId("6a276c8ee8bb34d38376685a"),
+        name: "ICICI Lombard: Hospitalization Claim Form",
+        category: "Health",
+        description: "Full reimbursement claim form with 4 parts. Submit with all original bills within 30 days of discharge.\n\n4 parts உள்ள complete reimbursement claim form. Discharge-ஆன 30 நாட்களில் original bills-உடன் submit செய்யவும்.",
+        status: "active",
+        fileName: "1780968590_icici_claim_form.pdf",
+        filePath: "uploads/claims/1780968590_icici_claim_form.pdf",
+        fileSize: "367 KB",
+        downloads: 0,
+        uploadedBy: "Naresh",
+        createdAt: new Date(),
+        lastUpdated: new Date()
+      },
+      {
+        _id: toObjectId("6a276c49e8bb34d383766859"),
+        name: "ICICI Lombard: Cashless Authorization Request Form",
+        category: "Others",
+        description: "Used to request cashless treatment before or during hospitalization. Send by fax or email to ICICI Lombard's cashless team.\n\nHospitalization-க்கு முன்பு அல்லது நேரத்தில் cashless கோர பயன்படும். Fax / email மூலம் ICICI-க்கு அனுப்பவும்.",
+        status: "active",
+        fileName: "1780968521_ICICI_LOMBOARD-pre-authorisation-form.pdf",
+        filePath: "uploads/claims/1780968521_ICICI_LOMBOARD-pre-authorisation-form.pdf",
+        fileSize: "55 KB",
+        downloads: 0,
+        uploadedBy: "Naresh",
+        createdAt: new Date(),
+        lastUpdated: new Date()
+      },
+      {
+        _id: toObjectId("6a276c16e8bb34d383766858"),
+        name: "Niva Bupa: Health Insurance Claim Form",
+        category: "Health",
+        description: "Standard health claim form. Part A filled by insured. Part B filled by hospital. Submit within 30 days of discharge.\n\nStandard health claim form. Part A-வை insured, Part B-வை hospital fill செய்யும். Discharge-ஆன 30 நாட்களில் submit செய்யுங்கள்.",
+        status: "active",
+        fileName: "1780968470_NIVA_BUPA_claim-form.pdf",
+        filePath: "uploads/claims/1780968470_NIVA_BUPA_claim-form.pdf",
+        fileSize: "453 KB",
+        downloads: 0,
+        uploadedBy: "Naresh",
+        createdAt: new Date(),
+        lastUpdated: new Date()
+      },
+      {
+        _id: toObjectId("6a276b7fe8bb34d383766857"),
+        name: "Star Health: Accident Care Insurance Claim Form",
+        category: "Health",
+        description: "Used for accident-related insurance claims. Submit after accident to claim compensation for injury, disability, or death.\n\nவிபத்து காரணமாக ஏற்பட்ட காயம், மரணம் அல்லது disability-க்கு பணம் கோர பயன்படும்.",
+        status: "active",
+        fileName: "1780968319_STAR_accident_claim_form.pdf",
+        filePath: "uploads/claims/1780968319_STAR_accident_claim_form.pdf",
+        fileSize: "327 KB",
+        downloads: 0,
+        uploadedBy: "Naresh",
+        createdAt: new Date(),
+        lastUpdated: new Date()
+      },
+      {
+        _id: toObjectId("6a276b30e8bb34d383766856"),
+        name: "Star Health: Pre-Authorization Form for Cashless",
+        category: "Health",
+        description: "This form is sent to Star Health BEFORE admission for cashless treatment. Hospital fills most of it. Patient fills personal details.\n\nஇந்த form hospitalization-க்கு முன்பே cashless-க்கு அனுமதி கேட்க பயன்படுகிறது. Hospital பெரும்பாலும் fill செய்யும்.",
+        status: "active",
+        fileName: "1780968240_StarHealthPreAuthForm.pdf",
+        filePath: "uploads/claims/1780968240_StarHealthPreAuthForm.pdf",
+        fileSize: "642 KB",
+        downloads: 0,
+        uploadedBy: "Naresh",
+        createdAt: new Date(),
+        lastUpdated: new Date()
       }
-
-      const existingTestimonial = await findOne('testimonials', {});
-      if (!existingTestimonial) {
-        console.log('Seeding initial testimonials...');
-        const initialTestimonials = [
-          {
-            name: 'Murugan',
-            from: 'from Karur',
-            before: 'I am Murugan from Karur. About six months ago, I suffered a heart attack and was advised to undergo heart surgery at a hospital in Coimbatore. The surgery would cost around ₹6 lakh. Since I had a Star Health Insurance policy, I submitted a claim, but it was rejected. After being discharged and returning home, I submitted the claim again, but it was rejected once more for different reasons.',
-            helped: 'At that point, a friend recommended Twins Consultancy. I immediately contacted them and shared all the necessary details. From the very beginning, their team guided me with speed and clarity. They explained exactly what needed to be done, how to submit the documents correctly, and what corrections were required. They carefully reviewed my case, corrected every mistake, and handled the entire process efficiently.',
-            after: 'Thanks to the efforts of Twins Consultancy, I successfully received my insurance claim amount of ₹6 lakh this week. I am extremely happy and satisfied with the support they provided. Their guidance made a difficult process much easier, and I highly recommend Twins Consultancy to anyone seeking assistance with insurance claims.',
-            avatarUrl: 'https://ui-avatars.com/api/?name=Murugan&background=random',
-            displayOrder: 1,
-            isActive: true,
-            createdAt: new Date(),
-            updatedAt: new Date()
-          },
-          {
-            name: 'Lokanathan',
-            from: 'Teacher from Chinnatharapuram',
-            before: 'I am Lokanathan, a teacher from Chinnatharapuram. I had taken the Star Super Plus Policy through Twins Consultancy. Recently, I underwent surgical treatment at Royal Care Hospital. At that time, I was unable to receive the payment directly through the policy. Since I am a government employee, the policy was not directly applicable, and I had to seek reimbursement through the government scheme. Additionally, there were challenges in obtaining the eligible amount through my Star Health Policy.',
-            helped: 'I am extremely grateful to Mr. Lakshmanan from Twins Consultancy, who personally guided and assisted me throughout the reimbursement process. He carefully handled the complexities involved in claiming benefits under the government policy and also addressed the issues related to my Star Health Policy. Even though it was a top-up policy and I initially considered leaving the matter as it was, Mr. Lakshmanan remained committed to ensuring that I received the amount I was rightfully entitled to. He continuously followed up and worked diligently until the reimbursement process was completed successfully.',
-            after: 'Thanks to the dedicated efforts of Mr. Lakshmanan and the team at Twins Consultancy, I successfully received the reimbursement amount that I was eligible for. I will always remain thankful for their support, dedication, and persistence. I highly appreciate the service provided by Twins Consultancy and sincerely thank Mr. Lakshmanan for his invaluable assistance.',
-            avatarUrl: 'https://ui-avatars.com/api/?name=Lokanathan&background=random',
-            displayOrder: 2,
-            isActive: true,
-            createdAt: new Date(),
-            updatedAt: new Date()
-          }
-        ];
-
-        for (const testimonial of initialTestimonials) {
-          await insertOne('testimonials', testimonial);
+    ];
+    for (const claim of initialClaims) {
+      await insertOne('claims', claim);
+    }
+  } else {
+    const testClaim = await findOne('claims', { fileName: "1781025223_CARE_HEALTH_CLAIM_FORM.pdf" });
+    if (testClaim && (testClaim.name === 'test' || testClaim.category === 'Life')) {
+      await updateOne('claims', { _id: toObjectId(testClaim._id) }, {
+        $set: {
+          name: "Care Health: Claim Form (Reimbursement)",
+          category: "Health",
+          description: "Standard Care Health claim form for reimbursement. Part A to be filled by the insured, Part B by the hospital.",
+          lastUpdated: new Date()
         }
-      }
-
-      const existingClaim = await findOne('claims', {});
-      if (!existingClaim) {
-        console.log('Seeding initial claims...');
-        const initialClaims = [
-          {
-            _id: toObjectId("6a2849c79c64d9a23efcd2fe"),
-            name: "Care Health: Claim Form (Reimbursement)",
-            category: "Health",
-            description: "Standard Care Health claim form for reimbursement. Part A to be filled by the insured, Part B by the hospital.",
-            status: "active",
-            fileName: "1781025223_CARE_HEALTH_CLAIM_FORM.pdf",
-            filePath: "uploads/claims/1781025223_CARE_HEALTH_CLAIM_FORM.pdf",
-            fileSize: "1.5 MB",
-            downloads: 2,
-            uploadedBy: "Naresh",
-            createdAt: new Date(),
-            lastUpdated: new Date()
-          },
-          {
-            _id: toObjectId("6a276d18e8bb34d38376685d"),
-            name: "Care Health: Pre-Authorization Form",
-            category: "Health",
-            description: "FAX/SCAN Page 1 & 2 only to Care Health for cashless approval. Page 3 (Declaration) should NOT be faxed.\n\nPage 1 & 2 மட்டும் FAX/SCAN செய்யுங்கள். Page 3 (Declaration) fax செய்யாதீர்கள்.",
-            status: "active",
-            fileName: "1780968728_care-pre-authorization-form.pdf",
-            filePath: "uploads/claims/1780968728_care-pre-authorization-form.pdf",
-            fileSize: "100 KB",
-            downloads: 1,
-            uploadedBy: "Naresh",
-            createdAt: new Date(),
-            lastUpdated: new Date()
-          },
-          {
-            _id: toObjectId("6a276cece8bb34d38376685c"),
-            name: "Chola MS: Health Claim Form (Reimbursement)",
-            category: "Health",
-            description: "Submit claim documents within 30 days of discharge. NEFT cannot be done without a cancelled cheque — always attach one.\n\nDischarge-ஆன 30 நாட்களில் submit செய்யுங்கள். Cancelled cheque இல்லாமல் NEFT முடியாது — எப்போதும் attach செய்யுங்கள்.",
-            status: "active",
-            fileName: "1780968684_CHOLA_Health-Claim-Form.pdf",
-            filePath: "uploads/claims/1780968684_CHOLA_Health-Claim-Form.pdf",
-            fileSize: "3.1 MB",
-            downloads: 0,
-            uploadedBy: "Naresh",
-            createdAt: new Date(),
-            lastUpdated: new Date()
-          },
-          {
-            _id: toObjectId("6a276cbde8bb34d38376685b"),
-            name: "Chola MS: Pre-Authorization Form for Cashless",
-            category: "Others",
-            description: "FAX/SCAN PAGE 1 ONLY to Chola MS for cashless approval before or during hospital admission.\n\nCashless approval-க்கு PAGE 1 மட்டும் FAX/SCAN செய்யுங்கள் — hospitalization-க்கு முன்பு அல்லது நேரத்தில்.",
-            status: "active",
-            fileName: "1780968637_Chola-MS-Pre-Authorisation-Form.pdf",
-            filePath: "uploads/claims/1780968637_Chola-MS-Pre-Authorisation-Form.pdf",
-            fileSize: "926 KB",
-            downloads: 0,
-            uploadedBy: "Naresh",
-            createdAt: new Date(),
-            lastUpdated: new Date()
-          },
-          {
-            _id: toObjectId("6a276c8ee8bb34d38376685a"),
-            name: "ICICI Lombard: Hospitalization Claim Form",
-            category: "Health",
-            description: "Full reimbursement claim form with 4 parts. Submit with all original bills within 30 days of discharge.\n\n4 parts உள்ள complete reimbursement claim form. Discharge-ஆன 30 நாட்களில் original bills-உடன் submit செய்யவும்.",
-            status: "active",
-            fileName: "1780968590_icici_claim_form.pdf",
-            filePath: "uploads/claims/1780968590_icici_claim_form.pdf",
-            fileSize: "367 KB",
-            downloads: 0,
-            uploadedBy: "Naresh",
-            createdAt: new Date(),
-            lastUpdated: new Date()
-          },
-          {
-            _id: toObjectId("6a276c49e8bb34d383766859"),
-            name: "ICICI Lombard: Cashless Authorization Request Form",
-            category: "Others",
-            description: "Used to request cashless treatment before or during hospitalization. Send by fax or email to ICICI Lombard's cashless team.\n\nHospitalization-க்கு முன்பு அல்லது நேரத்தில் cashless கோர பயன்படும். Fax / email மூலம் ICICI-க்கு அனுப்பவும்.",
-            status: "active",
-            fileName: "1780968521_ICICI_LOMBOARD-pre-authorisation-form.pdf",
-            filePath: "uploads/claims/1780968521_ICICI_LOMBOARD-pre-authorisation-form.pdf",
-            fileSize: "55 KB",
-            downloads: 0,
-            uploadedBy: "Naresh",
-            createdAt: new Date(),
-            lastUpdated: new Date()
-          },
-          {
-            _id: toObjectId("6a276c16e8bb34d383766858"),
-            name: "Niva Bupa: Health Insurance Claim Form",
-            category: "Health",
-            description: "Standard health claim form. Part A filled by insured. Part B filled by hospital. Submit within 30 days of discharge.\n\nStandard health claim form. Part A-வை insured, Part B-வை hospital fill செய்யும். Discharge-ஆன 30 நாட்களில் submit செய்யுங்கள்.",
-            status: "active",
-            fileName: "1780968470_NIVA_BUPA_claim-form.pdf",
-            filePath: "uploads/claims/1780968470_NIVA_BUPA_claim-form.pdf",
-            fileSize: "453 KB",
-            downloads: 0,
-            uploadedBy: "Naresh",
-            createdAt: new Date(),
-            lastUpdated: new Date()
-          },
-          {
-            _id: toObjectId("6a276b7fe8bb34d383766857"),
-            name: "Star Health: Accident Care Insurance Claim Form",
-            category: "Health",
-            description: "Used for accident-related insurance claims. Submit after accident to claim compensation for injury, disability, or death.\n\nவிபத்து காரணமாக ஏற்பட்ட காயம், மரணம் அல்லது disability-க்கு பணம் கோர பயன்படும்.",
-            status: "active",
-            fileName: "1780968319_STAR_accident_claim_form.pdf",
-            filePath: "uploads/claims/1780968319_STAR_accident_claim_form.pdf",
-            fileSize: "327 KB",
-            downloads: 0,
-            uploadedBy: "Naresh",
-            createdAt: new Date(),
-            lastUpdated: new Date()
-          },
-          {
-            _id: toObjectId("6a276b30e8bb34d383766856"),
-            name: "Star Health: Pre-Authorization Form for Cashless",
-            category: "Health",
-            description: "This form is sent to Star Health BEFORE admission for cashless treatment. Hospital fills most of it. Patient fills personal details.\n\nஇந்த form hospitalization-க்கு முன்பே cashless-க்கு அனுமதி கேட்க பயன்படுகிறது. Hospital பெரும்பாலும் fill செய்யும்.",
-            status: "active",
-            fileName: "1780968240_StarHealthPreAuthForm.pdf",
-            filePath: "uploads/claims/1780968240_StarHealthPreAuthForm.pdf",
-            fileSize: "642 KB",
-            downloads: 0,
-            uploadedBy: "Naresh",
-            createdAt: new Date(),
-            lastUpdated: new Date()
-          }
-        ];
-        for (const claim of initialClaims) {
-          await insertOne('claims', claim);
-        }
-      } else {
-        const testClaim = await findOne('claims', { fileName: "1781025223_CARE_HEALTH_CLAIM_FORM.pdf" });
-        if (testClaim && (testClaim.name === 'test' || testClaim.category === 'Life')) {
-          await updateOne('claims', { _id: toObjectId(testClaim._id) }, {
-            $set: {
-              name: "Care Health: Claim Form (Reimbursement)",
-              category: "Health",
-              description: "Standard Care Health claim form for reimbursement. Part A to be filled by the insured, Part B by the hospital.",
-              lastUpdated: new Date()
-            }
-          });
-        }
-      }
+      });
+    }
+  }
 }
 
 const allowedOrigins = [
@@ -498,7 +503,7 @@ const getLoginRateLimit = async () => {
 };
 
 const globalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, 
+  windowMs: 15 * 60 * 1000,
   limit: async (req, res) => await getGlobalRateLimit(),
   standardHeaders: true,
   legacyHeaders: false,
@@ -577,6 +582,188 @@ function createApiRouter() {
     } catch (error) {
       console.error('Database/Server Error:', error.message);
       sendJson(res, 500, { message: 'An internal server error occurred.' });
+    }
+  });
+  router.post('/auth/forgot-password-otp', strictLimiter, async (req, res) => {
+    const data = collectBody(req);
+    if (!data.email) {
+      sendJson(res, 400, { message: 'Try again' });
+      return;
+    }
+
+    try {
+      const user = await findOne('users', { email: data.email });
+      if (!user) {
+        sendJson(res, 400, { message: 'Try again' });
+        return;
+      }
+
+      if (user.lockoutUntil && new Date(user.lockoutUntil) > new Date()) {
+        const remainingMinutes = Math.ceil((new Date(user.lockoutUntil) - new Date()) / 60000);
+        sendJson(res, 403, { message: `Try after ${remainingMinutes} minutes. If this issue persists then contact the admin.` });
+        return;
+      }
+
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const otpExpiry = new Date(Date.now() + 5 * 60000);
+
+      await updateOne('users', { _id: user._id }, {
+        $set: {
+          otp,
+          otpExpiry,
+          failedOtpAttempts: 0
+        }
+      });
+
+      const mailOptions = {
+        from: process.env.SMTP_USER,
+        to: user.email,
+        subject: 'Password Reset OTP - Twinsure',
+        html: `
+<div style="font-family: 'Inter', Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+  <div style="background-color: #001533; padding: 20px; text-align: center; border-bottom: 3px solid #fdc500;">
+    <h1 style="color: #ffffff; margin: 0; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 24px; letter-spacing: 1px;">Twinsure</h1>
+  </div>
+  <div style="padding: 30px; background-color: #ffffff; color: #334155;">
+    <h2 style="color: #00296b; margin-top: 0; font-size: 20px;">Password Reset Request</h2>
+    <p style="font-size: 15px; line-height: 1.6;">Hello,</p>
+    <p style="font-size: 15px; line-height: 1.6;">A password reset was requested for your account at this time. Please use the following OTP to proceed:</p>
+    <div style="background-color: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 15px; text-align: center; margin: 25px 0;">
+      <span style="font-size: 32px; font-weight: 700; color: #003f88; letter-spacing: 5px;">${otp}</span>
+    </div>
+    <p style="font-size: 14px; color: #ef4444; font-weight: 600; text-align: center; margin-bottom: 25px;">This OTP is valid only for 5 minutes from now.</p>
+    <div style="border-top: 1px solid #e2e8f0; padding-top: 20px;">
+      <p style="font-size: 14px; line-height: 1.5; color: #64748b;"><strong>Security Alert:</strong> If you didn't request this OTP, kindly contact our team and then try changing your password immediately to secure your account.</p>
+    </div>
+  </div>
+  <div style="background-color: #f1f5f9; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b;">
+    <p style="margin: 0 0 5px 0;"><strong>Twinsure Admin Contact</strong></p>
+    <p style="margin: 0 0 5px 0;">Email: support@twinsure.com | Phone: +91 9750003600</p>
+    <p style="margin: 0;">Twinsure H.Q., Chennai, Tamil Nadu - 600xxx</p>
+  </div>
+</div>
+        `
+      };
+
+      mailTransporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error('Email error:', error);
+        }
+      });
+
+      sendJson(res, 200, { message: 'OTP sent' });
+    } catch (error) {
+      console.error('Error:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
+    }
+  });
+
+  router.post('/auth/verify-otp', strictLimiter, async (req, res) => {
+    const data = collectBody(req);
+    if (!data.email || !data.otp) {
+      sendJson(res, 400, { message: 'Incomplete data.' });
+      return;
+    }
+    try {
+      const user = await findOne('users', { email: data.email });
+      if (!user) {
+        sendJson(res, 400, { message: 'Invalid request.' });
+        return;
+      }
+
+      if (user.lockoutUntil && new Date(user.lockoutUntil) > new Date()) {
+        const remainingMinutes = Math.ceil((new Date(user.lockoutUntil) - new Date()) / 60000);
+        sendJson(res, 403, { message: `Try after ${remainingMinutes} minutes. If this issue persists then contact the admin.` });
+        return;
+      }
+
+      if (!user.otp || user.otp !== data.otp || new Date(user.otpExpiry) < new Date()) {
+        let attempts = (user.failedOtpAttempts || 0) + 1;
+        let updateData = { failedOtpAttempts: attempts };
+        let message = 'Invalid or expired OTP.';
+
+        if (attempts >= 3) {
+          updateData.lockoutUntil = new Date(Date.now() + 60 * 60000); // 1 hour
+          message = 'Try after 60 minutes. If this issue persists then contact the admin.';
+        }
+
+        await updateOne('users', { _id: user._id }, { $set: updateData });
+        sendJson(res, 400, { message });
+        return;
+      }
+
+      await updateOne('users', { _id: user._id }, {
+        $set: { otp: null, otpExpiry: null, failedOtpAttempts: 0 },
+        $unset: { lockoutUntil: "" }
+      });
+
+      if (!config.jwtSecret) throw new Error('Server misconfiguration');
+      const resetToken = jwt.sign({ email: user.email, intent: 'reset' }, config.jwtSecret, { expiresIn: '15m' });
+      sendJson(res, 200, { message: 'OTP verified', resetToken });
+    } catch (error) {
+      console.error('Error:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
+    }
+  });
+
+  router.post('/auth/reset-password', strictLimiter, async (req, res) => {
+    const data = collectBody(req);
+    if (!data.resetToken || !data.newPassword) {
+      sendJson(res, 400, { message: 'Incomplete data.' });
+      return;
+    }
+    try {
+      if (!config.jwtSecret) throw new Error('Server misconfiguration');
+      const decoded = jwt.verify(data.resetToken, config.jwtSecret);
+      if (decoded.intent !== 'reset') {
+        throw new Error('Invalid token intent');
+      }
+      const user = await findOne('users', { email: decoded.email });
+      if (!user) {
+        sendJson(res, 400, { message: 'User not found.' });
+        return;
+      }
+
+      await updateOne('users', { _id: user._id }, {
+        $set: { password: data.newPassword }
+      });
+
+      const mailOptions = {
+        from: process.env.SMTP_USER,
+        to: user.email,
+        subject: 'Password Reset Successful - Twinsure',
+        html: `
+<div style="font-family: 'Inter', Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+  <div style="background-color: #001533; padding: 20px; text-align: center; border-bottom: 3px solid #fdc500;">
+    <h1 style="color: #ffffff; margin: 0; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 24px; letter-spacing: 1px;">Twinsure</h1>
+  </div>
+  <div style="padding: 30px; background-color: #ffffff; color: #334155;">
+    <div style="text-align: center; margin-bottom: 20px;">
+      <div style="display: inline-block; background-color: #dcfce7; border-radius: 50%; width: 60px; height: 60px; line-height: 60px; color: #22c55e; font-size: 30px; font-weight: bold;">✓</div>
+    </div>
+    <h2 style="color: #00296b; margin-top: 0; font-size: 20px; text-align: center;">Password Reset Successful</h2>
+    <p style="font-size: 15px; line-height: 1.6; text-align: center;">Your password has been successfully reset. You can now log in using your new credentials.</p>
+    <div style="border-top: 1px solid #e2e8f0; padding-top: 20px; margin-top: 25px;">
+      <p style="font-size: 14px; line-height: 1.5; color: #64748b;"><strong>Security Alert:</strong> If you did not perform this action, it means your account may be compromised. Please contact our Twinsure admin support team immediately.</p>
+    </div>
+  </div>
+  <div style="background-color: #f1f5f9; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b;">
+    <p style="margin: 0 0 5px 0;"><strong>Twinsure Admin Contact</strong></p>
+    <p style="margin: 0 0 5px 0;">Email: support@twinsure.com | Phone: +91 9750003600</p>
+    <p style="margin: 0;">Twinsure H.Q., Karur, Tamil Nadu - 600xxx</p>
+  </div>
+</div>
+        `
+      };
+
+      mailTransporter.sendMail(mailOptions, (error, info) => {
+        if (error) console.error('Email error:', error);
+      });
+
+      sendJson(res, 200, { message: 'Password reset successfully' });
+    } catch (error) {
+      console.error('Error:', error.message);
+      sendJson(res, 400, { message: 'Invalid or expired reset token.' });
     }
   });
 
@@ -792,8 +979,8 @@ function createApiRouter() {
       const requestId = `fhr_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
       const timestamp = formatDateTime(new Date());
 
-      const description = method === 'email' 
-        ? `Sent Claim Form to Email: ${email}` 
+      const description = method === 'email'
+        ? `Sent Claim Form to Email: ${email}`
         : `Downloaded Claim Form (Phone: ${phone})`;
 
       await insertOne('form_help_requests', {
@@ -816,7 +1003,7 @@ function createApiRouter() {
       if (method === 'email') {
         const smtpUser = process.env.SMTP_USER || '';
         const smtpPass = process.env.SMTP_PASS || '';
-        
+
         if (!smtpUser || !smtpPass) {
           console.warn('SMTP Credentials not configured in .env. Email simulated successfully.');
           sendJson(res, 200, {
@@ -853,7 +1040,7 @@ function createApiRouter() {
 
       sendJson(res, 200, {
         success: true,
-        message: method === 'email' 
+        message: method === 'email'
           ? 'Claim form has been sent to your email successfully.'
           : 'Verification successful. Your download will start now.'
       });
@@ -1073,7 +1260,7 @@ function createApiRouter() {
       const objectIds = ids.map(id => {
         try {
           return new ObjectId(id);
-        } catch(e) {
+        } catch (e) {
           return id;
         }
       });
@@ -1414,13 +1601,13 @@ function createApiRouter() {
         role: data.role,
         updatedAt: new Date()
       };
-      
+
       if (data.password && data.password.trim() !== "") {
-          updateData.password = data.password.trim();
+        updateData.password = data.password.trim();
       }
 
       const updated = await updateOne('users', { _id: new ObjectId(userId) }, { $set: updateData });
-      
+
       if (updated && updated.modifiedCount > 0) {
         sendJson(res, 200, { success: true, message: 'User updated successfully.' });
       } else {
@@ -1570,7 +1757,7 @@ function createApiRouter() {
   });
 
   router.all('*', (req, res) => {
-    methodNotAllowed(res);
+    methodNotAllowed(res, req);
   });
 
   return router;

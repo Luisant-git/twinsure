@@ -679,6 +679,98 @@
           align-items: flex-start;
         }
       }
+      .fp-modal-overlay {
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 10, 26, 0.85);
+        backdrop-filter: blur(10px);
+        display: flex; align-items: center; justify-content: center;
+        z-index: 1000; opacity: 0; pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+      .fp-modal-overlay.active { opacity: 1; pointer-events: auto; }
+      .fp-modal-content {
+        background: var(--bg-glass);
+        border: 1px solid var(--border-glass);
+        border-radius: 20px; padding: 2.5rem;
+        width: 90%; max-width: 450px;
+        box-shadow: 0 25px 65px rgba(0, 0, 0, 0.45);
+        transform: translateY(20px); transition: transform 0.3s ease;
+        position: relative;
+      }
+      .fp-modal-overlay.active .fp-modal-content { transform: translateY(0); }
+      .fp-close-btn {
+        position: absolute; top: 1rem; right: 1.2rem;
+        background: none; border: none; color: var(--text-grey);
+        font-size: 1.2rem; cursor: pointer;
+      }
+      .fp-close-btn:hover { color: var(--text-white); }
+      .fp-step { display: none; }
+      .fp-step.active { display: block; }
+      .otp-inputs {
+        display: flex; justify-content: space-between; gap: 0.5rem; margin: 1.5rem 0;
+      }
+      .otp-input {
+        width: 45px; height: 55px; text-align: center; font-size: 1.5rem;
+        font-weight: bold; background: rgba(255, 255, 255, 0.05);
+        border: 1.5px solid rgba(255, 255, 255, 0.1); border-radius: 10px;
+        color: var(--text-white); transition: all 0.2s;
+      }
+      .otp-input:focus { border-color: var(--accent-gold); outline: none; }
+      .success-circle-container {
+        width: 100px; height: 100px; margin: 0 auto 1.5rem;
+        position: relative; display: flex; align-items: center; justify-content: center;
+      }
+      .success-circle-bg {
+        position: absolute; inset: 0; border-radius: 50%;
+        border: 3px solid rgba(37, 211, 102, 0.2);
+      }
+      .success-circle-progress {
+        position: absolute; inset: -3px; border-radius: 50%;
+        border: 3px solid transparent; border-top-color: #ffffff;
+      }
+      .success-circle-icon {
+        font-size: 3rem; color: #25d366; opacity: 0;
+      }
+      .success-anim .success-circle-progress {
+        animation: spin 1s linear infinite;
+      }
+      .success-anim .success-circle-icon {
+        animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      }
+      @keyframes spin { 100% { transform: rotate(360deg); } }
+      @keyframes popIn { 100% { transform: scale(1); opacity: 1; } }
+      .fp-timer { font-size: 0.85rem; color: var(--text-grey); margin-top: 1rem; text-align: center; }
+
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        20%, 60% { transform: translateX(-10px); }
+        40%, 80% { transform: translateX(10px); }
+      }
+      .shake-anim {
+        animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+      }
+
+      @media (max-width: 480px) {
+        .fp-modal-content {
+          padding: 1.5rem;
+          width: 95%;
+        }
+        .otp-inputs {
+          gap: 0.25rem;
+        }
+        .otp-input {
+          width: 38px;
+          height: 48px;
+          font-size: 1.2rem;
+        }
+        .success-circle-container {
+          width: 80px;
+          height: 80px;
+        }
+        .success-circle-icon {
+          font-size: 2.5rem;
+        }
+      }
     </style>
   </head>
   <body>
@@ -872,11 +964,7 @@
                   <a
                     href="#"
                     class="text-link"
-                    onclick="
-                      alert(
-                        'Forgot password link clicked. Please contact administrator to reset.',
-                      )
-                    "
+                    onclick="openFpModal(event)"
                     >Forgot Password?</a
                   >
                 </div>
@@ -981,6 +1069,88 @@
             <i class="fas fa-lock"></i>
             <span>Protected by 256-bit Secure Encrypted Authentication</span>
           </div>
+        </div>
+      </div>
+    </div>
+    <div class="fp-modal-overlay" id="fpModal">
+      <div class="fp-modal-content">
+        <button class="fp-close-btn" onclick="closeFpModal()"><i class="fas fa-times"></i></button>
+        
+        <div id="fpStep1" class="fp-step active">
+          <div class="form-header" style="margin-bottom:1.5rem">
+            <h2>Forgot Password</h2>
+            <p>Enter your registered email to receive an OTP.</p>
+          </div>
+          <div id="fpAlert1" class="alert"></div>
+          <div class="form-group" style="margin-bottom:1.5rem">
+            <label>Email ID</label>
+            <div class="input-wrapper">
+              <i class="far fa-envelope input-icon-left"></i>
+              <input type="email" id="fpEmail" class="input-field" placeholder="Registered email" required />
+            </div>
+          </div>
+          <label class="custom-chk" style="margin-bottom:1.5rem">
+            <input type="checkbox" id="fpConsent" required />
+            <span class="chk-box"><i class="fas fa-check"></i></span>
+            <span style="font-size:0.8rem; line-height:1.3">I have the mail id to see the otp and it is safe to send now</span>
+          </label>
+          <button class="btn-auth-submit" onclick="requestOtp()">Send OTP</button>
+        </div>
+
+        <div id="fpStep2" class="fp-step">
+          <div class="form-header" style="margin-bottom:1.5rem">
+            <h2>Verify OTP</h2>
+            <p>Enter the 6-digit code sent to your email.</p>
+          </div>
+          <div id="fpAlert2" class="alert"></div>
+          <div class="otp-inputs" id="otpContainer">
+            <input type="text" maxlength="1" class="otp-input" />
+            <input type="text" maxlength="1" class="otp-input" />
+            <input type="text" maxlength="1" class="otp-input" />
+            <input type="text" maxlength="1" class="otp-input" />
+            <input type="text" maxlength="1" class="otp-input" />
+            <input type="text" maxlength="1" class="otp-input" />
+          </div>
+          <button class="btn-auth-submit" onclick="verifyOtp()">Verify OTP</button>
+          <div class="fp-timer">
+            <span id="resendTimerText">Resend in 2:00</span>
+            <a href="#" id="resendLink" class="text-link" style="display:none;" onclick="requestOtp(true)">Resend OTP</a>
+          </div>
+        </div>
+
+        <div id="fpStep3" class="fp-step">
+          <div class="form-header" style="margin-bottom:1.5rem">
+            <h2>Reset Password</h2>
+            <p>Create a new password for your account.</p>
+          </div>
+          <div id="fpAlert3" class="alert"></div>
+          <div class="form-group" style="margin-bottom:1rem">
+            <label>New Password</label>
+            <div class="input-wrapper">
+              <i class="fas fa-lock input-icon-left"></i>
+              <input type="password" id="fpNewPassword" class="input-field" placeholder="New Password" />
+              <i class="far fa-eye-slash input-icon-right" id="fpEye1" onclick="togglePasswordVisibility('fpNewPassword', 'fpEye1')"></i>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:1.5rem">
+            <label>Confirm Password</label>
+            <div class="input-wrapper">
+              <i class="fas fa-lock input-icon-left"></i>
+              <input type="password" id="fpConfirmPassword" class="input-field" placeholder="Confirm Password" />
+              <i class="far fa-eye-slash input-icon-right" id="fpEye2" onclick="togglePasswordVisibility('fpConfirmPassword', 'fpEye2')"></i>
+            </div>
+          </div>
+          <button class="btn-auth-submit" onclick="resetPassword()">Reset My Password</button>
+        </div>
+
+        <div id="fpStep4" class="fp-step" style="text-align:center">
+          <div class="success-circle-container" id="fpSuccessAnim">
+            <div class="success-circle-bg"></div>
+            <div class="success-circle-progress"></div>
+            <i class="fas fa-check success-circle-icon"></i>
+          </div>
+          <h2>Password Reset Successful</h2>
+          <p style="color:var(--text-grey); margin-top:0.5rem">You will be redirected to login shortly.</p>
         </div>
       </div>
     </div>
@@ -1103,6 +1273,179 @@
             window.location.href = "index.html";
           }
         });
+
+      // Forgot Password Flow
+      let fpResetToken = null;
+      let fpTimerInterval = null;
+
+      function openFpModal(e) {
+        if(e) e.preventDefault();
+        document.getElementById('fpModal').classList.add('active');
+        showFpStep(1);
+        document.getElementById('fpEmail').value = '';
+        document.getElementById('fpConsent').checked = false;
+        document.getElementById('fpAlert1').style.display = 'none';
+      }
+      function closeFpModal() {
+        document.getElementById('fpModal').classList.remove('active');
+        if(fpTimerInterval) clearInterval(fpTimerInterval);
+      }
+      function showFpStep(step) {
+        document.querySelectorAll('.fp-step').forEach(el => el.classList.remove('active'));
+        document.getElementById('fpStep' + step).classList.add('active');
+      }
+      function showFpAlert(step, msg, type) {
+        const alertEl = document.getElementById('fpAlert' + step);
+        alertEl.textContent = msg;
+        alertEl.className = 'alert ' + type;
+        alertEl.style.display = 'block';
+      }
+      
+      function triggerShake() {
+        const modalContent = document.querySelector('.fp-modal-content');
+        modalContent.classList.remove('shake-anim');
+        void modalContent.offsetWidth; // trigger CSS reflow
+        modalContent.classList.add('shake-anim');
+        // vibrate device if supported
+        if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+      }
+
+      async function requestOtp(isResend = false) {
+        const email = document.getElementById('fpEmail').value;
+        const consent = document.getElementById('fpConsent').checked;
+        if (!email) { showFpAlert(1, 'Please enter email', 'error'); return triggerShake(); }
+        if (!consent && !isResend) { showFpAlert(1, 'Please check the consent box', 'error'); return triggerShake(); }
+        
+        try {
+          const res = await fetch(window.API_BASE_URL + '/auth/forgot-password-otp', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+          });
+          let data;
+          try { data = await res.json(); } catch(err) { data = { message: await res.text() || 'Error sending OTP' }; }
+          if (!res.ok) {
+            const errMsg = data.message || 'Error sending OTP';
+            if (errMsg.toLowerCase().includes('try again') || errMsg.toLowerCase().includes('try after') || errMsg.toLowerCase().includes('too many requests')) {
+              showFpAlert(isResend ? 2 : 1, errMsg, 'error');
+              triggerShake();
+            } else {
+              showFpAlert(isResend ? 2 : 1, errMsg, 'error');
+            }
+          } else {
+            showFpStep(2);
+            document.getElementById('fpAlert2').style.display = 'none';
+            // Setup OTP inputs
+            const inputs = document.querySelectorAll('.otp-input');
+            inputs.forEach(i => i.value = '');
+            inputs[0].focus();
+            startResendTimer();
+          }
+        } catch(e) {
+          showFpAlert(isResend ? 2 : 1, 'Network error. Please try again.', 'error');
+          triggerShake();
+        }
+      }
+
+      function startResendTimer() {
+        document.getElementById('resendLink').style.display = 'none';
+        const timerText = document.getElementById('resendTimerText');
+        timerText.style.display = 'inline';
+        if(fpTimerInterval) clearInterval(fpTimerInterval);
+        let timeLeft = 120;
+        timerText.textContent = `Resend in 2:00`;
+        fpTimerInterval = setInterval(() => {
+          timeLeft--;
+          const m = Math.floor(timeLeft / 60);
+          const s = timeLeft % 60;
+          timerText.textContent = `Resend in ${m}:${s.toString().padStart(2, '0')}`;
+          if (timeLeft <= 0) {
+            clearInterval(fpTimerInterval);
+            timerText.style.display = 'none';
+            document.getElementById('resendLink').style.display = 'inline';
+          }
+        }, 1000);
+      }
+
+      // OTP Input navigation
+      const otpInputs = document.querySelectorAll('.otp-input');
+      otpInputs.forEach((input, index) => {
+        input.addEventListener('input', (e) => {
+          // ensure only numbers
+          e.target.value = e.target.value.replace(/[^0-9]/g, '');
+          if (e.target.value && index < otpInputs.length - 1) {
+            otpInputs[index + 1].focus();
+          }
+        });
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Backspace' && !e.target.value && index > 0) {
+            otpInputs[index - 1].focus();
+          } else if (e.key === 'ArrowLeft' && index > 0) {
+            otpInputs[index - 1].focus();
+          } else if (e.key === 'ArrowRight' && index < otpInputs.length - 1) {
+            otpInputs[index + 1].focus();
+          }
+        });
+      });
+
+      async function verifyOtp() {
+        const email = document.getElementById('fpEmail').value;
+        let otp = '';
+        otpInputs.forEach(i => otp += i.value);
+        if (otp.length < 6) { showFpAlert(2, 'Please enter 6-digit OTP', 'error'); return triggerShake(); }
+        
+        try {
+          const res = await fetch(window.API_BASE_URL + '/auth/verify-otp', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, otp })
+          });
+          let data;
+          try { data = await res.json(); } catch(err) { data = { message: await res.text() || 'Invalid OTP' }; }
+          if (!res.ok) {
+            showFpAlert(2, data.message || 'Invalid OTP', 'error');
+            triggerShake();
+          } else {
+            fpResetToken = data.resetToken;
+            showFpStep(3);
+            document.getElementById('fpAlert3').style.display = 'none';
+          }
+        } catch(e) {
+          showFpAlert(2, 'Network error. Please try again.', 'error');
+          triggerShake();
+        }
+      }
+
+      async function resetPassword() {
+        const newPassword = document.getElementById('fpNewPassword').value;
+        const confirmPassword = document.getElementById('fpConfirmPassword').value;
+        if (!newPassword || !confirmPassword) { showFpAlert(3, 'Fill all fields', 'error'); return triggerShake(); }
+        if (newPassword !== confirmPassword) { showFpAlert(3, 'Passwords do not match', 'error'); return triggerShake(); }
+        if (newPassword.length < 6) { showFpAlert(3, 'Password must be at least 6 characters', 'error'); return triggerShake(); }
+        
+        try {
+          const res = await fetch(window.API_BASE_URL + '/auth/reset-password', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ resetToken: fpResetToken, newPassword })
+          });
+          let data;
+          try { data = await res.json(); } catch(err) { data = { message: await res.text() || 'Error resetting password' }; }
+          if (!res.ok) {
+            showFpAlert(3, data.message || 'Error resetting password', 'error');
+            triggerShake();
+          } else {
+            showFpStep(4);
+            const animEl = document.getElementById('fpSuccessAnim');
+            animEl.classList.add('success-anim');
+            setTimeout(() => {
+              animEl.classList.remove('success-anim');
+              closeFpModal();
+              document.getElementById('goToLogin').click(); // Redirects to login view in slider
+            }, 4000);
+          }
+        } catch(e) {
+          showFpAlert(3, 'Network error. Please try again.', 'error');
+          triggerShake();
+        }
+      }
     </script>
   </body>
 </html>
