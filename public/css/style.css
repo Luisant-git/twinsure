@@ -250,9 +250,6 @@ footer {
     display: block;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-
 /* Recommendation Builder */
 .builder-container {
     width: 100%;
@@ -335,6 +332,9 @@ footer {
     fill: none;
     stroke-linecap: round;
 }
+
+/* Responsive */
+@media (max-width: 768px) {
     nav ul {
         display: none; /* Add a hamburger menu for real production */
     }

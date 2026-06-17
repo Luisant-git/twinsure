@@ -51,7 +51,10 @@ class VisualBuilder {
             id: id,
             title: 'New Question',
             type: 'radio',
-            options: ['Option 1', 'Option 2'],
+            options: [
+                { id: 'opt_' + Date.now() + '_1', text: 'Option 1', color: 'purple' },
+                { id: 'opt_' + Date.now() + '_2', text: 'Option 2', color: 'blue' }
+            ],
             x: 50 + (Math.random() * 100),
             y: 50 + (Math.random() * 100)
         };
@@ -61,7 +64,7 @@ class VisualBuilder {
 
     deleteNode(id) {
         this.nodes = this.nodes.filter(n => n.id !== id);
-        this.edges = this.edges.filter(e => e.from !== id && e.to !== id);
+        this.edges = this.edges.filter(e => e.from !== id && e.to !== id && e.fromNode !== id && e.toNode !== id);
         this.renderAll();
     }
 
@@ -75,7 +78,22 @@ class VisualBuilder {
     updateOptions(id, optionsStr) {
         const node = this.nodes.find(n => n.id === id);
         if (node) {
-            node.options = optionsStr.split(',').map(s => s.trim());
+            node.options = optionsStr.split(',').map((s, index) => {
+                const text = s.trim();
+                const existing = node.options && node.options[index];
+                if (existing && typeof existing === 'object') {
+                    return {
+                        id: existing.id || ('opt_' + Date.now() + '_' + index),
+                        text: text,
+                        color: existing.color || 'blue'
+                    };
+                }
+                return {
+                    id: 'opt_' + Date.now() + '_' + index,
+                    text: text,
+                    color: 'blue'
+                };
+            });
         }
     }
 
@@ -105,7 +123,7 @@ class VisualBuilder {
                         <option value="text" ${nodeData.type==='text'?'selected':''}>Text Input</option>
                     </select>
                     <label style="font-size:0.8rem; color:#666;">Options (comma separated):</label>
-                    <input type="text" value="${(nodeData.options || []).join(', ')}" onchange="builder.updateOptions('${nodeData.id}', this.value)" style="width:100%; padding:5px; font-size:0.9rem;">
+                    <input type="text" value="${(nodeData.options || []).map(o => typeof o === 'object' && o !== null ? o.text : o).join(', ')}" onchange="builder.updateOptions('${nodeData.id}', this.value)" style="width:100%; padding:5px; font-size:0.9rem;">
                 </div>
                 <div class="node-endpoint endpoint-out" data-type="out" data-id="${nodeData.id}" title="Drag to connect"></div>
             `;
@@ -122,9 +140,17 @@ class VisualBuilder {
             const epIn = el.querySelector('.endpoint-in');
             epIn.addEventListener('mouseup', (e) => {
                 if (this.connectingFrom && this.connectingFrom !== nodeData.id) {
-                    // Prevent duplicate connections
-                    if(!this.edges.find(edge => edge.from === this.connectingFrom && edge.to === nodeData.id)) {
-                        this.edges.push({ from: this.connectingFrom, to: nodeData.id });
+                    const fromId = this.connectingFrom;
+                    const toId = nodeData.id;
+                    const exists = this.edges.find(edge => (edge.fromNode === fromId || edge.from === fromId) && (edge.toNode === toId || edge.to === toId));
+                    if(!exists) {
+                        this.edges.push({
+                            fromNode: fromId,
+                            fromOption: 'default',
+                            toNode: toId,
+                            from: fromId,
+                            to: toId
+                        });
                     }
                     this.connectingFrom = null;
                     this.renderAll();
@@ -183,8 +209,10 @@ class VisualBuilder {
     drawConnections() {
         this.svg.innerHTML = '';
         this.edges.forEach(edge => {
-            const fromNode = this.nodes.find(n => n.id === edge.from);
-            const toNode = this.nodes.find(n => n.id === edge.to);
+            const fromId = edge.fromNode || edge.from;
+            const toId = edge.toNode || edge.to;
+            const fromNode = this.nodes.find(n => n.id === fromId);
+            const toNode = this.nodes.find(n => n.id === toId);
             if (fromNode && toNode) {
                 this.drawLine(fromNode.x + 125, fromNode.y + 115, toNode.x + 125, toNode.y); // Adjust offsets based on node size
             }
