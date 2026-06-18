@@ -56,6 +56,51 @@
         background-attachment: fixed;
         background-position: 0 0;
       }
+
+      /* General compact and professional header styling */
+      .builder-header {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 0.6rem 1.5rem !important;
+        background: #ffffff !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+        z-index: 100 !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+      }
+      .header-left {
+        display: flex !important;
+        align-items: center !important;
+        gap: 1rem !important;
+      }
+      .logo-branding {
+        display: flex !important;
+        align-items: center !important;
+        gap: 0.5rem !important;
+        text-decoration: none !important;
+        color: #00296b !important;
+        font-weight: 800 !important;
+        font-size: 1.2rem !important;
+        font-family: 'Outfit', sans-serif !important;
+      }
+      .logo-branding img {
+        height: 24px !important;
+        width: auto !important;
+      }
+      .logo-branding span {
+        color: #00296b !important;
+      }
+      .vertical-divider {
+        width: 1px !important;
+        height: 20px !important;
+        background: #e2e8f0 !important;
+      }
+      .header-title-area h1 {
+        font-size: 1.05rem !important;
+        font-weight: 600 !important;
+        color: #334155 !important;
+        margin: 0 !important;
+      }
     </style>
     <noscript
       ><link
@@ -70,6 +115,14 @@
         }
         (e(), window.addEventListener("pageshow", e));
       })();
+      function goToAdmin() {
+        if (localStorage.getItem("token") && localStorage.getItem("role") === "admin") {
+          window.location.href = "admin.html";
+        } else {
+          alert("Access Denied: You must be logged in as an administrator.");
+          window.location.href = "login.html";
+        }
+      }
     </script>
   
     <script>
@@ -79,23 +132,236 @@
           window.location.replace("login.html");
       }
     </script>
+    <style id="mobile-builder-styles">
+      @media (max-width: 992px) {
+        /* Mobile View Styles for Recommendation Builder */
+
+        /* 1. Header Stacking */
+        .builder-header {
+          position: relative !important;
+          flex-direction: column !important;
+          align-items: stretch !important;
+          gap: 0.8rem !important;
+          padding: 0.8rem !important;
+        }
+        .header-left {
+          width: 100% !important;
+          display: flex !important;
+          justify-content: space-between !important;
+          align-items: center !important;
+          gap: 0.5rem !important;
+        }
+        .vertical-divider {
+          display: none !important;
+        }
+        .header-title-area h1 {
+          font-size: 0.95rem !important;
+        }
+        .builder-header .header-actions {
+          display: grid !important;
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: 0.4rem !important;
+          width: 100% !important;
+        }
+        .builder-header .header-actions .btn {
+          width: 100% !important;
+          justify-content: center !important;
+          padding: 0.55rem 0.3rem !important;
+          font-size: 0.75rem !important;
+          border-radius: 8px !important;
+        }
+
+        /* 2. Main Layout Column stacking */
+        .builder-main {
+          flex-direction: column !important;
+          overflow-y: auto !important;
+        }
+
+        /* 3. Properties Sidebar as a sliding bottom drawer */
+        .properties-sidebar {
+          position: fixed !important;
+          left: 0 !important;
+          right: 0 !important;
+          bottom: 0 !important;
+          width: 100% !important;
+          height: 65vh !important;
+          z-index: 10000 !important;
+          border-left: none !important;
+          border-top: 2px solid #6b4ce6 !important;
+          border-radius: 20px 20px 0 0 !important;
+          box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.2) !important;
+          transform: translateY(100%) !important;
+          transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+
+        /* Show the drawer only when a node is selected */
+        .properties-sidebar:has(#sidebarEmpty[style*="display: none"]),
+        .properties-sidebar:has(#sidebarEmpty[style*="display:none"]) {
+          transform: translateY(0) !important;
+        }
+
+        /* Adjust close button position inside sidebar header */
+        .sidebar-header {
+          padding: 1rem 1.2rem !important;
+        }
+        .sidebar-content {
+          padding: 1.2rem !important;
+        }
+
+        /* Backdrop overlay when properties panel is open on mobile */
+        .builder-main::after {
+          content: "";
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.5);
+          backdrop-filter: blur(2px);
+          z-index: 9999;
+          display: none;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+          pointer-events: none;
+        }
+        .builder-main:has(.properties-sidebar:has(#sidebarEmpty[style*="display: none"]))::after,
+        .builder-main:has(.properties-sidebar:has(#sidebarEmpty[style*="display:none"]))::after {
+          display: block !important;
+          opacity: 1 !important;
+          pointer-events: auto !important;
+        }
+
+        /* 4. Greeting Bar Stacking */
+        .greeting-bar {
+          padding: 1rem !important;
+          margin-bottom: 2rem !important;
+        }
+        .greeting-input-group {
+          flex-wrap: wrap !important;
+          gap: 0.5rem !important;
+          padding: 0.5rem !important;
+        }
+        .greeting-input-group input {
+          width: 100% !important;
+          flex: none !important;
+          background: #fff !important;
+          border-radius: 6px !important;
+          border: 1px solid #ddd !important;
+          padding: 0.5rem !important;
+        }
+        .greeting-input-group button.btn-purple-small {
+          width: 100% !important;
+          justify-content: center !important;
+          padding: 0.6rem !important;
+        }
+
+        /* 5. Canvas Controls Positioning */
+        .canvas-controls {
+          bottom: 1rem !important;
+          left: 1rem !important;
+        }
+
+        /* ─── Preview Mode Mobile Styles ─── */
+        .preview-header {
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          z-index: 1000 !important;
+          flex-direction: column !important;
+          align-items: stretch !important;
+          gap: 0.8rem !important;
+          padding: 0.8rem !important;
+          background: #ffffff !important;
+          border-bottom: 1px solid #e2e8f0 !important;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+        }
+        .preview-header .ph-left {
+          width: 100% !important;
+          display: flex !important;
+          justify-content: space-between !important;
+          align-items: center !important;
+          gap: 0.5rem !important;
+        }
+        .preview-header .vertical-divider {
+          display: none !important;
+        }
+        .preview-header .ph-left h2 {
+          font-size: 0.95rem !important;
+        }
+        .preview-header .preview-badge {
+          display: none !important;
+        }
+        .preview-header .ph-right {
+          display: grid !important;
+          grid-template-columns: repeat(3, 1fr) !important;
+          gap: 0.4rem !important;
+          width: 100% !important;
+        }
+        .preview-header .ph-profile {
+          display: none !important;
+        }
+        .preview-header .ph-right .btn {
+          width: 100% !important;
+          justify-content: center !important;
+          padding: 0.55rem 0.3rem !important;
+          font-size: 0.75rem !important;
+          border-radius: 8px !important;
+        }
+        .preview-layout {
+          flex-direction: column !important;
+          margin-top: 135px !important;
+          padding: 2.5rem 1rem 1rem 1rem !important;
+          gap: 1.5rem !important;
+          overflow-y: auto !important;
+          height: calc(100vh - 135px) !important;
+        }
+        .preview-chat-container {
+          max-width: 100% !important;
+          width: 100% !important;
+          height: auto !important;
+          flex: none !important;
+        }
+        .preview-chat-card {
+          max-height: 520px !important;
+          height: 520px !important;
+          min-height: 520px !important;
+        }
+        .preview-right-analytics {
+          width: 100% !important;
+          flex: none !important;
+        }
+        .chat-messages-area {
+          padding: 2.2rem 1.2rem 1.5rem 1.2rem !important;
+        }
+        .chat-options-container {
+          margin-left: 20px !important;
+        }
+      }
+    </style>
   </head>
   <body>
     <div class="builder-app" id="builderApp">
       <header class="builder-header">
-        <div>
-          <h1>Recommendation Question Builder</h1>
-          <p>Create dynamic recommendation flows with conditional branching.</p>
+        <div class="header-left">
+          <a href="index.html" class="logo-branding">
+            <img src="assets/logo.png" alt="Twinsure" />
+            <span>Twinsure</span>
+          </a>
+          <div class="vertical-divider"></div>
+          <div class="header-title-area">
+            <h1>Recommendation Builder</h1>
+          </div>
         </div>
         <div class="header-actions">
+          <button class="btn btn-white" onclick="goToAdmin()">
+            <i class="fas fa-arrow-left"></i> Back to Admin
+          </button>
           <button class="btn btn-white" id="undoBuilderChangeBtn" disabled>
-            <i class="fas fa-rotate-left"></i> Undo Last Change
+            <i class="fas fa-rotate-left"></i> Undo
           </button>
           <button class="btn btn-purple" id="addQuestionBtn">
             <i class="fas fa-plus"></i> Add Question
           </button>
           <button class="btn btn-white" id="previewFlowBtn">
-            <i class="fas fa-eye"></i> Preview Flow
+            <i class="fas fa-eye"></i> Preview
           </button>
         </div>
       </header>
@@ -253,19 +519,26 @@
     >
       <header class="preview-header">
         <div class="ph-left">
-          <h2>Insurance Plan Recommendation</h2>
+          <a href="index.html" class="logo-branding">
+            <img src="assets/logo.png" alt="Twinsure" />
+            <span>Twinsure</span>
+          </a>
+          <div class="vertical-divider"></div>
+          <h2 style="margin: 0; font-size: 1.05rem; color: #334155;">Preview Mode</h2>
           <span class="preview-badge"
-            ><i class="fas fa-circle"></i> Preview Mode</span
+            ><i class="fas fa-circle"></i> Preview</span
           >
         </div>
         <div class="ph-right">
           <button class="btn btn-white" id="undoLastChangeBtn" disabled>
-            Undo Last Change
+            <i class="fas fa-rotate-left"></i> Undo
           </button>
           <button class="btn btn-white" onclick="window.close()">
-            Back to Builder
+            <i class="fas fa-times"></i> Exit
           </button>
-          <button class="btn btn-purple" id="publishFlowBtn">Publish</button>
+          <button class="btn btn-purple" id="publishFlowBtn">
+            <i class="fas fa-paper-plane"></i> Publish
+          </button>
           <div class="ph-profile">
             <img
               src="https://ui-avatars.com/api/?name=Admin&background=random"

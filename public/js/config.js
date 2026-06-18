@@ -1,3 +1,3 @@
-const isDev = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' || window.location.protocol === 'file:'; 
+const isDev = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'; 
 window.API_BASE_URL = isDev ? 'http://127.0.0.1:8000/backend/api' : '/backend/api'; 
 window.BACKEND_ROOT = window.API_BASE_URL.replace(/\/backend\/api\/?$/, ""); 
