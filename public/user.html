@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Customer Dashboard - Twinsure</title>
+  <title>Twinsure - User Portal</title>
   <link rel="icon" href="assets/logo.png" type="image/png" />
   
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -13,20 +13,22 @@
 
   <style>
     :root {
-      --bg-dark: #070d19;
-      --bg-card: rgba(22, 30, 49, 0.7);
-      --bg-nav: #0b132b;
-      --border-glow: rgba(0, 122, 255, 0.15);
-      --border-glass: rgba(255, 255, 255, 0.08);
+      --bg-dark: #060913;
+      --bg-black: #000000;
+      --bg-card: #121620;
+      --bg-nav: #0b0e14;
+      --border-glass: rgba(255, 255, 255, 0.06);
+      --border-glow: rgba(0, 122, 255, 0.3);
       
       --primary-blue: #007aff;
-      --accent-neon: #00d2ff;
-      --success-green: #34c759;
-      --warning-orange: #ff9500;
+      --primary-blue-glow: rgba(0, 122, 255, 0.4);
+      --success-green: #24b47e;
+      --warning-orange: #f59e0b;
+      --danger-red: #ef4444;
       
       --text-white: #ffffff;
-      --text-gray: #8e9ebb;
-      --text-muted: #53627c;
+      --text-gray: #94a3b8;
+      --text-muted: #475569;
       --font-family-sans: 'Inter', sans-serif;
       --font-family-heading: 'Outfit', sans-serif;
     }
@@ -43,39 +45,52 @@
       color: var(--text-white);
       min-height: 100vh;
       overflow-x: hidden;
+      position: relative;
       
       /* Subtle grid background */
       background-image: 
-        linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
-      background-size: 24px 24px;
-      display: flex;
+        linear-gradient(rgba(255, 255, 255, 0.012) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
+      background-size: 30px 30px;
     }
 
-    /* Scrollbar */
+    /* Top blue ambient radial glow */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 380px;
+      background: radial-gradient(circle at top, rgba(0, 122, 255, 0.16) 0%, transparent 65%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Scrollbar customization */
     ::-webkit-scrollbar {
       width: 6px;
+      height: 6px;
     }
     ::-webkit-scrollbar-track {
-      background: rgba(0, 0, 0, 0.1);
+      background: rgba(0, 0, 0, 0.2);
     }
     ::-webkit-scrollbar-thumb {
       background: var(--text-muted);
-      border-radius: 3px;
+      border-radius: 4px;
     }
     ::-webkit-scrollbar-thumb:hover {
       background: var(--text-gray);
     }
 
-    /* Main layout */
-    .dashboard-container {
+    /* Container setup */
+    .app-layout {
       display: flex;
       width: 100vw;
       min-height: 100vh;
-      position: relative;
     }
 
-    /* Sidebar - Desktop Only */
+    /* DESKTOP SIDEBAR NAVIGATION */
     .sidebar {
       width: 260px;
       background-color: var(--bg-nav);
@@ -88,32 +103,39 @@
       left: 0;
       z-index: 100;
       padding: 1.5rem;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 0.3s ease;
     }
 
-    .brand-logo {
+    .brand-branding {
       display: flex;
       align-items: center;
-      gap: 0.8rem;
+      gap: 0.75rem;
       margin-bottom: 2.5rem;
       text-decoration: none;
       color: var(--text-white);
     }
 
-    .brand-logo img {
+    .brand-branding .logo-container {
       width: 32px;
       height: 32px;
-      object-fit: contain;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .brand-logo span {
+    .brand-branding .logo-container svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .brand-branding span {
       font-family: var(--font-family-heading);
-      font-size: 1.35rem;
+      font-size: 1.4rem;
       font-weight: 800;
       letter-spacing: -0.5px;
     }
 
-    .nav-menu {
+    .nav-list {
       list-style: none;
       display: flex;
       flex-direction: column;
@@ -121,43 +143,45 @@
       flex: 1;
     }
 
-    .nav-item a {
+    .nav-link-item a {
       display: flex;
       align-items: center;
       gap: 1rem;
-      padding: 0.85rem 1.2rem;
+      padding: 0.85rem 1.15rem;
       color: var(--text-gray);
       text-decoration: none;
       border-radius: 12px;
       font-size: 0.95rem;
       font-weight: 500;
       transition: all 0.2s ease;
+      border: 1px solid transparent;
     }
 
-    .nav-item a:hover {
+    .nav-link-item a:hover {
       color: var(--text-white);
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba(255, 255, 255, 0.02);
     }
 
-    .nav-item.active a {
+    .nav-link-item.active a {
       color: var(--text-white);
-      background: linear-gradient(135deg, rgba(0, 122, 255, 0.15) 0%, rgba(0, 122, 255, 0.05) 100%);
-      border: 1px solid var(--border-glow);
-      box-shadow: 0 4px 15px rgba(0, 122, 255, 0.1);
+      background: linear-gradient(135deg, rgba(0, 122, 255, 0.15) 0%, rgba(0, 122, 255, 0.04) 100%);
+      border-color: var(--border-glow);
+      box-shadow: 0 4px 15px rgba(0, 122, 255, 0.08);
     }
 
-    .nav-item a i {
+    .nav-link-item a i {
       font-size: 1.1rem;
       width: 20px;
       text-align: center;
     }
 
-    .sidebar-footer {
+    .sidebar-user-block {
       border-top: 1px solid var(--border-glass);
       padding-top: 1.25rem;
+      margin-top: auto;
     }
 
-    .profile-card-small {
+    .sidebar-user-card {
       display: flex;
       align-items: center;
       gap: 0.85rem;
@@ -167,70 +191,70 @@
       transition: background 0.2s;
     }
 
-    .profile-card-small:hover {
+    .sidebar-user-card:hover {
       background: rgba(255, 255, 255, 0.03);
     }
 
-    .profile-card-small img {
-      width: 40px;
-      height: 40px;
+    .sidebar-user-card img {
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       border: 2px solid var(--primary-blue);
       object-fit: cover;
+      box-shadow: 0 0 10px rgba(0, 122, 255, 0.3);
     }
 
-    .profile-card-info h4 {
+    .user-card-info h4 {
       font-size: 0.9rem;
       font-weight: 600;
       color: var(--text-white);
     }
 
-    .profile-card-info p {
-      font-size: 0.75rem;
+    .user-card-info p {
+      font-size: 0.72rem;
       color: var(--text-gray);
     }
 
-    /* Content Area */
-    .content-area {
+    /* MAIN CONTENT VIEWPORT */
+    .main-viewport {
       flex: 1;
       margin-left: 260px;
-      padding: 2rem;
+      padding: 2.25rem;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      position: relative;
+      z-index: 10;
     }
 
-    /* Header Nav */
-    .top-header {
+    /* TOP HEADER BAR */
+    .header-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 2rem;
-      z-index: 90;
     }
 
-    .top-header-mobile {
+    .header-bar-mobile {
       display: none;
     }
 
-    .page-title {
+    .header-title {
       font-family: var(--font-family-heading);
-      font-size: 2rem;
+      font-size: 2.2rem;
       font-weight: 800;
       letter-spacing: -0.5px;
     }
 
-    .header-actions {
+    .header-controls {
       display: flex;
       align-items: center;
-      gap: 1.25rem;
+      gap: 1.2rem;
     }
 
-    .notif-bell {
+    .header-bell {
       position: relative;
-      width: 40px;
-      height: 40px;
+      width: 44px;
+      height: 44px;
       background: var(--bg-card);
       border: 1px solid var(--border-glass);
       border-radius: 50%;
@@ -243,219 +267,183 @@
       transition: all 0.2s;
     }
 
-    .notif-bell:hover {
-      background: rgba(255, 255, 255, 0.08);
-      transform: translateY(-2px);
+    .header-bell:hover {
+      background: rgba(255, 255, 255, 0.06);
+      transform: translateY(-1px);
     }
 
-    .notif-badge {
+    .header-bell-dot {
       position: absolute;
-      top: -3px;
-      right: -3px;
+      top: 12px;
+      right: 12px;
+      width: 8px;
+      height: 8px;
       background: var(--primary-blue);
-      color: var(--text-white);
-      font-size: 0.68rem;
-      font-weight: 800;
-      width: 18px;
-      height: 18px;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid var(--bg-dark);
+      box-shadow: 0 0 8px var(--primary-blue);
     }
 
-    /* View containers */
-    .view-pane {
+    /* Glass Cards */
+    .container-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: 20px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      position: relative;
+    }
+
+    /* VIEW PANES */
+    .tab-view {
       display: none;
-      animation: fadeIn 0.4s ease-out;
+      animation: tabFadeIn 0.35s ease;
       flex: 1;
     }
 
-    .view-pane.active {
+    .tab-view.active {
       display: block;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
+    @keyframes tabFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Common Card Styling - Glassmorphic */
-    .glass-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-glass);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 20px;
-      padding: 1.5rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .glass-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, rgba(255,255,255,0.15) 0%, transparent 100%);
-    }
-
-    /* Status badge style */
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.3rem 0.75rem;
-      border-radius: 30px;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-
-    .status-badge.verified, .status-badge.approved {
-      background: rgba(52, 199, 89, 0.1);
-      color: var(--success-green);
-      border: 1px solid rgba(52, 199, 89, 0.2);
-    }
-
-    .status-badge.pending {
-      background: rgba(255, 149, 0, 0.1);
-      color: var(--warning-orange);
-      border: 1px solid rgba(255, 149, 0, 0.2);
-    }
-
-    .status-badge.unverified {
-      background: rgba(142, 158, 187, 0.1);
-      color: var(--text-gray);
-      border: 1px solid var(--border-glass);
-    }
-
-    /* HOME VIEW SPECIFICS */
-    .greeting-card {
+    /* HOME VIEW */
+    .profile-banner {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 2rem;
     }
 
-    .greeting-main h2 {
+    .banner-welcome h2 {
       font-family: var(--font-family-heading);
-      font-size: 1.75rem;
+      font-size: 1.85rem;
       font-weight: 800;
       margin-bottom: 0.5rem;
+      letter-spacing: -0.5px;
     }
 
-    .greeting-main .kyc-badge {
-      display: flex;
+    .banner-welcome .badge-kyc {
+      display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.35rem;
       font-size: 0.8rem;
       font-weight: 600;
-      background: rgba(255, 255, 255, 0.05);
-      padding: 0.3rem 0.8rem;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 0.3rem 0.85rem;
       border-radius: 30px;
-      width: fit-content;
       border: 1px solid var(--border-glass);
     }
 
-    .greeting-main .kyc-badge.verified {
+    .banner-welcome .badge-kyc.verified {
       color: var(--success-green);
-      border-color: rgba(52, 199, 89, 0.3);
-      background: rgba(52, 199, 89, 0.05);
+      border-color: rgba(36, 180, 126, 0.25);
+      background: rgba(36, 180, 126, 0.05);
     }
 
-    .greeting-main .id-badge {
-      margin-top: 1rem;
+    .banner-welcome .badge-kyc.pending {
+      color: var(--warning-orange);
+      border-color: rgba(245, 158, 11, 0.25);
+      background: rgba(245, 158, 11, 0.05);
+    }
+
+    .banner-welcome .user-tsid {
+      margin-top: 0.85rem;
       font-size: 0.85rem;
       color: var(--text-gray);
       font-family: monospace;
+      letter-spacing: 0.5px;
     }
 
-    .greeting-card img {
-      width: 72px;
-      height: 72px;
+    .profile-banner-avatar {
+      position: relative;
+    }
+
+    .profile-banner-avatar img {
+      width: 76px;
+      height: 76px;
       border-radius: 50%;
-      border: 3px solid var(--primary-blue);
+      border: 3.5px solid var(--primary-blue);
       object-fit: cover;
-      box-shadow: 0 0 20px rgba(0, 122, 255, 0.25);
+      box-shadow: 0 0 20px rgba(0, 122, 255, 0.35);
     }
 
-    /* Action Grid */
-    .action-grid-title {
-      font-size: 1.1rem;
+    /* Actions Grid */
+    .grid-header {
+      font-size: 1.05rem;
       font-weight: 700;
       margin-bottom: 1rem;
       color: var(--text-gray);
+      letter-spacing: 0.25px;
     }
 
-    .quick-action-grid {
+    .actions-grid-2x2 {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
+      gap: 1.15rem;
       margin-bottom: 2rem;
     }
 
-    .action-card {
+    .action-card-btn {
       background: var(--bg-card);
       border: 1px solid var(--border-glass);
       border-radius: 16px;
-      padding: 1.2rem;
+      padding: 1.25rem;
       display: flex;
       align-items: center;
       gap: 1rem;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s;
     }
 
-    .action-card:hover {
+    .action-card-btn:hover {
       border-color: var(--primary-blue);
       transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0, 122, 255, 0.15);
+      box-shadow: 0 5px 15px rgba(0, 122, 255, 0.15);
     }
 
-    .action-icon {
-      width: 44px;
-      height: 44px;
+    .action-card-icon {
+      width: 46px;
+      height: 46px;
       border-radius: 12px;
-      background: rgba(0, 122, 255, 0.1);
-      border: 1px solid rgba(0, 122, 255, 0.2);
+      background: rgba(0, 122, 255, 0.08);
+      border: 1px solid rgba(0, 122, 255, 0.16);
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--primary-blue);
-      font-size: 1.2rem;
+      font-size: 1.25rem;
     }
 
-    .action-info h4 {
+    .action-card-info h4 {
       font-size: 0.95rem;
       font-weight: 600;
-      margin-bottom: 0.2rem;
+      margin-bottom: 0.15rem;
     }
 
-    .action-info p {
+    .action-card-info p {
       font-size: 0.75rem;
       color: var(--text-gray);
     }
 
-    /* Service shortcuts */
-    .shortcuts-container {
+    /* Shortcuts Row */
+    .shortcuts-wrapper {
       margin-bottom: 2rem;
     }
 
-    .shortcuts-list {
+    .shortcuts-panel {
       display: flex;
       justify-content: space-between;
       gap: 1rem;
-      background: rgba(255, 255, 255, 0.02);
+      background: rgba(255, 255, 255, 0.015);
       border: 1px solid var(--border-glass);
-      padding: 1.25rem;
+      padding: 1.25rem 1.5rem;
       border-radius: 20px;
     }
 
-    .shortcut-item {
+    .shortcut-circle-item {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -466,89 +454,88 @@
       flex: 1;
     }
 
-    .shortcut-icon {
+    .shortcut-circle-icon {
       width: 48px;
       height: 48px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba(255, 255, 255, 0.02);
       border: 1px solid var(--border-glass);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 1.15rem;
       color: var(--primary-blue);
-      transition: all 0.2s;
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    .shortcut-item:hover .shortcut-icon {
+    .shortcut-circle-item:hover .shortcut-circle-icon {
       background: var(--primary-blue);
       color: var(--text-white);
-      transform: scale(1.08);
-      box-shadow: 0 0 15px rgba(0, 122, 255, 0.3);
+      transform: scale(1.1);
+      box-shadow: 0 0 15px rgba(0, 122, 255, 0.4);
     }
 
-    .shortcut-item span {
+    .shortcut-circle-item span {
       font-size: 0.78rem;
       font-weight: 500;
       text-align: center;
       color: var(--text-gray);
     }
 
-    /* Timeline style recent activity */
-    .activity-list {
+    /* Home chronological activity */
+    .home-activity-row {
       display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-    }
-
-    .activity-item {
-      display: flex;
-      gap: 1rem;
+      gap: 1.15rem;
       align-items: flex-start;
+      margin-bottom: 1.15rem;
     }
 
-    .activity-num {
+    .home-activity-num {
       font-size: 0.85rem;
       font-weight: 700;
       color: var(--text-muted);
       width: 15px;
-      margin-top: 2px;
+      margin-top: 1px;
     }
 
-    .activity-content {
+    .home-activity-body {
       flex: 1;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.025);
       padding-bottom: 0.85rem;
     }
 
-    .activity-details h5 {
+    .home-activity-body:last-child {
+      border-bottom: none;
+    }
+
+    .home-activity-details h5 {
       font-size: 0.9rem;
       font-weight: 600;
       margin-bottom: 0.2rem;
     }
 
-    .activity-details p {
+    .home-activity-details p {
       font-size: 0.75rem;
       color: var(--text-gray);
     }
 
-    .activity-time {
+    .home-activity-timestamp {
       font-size: 0.75rem;
       color: var(--text-muted);
     }
 
-    /* POLICIES VIEW SPECIFICS */
-    .policies-header {
+    /* POLICIES VIEW */
+    .policies-title-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1.5rem;
     }
 
-    .btn-primary {
+    .btn-solid-blue {
       background: var(--primary-blue);
       color: var(--text-white);
       border: none;
@@ -563,19 +550,13 @@
       transition: all 0.2s;
     }
 
-    .btn-primary:hover {
-      background: #0066d6;
+    .btn-solid-blue:hover {
+      background: #006ce6;
       box-shadow: 0 0 15px rgba(0, 122, 255, 0.4);
       transform: translateY(-1px);
     }
 
-    .policy-cards-container {
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-    }
-
-    .policy-card {
+    .policy-item-card {
       background: var(--bg-card);
       border: 1px solid var(--border-glass);
       border-radius: 20px;
@@ -583,61 +564,61 @@
       display: flex;
       flex-direction: column;
       gap: 1.25rem;
+      margin-bottom: 1.25rem;
     }
 
-    .policy-card-top {
+    .policy-item-top {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
     }
 
-    .policy-provider-info {
+    .policy-item-provider {
       display: flex;
       align-items: center;
       gap: 1rem;
     }
 
-    .policy-logo-wrapper {
+    .policy-item-logo {
       width: 50px;
       height: 50px;
       border-radius: 12px;
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border-glass);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.2rem;
+      font-size: 1.25rem;
       color: var(--primary-blue);
-      overflow: hidden;
     }
 
-    .policy-logo-wrapper img {
+    .policy-item-logo img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
 
-    .policy-meta h3 {
+    .policy-item-meta h3 {
       font-size: 1.05rem;
       font-weight: 700;
-      margin-bottom: 0.25rem;
+      margin-bottom: 0.2rem;
     }
 
-    .policy-meta p {
+    .policy-item-meta p {
       font-size: 0.8rem;
       color: var(--text-gray);
     }
 
-    .policy-card-actions {
+    .policy-action-pills {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 0.75rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
       padding-top: 1rem;
     }
 
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.03);
+    .btn-pill-gray {
+      background: rgba(255, 255, 255, 0.025);
       border: 1px solid var(--border-glass);
       color: var(--text-white);
       padding: 0.65rem;
@@ -653,52 +634,60 @@
       text-decoration: none;
     }
 
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.07);
+    .btn-pill-gray:hover {
+      background: rgba(255, 255, 255, 0.06);
       border-color: var(--text-gray);
     }
 
-    /* SERVICES VIEW SPECIFICS */
-    .services-subtitle {
-      font-size: 0.9rem;
-      color: var(--text-gray);
-      margin-bottom: 1.5rem;
-      margin-top: -1rem;
+    .btn-pill-gray.disabled {
+      opacity: 0.4;
+      pointer-events: none;
     }
 
-    .services-grid {
+    /* SERVICES VIEW */
+    .services-grid-4col {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 1.25rem;
     }
 
-    .service-detail-card {
+    .service-glow-card {
       background: var(--bg-card);
       border: 1px solid var(--border-glass);
       border-radius: 20px;
-      padding: 1.5rem;
+      padding: 1.75rem 1.5rem;
       display: flex;
       flex-direction: column;
       gap: 1.25rem;
-      transition: all 0.2s;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      position: relative;
     }
 
-    .service-detail-card:hover {
-      border-color: var(--primary-blue);
-      box-shadow: 0 0 20px rgba(0, 122, 255, 0.2);
+    .service-glow-card::after {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 20px;
+      border: 1px solid transparent;
+      pointer-events: none;
+      transition: border-color 0.3s;
+      z-index: 2;
     }
 
-    .service-header {
-      display: flex;
-      flex-direction: column;
-      gap: 0.85rem;
+    .service-glow-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 122, 255, 0.16);
     }
 
-    .service-detail-icon {
-      width: 48px;
-      height: 48px;
+    .service-glow-card:hover::after {
+      border-color: var(--primary-blue-glow);
+    }
+
+    .service-glow-icon-box {
+      width: 50px;
+      height: 50px;
       border-radius: 12px;
-      background: rgba(0, 122, 255, 0.1);
+      background: rgba(0, 122, 255, 0.08);
       border: 1px solid rgba(0, 122, 255, 0.2);
       display: flex;
       align-items: center;
@@ -706,107 +695,107 @@
       font-size: 1.35rem;
       color: var(--primary-blue);
       box-shadow: 0 0 15px rgba(0, 122, 255, 0.15);
+      margin-bottom: 0.5rem;
     }
 
-    .service-header h3 {
+    .service-glow-card h3 {
       font-size: 1.15rem;
       font-weight: 700;
       font-family: var(--font-family-heading);
     }
 
-    .service-header p {
+    .service-glow-card p {
       font-size: 0.8rem;
       color: var(--text-gray);
-      line-height: 1.4;
-      min-height: 45px;
+      line-height: 1.45;
+      min-height: 44px;
     }
 
-    .service-detail-card .btn-primary {
+    .service-glow-card .btn-solid-blue {
       width: 100%;
       justify-content: center;
       padding: 0.65rem;
       font-size: 0.82rem;
     }
 
-    /* APPOINTMENTS VIEW SPECIFICS */
-    .appointment-type-grid {
+    /* APPOINTMENTS VIEW */
+    .booking-type-toggle {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
+      gap: 1.15rem;
       margin-bottom: 2rem;
     }
 
-    .type-card {
+    .booking-card-option {
       background: var(--bg-card);
       border: 1px solid var(--border-glass);
       border-radius: 16px;
       padding: 1.5rem;
       text-align: center;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.25s;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 0.75rem;
     }
 
-    .type-card i {
-      font-size: 1.5rem;
+    .booking-card-option i {
+      font-size: 1.6rem;
       color: var(--primary-blue);
+      transition: transform 0.2s;
     }
 
-    .type-card h3 {
-      font-size: 1rem;
+    .booking-card-option h3 {
+      font-size: 1.05rem;
       font-weight: 700;
     }
 
-    .type-card p {
-      font-size: 0.75rem;
+    .booking-card-option p {
+      font-size: 0.78rem;
       color: var(--text-gray);
     }
 
-    .type-card:hover {
+    .booking-card-option:hover {
       border-color: var(--primary-blue);
       box-shadow: 0 4px 15px rgba(0, 122, 255, 0.15);
     }
 
-    .type-card.active {
-      background: linear-gradient(135deg, rgba(0, 122, 255, 0.15) 0%, rgba(0, 122, 255, 0.05) 100%);
+    .booking-card-option:hover i {
+      transform: scale(1.08);
+    }
+
+    .booking-card-option.active {
+      background: linear-gradient(135deg, rgba(0, 122, 255, 0.15) 0%, rgba(0, 122, 255, 0.03) 100%);
       border-color: var(--primary-blue);
+      box-shadow: 0 0 15px rgba(0, 122, 255, 0.12);
     }
 
-    .appointment-form-section {
-      margin-bottom: 2.5rem;
+    .form-inputs-block {
+      margin-bottom: 2rem;
     }
 
-    .section-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 1.25rem;
-      color: var(--text-gray);
-    }
-
-    .form-row {
+    .inputs-grid-2col {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 1.25rem;
       margin-bottom: 1.25rem;
     }
 
-    .form-group {
+    .field-wrapper {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.45rem;
     }
 
-    .form-group label {
+    .field-wrapper label {
       font-size: 0.78rem;
       font-weight: 600;
       color: var(--text-gray);
     }
 
-    .form-control {
-      background: rgba(255, 255, 255, 0.03);
+    .field-control {
+      background: var(--bg-black);
       border: 1.5px solid var(--border-glass);
       color: var(--text-white);
       padding: 0.75rem 1rem;
@@ -817,39 +806,39 @@
       width: 100%;
     }
 
-    .form-control:focus {
+    .field-control:focus {
       border-color: var(--primary-blue);
-      box-shadow: 0 0 10px rgba(0, 122, 255, 0.15);
+      box-shadow: 0 0 10px rgba(0, 122, 255, 0.2);
     }
 
-    .form-control::placeholder {
+    .field-control::placeholder {
       color: var(--text-muted);
     }
 
-    select.form-control {
+    select.field-control {
       cursor: pointer;
       appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%238e9ebb'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 1rem center;
-      background-size: 1.2rem;
+      background-size: 1.1rem;
       padding-right: 2.5rem;
     }
 
-    select.form-control option {
+    select.field-control option {
       background-color: var(--bg-dark);
       color: var(--text-white);
     }
 
-    .appointment-form-section .btn-primary {
+    .form-inputs-block .btn-solid-blue {
       width: 100%;
       justify-content: center;
       padding: 0.85rem;
       margin-top: 0.5rem;
     }
 
-    /* Chronological Timeline on Appointments and Updates */
-    .timeline-container {
+    /* Chronological Timeline */
+    .timeline-path {
       position: relative;
       padding-left: 1.75rem;
       display: flex;
@@ -857,7 +846,7 @@
       gap: 1.5rem;
     }
 
-    .timeline-container::before {
+    .timeline-path::before {
       content: '';
       position: absolute;
       left: 6px;
@@ -867,11 +856,11 @@
       background: var(--border-glass);
     }
 
-    .timeline-node {
+    .timeline-step-node {
       position: relative;
     }
 
-    .timeline-dot {
+    .timeline-circle-node {
       position: absolute;
       left: -1.75rem;
       top: 4px;
@@ -879,20 +868,20 @@
       height: 14px;
       border-radius: 50%;
       background: var(--primary-blue);
-      border: 3px solid var(--bg-dark);
-      box-shadow: 0 0 0 2px var(--border-glass);
+      border: 3.5px solid var(--bg-dark);
+      box-shadow: 0 0 0 1.5px var(--border-glass);
       z-index: 2;
     }
 
-    .timeline-dot.completed {
+    .timeline-circle-node.completed {
       background: var(--success-green);
     }
 
-    .timeline-dot.pending {
+    .timeline-circle-node.pending {
       background: var(--warning-orange);
     }
 
-    .timeline-content-card {
+    .timeline-box-card {
       background: var(--bg-card);
       border: 1px solid var(--border-glass);
       border-radius: 16px;
@@ -902,31 +891,31 @@
       align-items: center;
     }
 
-    .timeline-info h4 {
+    .timeline-desc h4 {
       font-size: 0.88rem;
       font-weight: 700;
       margin-bottom: 0.2rem;
     }
 
-    .timeline-info p {
+    .timeline-desc p {
       font-size: 0.75rem;
       color: var(--text-gray);
     }
 
-    /* UPDATES VIEW SPECIFICS */
-    .updates-filters {
+    /* UPDATES VIEW */
+    .pills-filter-row {
       display: flex;
       gap: 0.5rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.75rem;
       overflow-x: auto;
       padding-bottom: 0.5rem;
     }
 
-    .filter-pill {
-      background: rgba(255, 255, 255, 0.03);
+    .filter-pill-btn {
+      background: rgba(255, 255, 255, 0.025);
       border: 1px solid var(--border-glass);
       color: var(--text-gray);
-      padding: 0.45rem 1.15rem;
+      padding: 0.45rem 1.25rem;
       border-radius: 30px;
       font-size: 0.82rem;
       font-weight: 600;
@@ -935,301 +924,259 @@
       white-space: nowrap;
     }
 
-    .filter-pill:hover {
+    .filter-pill-btn:hover {
       background: rgba(255, 255, 255, 0.06);
       color: var(--text-white);
     }
 
-    .filter-pill.active {
+    .filter-pill-btn.active {
       background: var(--primary-blue);
       color: var(--text-white);
       border-color: var(--primary-blue);
       box-shadow: 0 0 10px rgba(0, 122, 255, 0.35);
     }
 
-    /* Floating action buttons */
-    .floating-actions {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
+    /* MY PROFILE VIEW (Pristine mockup representation) */
+    .profile-nav-top {
       display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      z-index: 200;
+      align-items: center;
+      margin-bottom: 2rem;
+      position: relative;
     }
 
-    .floating-btn {
-      width: 56px;
-      height: 56px;
+    .profile-back-arrow {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-glass);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-white);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .profile-back-arrow:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .profile-nav-title {
+      font-family: var(--font-family-heading);
+      font-size: 1.25rem;
+      font-weight: 700;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .profile-center-hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 2rem;
+    }
+
+    .profile-hero-avatar-wrapper {
+      position: relative;
+      width: 104px;
+      height: 104px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.45rem;
-      color: var(--text-white);
-      cursor: pointer;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-      border: none;
-      position: relative;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      background: radial-gradient(circle, rgba(0, 122, 255, 0.25) 0%, transparent 80%);
     }
 
-    .floating-btn:hover {
-      transform: scale(1.08) translateY(-3px);
-    }
-
-    .floating-btn.ai-agent {
-      background: linear-gradient(135deg, #007aff 0%, #00d2ff 100%);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-    }
-
-    .floating-btn.whatsapp {
-      background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-    }
-
-    .floating-label {
+    .profile-hero-avatar-wrapper::after {
+      content: '';
       position: absolute;
-      right: 70px;
-      background: var(--bg-nav);
-      border: 1px solid var(--border-glass);
-      color: var(--text-white);
-      padding: 0.35rem 0.75rem;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      white-space: nowrap;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      inset: -2px;
+      border-radius: 50%;
+      border: 2px solid var(--primary-blue);
+      box-shadow: 0 0 15px rgba(0, 122, 255, 0.4);
     }
 
-    .floating-btn:hover .floating-label {
-      opacity: 1;
+    .profile-hero-avatar-wrapper img {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      object-fit: cover;
+      z-index: 2;
     }
 
-    /* Modal dialog styling */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-      padding: 1.5rem;
-    }
-
-    .modal-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .modal-wrapper {
-      background: var(--bg-nav);
-      border: 1px solid var(--border-glass);
-      border-radius: 24px;
-      width: 100%;
-      max-width: 500px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-      transform: translateY(20px);
-      transition: transform 0.3s ease;
-      overflow: hidden;
-    }
-
-    .modal-overlay.active .modal-wrapper {
-      transform: translateY(0);
-    }
-
-    .modal-header {
-      padding: 1.5rem;
-      border-bottom: 1px solid var(--border-glass);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .modal-header h3 {
+    .profile-center-hero h2 {
       font-family: var(--font-family-heading);
-      font-size: 1.25rem;
-      font-weight: 800;
+      font-size: 1.65rem;
+      font-weight: 700;
+      letter-spacing: -0.25px;
     }
 
-    .modal-close {
-      background: none;
-      border: none;
+    .profile-center-hero p {
+      font-size: 0.88rem;
       color: var(--text-gray);
-      font-size: 1.2rem;
-      cursor: pointer;
-      padding: 0.25rem;
+      margin-top: -0.2rem;
     }
 
-    .modal-close:hover {
-      color: var(--text-white);
-    }
-
-    .modal-body {
-      padding: 1.5rem;
-      max-height: 70vh;
-      overflow-y: auto;
-    }
-
-    .modal-footer {
-      padding: 1.25rem 1.5rem;
-      border-top: 1px solid var(--border-glass);
-      display: flex;
-      justify-content: flex-end;
-      gap: 0.75rem;
-    }
-
-    /* Side drawer style for Profile */
-    .drawer-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(5px);
-      z-index: 1000;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
-
-    .drawer-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .drawer-wrapper {
-      position: fixed;
-      top: 0;
-      bottom: 0;
-      right: -420px;
-      width: 420px;
-      max-width: 100vw;
-      background: var(--bg-nav);
-      border-left: 1px solid var(--border-glass);
-      box-shadow: -10px 0 30px rgba(0,0,0,0.3);
-      z-index: 1001;
-      display: flex;
-      flex-direction: column;
-      transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .drawer-overlay.active + .drawer-wrapper,
-    .drawer-wrapper.active {
-      right: 0;
-    }
-
-    .drawer-header {
-      padding: 1.5rem;
-      border-bottom: 1px solid var(--border-glass);
+    .kyc-status-block {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: 16px;
+      padding: 1rem 1.25rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-bottom: 2rem;
     }
 
-    .drawer-header h3 {
-      font-family: var(--font-family-heading);
-      font-size: 1.25rem;
-      font-weight: 800;
+    .kyc-status-block span {
+      font-size: 0.95rem;
+      font-weight: 600;
     }
 
-    .drawer-body {
-      padding: 1.5rem;
-      flex: 1;
-      overflow-y: auto;
+    .documents-header {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-gray);
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .documents-list-block {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: 20px;
+      padding: 0.5rem 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .doc-row-line {
       display: flex;
-      flex-direction: column;
-      gap: 1.75rem;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
     }
 
-    /* KYC document upload cards inside drawer */
-    .kyc-upload-container {
+    .doc-row-line:last-child {
+      border-bottom: none;
+    }
+
+    .doc-row-details {
       display: flex;
-      flex-direction: column;
+      align-items: center;
       gap: 0.85rem;
     }
 
-    .kyc-upload-card {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--border-glass);
-      border-radius: 12px;
-      padding: 1rem;
+    .doc-row-details i {
+      font-size: 1.15rem;
+      color: var(--text-gray);
+      width: 20px;
+      text-align: center;
+    }
+
+    .doc-row-details span {
+      font-size: 0.88rem;
+      font-weight: 500;
+    }
+
+    .doc-row-actions {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .doc-action-link {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--primary-blue);
+      text-decoration: none;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .doc-action-link:hover {
+      opacity: 0.8;
+    }
+
+    .settings-list-block {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .setting-list-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-    }
-
-    .kyc-doc-info h5 {
-      font-size: 0.85rem;
-      font-weight: 700;
-      margin-bottom: 0.15rem;
-    }
-
-    .kyc-doc-info p {
-      font-size: 0.72rem;
-      color: var(--text-gray);
-    }
-
-    .kyc-upload-btn {
-      background: rgba(0, 122, 255, 0.1);
-      border: 1px solid rgba(0, 122, 255, 0.2);
-      color: var(--primary-blue);
-      padding: 0.45rem 0.85rem;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      font-weight: 600;
+      padding: 1rem 1.25rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: 16px;
       cursor: pointer;
+      text-decoration: none;
+      color: var(--text-white);
       transition: all 0.2s;
     }
 
-    .kyc-upload-btn:hover {
-      background: var(--primary-blue);
-      color: var(--text-white);
+    .setting-list-row:hover {
+      background: rgba(255, 255, 255, 0.02);
+      border-color: var(--primary-blue-glow);
     }
 
-    .logout-btn-wrapper {
-      margin-top: 1rem;
-      border-top: 1px solid var(--border-glass);
-      padding-top: 1.25rem;
-    }
-
-    .btn-danger {
-      background: rgba(255, 59, 48, 0.1);
-      border: 1px solid rgba(255, 59, 48, 0.2);
-      color: #ff3b30;
-      width: 100%;
-      padding: 0.75rem;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
+    .setting-row-left {
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      transition: all 0.2s;
+      gap: 0.85rem;
     }
 
-    .btn-danger:hover {
-      background: #ff3b30;
-      color: var(--text-white);
+    .setting-row-left i {
+      font-size: 1.1rem;
+      color: var(--text-gray);
+      width: 20px;
+      text-align: center;
     }
 
-    /* Bottom Nav for Mobile/Tablet */
-    .bottom-nav {
+    .setting-row-left span {
+      font-size: 0.88rem;
+      font-weight: 500;
+    }
+
+    .setting-list-row.danger {
+      border-color: rgba(239, 68, 68, 0.15);
+    }
+
+    .setting-list-row.danger:hover {
+      background: rgba(239, 68, 68, 0.05);
+      border-color: var(--danger-red);
+    }
+
+    .setting-list-row.danger i, .setting-list-row.danger span {
+      color: var(--danger-red);
+    }
+
+    /* Modal Form / Edit Panels inside Profile Drawer Overlay */
+    .profile-inline-form-modal {
+      display: none;
+      animation: tabFadeIn 0.3s ease;
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: 20px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    }
+
+    .profile-inline-form-modal.active {
+      display: block;
+    }
+
+    /* BOTTOM MOBILE NAVIGATION MENU */
+    .bottom-navbar {
       display: none;
       position: fixed;
       bottom: 0;
@@ -1242,10 +1189,10 @@
       justify-content: space-around;
       align-items: center;
       padding: 0 0.5rem;
-      box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.4);
     }
 
-    .bottom-nav-item {
+    .bottom-nav-link {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -1260,34 +1207,159 @@
       transition: all 0.2s;
     }
 
-    .bottom-nav-item i {
-      font-size: 1.3rem;
+    .bottom-nav-link i {
+      font-size: 1.35rem;
       margin-top: 2px;
     }
 
-    .bottom-nav-item.active {
+    .bottom-nav-link.active {
       color: var(--primary-blue);
-      text-shadow: 0 0 10px rgba(0, 122, 255, 0.2);
+      text-shadow: 0 0 10px rgba(0, 122, 255, 0.25);
     }
 
-    /* Responsive adjustments */
+    /* FLOATING ACTIONS PILLS */
+    .floater-actions-container {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      z-index: 200;
+    }
+
+    .floater-btn {
+      height: 48px;
+      border-radius: 24px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0 1.25rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-white);
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      text-decoration: none;
+    }
+
+    .floater-btn i {
+      font-size: 1.15rem;
+    }
+
+    .floater-btn:hover {
+      transform: scale(1.04) translateY(-2px);
+    }
+
+    .floater-btn.ai-copilot {
+      background: linear-gradient(135deg, #007aff 0%, #00d2ff 100%);
+      box-shadow: 0 0 15px rgba(0, 122, 255, 0.3);
+    }
+
+    .floater-btn.whatsapp-support {
+      background: linear-gradient(135deg, #24b47e 0%, #128c7e 100%);
+      box-shadow: 0 0 15px rgba(36, 180, 126, 0.3);
+    }
+
+    /* Modal windows */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      padding: 1.5rem;
+    }
+
+    .modal-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-dialog-panel {
+      background: var(--bg-nav);
+      border: 1px solid var(--border-glass);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+      overflow: hidden;
+    }
+
+    .modal-backdrop.active .modal-dialog-panel {
+      transform: translateY(0);
+    }
+
+    .modal-title-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-glass);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title-header h3 {
+      font-family: var(--font-family-heading);
+      font-size: 1.25rem;
+      font-weight: 800;
+    }
+
+    .modal-close-btn {
+      background: none;
+      border: none;
+      color: var(--text-gray);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0.25rem;
+    }
+
+    .modal-close-btn:hover {
+      color: var(--text-white);
+    }
+
+    .modal-content-body {
+      padding: 1.5rem;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    .modal-actions-footer {
+      padding: 1.25rem 1.5rem;
+      border-top: 1px solid var(--border-glass);
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+
+    /* RESPONSIVE LAYOUT BREAKPOINTS */
     @media (max-width: 992px) {
-      body {
-        flex-direction: column;
-      }
       .sidebar {
         display: none;
       }
-      .content-area {
+      .main-viewport {
         margin-left: 0;
-        padding: 1rem 1rem 90px 1rem; /* Padding at bottom for bottom-nav */
+        padding: 1.25rem 1.25rem 90px 1.25rem; /* Space for mobile navbar */
       }
-      .top-header {
+      .header-bar {
         display: none;
       }
       
-      /* Mobile fixed top header */
-      .top-header-mobile {
+      /* Mobile fixed header bar */
+      .header-bar-mobile {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -1297,28 +1369,15 @@
         position: sticky;
         top: 0;
         z-index: 160;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
       }
-      .top-header-mobile .mobile-brand {
-        display: flex;
-        align-items: center;
-        gap: 0.6rem;
-        text-decoration: none;
-        color: var(--text-white);
+      .header-bar-mobile .brand-branding {
+        margin-bottom: 0;
       }
-      .top-header-mobile .mobile-brand img {
-        width: 28px;
-        height: 28px;
-      }
-      .top-header-mobile .mobile-brand span {
-        font-family: var(--font-family-heading);
-        font-size: 1.15rem;
-        font-weight: 800;
-      }
-      .top-header-mobile .header-actions {
+      .header-bar-mobile .header-controls {
         gap: 0.85rem;
       }
-      .top-header-mobile .header-actions img {
+      .header-bar-mobile .header-controls img {
         width: 32px;
         height: 32px;
         border-radius: 50%;
@@ -1326,158 +1385,157 @@
         object-fit: cover;
       }
       
-      .bottom-nav {
+      .bottom-navbar {
         display: flex;
       }
       
-      .floating-actions {
-        bottom: 5.5rem; /* Make room for bottom nav */
+      .floater-actions-container {
+        bottom: 5.5rem; /* Elevate actions above bottom navbar */
         right: 1.25rem;
       }
       
-      .floating-btn {
-        width: 50px;
-        height: 50px;
-        font-size: 1.25rem;
-      }
-      
-      .floating-label {
-        display: none; /* Hide labels on mobile */
+      .floater-btn {
+        height: 44px;
+        padding: 0 1rem;
+        font-size: 0.78rem;
       }
     }
 
     @media (max-width: 600px) {
-      .quick-action-grid {
+      .actions-grid-2x2 {
         grid-template-columns: 1fr;
-        gap: 0.75rem;
+        gap: 0.85rem;
       }
-      .services-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-      }
-      .form-row {
+      .services-grid-4col {
         grid-template-columns: 1fr;
         gap: 1rem;
       }
-      .drawer-wrapper {
-        width: 100vw;
+      .inputs-grid-2col {
+        grid-template-columns: 1fr;
+        gap: 1rem;
       }
-      .policy-card-actions {
+      .policy-action-pills {
         grid-template-columns: 1fr;
       }
-      .shortcuts-list {
+      .shortcuts-panel {
         padding: 1rem 0.5rem;
       }
-      .shortcut-item span {
+      .shortcut-circle-item span {
         font-size: 0.7rem;
       }
-      .shortcut-icon {
+      .shortcut-circle-icon {
         width: 42px;
         height: 42px;
         font-size: 1rem;
       }
     }
 
-    /* AI Agent Drawer Simulation */
-    .ai-drawer {
+    /* AI Agent Copilot Drawer chat elements */
+    .ai-chat-block {
       display: flex;
       flex-direction: column;
       gap: 1rem;
     }
-    .chat-messages {
+    .chat-scroll-area {
       height: 250px;
       overflow-y: auto;
       border: 1px solid var(--border-glass);
       border-radius: 12px;
       padding: 0.75rem;
-      background: rgba(0,0,0,0.1);
+      background: rgba(0,0,0,0.2);
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
     }
-    .chat-msg {
-      padding: 0.6rem 0.85rem;
+    .msg-bubble {
+      padding: 0.65rem 0.85rem;
       border-radius: 12px;
-      font-size: 0.8rem;
-      max-width: 80%;
+      font-size: 0.82rem;
+      max-width: 85%;
     }
-    .chat-msg.agent {
-      background: rgba(0, 122, 255, 0.15);
+    .msg-bubble.bot {
+      background: rgba(0, 122, 255, 0.12);
+      border: 1px solid rgba(0, 122, 255, 0.2);
       color: var(--text-white);
       align-self: flex-start;
       border-bottom-left-radius: 2px;
     }
-    .chat-msg.user {
+    .msg-bubble.sender {
       background: var(--bg-card);
       color: var(--text-white);
       align-self: flex-end;
       border-bottom-right-radius: 2px;
       border: 1px solid var(--border-glass);
     }
-    .chat-input-row {
+    .chat-input-wrapper {
       display: flex;
       gap: 0.5rem;
-    }
-    .chat-input-row .form-control {
-      padding: 0.6rem;
-    }
-    .chat-input-row .btn-primary {
-      padding: 0.6rem 1rem;
     }
   </style>
 </head>
 <body>
 
-  <!-- MOBILE STATIC TOP BAR -->
-  <div class="top-header-mobile">
-    <a href="index.html" class="mobile-brand">
-      <img src="assets/logo.png" alt="Twinsure" />
+  <!-- MOBILE TOP FIXED BAR -->
+  <div class="header-bar-mobile">
+    <a href="index.html" class="brand-branding">
+      <div class="logo-container">
+        <!-- SVG Shield Logo -->
+        <svg viewBox="0 0 100 100">
+          <path d="M 50,10 Q 80,18 80,42 C 80,70 50,90 50,90 C 50,90 20,70 20,42 Q 20,18 50,10 Z" fill="none" stroke="#007aff" stroke-width="8"></path>
+          <path d="M 40,50 C 40,43 45,43 50,50 C 55,57 60,57 60,50 C 60,43 55,43 50,50 C 45,57 40,57 40,50 Z" fill="none" stroke="#007aff" stroke-width="6" stroke-linecap="round"></path>
+        </svg>
+      </div>
       <span>Twinsure</span>
     </a>
-    <div class="header-actions">
-      <div class="notif-bell" onclick="switchTab('updates')">
+    <div class="header-controls">
+      <div class="header-bell" onclick="switchTab('updates')">
         <i class="far fa-bell"></i>
-        <div class="notif-badge" id="mobile-notif-count">3</div>
+        <div class="header-bell-dot" id="mobile-bell-dot"></div>
       </div>
-      <img src="https://ui-avatars.com/api/?name=User&background=007aff&color=fff" id="mobile-user-avatar" onclick="openProfileDrawer()" alt="User" />
+      <img src="https://ui-avatars.com/api/?name=User&background=007aff&color=fff" id="mobile-avatar-img" onclick="switchTab('profile')" alt="User Avatar" />
     </div>
   </div>
 
-  <div class="dashboard-container">
+  <div class="app-layout">
     
     <!-- DESKTOP LEFT SIDEBAR -->
     <aside class="sidebar">
-      <a href="index.html" class="brand-logo">
-        <img src="assets/logo.png" alt="Twinsure" />
+      <a href="index.html" class="brand-branding">
+        <div class="logo-container">
+          <svg viewBox="0 0 100 100">
+            <path d="M 50,10 Q 80,18 80,42 C 80,70 50,90 50,90 C 50,90 20,70 20,42 Q 20,18 50,10 Z" fill="none" stroke="#007aff" stroke-width="8"></path>
+            <path d="M 40,50 C 40,43 45,43 50,50 C 55,57 60,57 60,50 C 60,43 55,43 50,50 C 45,57 40,57 40,50 Z" fill="none" stroke="#007aff" stroke-width="6" stroke-linecap="round"></path>
+          </svg>
+        </div>
         <span>Twinsure</span>
       </a>
       
-      <ul class="nav-menu">
-        <li class="nav-item active" id="side-nav-home">
+      <ul class="nav-list">
+        <li class="nav-link-item active" id="side-nav-home">
           <a href="#" onclick="switchTab('home')">
             <i class="fas fa-house"></i>
             <span>Home</span>
           </a>
         </li>
-        <li class="nav-item" id="side-nav-policies">
+        <li class="nav-link-item" id="side-nav-policies">
           <a href="#" onclick="switchTab('policies')">
             <i class="fas fa-file-shield"></i>
             <span>Policies</span>
           </a>
         </li>
-        <li class="nav-item" id="side-nav-services">
+        <li class="nav-link-item" id="side-nav-services">
           <a href="#" onclick="switchTab('services')">
             <i class="fas fa-cubes"></i>
             <span>Services</span>
           </a>
         </li>
-        <li class="nav-item" id="side-nav-appointments">
+        <li class="nav-link-item" id="side-nav-appointments">
           <a href="#" onclick="switchTab('appointments')">
             <i class="fas fa-calendar-check"></i>
             <span>Appointments</span>
           </a>
         </li>
-        <li class="nav-item" id="side-nav-updates">
+        <li class="nav-link-item" id="side-nav-updates">
           <a href="#" onclick="switchTab('updates')">
             <i class="fas fa-bell"></i>
             <span>Updates</span>
@@ -1485,10 +1543,10 @@
         </li>
       </ul>
       
-      <div class="sidebar-footer">
-        <div class="profile-card-small" onclick="openProfileDrawer()">
-          <img src="https://ui-avatars.com/api/?name=User&background=007aff&color=fff" id="sidebar-user-avatar" alt="User" />
-          <div class="profile-card-info">
+      <div class="sidebar-user-block">
+        <div class="sidebar-user-card" onclick="switchTab('profile')">
+          <img src="https://ui-avatars.com/api/?name=User&background=007aff&color=fff" id="sidebar-avatar-img" alt="User Avatar" />
+          <div class="user-card-info">
             <h4 id="sidebar-user-name">Loading...</h4>
             <p id="sidebar-user-tsid">TS-XXXX</p>
           </div>
@@ -1496,97 +1554,97 @@
       </div>
     </aside>
 
-    <!-- CONTENT DISPLAY AREA -->
-    <main class="content-area">
+    <!-- MAIN INTERACTIVE SPACE -->
+    <main class="main-viewport">
       
       <!-- DESKTOP TOP HEADER -->
-      <header class="top-header">
-        <h1 class="page-title" id="page-title-text">Dashboard</h1>
-        <div class="header-actions">
-          <div class="notif-bell" onclick="switchTab('updates')">
+      <header class="header-bar">
+        <h1 class="header-title" id="desktop-view-title">Dashboard</h1>
+        <div class="header-controls">
+          <div class="header-bell" onclick="switchTab('updates')">
             <i class="far fa-bell"></i>
-            <div class="notif-badge" id="desktop-notif-count">3</div>
+            <div class="header-bell-dot" id="desktop-bell-dot"></div>
           </div>
-          <button class="btn-primary" onclick="openProfileDrawer()" style="padding: 0.6rem 1.2rem; border-radius: 30px;">
+          <button class="btn-solid-blue" onclick="switchTab('profile')" style="border-radius: 30px; padding: 0.6rem 1.25rem;">
             <i class="far fa-user-circle"></i>
             <span>My Profile</span>
           </button>
         </div>
       </header>
 
-      <!-- PANES / VIEWS -->
-      
-      <!-- 1. HOME VIEW -->
-      <section id="view-home" class="view-pane active">
-        <div class="glass-card greeting-card" style="margin-bottom: 1.5rem;">
-          <div class="greeting-main">
-            <h2 id="home-greeting">Good Morning, User</h2>
-            <div class="kyc-badge" id="home-kyc-badge">
+      <!-- TAB 1: HOME VIEW -->
+      <section id="view-home" class="tab-view active">
+        <div class="container-card profile-banner" style="margin-bottom: 1.5rem;">
+          <div class="banner-welcome">
+            <h2 id="home-greeting-text">Good Morning, User</h2>
+            <div class="badge-kyc" id="home-kyc-badge">
               <i class="fas fa-circle-notch fa-spin"></i> Checking KYC...
             </div>
-            <div class="id-badge" id="home-user-id">My ID: TS-XXXX</div>
+            <div class="user-tsid" id="home-user-id">My ID: TS-XXXX</div>
           </div>
-          <img src="https://ui-avatars.com/api/?name=User&background=007aff&color=fff" id="home-user-avatar" alt="Avatar" />
+          <div class="profile-banner-avatar">
+            <img src="https://ui-avatars.com/api/?name=User&background=007aff&color=fff" id="home-avatar-img" alt="User Avatar" />
+          </div>
         </div>
 
-        <h3 class="action-grid-title">Quick Action</h3>
-        <div class="quick-action-grid">
-          <div class="action-card" onclick="openAddPolicyModal()">
-            <div class="action-icon"><i class="fas fa-file-arrow-up"></i></div>
-            <div class="action-info">
+        <h3 class="grid-header">Quick Action</h3>
+        <div class="actions-grid-2x2">
+          <div class="action-card-btn" onclick="openAddPolicyModal()">
+            <div class="action-card-icon"><i class="fas fa-file-arrow-up"></i></div>
+            <div class="action-card-info">
               <h4>Upload Policy</h4>
               <p>Instantly digitize policy</p>
             </div>
           </div>
-          <div class="action-card" onclick="switchTab('services')">
-            <div class="action-icon"><i class="fas fa-screwdriver-wrench"></i></div>
-            <div class="action-info">
+          <div class="action-card-btn" onclick="switchTab('services')">
+            <div class="action-card-icon"><i class="fas fa-screwdriver-wrench"></i></div>
+            <div class="action-card-info">
               <h4>Request Service</h4>
               <p>Get assistance</p>
             </div>
           </div>
-          <div class="action-card" onclick="switchTab('appointments')">
-            <div class="action-icon"><i class="fas fa-calendar-days"></i></div>
-            <div class="action-info">
+          <div class="action-card-btn" onclick="switchTab('appointments')">
+            <div class="action-card-icon"><i class="fas fa-calendar-days"></i></div>
+            <div class="action-card-info">
               <h4>Book Appointment</h4>
               <p>Meet your Agent</p>
             </div>
           </div>
-          <div class="action-card" onclick="openServiceModal('Pre Policy Audit')">
-            <div class="action-icon"><i class="fas fa-magnifying-glass-chart"></i></div>
-            <div class="action-info">
+          <div class="action-card-btn" onclick="openServiceRequestModal('Pre Policy Audit')">
+            <div class="action-card-icon"><i class="fas fa-magnifying-glass-chart"></i></div>
+            <div class="action-card-info">
               <h4>AI Policy Audit</h4>
               <p>Review coverage</p>
             </div>
           </div>
         </div>
 
-        <div class="shortcuts-container">
-          <h3 class="action-grid-title">Service Shortcuts</h3>
-          <div class="shortcuts-list">
-            <a href="#" class="shortcut-item" onclick="openServiceModal('Icare')">
-              <div class="shortcut-icon"><i class="fas fa-hand-holding-heart"></i></div>
+        <div class="shortcuts-wrapper">
+          <h3 class="grid-header">Service Shortcuts</h3>
+          <div class="shortcuts-panel">
+            <a href="#" class="shortcut-circle-item" onclick="openServiceRequestModal('Icare')">
+              <div class="shortcut-circle-icon"><i class="fas fa-hand-holding-heart"></i></div>
               <span>Icare</span>
             </a>
-            <a href="#" class="shortcut-item" onclick="openServiceModal('Re.New.All')">
-              <div class="shortcut-icon"><i class="fas fa-arrow-rotate-right"></i></div>
+            <a href="#" class="shortcut-circle-item" onclick="openServiceRequestModal('Re.New.All')">
+              <div class="shortcut-circle-icon"><i class="fas fa-arrow-rotate-right"></i></div>
               <span>Re.New All</span>
             </a>
-            <a href="#" class="shortcut-item" onclick="openServiceModal('HosPos')">
-              <div class="shortcut-icon"><i class="fas fa-hospital-user"></i></div>
+            <a href="#" class="shortcut-circle-item" onclick="openServiceRequestModal('HosPos')">
+              <div class="shortcut-circle-icon"><i class="fas fa-hospital-user"></i></div>
               <span>HosPos</span>
             </a>
-            <a href="#" class="shortcut-item" onclick="openServiceModal('Pre Policy Audit')">
-              <div class="shortcut-icon"><i class="fas fa-shield-halved"></i></div>
+            <a href="#" class="shortcut-circle-item" onclick="openServiceRequestModal('Pre Policy Audit')">
+              <div class="shortcut-circle-icon"><i class="fas fa-shield-halved"></i></div>
               <span>Pre Policy Audit</span>
             </a>
           </div>
         </div>
 
-        <div class="glass-card">
-          <h3 class="action-grid-title" style="margin-bottom: 1.25rem;">Recent Activity</h3>
-          <div class="activity-list" id="home-activity-list">
-            <!-- Dynamic activities list -->
+        <div class="container-card">
+          <h3 class="grid-header" style="margin-bottom: 1.25rem;">Recent Activity</h3>
+          <div id="home-activity-list">
+            <!-- Dynamic loaded items -->
             <div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 1rem 0;">
               No recent activity recorded.
             </div>
@@ -1594,19 +1652,19 @@
         </div>
       </section>
 
-      <!-- 2. POLICIES VIEW -->
-      <section id="view-policies" class="view-pane">
-        <div class="policies-header">
-          <h2 class="page-title" style="font-size: 1.5rem;">My Policies</h2>
-          <button class="btn-primary" onclick="openAddPolicyModal()">
+      <!-- TAB 2: POLICIES VIEW -->
+      <section id="view-policies" class="tab-view">
+        <div class="policies-title-bar">
+          <h2 class="grid-header" style="font-size: 1.5rem; margin-bottom: 0;">My Policies</h2>
+          <button class="btn-solid-blue" onclick="openAddPolicyModal()">
             <i class="fas fa-plus"></i>
             <span>Add Existing Policy</span>
           </button>
         </div>
 
         <div class="policy-cards-container" id="policies-list">
-          <!-- Dynamic loaded policies -->
-          <div class="glass-card" style="text-align: center; padding: 3rem 1.5rem; color: var(--text-gray);">
+          <!-- Dynamically loaded list -->
+          <div class="container-card" style="text-align: center; padding: 3rem 1.5rem; color: var(--text-gray);">
             <i class="fas fa-folder-open" style="font-size: 2.5rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
             <h3>No Policies Added</h3>
             <p style="font-size: 0.85rem; margin-top: 0.5rem;">Click the button above to upload and track your active insurance policies.</p>
@@ -1614,88 +1672,80 @@
         </div>
       </section>
 
-      <!-- 3. SERVICES VIEW -->
-      <section id="view-services" class="view-pane">
-        <p class="services-subtitle">Explore and manage your insurance services.</p>
+      <!-- TAB 3: SERVICES VIEW -->
+      <section id="view-services" class="tab-view">
+        <p class="grid-header" style="font-size: 0.95rem; margin-top: -1rem; margin-bottom: 2rem;">Explore and manage your insurance services.</p>
         
-        <div class="services-grid">
-          <div class="service-detail-card">
-            <div class="service-header">
-              <div class="service-detail-icon"><i class="fas fa-hand-holding-heart"></i></div>
-              <h3>Icare</h3>
-              <p>Health Insurance Support & Claims Assistance</p>
-            </div>
-            <button class="btn-primary" onclick="openServiceModal('Icare')">Get Support</button>
+        <div class="services-grid-4col">
+          <div class="service-glow-card">
+            <div class="service-glow-icon-box"><i class="fas fa-hand-holding-heart"></i></div>
+            <h3>Icare</h3>
+            <p>Health Insurance Support & Claims Assistance</p>
+            <button class="btn-solid-blue" onclick="openServiceRequestModal('Icare')">Get Support</button>
           </div>
           
-          <div class="service-detail-card">
-            <div class="service-header">
-              <div class="service-detail-icon"><i class="fas fa-arrow-rotate-right"></i></div>
-              <h3>Re.New.All</h3>
-              <p>Renewal Management & Policy Tracking</p>
-            </div>
-            <button class="btn-primary" onclick="switchTab('policies')">Manage Policies</button>
+          <div class="service-glow-card">
+            <div class="service-glow-icon-box"><i class="fas fa-arrow-rotate-right"></i></div>
+            <h3>Re.New.All</h3>
+            <p>Renewal Management & Policy Tracking</p>
+            <button class="btn-solid-blue" onclick="switchTab('policies')">Manage Policies</button>
           </div>
           
-          <div class="service-detail-card">
-            <div class="service-header">
-              <div class="service-detail-icon"><i class="fas fa-hospital-user"></i></div>
-              <h3>HosPos</h3>
-              <p>Hospital Support & Cashless Guidance</p>
-            </div>
-            <button class="btn-primary" onclick="openServiceModal('HosPos')">Find Support</button>
+          <div class="service-glow-card">
+            <div class="service-glow-icon-box"><i class="fas fa-hospital-user"></i></div>
+            <h3>HosPos</h3>
+            <p>Hospital Support & Cashless Guidance</p>
+            <button class="btn-solid-blue" onclick="openServiceRequestModal('HosPos')">Find Support</button>
           </div>
           
-          <div class="service-detail-card">
-            <div class="service-header">
-              <div class="service-detail-icon"><i class="fas fa-shield-halved"></i></div>
-              <h3>Pre Policy Audit</h3>
-              <p>AI Powered Policy Analysis</p>
-            </div>
-            <button class="btn-primary" onclick="openServiceModal('Pre Policy Audit')">Start Audit</button>
+          <div class="service-glow-card">
+            <div class="service-glow-icon-box"><i class="fas fa-shield-halved"></i></div>
+            <h3>Pre Policy Audit</h3>
+            <p>AI Powered Policy Analysis</p>
+            <button class="btn-solid-blue" onclick="openServiceRequestModal('Pre Policy Audit')">Start Audit</button>
           </div>
         </div>
       </section>
 
-      <!-- 4. APPOINTMENTS VIEW -->
-      <section id="view-appointments" class="view-pane">
-        <div class="appointment-type-grid">
-          <div class="type-card active" id="appt-type-call" onclick="selectApptType('call')">
+      <!-- TAB 4: APPOINTMENTS VIEW -->
+      <section id="view-appointments" class="tab-view">
+        <div class="booking-type-toggle">
+          <div class="booking-card-option active" id="booking-type-call" onclick="selectBookingType('call')">
             <i class="fas fa-phone-volume"></i>
             <h3>Request a Call</h3>
             <p>Speak with our advisor</p>
           </div>
-          <div class="type-card" id="appt-type-office" onclick="selectApptType('office')">
+          <div class="booking-card-option" id="booking-type-office" onclick="selectBookingType('office')">
             <i class="fas fa-building-user"></i>
             <h3>Visit Office</h3>
             <p>Meet us at the branch</p>
           </div>
         </div>
 
-        <div class="glass-card appointment-form-section">
-          <h3 class="section-title">New Appointment</h3>
-          <form id="appointmentForm" onsubmit="bookAppointment(event)">
-            <input type="hidden" id="apptType" value="call" />
+        <div class="container-card form-inputs-block">
+          <h3 class="grid-header" style="margin-bottom: 1.25rem;">New Appointment</h3>
+          <form id="appointmentForm" onsubmit="bookNewAppointment(event)">
+            <input type="hidden" id="bookingTypeField" value="call" />
             
-            <div class="form-row">
-              <div class="form-group">
+            <div class="inputs-grid-2col">
+              <div class="field-wrapper">
                 <label for="primaryMobile">Primary Mobile Number</label>
-                <input type="tel" id="primaryMobile" class="form-control" placeholder="+91 XXXXX XXXXX" required />
+                <input type="tel" id="primaryMobile" class="field-control" placeholder="+91 XXXXX XXXXX" required />
               </div>
-              <div class="form-group">
-                <label for="altMobile">Alternative Mobile Number</label>
-                <input type="tel" id="altMobile" class="form-control" placeholder="+91 XXXXX XXXXX" />
+              <div class="field-wrapper">
+                <label for="alternativeMobile">Alternative Mobile Number</label>
+                <input type="tel" id="alternativeMobile" class="field-control" placeholder="+91 XXXXX XXXXX" />
               </div>
             </div>
             
-            <div class="form-row">
-              <div class="form-group">
+            <div class="inputs-grid-2col">
+              <div class="field-wrapper">
                 <label for="preferredDate">Preferred Date</label>
-                <input type="date" id="preferredDate" class="form-control" required />
+                <input type="date" id="preferredDate" class="field-control" required />
               </div>
-              <div class="form-group">
+              <div class="field-wrapper">
                 <label for="preferredTime">Preferred Time Slot</label>
-                <select id="preferredTime" class="form-control" required>
+                <select id="preferredTime" class="field-control" required>
                   <option value="" disabled selected>Select Time Slot</option>
                   <option value="09:00 AM - 10:00 AM">09:00 AM - 10:00 AM</option>
                   <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
@@ -1709,10 +1759,10 @@
               </div>
             </div>
             
-            <div class="form-row">
-              <div class="form-group">
-                <label for="altTime">Alternative Time Slot</label>
-                <select id="altTime" class="form-control">
+            <div class="inputs-grid-2col">
+              <div class="field-wrapper">
+                <label for="alternativeTime">Alternative Time Slot</label>
+                <select id="alternativeTime" class="field-control">
                   <option value="" disabled selected>Select Alternative Time Slot</option>
                   <option value="09:00 AM - 10:00 AM">09:00 AM - 10:00 AM</option>
                   <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
@@ -1724,9 +1774,9 @@
                   <option value="05:00 PM - 06:00 PM">05:00 PM - 06:00 PM</option>
                 </select>
               </div>
-              <div class="form-group">
+              <div class="field-wrapper">
                 <label for="apptPurpose">Purpose Dropdown</label>
-                <select id="apptPurpose" class="form-control" required>
+                <select id="apptPurpose" class="field-control" required>
                   <option value="" disabled selected>Select Purpose</option>
                   <option value="Policy Clarification">Policy Clarification</option>
                   <option value="Claims Inquiry">Claims Inquiry</option>
@@ -1737,196 +1787,250 @@
               </div>
             </div>
 
-            <button type="submit" class="btn-primary">Book Appointment</button>
+            <button type="submit" class="btn-solid-blue">Book Appointment</button>
           </form>
         </div>
 
-        <div class="glass-card">
-          <h3 class="section-title">Recent Appointments</h3>
-          <div class="timeline-container" id="appointments-timeline">
-            <!-- Dynamic loaded appts -->
+        <div class="container-card">
+          <h3 class="grid-header" style="margin-bottom: 1.25rem;">Recent Appointments</h3>
+          <div class="timeline-path" id="appointments-timeline-list">
+            <!-- Dynamic timeline of appointments -->
             <div style="color: var(--text-muted); font-size: 0.85rem; padding: 1rem 0;">
-              No appointments found. Use the form above to book an appointment.
+              No appointments scheduled yet.
             </div>
           </div>
         </div>
       </section>
 
-      <!-- 5. UPDATES VIEW -->
-      <section id="view-updates" class="view-pane">
-        <div class="updates-filters">
-          <button class="filter-pill active" onclick="filterUpdates('all', this)">All</button>
-          <button class="filter-pill" onclick="filterUpdates('Policies', this)">Policies</button>
-          <button class="filter-pill" onclick="filterUpdates('Appointments', this)">Appointments</button>
-          <button class="filter-pill" onclick="filterUpdates('Services', this)">Services</button>
+      <!-- TAB 5: UPDATES VIEW -->
+      <section id="view-updates" class="tab-view">
+        <div class="pills-filter-row">
+          <button class="filter-pill-btn active" onclick="filterUpdatesList('all', this)">All</button>
+          <button class="filter-pill-btn" onclick="filterUpdatesList('Policies', this)">Policies</button>
+          <button class="filter-pill-btn" onclick="filterUpdatesList('Appointments', this)">Appointments</button>
+          <button class="filter-pill-btn" onclick="filterUpdatesList('Services', this)">Services</button>
         </div>
 
-        <div class="timeline-container" id="updates-timeline">
-          <!-- Dynamic loaded updates -->
+        <div class="timeline-path" id="updates-timeline-list">
+          <!-- Dynamic loaded updates timeline -->
           <div style="color: var(--text-muted); font-size: 0.85rem; padding: 2rem 0; text-align: center;">
-            No updates available.
+            No notifications found.
           </div>
         </div>
+      </section>
+
+      <!-- TAB 6: MY PROFILE VIEW (Pristine Visual Mockup) -->
+      <section id="view-profile" class="tab-view">
+        <div class="profile-nav-top">
+          <a href="#" class="profile-back-arrow" onclick="switchTab('home')"><i class="fas fa-chevron-left"></i></a>
+          <span class="profile-nav-title">My Profile</span>
+        </div>
+
+        <div class="profile-center-hero">
+          <div class="profile-hero-avatar-wrapper">
+            <img src="https://ui-avatars.com/api/?name=User&background=007aff&color=fff" id="profile-hero-avatar-img" alt="Alex Rodriguez" />
+          </div>
+          <h2 id="profile-hero-name">Loading...</h2>
+          <p id="profile-hero-phone">+1 000-000-0000</p>
+          <p id="profile-hero-email" style="font-size:0.8rem; color: var(--text-gray); margin-top: 0.1rem;">user@twinsure.com</p>
+        </div>
+
+        <div class="kyc-status-block">
+          <span>KYC Status</span>
+          <div class="status-badge" id="profile-kyc-status-badge">Checking...</div>
+        </div>
+
+        <h3 class="documents-header">My Documents</h3>
+        <div class="documents-list-block">
+          <div class="doc-row-line">
+            <div class="doc-row-details">
+              <i class="far fa-address-card"></i>
+              <span>Aadhaar Card</span>
+            </div>
+            <div class="doc-row-actions">
+              <a class="doc-action-link" id="view-doc-aadhaar" style="display:none;" target="_blank">View</a>
+              <a class="doc-action-link" onclick="openDocUpload('aadhaar')">Replace</a>
+            </div>
+          </div>
+          <div class="doc-row-line">
+            <div class="doc-row-details">
+              <i class="far fa-id-card"></i>
+              <span>PAN Card</span>
+            </div>
+            <div class="doc-row-actions">
+              <a class="doc-action-link" id="view-doc-pan" style="display:none;" target="_blank">View</a>
+              <a class="doc-action-link" onclick="openDocUpload('pan')">Replace</a>
+            </div>
+          </div>
+          <div class="doc-row-line">
+            <div class="doc-row-details">
+              <i class="far fa-id-badge"></i>
+              <span>Voter ID</span>
+            </div>
+            <div class="doc-row-actions">
+              <a class="doc-action-link" id="view-doc-voterid" style="display:none;" target="_blank">View</a>
+              <a class="doc-action-link" onclick="openDocUpload('voterid')">Replace</a>
+            </div>
+          </div>
+          <div class="doc-row-line">
+            <div class="doc-row-details">
+              <i class="far fa-user"></i>
+              <span>Profile Photo</span>
+            </div>
+            <div class="doc-row-actions">
+              <a class="doc-action-link" id="view-doc-photo" style="display:none;" target="_blank">View</a>
+              <a class="doc-action-link" onclick="openDocUpload('photo')">Replace</a>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="documents-header">Account Settings</h3>
+        <div class="settings-list-block">
+          <div class="setting-list-row" onclick="toggleProfileSubSection('editProfileSection')">
+            <div class="setting-row-left">
+              <i class="far fa-edit"></i>
+              <span>Edit Profile</span>
+            </div>
+            <i class="fas fa-chevron-right" style="font-size: 0.8rem; color: var(--text-muted);"></i>
+          </div>
+          
+          <!-- Edit Profile Inline Form -->
+          <div class="profile-inline-form-modal" id="editProfileSection">
+            <form id="editProfileForm" onsubmit="submitProfileDetailsUpdate(event)">
+              <div class="form-group" style="margin-bottom: 0.85rem;">
+                <label style="font-size:0.75rem; font-weight:600; color:var(--text-gray)">Full Name</label>
+                <input type="text" id="editName" class="field-control" required />
+              </div>
+              <div class="form-group" style="margin-bottom: 0.85rem;">
+                <label style="font-size:0.75rem; font-weight:600; color:var(--text-gray)">Email ID</label>
+                <input type="email" id="editEmail" class="field-control" required />
+              </div>
+              <div class="form-group" style="margin-bottom: 0.85rem;">
+                <label style="font-size:0.75rem; font-weight:600; color:var(--text-gray)">Phone Number</label>
+                <input type="tel" id="editPhone" class="field-control" required />
+              </div>
+              <div class="form-group" style="margin-bottom: 0.85rem;">
+                <label style="font-size:0.75rem; font-weight:600; color:var(--text-gray)">Residential Address</label>
+                <input type="text" id="editAddress" class="field-control" placeholder="No. 123, Main Street" />
+              </div>
+              <div class="inputs-grid-2col" style="margin-bottom: 0.85rem;">
+                <div class="form-group">
+                  <label style="font-size:0.75rem; font-weight:600; color:var(--text-gray)">Pincode</label>
+                  <input type="text" id="editPincode" class="field-control" placeholder="600001" />
+                </div>
+                <div class="form-group">
+                  <label style="font-size:0.75rem; font-weight:600; color:var(--text-gray)">Emergency Contact</label>
+                  <input type="tel" id="editEmergency" class="field-control" placeholder="Guardian Contact" />
+                </div>
+              </div>
+              <button type="submit" class="btn-solid-blue" style="width:100%; justify-content:center;">Save Changes</button>
+            </form>
+          </div>
+
+          <div class="setting-list-row" onclick="toggleProfileSubSection('changePasswordSection')">
+            <div class="setting-row-left">
+              <i class="fas fa-lock"></i>
+              <span>Change Password</span>
+            </div>
+            <i class="fas fa-chevron-right" style="font-size: 0.8rem; color: var(--text-muted);"></i>
+          </div>
+          
+          <!-- Change Password Inline Form -->
+          <div class="profile-inline-form-modal" id="changePasswordSection">
+            <form id="changePasswordForm" onsubmit="submitPasswordUpdate(event)">
+              <div class="form-group" style="margin-bottom: 0.85rem;">
+                <label style="font-size:0.75rem; font-weight:600; color:var(--text-gray)">Current Password</label>
+                <input type="password" id="oldPassword" class="field-control" required />
+              </div>
+              <div class="form-group" style="margin-bottom: 0.85rem;">
+                <label style="font-size:0.75rem; font-weight:600; color:var(--text-gray)">New Password</label>
+                <input type="password" id="newPassword" class="field-control" required />
+              </div>
+              <button type="submit" class="btn-solid-blue" style="width:100%; justify-content:center;">Change Password</button>
+            </form>
+          </div>
+
+          <a href="privacy.html" class="setting-list-row" target="_blank">
+            <div class="setting-row-left">
+              <i class="fas fa-shield-halved"></i>
+              <span>Privacy Policy</span>
+            </div>
+            <i class="fas fa-chevron-right" style="font-size: 0.8rem; color: var(--text-muted);"></i>
+          </a>
+
+          <a href="terms.html" class="setting-list-row" target="_blank">
+            <div class="setting-row-left">
+              <i class="far fa-file-lines"></i>
+              <span>Terms & Conditions</span>
+            </div>
+            <i class="fas fa-chevron-right" style="font-size: 0.8rem; color: var(--text-muted);"></i>
+          </a>
+
+          <div class="setting-list-row danger" onclick="api.logout()">
+            <div class="setting-row-left">
+              <i class="fas fa-power-off"></i>
+              <span>Logout</span>
+            </div>
+            <i class="fas fa-chevron-right" style="font-size: 0.8rem; color: rgba(239, 68, 68, 0.4);"></i>
+          </div>
+        </div>
+
+        <input type="file" id="docUploadInput" style="display:none;" onchange="handleDocUploadSelected(event)" />
       </section>
 
     </main>
   </div>
 
-  <!-- BOTTOM MOBILE NAVIGATION BAR -->
-  <nav class="bottom-nav">
-    <a href="#" class="bottom-nav-item active" id="bot-nav-home" onclick="switchTab('home')">
+  <!-- FIXED BOTTOM MOBILE TAB NAVIGATION BAR -->
+  <nav class="bottom-navbar">
+    <a href="#" class="bottom-nav-link active" id="bot-nav-home" onclick="switchTab('home')">
       <i class="fas fa-house"></i>
       <span>Home</span>
     </a>
-    <a href="#" class="bottom-nav-item" id="bot-nav-policies" onclick="switchTab('policies')">
+    <a href="#" class="bottom-nav-link" id="bot-nav-policies" onclick="switchTab('policies')">
       <i class="fas fa-file-shield"></i>
       <span>Policies</span>
     </a>
-    <a href="#" class="bottom-nav-item" id="bot-nav-services" onclick="switchTab('services')">
+    <a href="#" class="bottom-nav-link" id="bot-nav-services" onclick="switchTab('services')">
       <i class="fas fa-cubes"></i>
       <span>Services</span>
     </a>
-    <a href="#" class="bottom-nav-item" id="bot-nav-appointments" onclick="switchTab('appointments')">
+    <a href="#" class="bottom-nav-link" id="bot-nav-appointments" onclick="switchTab('appointments')">
       <i class="fas fa-calendar-check"></i>
       <span>Appointments</span>
     </a>
-    <a href="#" class="bottom-nav-item" id="bot-nav-updates" onclick="switchTab('updates')">
+    <a href="#" class="bottom-nav-link" id="bot-nav-updates" onclick="switchTab('updates')">
       <i class="fas fa-bell"></i>
       <span>Updates</span>
     </a>
   </nav>
 
-  <!-- FLOATING ACTION BUTTONS -->
-  <div class="floating-actions">
-    <button class="floating-btn ai-agent" onclick="openAiAgentChat()">
+  <!-- FLOAT WIDGET BUTTONS -->
+  <div class="floater-actions-container">
+    <button class="floater-btn ai-copilot" onclick="openAiCopilotModal()">
       <i class="fas fa-robot"></i>
-      <span class="floating-label">AI Agent</span>
+      <span>AI Agent</span>
     </button>
-    <a href="https://wa.me/919750003600" target="_blank" class="floating-btn whatsapp" id="whatsapp-link">
+    <a href="https://wa.me/919750003600" target="_blank" class="floater-btn whatsapp-support" id="whatsapp-support-link">
       <i class="fab fa-whatsapp"></i>
-      <span class="floating-label">WhatsApp</span>
+      <span>WhatsApp</span>
     </a>
   </div>
 
-  <!-- DRAWERS & MODALS -->
+  <!-- MODALS -->
 
-  <!-- Drawer: User Profile Settings -->
-  <div class="drawer-overlay" id="profile-drawer-overlay" onclick="closeProfileDrawer()"></div>
-  <div class="drawer-wrapper" id="profile-drawer">
-    <div class="drawer-header">
-      <h3>My Profile Settings</h3>
-      <button class="modal-close" onclick="closeProfileDrawer()"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="drawer-body">
-      
-      <!-- Profile Details Form -->
-      <form id="profileForm" onsubmit="updateProfile(event)">
-        <h4 style="margin-bottom: 0.85rem; font-size: 0.95rem; border-bottom: 1px solid var(--border-glass); padding-bottom: 0.4rem; color: var(--primary-blue);">Edit Contact Details</h4>
-        <div class="form-group" style="margin-bottom: 0.85rem;">
-          <label>Full Name</label>
-          <input type="text" id="profName" class="form-control" required />
-        </div>
-        <div class="form-group" style="margin-bottom: 0.85rem;">
-          <label>Email ID</label>
-          <input type="email" id="profEmail" class="form-control" required />
-        </div>
-        <div class="form-group" style="margin-bottom: 0.85rem;">
-          <label>Phone Number</label>
-          <input type="tel" id="profPhone" class="form-control" required />
-        </div>
-        <div class="form-group" style="margin-bottom: 0.85rem;">
-          <label>Residential Address</label>
-          <input type="text" id="profAddress" class="form-control" placeholder="No. 123, Main Street" />
-        </div>
-        <div class="form-row" style="margin-bottom: 0.85rem;">
-          <div class="form-group">
-            <label>Pincode</label>
-            <input type="text" id="profPincode" class="form-control" placeholder="600001" />
-          </div>
-          <div class="form-group">
-            <label>Emergency Contact</label>
-            <input type="tel" id="profEmergency" class="form-control" placeholder="Guardian Phone" />
-          </div>
-        </div>
-        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.65rem;">Save Changes</button>
-      </form>
-
-      <!-- Change Password Form -->
-      <form id="passwordForm" onsubmit="changePassword(event)">
-        <h4 style="margin-bottom: 0.85rem; font-size: 0.95rem; border-bottom: 1px solid var(--border-glass); padding-bottom: 0.4rem; color: var(--primary-blue);">Security & Password</h4>
-        <div class="form-group" style="margin-bottom: 0.85rem;">
-          <label>Current Password</label>
-          <input type="password" id="oldPass" class="form-control" required />
-        </div>
-        <div class="form-group" style="margin-bottom: 0.85rem;">
-          <label>New Password</label>
-          <input type="password" id="newPass" class="form-control" required />
-        </div>
-        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.65rem;">Change Password</button>
-      </form>
-
-      <!-- KYC Document Upload Blocks -->
-      <div class="kyc-upload-container">
-        <h4 style="margin-bottom: 0.25rem; font-size: 0.95rem; color: var(--primary-blue); border-bottom: 1px solid var(--border-glass); padding-bottom: 0.4rem;">KYC Upload verification</h4>
-        
-        <div class="kyc-upload-card">
-          <div class="kyc-doc-info">
-            <h5>Aadhaar Card</h5>
-            <p id="kyc-status-aadhaar">Not uploaded</p>
-          </div>
-          <button class="kyc-upload-btn" onclick="triggerKycUpload('aadhaar')">Upload</button>
-        </div>
-        
-        <div class="kyc-upload-card">
-          <div class="kyc-doc-info">
-            <h5>PAN Card</h5>
-            <p id="kyc-status-pan">Not uploaded</p>
-          </div>
-          <button class="kyc-upload-btn" onclick="triggerKycUpload('pan')">Upload</button>
-        </div>
-        
-        <div class="kyc-upload-card">
-          <div class="kyc-doc-info">
-            <h5>Voter ID Card</h5>
-            <p id="kyc-status-voterid">Not uploaded</p>
-          </div>
-          <button class="kyc-upload-btn" onclick="triggerKycUpload('voterid')">Upload</button>
-        </div>
-        
-        <div class="kyc-upload-card">
-          <div class="kyc-doc-info">
-            <h5>Profile Photo</h5>
-            <p id="kyc-status-photo">Not uploaded</p>
-          </div>
-          <button class="kyc-upload-btn" onclick="triggerKycUpload('photo')">Upload</button>
-        </div>
-
-        <input type="file" id="kycFileInput" style="display: none;" onchange="handleKycFileSelected(event)" />
-      </div>
-
-      <!-- Sign Out -->
-      <div class="logout-btn-wrapper">
-        <button class="btn-danger" onclick="api.logout()">
-          <i class="fas fa-right-from-bracket"></i>
-          <span>Sign Out</span>
-        </button>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- Modal: Add Existing Policy -->
-  <div class="modal-overlay" id="add-policy-modal" onclick="closeAddPolicyModal(event)">
-    <div class="modal-wrapper">
-      <div class="modal-header">
+  <!-- Modal: Upload / Add Existing Policy -->
+  <div class="modal-backdrop" id="add-policy-backdrop" onclick="closeAddPolicyModal(event)">
+    <div class="modal-dialog-panel">
+      <div class="modal-title-header">
         <h3>Add Existing Policy</h3>
-        <button class="modal-close" onclick="closeAddPolicyModal(event, true)"><i class="fas fa-times"></i></button>
+        <button class="modal-close-btn" onclick="closeAddPolicyModal(event, true)"><i class="fas fa-times"></i></button>
       </div>
-      <form id="addPolicyForm" onsubmit="uploadPolicy(event)">
-        <div class="modal-body">
-          <div class="form-group" style="margin-bottom: 1rem;">
+      <form id="addPolicyForm" onsubmit="submitNewPolicyUpload(event)">
+        <div class="modal-content-body">
+          <div class="field-wrapper" style="margin-bottom: 1rem;">
             <label>Insurance Provider</label>
-            <select id="policyProvider" class="form-control" required>
+            <select id="policyProvider" class="field-control" required>
               <option value="" disabled selected>Select Provider</option>
               <option value="Star Health">Star Health</option>
               <option value="HDFC Ergo">HDFC Ergo</option>
@@ -1937,13 +2041,13 @@
               <option value="Others">Others</option>
             </select>
           </div>
-          <div class="form-group" style="margin-bottom: 1rem;">
+          <div class="field-wrapper" style="margin-bottom: 1rem;">
             <label>Policy Number</label>
-            <input type="text" id="policyNumber" class="form-control" placeholder="e.g. 00000034453" required />
+            <input type="text" id="policyNumber" class="field-control" placeholder="e.g. 00000034453" required />
           </div>
-          <div class="form-group" style="margin-bottom: 1rem;">
+          <div class="field-wrapper" style="margin-bottom: 1rem;">
             <label>Policy Type</label>
-            <select id="policyType" class="form-control" required>
+            <select id="policyType" class="field-control" required>
               <option value="" disabled selected>Select Type</option>
               <option value="Health">Health Insurance</option>
               <option value="Motor">Motor Insurance</option>
@@ -1951,92 +2055,88 @@
               <option value="Others">Others</option>
             </select>
           </div>
-          <div class="form-group" style="margin-bottom: 1rem;">
+          <div class="field-wrapper" style="margin-bottom: 1rem;">
             <label>Notes / Remarks</label>
-            <input type="text" id="policyNotes" class="form-control" placeholder="Any additional notes" />
+            <input type="text" id="policyNotes" class="field-control" placeholder="Any additional notes" />
           </div>
-          <div class="form-group">
+          <div class="field-wrapper">
             <label>Policy PDF Document</label>
-            <input type="file" id="policyFile" class="form-control" accept="application/pdf" required />
+            <input type="file" id="policyFile" class="field-control" accept="application/pdf" required />
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn-secondary" onclick="closeAddPolicyModal(event, true)">Cancel</button>
-          <button type="submit" class="btn-primary">Add Policy</button>
+        <div class="modal-actions-footer">
+          <button type="button" class="btn-pill-gray" onclick="closeAddPolicyModal(event, true)">Cancel</button>
+          <button type="submit" class="btn-solid-blue">Add Policy</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Modal: Service Request Forms -->
-  <div class="modal-overlay" id="service-request-modal" onclick="closeServiceModal(event)">
-    <div class="modal-wrapper">
-      <div class="modal-header">
-        <h3 id="service-modal-title">Request Support</h3>
-        <button class="modal-close" onclick="closeServiceModal(event, true)"><i class="fas fa-times"></i></button>
+  <!-- Modal: Support Service Request Form -->
+  <div class="modal-backdrop" id="service-request-backdrop" onclick="closeServiceRequestModal(event)">
+    <div class="modal-dialog-panel">
+      <div class="modal-title-header">
+        <h3 id="service-req-title">Request Support</h3>
+        <button class="modal-close-btn" onclick="closeServiceRequestModal(event, true)"><i class="fas fa-times"></i></button>
       </div>
-      <form id="serviceRequestForm" onsubmit="submitServiceRequest(event)">
-        <input type="hidden" id="serviceCategory" />
-        <div class="modal-body">
-          <p id="service-modal-description" style="font-size: 0.85rem; color: var(--text-gray); margin-bottom: 1.25rem; line-height: 1.4;"></p>
+      <form id="serviceRequestForm" onsubmit="submitSupportServiceRequest(event)">
+        <input type="hidden" id="serviceReqCategory" />
+        <div class="modal-content-body">
+          <p id="service-req-description" style="font-size: 0.85rem; color: var(--text-gray); margin-bottom: 1.25rem; line-height: 1.45;"></p>
           
-          <div class="form-group" style="margin-bottom: 1rem;">
+          <div class="field-wrapper" style="margin-bottom: 1rem;">
             <label>Preferred Time to Contact</label>
-            <input type="text" id="servicePreferredTime" class="form-control" placeholder="e.g. Morning 10AM, Any time" required />
+            <input type="text" id="servicePreferredTime" class="field-control" placeholder="e.g. Morning 10AM, Any time" required />
           </div>
-          <div class="form-group" style="margin-bottom: 1rem;">
+          <div class="field-wrapper" style="margin-bottom: 1rem;">
             <label>Description of Assistance Required</label>
-            <textarea id="serviceDescription" class="form-control" rows="3" placeholder="Tell us how we can help you with this service" required style="resize: none; font-family: inherit;"></textarea>
-          </div>
-          <div class="form-group">
-            <label>Upload Supporting Documents (Optional)</label>
-            <input type="file" id="serviceFile" class="form-control" />
+            <textarea id="serviceDescription" class="field-control" rows="3" placeholder="Tell us how we can help you with this service" required style="resize: none; font-family: inherit;"></textarea>
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn-secondary" onclick="closeServiceModal(event, true)">Cancel</button>
-          <button type="submit" class="btn-primary">Submit Request</button>
+        <div class="modal-actions-footer">
+          <button type="button" class="btn-pill-gray" onclick="closeServiceRequestModal(event, true)">Cancel</button>
+          <button type="submit" class="btn-solid-blue">Submit Request</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Modal: AI Agent Simulator Drawer -->
-  <div class="modal-overlay" id="ai-agent-modal" onclick="closeAiAgentChat(event)">
+  <!-- Modal: AI Assistant Copilot Simulator -->
+  <div class="modal-backdrop" id="ai-copilot-backdrop" onclick="closeAiCopilotModal(event)">
     <div class="modal-wrapper">
       <div class="modal-header">
         <h3>Twinsure AI Copilot</h3>
-        <button class="modal-close" onclick="closeAiAgentChat(event, true)"><i class="fas fa-times"></i></button>
+        <button class="modal-close-btn" onclick="closeAiCopilotModal(event, true)"><i class="fas fa-times"></i></button>
       </div>
-      <div class="modal-body ai-drawer">
-        <div class="chat-messages" id="chat-messages-container">
-          <div class="chat-msg agent">
+      <div class="modal-body ai-chat-block">
+        <div class="chat-scroll-area" id="copilot-messages-box">
+          <div class="msg-bubble bot">
             Hello! I am your Twinsure AI Agent. How can I help you audit your policies or look up cashless hospital availability today?
           </div>
         </div>
-        <div class="chat-input-row">
-          <input type="text" id="chat-input-field" class="form-control" placeholder="Ask something..." onkeydown="handleChatKeyDown(event)" />
-          <button class="btn-primary" onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
+        <div class="chat-input-wrapper">
+          <input type="text" id="copilot-input-field" class="field-control" placeholder="Ask something..." onkeydown="handleCopilotKeyDown(event)" />
+          <button class="btn-solid-blue" onclick="sendCopilotChatMessage()"><i class="fas fa-paper-plane"></i></button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- API CONNECTIVITY SCRIPTS -->
+  <!-- INTEGRATION SCRIPTS -->
   <script src="js/config.js"></script>
   <script src="js/api.js"></script>
   <script>
-    // State management
-    let state = {
+    // State values
+    let pageState = {
       user: null,
       policies: [],
       appointments: [],
       updates: [],
       activeTab: 'home',
-      kycUploadType: null
+      currentUploadType: null
     };
 
-    // Page Load Checks
+    // Initialize checking login on load
     window.addEventListener('DOMContentLoaded', async () => {
       const token = localStorage.getItem('token');
       const role = localStorage.getItem('role');
@@ -2055,179 +2155,190 @@
         return;
       }
       
-      // Load user profile details
-      await fetchUserProfile();
+      // Load collections
+      await loadUserProfile();
+      await loadUserPolicies();
+      await loadUserAppointments();
+      await loadUserUpdates();
       
-      // Fetch dynamic collections
-      await fetchUserPolicies();
-      await fetchUserAppointments();
-      await fetchUserUpdates();
-      
-      // Switch tab state on load
+      // Select home tab initially
       switchTab('home');
     });
 
-    // Tab Switching
+    // Tab switcher
     function switchTab(tabId) {
-      state.activeTab = tabId;
+      pageState.activeTab = tabId;
       
       // Hide all panels
-      document.querySelectorAll('.view-pane').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-view').forEach(el => el.classList.remove('active'));
       
-      // Show active panel
-      const activePane = document.getElementById(`view-pane` !== `view-${tabId}` ? `view-${tabId}` : `view-pane`);
-      if (activePane) activePane.classList.add('active');
+      // Show targeted panel
+      const targetPane = document.getElementById(`view-${tabId}`);
+      if (targetPane) targetPane.classList.add('active');
       
-      // Update sidebar nav active state
-      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-      const sideNavItem = document.getElementById(`side-nav-${tabId}`);
-      if (sideNavItem) sideNavItem.classList.add('active');
+      // Update sidebar selections
+      document.querySelectorAll('.nav-link-item').forEach(el => el.classList.remove('active'));
+      const sidebarNav = document.getElementById(`side-nav-${tabId}`);
+      if (sidebarNav) sidebarNav.classList.add('active');
       
-      // Update bottom nav active state
-      document.querySelectorAll('.bottom-nav-item').forEach(el => el.classList.remove('active'));
-      const botNavItem = document.getElementById(`bot-nav-${tabId}`);
-      if (botNavItem) botNavItem.classList.add('active');
+      // Update bottom nav selections
+      document.querySelectorAll('.bottom-nav-link').forEach(el => el.classList.remove('active'));
+      const botNav = document.getElementById(`bot-nav-${tabId}`);
+      if (botNav) botNav.classList.add('active');
       
-      // Update header title text
-      const titleText = document.getElementById('page-title-text');
-      if (titleText) {
-        titleText.textContent = tabId.charAt(0).toUpperCase() + tabId.slice(1);
+      // Update desktop header title
+      const pageTitle = document.getElementById('desktop-view-title');
+      if (pageTitle) {
+        if (tabId === 'profile') {
+          pageTitle.textContent = 'My Profile';
+        } else {
+          pageTitle.textContent = tabId.charAt(0).toUpperCase() + tabId.slice(1);
+        }
       }
       
-      // Scroll to top
+      // Scroll view back to top
       window.scrollTo(0, 0);
     }
 
-    // Profile drawer toggle
-    function openProfileDrawer() {
-      document.getElementById('profile-drawer-overlay').classList.add('active');
-      document.getElementById('profile-drawer').classList.add('active');
+    // Toggle sub forms inside profile view
+    function toggleProfileSubSection(sectionId) {
+      const el = document.getElementById(sectionId);
+      if (el) {
+        el.classList.toggle('active');
+      }
     }
 
-    function closeProfileDrawer() {
-      document.getElementById('profile-drawer-overlay').classList.remove('active');
-      document.getElementById('profile-drawer').classList.remove('active');
-    }
-
-    // Fetch and populate Profile Drawer
-    async function fetchUserProfile() {
+    // Load User Profile details
+    async function loadUserProfile() {
       try {
         const user = await api.get('/users/profile');
-        state.user = user;
+        pageState.user = user;
         
-        // Update user interfaces names & TSID
+        // Update elements
         document.getElementById('sidebar-user-name').textContent = user.name;
         document.getElementById('sidebar-user-tsid').textContent = user.tsid || 'TS-XXXX';
-        document.getElementById('home-greeting').textContent = `Good Morning, ${user.name.split(' ')[0]}`;
+        document.getElementById('home-greeting-text').textContent = `Good Morning, ${user.name.split(' ')[0]}`;
         document.getElementById('home-user-id').textContent = `My ID: ${user.tsid || 'TS-XXXX'}`;
         
-        // Generate avatar or fetch uploaded
+        document.getElementById('profile-hero-name').textContent = user.name;
+        document.getElementById('profile-hero-phone').textContent = user.phone || 'No phone number';
+        document.getElementById('profile-hero-email').textContent = user.email;
+        
+        // Avatar source resolves
         let avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=007aff&color=fff`;
         if (user.kyc && user.kyc.photo && user.kyc.photo.filePath) {
           avatarUrl = window.BACKEND_ROOT + '/' + user.kyc.photo.filePath;
         }
         
-        document.getElementById('sidebar-user-avatar').src = avatarUrl;
-        document.getElementById('home-user-avatar').src = avatarUrl;
-        document.getElementById('mobile-user-avatar').src = avatarUrl;
+        document.getElementById('sidebar-avatar-img').src = avatarUrl;
+        document.getElementById('home-avatar-img').src = avatarUrl;
+        document.getElementById('mobile-avatar-img').src = avatarUrl;
+        document.getElementById('profile-hero-avatar-img').src = avatarUrl;
         
-        // KYC Badge home page
+        // Home KYC Badge
         const homeKyc = document.getElementById('home-kyc-badge');
         const kycStatus = (user.kyc && user.kyc.status) ? user.kyc.status : 'Not Verified';
         
+        const badgeProfile = document.getElementById('profile-kyc-status-badge');
+        badgeProfile.className = 'status-badge';
+        
         if (kycStatus === 'Verified') {
-          homeKyc.className = 'kyc-badge verified';
+          homeKyc.className = 'badge-kyc verified';
           homeKyc.innerHTML = `<i class="fas fa-circle-check"></i> KYC Verified`;
+          badgeProfile.classList.add('verified');
+          badgeProfile.textContent = 'Verified';
         } else if (kycStatus === 'Pending Verification') {
-          homeKyc.className = 'kyc-badge';
-          homeKyc.style.color = 'var(--warning-orange)';
-          homeKyc.style.borderColor = 'rgba(255, 149, 0, 0.3)';
-          homeKyc.style.background = 'rgba(255, 149, 0, 0.05)';
+          homeKyc.className = 'badge-kyc pending';
           homeKyc.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Pending Verification`;
+          badgeProfile.classList.add('pending');
+          badgeProfile.textContent = 'Pending Verification';
         } else {
-          homeKyc.className = 'kyc-badge';
+          homeKyc.className = 'badge-kyc';
           homeKyc.innerHTML = `<i class="fas fa-circle-exclamation"></i> KYC Not Verified`;
+          badgeProfile.classList.add('unverified');
+          badgeProfile.textContent = 'Not Verified';
         }
         
-        // Update profile form fields
-        document.getElementById('profName').value = user.name || '';
-        document.getElementById('profEmail').value = user.email || '';
-        document.getElementById('profPhone').value = user.phone || '';
-        document.getElementById('profAddress').value = user.address || '';
-        document.getElementById('profPincode').value = user.pincode || '';
-        document.getElementById('profEmergency').value = user.emergencyContact || '';
+        // Edit Profile inputs
+        document.getElementById('editName').value = user.name || '';
+        document.getElementById('editEmail').value = user.email || '';
+        document.getElementById('editPhone').value = user.phone || '';
+        document.getElementById('editAddress').value = user.address || '';
+        document.getElementById('editPincode').value = user.pincode || '';
+        document.getElementById('editEmergency').value = user.emergencyContact || '';
         
-        // Update KYC Status fields in profile drawer
-        updateKycDrawerRow('aadhaar', user.kyc && user.kyc.aadhaar);
-        updateKycDrawerRow('pan', user.kyc && user.kyc.pan);
-        updateKycDrawerRow('voterid', user.kyc && user.kyc.voterid);
-        updateKycDrawerRow('photo', user.kyc && user.kyc.photo);
+        // Document links update
+        updateKycDocumentRowLink('aadhaar', user.kyc && user.kyc.aadhaar);
+        updateKycDocumentRowLink('pan', user.kyc && user.kyc.pan);
+        updateKycDocumentRowLink('voterid', user.kyc && user.kyc.voterid);
+        updateKycDocumentRowLink('photo', user.kyc && user.kyc.photo);
         
       } catch (err) {
         console.error('Error fetching user profile:', err);
       }
     }
 
-    function updateKycDrawerRow(docType, fileObj) {
-      const label = document.getElementById(`kyc-status-${docType}`);
-      if (!label) return;
+    function updateKycDocumentRowLink(type, fileObj) {
+      const viewBtn = document.getElementById(`view-doc-${type}`);
+      if (!viewBtn) return;
       
-      if (fileObj && fileObj.fileName) {
-        label.textContent = 'Uploaded & Pending';
-        label.style.color = 'var(--warning-orange)';
+      if (fileObj && fileObj.filePath) {
+        viewBtn.href = window.BACKEND_ROOT + '/' + fileObj.filePath;
+        viewBtn.style.display = 'inline-block';
       } else {
-        label.textContent = 'Not uploaded';
-        label.style.color = 'var(--text-muted)';
+        viewBtn.style.display = 'none';
       }
     }
 
-    // Edit Profile details submit
-    async function updateProfile(event) {
+    // Submit profile updates
+    async function submitProfileDetailsUpdate(event) {
       event.preventDefault();
       const payload = {
-        name: document.getElementById('profName').value,
-        email: document.getElementById('profEmail').value,
-        phone: document.getElementById('profPhone').value,
-        address: document.getElementById('profAddress').value,
-        pincode: document.getElementById('profPincode').value,
-        emergencyContact: document.getElementById('profEmergency').value
+        name: document.getElementById('editName').value,
+        email: document.getElementById('editEmail').value,
+        phone: document.getElementById('editPhone').value,
+        address: document.getElementById('editAddress').value,
+        pincode: document.getElementById('editPincode').value,
+        emergencyContact: document.getElementById('editEmergency').value
       };
       
       try {
         const res = await api.put('/users/profile', payload);
-        alert(res.message || 'Profile details updated successfully.');
-        await fetchUserProfile();
+        alert(res.message || 'Profile updated successfully.');
+        document.getElementById('editProfileSection').classList.remove('active');
+        await loadUserProfile();
       } catch (err) {
-        alert('Failed to update contact details.');
+        alert('Failed to update profile.');
       }
     }
 
-    // Change Password submit
-    async function changePassword(event) {
+    // Submit password updates
+    async function submitPasswordUpdate(event) {
       event.preventDefault();
-      const oldPassword = document.getElementById('oldPass').value;
-      const newPassword = document.getElementById('newPass').value;
+      const oldPassword = document.getElementById('oldPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
       
       try {
         const res = await api.put('/users/password', { oldPassword, newPassword });
         alert(res.message || 'Password changed successfully.');
-        document.getElementById('passwordForm').reset();
+        document.getElementById('changePasswordForm').reset();
+        document.getElementById('changePasswordSection').classList.remove('active');
       } catch (err) {
-        alert('Failed to change password. Please verify current password.');
+        alert('Failed to change password. Make sure current password is correct.');
       }
     }
 
-    // KYC File upload selection triggers
-    function triggerKycUpload(docType) {
-      state.kycUploadType = docType;
-      document.getElementById('kycFileInput').click();
+    // Doc upload triggers
+    function openDocUpload(type) {
+      pageState.currentUploadType = type;
+      document.getElementById('docUploadInput').click();
     }
 
-    async function handleKycFileSelected(event) {
+    async function handleDocUploadSelected(event) {
       const file = event.target.files[0];
       if (!file) return;
       
-      const docType = state.kycUploadType;
+      const docType = pageState.currentUploadType;
       if (!docType) return;
       
       const formData = new FormData();
@@ -2236,85 +2347,30 @@
       
       try {
         const res = await api.postMultipart('/users/kyc', formData);
-        alert(res.message || 'KYC document uploaded successfully.');
-        await fetchUserProfile();
-        await fetchUserUpdates();
+        alert(res.message || 'Document uploaded successfully.');
+        await loadUserProfile();
+        await loadUserUpdates();
       } catch (err) {
-        alert('KYC upload failed. Ensure the document is a PDF or an Image file.');
+        alert('Upload failed. Choose a valid PDF or Image file.');
       } finally {
-        document.getElementById('kycFileInput').value = '';
+        document.getElementById('docUploadInput').value = '';
       }
     }
 
     // Policies Modal
     function openAddPolicyModal() {
-      document.getElementById('add-policy-modal').classList.add('active');
+      document.getElementById('add-policy-backdrop').classList.add('active');
     }
 
     function closeAddPolicyModal(event, force = false) {
-      if (force || event.target === document.getElementById('add-policy-modal')) {
-        document.getElementById('add-policy-modal').classList.remove('active');
+      if (force || event.target === document.getElementById('add-policy-backdrop')) {
+        document.getElementById('add-policy-backdrop').classList.remove('active');
         document.getElementById('addPolicyForm').reset();
       }
     }
 
-    // Fetch user policies list
-    async function fetchUserPolicies() {
-      try {
-        const policies = await api.get('/users/policies');
-        state.policies = policies;
-        
-        const container = document.getElementById('policies-list');
-        if (policies.length === 0) {
-          container.innerHTML = `
-            <div class="glass-card" style="text-align: center; padding: 3rem 1.5rem; color: var(--text-gray);">
-              <i class="fas fa-folder-open" style="font-size: 2.5rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
-              <h3>No Policies Added</h3>
-              <p style="font-size: 0.85rem; margin-top: 0.5rem;">Click the button above to upload and track your active insurance policies.</p>
-            </div>`;
-          return;
-        }
-        
-        container.innerHTML = policies.map(p => {
-          const downloadUrl = p.filePath ? window.BACKEND_ROOT + '/' + p.filePath : '#';
-          const fileClass = p.filePath ? '' : 'disabled';
-          
-          return `
-            <div class="policy-card">
-              <div class="policy-card-top">
-                <div class="policy-provider-info">
-                  <div class="policy-logo-wrapper">
-                    <i class="fas fa-shield-halved"></i>
-                  </div>
-                  <div class="policy-meta">
-                    <h3>${p.provider}</h3>
-                    <p>Policy Number: ${p.policyNumber}</p>
-                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">Type: ${p.type}</p>
-                  </div>
-                </div>
-                <div class="status-badge ${p.status === 'Approved' ? 'approved' : 'pending'}">
-                  <i class="fas ${p.status === 'Approved' ? 'fa-circle-check' : 'fa-clock'}"></i>
-                  <span>${p.status}</span>
-                </div>
-              </div>
-              
-              ${p.notes ? `<p style="font-size: 0.82rem; color: var(--text-gray); background: rgba(255,255,255,0.02); padding: 0.6rem; border-radius: 8px; border: 1px solid var(--border-glass);">${p.notes}</p>` : ''}
-              
-              <div class="policy-card-actions">
-                <a href="${downloadUrl}" target="_blank" class="btn-secondary ${fileClass}"><i class="fas fa-eye"></i> View</a>
-                <a href="${downloadUrl}" download class="btn-secondary ${fileClass}"><i class="fas fa-download"></i> Download</a>
-                <a href="https://wa.me/919750003600?text=I%20have%20an%20issue%20with%20my%20${encodeURIComponent(p.provider)}%20policy%20${p.policyNumber}" target="_blank" class="btn-secondary"><i class="far fa-comments"></i> Contact Agent</a>
-              </div>
-            </div>`;
-        }).join('');
-        
-      } catch (err) {
-        console.error('Error fetching user policies:', err);
-      }
-    }
-
-    // Add Policy action
-    async function uploadPolicy(event) {
+    // Submit policy document
+    async function submitNewPolicyUpload(event) {
       event.preventDefault();
       const provider = document.getElementById('policyProvider').value;
       const policyNumber = document.getElementById('policyNumber').value;
@@ -2333,35 +2389,90 @@
       
       try {
         const res = await api.postMultipart('/users/policies', formData);
-        alert(res.message || 'Policy added and uploaded successfully.');
-        document.getElementById('add-policy-modal').classList.remove('active');
+        alert(res.message || 'Policy added successfully.');
+        document.getElementById('add-policy-backdrop').classList.remove('active');
         document.getElementById('addPolicyForm').reset();
-        await fetchUserPolicies();
-        await fetchUserUpdates();
+        await loadUserPolicies();
+        await loadUserUpdates();
       } catch (err) {
-        alert('Failed to upload policy document. Ensure file is a valid PDF.');
+        alert('Failed to upload policy. Ensure document is a valid PDF.');
+      }
+    }
+
+    // Load user policies list
+    async function loadUserPolicies() {
+      try {
+        const policies = await api.get('/users/policies');
+        pageState.policies = policies;
+        
+        const container = document.getElementById('policies-list');
+        if (policies.length === 0) {
+          container.innerHTML = `
+            <div class="container-card" style="text-align: center; padding: 3rem 1.5rem; color: var(--text-gray);">
+              <i class="fas fa-folder-open" style="font-size: 2.5rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+              <h3>No Policies Added</h3>
+              <p style="font-size: 0.85rem; margin-top: 0.5rem;">Click the button above to upload and track your active insurance policies.</p>
+            </div>`;
+          return;
+        }
+        
+        container.innerHTML = policies.map(p => {
+          const fileUrl = p.filePath ? window.BACKEND_ROOT + '/' + p.filePath : '#';
+          const fileClass = p.filePath ? '' : 'disabled';
+          
+          return `
+            <div class="policy-item-card">
+              <div class="policy-item-top">
+                <div class="policy-item-provider">
+                  <div class="policy-item-logo">
+                    <i class="fas fa-shield-halved"></i>
+                  </div>
+                  <div class="policy-item-meta">
+                    <h3>${p.provider}</h3>
+                    <p>Policy Number: ${p.policyNumber}</p>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">Type: ${p.type}</p>
+                  </div>
+                </div>
+                <div class="status-badge ${p.status === 'Approved' ? 'verified' : 'pending'}">
+                  <i class="fas ${p.status === 'Approved' ? 'fa-circle-check' : 'fa-clock'}"></i>
+                  <span>${p.status}</span>
+                </div>
+              </div>
+              
+              ${p.notes ? `<p style="font-size: 0.82rem; color: var(--text-gray); background: rgba(255,255,255,0.015); padding: 0.65rem; border-radius: 8px; border: 1px solid var(--border-glass);">${p.notes}</p>` : ''}
+              
+              <div class="policy-action-pills">
+                <a href="${fileUrl}" target="_blank" class="btn-pill-gray ${fileClass}"><i class="fas fa-eye"></i> View</a>
+                <a href="${fileUrl}" download class="btn-pill-gray ${fileClass}"><i class="fas fa-download"></i> Download</a>
+                <a href="https://wa.me/919750003600?text=I%20have%20an%20issue%20with%20my%20${encodeURIComponent(p.provider)}%20policy%20${p.policyNumber}" target="_blank" class="btn-pill-gray"><i class="far fa-comments"></i> Contact Agent</a>
+              </div>
+            </div>`;
+        }).join('');
+        
+      } catch (err) {
+        console.error('Error fetching user policies:', err);
       }
     }
 
     // Appointment selection
-    function selectApptType(type) {
-      document.getElementById('apptType').value = type;
-      document.getElementById('appt-type-call').classList.remove('active');
-      document.getElementById('appt-type-office').classList.remove('active');
+    function selectBookingType(type) {
+      document.getElementById('bookingTypeField').value = type;
+      document.getElementById('booking-type-call').classList.remove('active');
+      document.getElementById('booking-type-office').classList.remove('active');
       
-      document.getElementById(`appt-type-${type}`).classList.add('active');
+      document.getElementById(`booking-type-${type}`).classList.add('active');
     }
 
     // Book Appointment
-    async function bookAppointment(event) {
+    async function bookNewAppointment(event) {
       event.preventDefault();
       const payload = {
-        type: document.getElementById('apptType').value,
+        type: document.getElementById('bookingTypeField').value,
         primaryPhone: document.getElementById('primaryMobile').value,
-        alternativePhone: document.getElementById('altMobile').value,
+        alternativePhone: document.getElementById('alternativeMobile').value,
         date: document.getElementById('preferredDate').value,
         timeSlot: document.getElementById('preferredTime').value,
-        alternativeTimeSlot: document.getElementById('altTime').value,
+        alternativeTimeSlot: document.getElementById('alternativeTime').value,
         purpose: document.getElementById('apptPurpose').value
       };
       
@@ -2369,24 +2480,24 @@
         const res = await api.post('/users/appointments', payload);
         alert(res.message || 'Appointment requested successfully.');
         document.getElementById('appointmentForm').reset();
-        await fetchUserAppointments();
-        await fetchUserUpdates();
+        await loadUserAppointments();
+        await loadUserUpdates();
       } catch (err) {
-        alert('Failed to request appointment.');
+        alert('Failed to schedule appointment.');
       }
     }
 
-    // Fetch user appointments
-    async function fetchUserAppointments() {
+    // Load user appointments list
+    async function loadUserAppointments() {
       try {
         const appts = await api.get('/users/appointments');
-        state.appointments = appts;
+        pageState.appointments = appts;
         
-        const container = document.getElementById('appointments-timeline');
+        const container = document.getElementById('appointments-timeline-list');
         if (appts.length === 0) {
           container.innerHTML = `
             <div style="color: var(--text-muted); font-size: 0.85rem; padding: 1rem 0;">
-              No appointments found. Use the form above to book an appointment.
+              No appointments scheduled yet.
             </div>`;
           return;
         }
@@ -2397,13 +2508,13 @@
           else if (appt.status === 'Booked') dotClass = 'pending';
           
           return `
-            <div class="timeline-node">
-              <div class="timeline-dot ${dotClass}"></div>
-              <div class="timeline-content-card">
-                <div class="timeline-info">
+            <div class="timeline-step-node">
+              <div class="timeline-circle-node ${dotClass}"></div>
+              <div class="timeline-box-card">
+                <div class="timeline-desc">
                   <h4>${appt.purpose}</h4>
-                  <p>Type: ${appt.type === 'call' ? 'Call Assistance' : 'Office Visit'}</p>
-                  <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">Date: ${appt.date} at ${appt.timeSlot}</p>
+                  <p>Type: ${appt.type === 'call' ? 'Call consultation' : 'Office appointment'}</p>
+                  <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;"><i class="far fa-clock"></i> Scheduled: ${appt.date} (${appt.timeSlot})</p>
                 </div>
                 <div class="status-badge ${appt.status === 'Completed' ? 'verified' : 'pending'}">
                   <span>${appt.status}</span>
@@ -2417,33 +2528,33 @@
       }
     }
 
-    // Services Modals Toggle
-    const servicesMeta = {
+    // Services Modal requests
+    const catDescriptions = {
       'Icare': 'Reach out to our health insurance support team for claims filing assistance, claims rejection review, and general health scheme guidance.',
       'Re.New.All': 'Renewal management assistance. Leave details of the policies you wish to track and renew, and our team will get in touch with optimized rate options.',
       'HosPos': 'HosPos hospital support. Get cashless verification assistance, find network hospitals in your city, and get seamless entry pre-approvals.',
       'Pre Policy Audit': 'Submit your policy coordinates for a complete visual review. Our AI tool alongside underwriters will audit your inclusions/exclusions.'
     };
 
-    function openServiceModal(category) {
-      document.getElementById('serviceCategory').value = category;
-      document.getElementById('service-modal-title').textContent = `${category} Assistance`;
-      document.getElementById('service-modal-description').textContent = servicesMeta[category] || 'Request support coordinates.';
-      document.getElementById('service-request-modal').classList.add('active');
+    function openServiceRequestModal(category) {
+      document.getElementById('serviceReqCategory').value = category;
+      document.getElementById('service-req-title').textContent = `${category} Assistance`;
+      document.getElementById('service-req-description').textContent = catDescriptions[category] || 'Request support assistance.';
+      document.getElementById('service-request-backdrop').classList.add('active');
     }
 
-    function closeServiceModal(event, force = false) {
-      if (force || event.target === document.getElementById('service-request-modal')) {
-        document.getElementById('service-request-modal').classList.remove('active');
+    function closeServiceRequestModal(event, force = false) {
+      if (force || event.target === document.getElementById('service-request-backdrop')) {
+        document.getElementById('service-request-backdrop').classList.remove('active');
         document.getElementById('serviceRequestForm').reset();
       }
     }
 
     // Submit service request
-    async function submitServiceRequest(event) {
+    async function submitSupportServiceRequest(event) {
       event.preventDefault();
       const payload = {
-        category: document.getElementById('serviceCategory').value,
+        category: document.getElementById('serviceReqCategory').value,
         preferredTime: document.getElementById('servicePreferredTime').value,
         description: document.getElementById('serviceDescription').value,
         notes: ''
@@ -2452,72 +2563,73 @@
       try {
         const res = await api.post('/users/services', payload);
         alert(res.message || 'Support service requested successfully.');
-        document.getElementById('service-request-modal').classList.remove('active');
+        document.getElementById('service-request-backdrop').classList.remove('active');
         document.getElementById('serviceRequestForm').reset();
-        await fetchUserUpdates();
+        await loadUserUpdates();
       } catch (err) {
-        alert('Failed to request service assistance.');
+        alert('Failed to request support.');
       }
     }
 
-    // Fetch user updates
-    async function fetchUserUpdates() {
+    // Load User Updates
+    async function loadUserUpdates() {
       try {
         const updates = await api.get('/users/updates');
-        state.updates = updates;
+        pageState.updates = updates;
         
-        // Render mobile and desktop unread counts
-        const pendingCount = updates.filter(u => u.status === 'Pending' || u.status === 'Confirmed').length;
-        document.getElementById('mobile-notif-count').textContent = pendingCount;
-        document.getElementById('desktop-notif-count').textContent = pendingCount;
-        if (pendingCount === 0) {
-          document.getElementById('mobile-notif-count').style.display = 'none';
-          document.getElementById('desktop-notif-count').style.display = 'none';
+        // Unread indicators toggle
+        const unreadCount = updates.filter(u => u.status === 'Pending' || u.status === 'Confirmed').length;
+        const mobileDot = document.getElementById('mobile-bell-dot');
+        const desktopDot = document.getElementById('desktop-bell-dot');
+        
+        if (unreadCount === 0) {
+          mobileDot.style.display = 'none';
+          desktopDot.style.display = 'none';
         } else {
-          document.getElementById('mobile-notif-count').style.display = 'flex';
-          document.getElementById('desktop-notif-count').style.display = 'flex';
+          mobileDot.style.display = 'block';
+          desktopDot.style.display = 'block';
         }
-
-        // Render Home page recent activity (maximum 3 items)
-        const recentActivity = updates.slice(0, 3);
-        const homeActivityList = document.getElementById('home-activity-list');
         
-        if (recentActivity.length === 0) {
-          homeActivityList.innerHTML = `
+        // Home page recent activity updates (top 3)
+        const recentList = updates.slice(0, 3);
+        const homeListContainer = document.getElementById('home-activity-list');
+        
+        if (recentList.length === 0) {
+          homeListContainer.innerHTML = `
             <div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 1rem 0;">
               No recent activity recorded.
             </div>`;
         } else {
-          homeActivityList.innerHTML = recentActivity.map((act, index) => {
-            const timeFormatted = act.createdAt ? act.createdAt.slice(11, 16) || 'Today' : 'Today';
+          homeListContainer.innerHTML = recentList.map((act, index) => {
+            const dateStr = act.createdAt ? act.createdAt.slice(11, 16) || 'Today' : 'Today';
             return `
-              <div class="activity-item">
-                <div class="activity-num">${index + 1}.</div>
-                <div class="activity-content">
-                  <div class="activity-details">
+              <div class="home-activity-row">
+                <div class="home-activity-num">${index + 1}.</div>
+                <div class="home-activity-body">
+                  <div class="home-activity-details">
                     <h5>${act.title}</h5>
                     <p>${act.message}</p>
                   </div>
-                  <div class="activity-time">${timeFormatted}</div>
+                  <div class="home-activity-timestamp">${dateStr}</div>
                 </div>
               </div>`;
           }).join('');
         }
-
-        // Render full Updates view timeline
+        
+        // Render full Updates timeline view
         renderUpdatesTimeline(updates);
-
+        
       } catch (err) {
-        console.error('Error fetching user updates:', err);
+        console.error('Error fetching updates:', err);
       }
     }
 
     function renderUpdatesTimeline(list) {
-      const container = document.getElementById('updates-timeline');
+      const container = document.getElementById('updates-timeline-list');
       if (list.length === 0) {
         container.innerHTML = `
           <div style="color: var(--text-muted); font-size: 0.85rem; padding: 2rem 0; text-align: center;">
-            No updates available in this category.
+            No updates found.
           </div>`;
         return;
       }
@@ -2528,15 +2640,15 @@
         else if (u.status === 'Pending') dotClass = 'pending';
         
         return `
-          <div class="timeline-node">
-            <div class="timeline-dot ${dotClass}"></div>
-            <div class="timeline-content-card">
-              <div class="timeline-info" style="flex: 1; margin-right: 1rem;">
+          <div class="timeline-step-node">
+            <div class="timeline-circle-node ${dotClass}"></div>
+            <div class="timeline-box-card">
+              <div class="timeline-desc" style="flex: 1; margin-right: 1.25rem;">
                 <h4 style="font-size: 0.92rem; font-weight: 700; margin-bottom: 0.25rem;">${u.title}</h4>
-                <p style="font-size: 0.8rem; color: var(--text-gray); line-height: 1.4;">${u.message}</p>
-                <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.4rem;"><i class="far fa-clock"></i> ${u.createdAt ? u.createdAt.slice(0, 10) : 'Today'}</p>
+                <p style="font-size: 0.8rem; color: var(--text-gray); line-height: 1.45;">${u.message}</p>
+                <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.45rem;"><i class="far fa-clock"></i> ${u.createdAt ? u.createdAt.slice(0, 10) : 'Today'}</p>
               </div>
-              <div class="status-badge ${u.status === 'Approved' || u.status === 'Confirmed' ? 'approved' : 'pending'}">
+              <div class="status-badge ${u.status === 'Approved' || u.status === 'Confirmed' ? 'verified' : 'pending'}">
                 <span>${u.status}</span>
               </div>
             </div>
@@ -2544,70 +2656,68 @@
       }).join('');
     }
 
-    // Filter updates on click
-    function filterUpdates(category, pillBtn) {
-      document.querySelectorAll('.updates-filters .filter-pill').forEach(el => el.classList.remove('active'));
-      pillBtn.classList.add('active');
+    // Filter Updates List
+    function filterUpdatesList(category, btnEl) {
+      document.querySelectorAll('.pills-filter-row .filter-pill-btn').forEach(btn => btn.classList.remove('active'));
+      btnEl.classList.add('active');
       
       if (category === 'all') {
-        renderUpdatesTimeline(state.updates);
+        renderUpdatesTimeline(pageState.updates);
       } else {
-        const filtered = state.updates.filter(u => u.category === category);
+        const filtered = pageState.updates.filter(u => u.category === category);
         renderUpdatesTimeline(filtered);
       }
     }
 
-    // AI Agent simulator Modal triggers
-    function openAiAgentChat() {
-      document.getElementById('ai-agent-modal').classList.add('active');
-      document.getElementById('chat-input-field').focus();
+    // AI Copilot Chat Modal triggers
+    function openAiCopilotModal() {
+      document.getElementById('ai-copilot-backdrop').classList.add('active');
+      document.getElementById('copilot-input-field').focus();
     }
 
-    function closeAiAgentChat(event, force = false) {
-      if (force || event.target === document.getElementById('ai-agent-modal')) {
-        document.getElementById('ai-agent-modal').classList.remove('active');
+    function closeAiCopilotModal(event, force = false) {
+      if (force || event.target === document.getElementById('ai-copilot-backdrop')) {
+        document.getElementById('ai-copilot-backdrop').classList.remove('active');
       }
     }
 
-    function handleChatKeyDown(event) {
+    function handleCopilotKeyDown(event) {
       if (event.key === 'Enter') {
-        sendChatMessage();
+        sendCopilotChatMessage();
       }
     }
 
-    function sendChatMessage() {
-      const input = document.getElementById('chat-input-field');
+    function sendCopilotChatMessage() {
+      const input = document.getElementById('copilot-input-field');
       const text = input.value.trim();
       if (!text) return;
       
-      // Render user message
-      const container = document.getElementById('chat-messages-container');
-      const userMsg = document.createElement('div');
-      userMsg.className = 'chat-msg user';
-      userMsg.textContent = text;
-      container.appendChild(userMsg);
+      const box = document.getElementById('copilot-messages-box');
+      const userBubble = document.createElement('div');
+      userBubble.className = 'msg-bubble sender';
+      userBubble.textContent = text;
+      box.appendChild(userBubble);
       
       input.value = '';
-      container.scrollTop = container.scrollHeight;
+      box.scrollTop = box.scrollHeight;
       
-      // Simulate simple agent response after 1 second
       setTimeout(() => {
-        const agentMsg = document.createElement('div');
-        agentMsg.className = 'chat-msg agent';
+        const botBubble = document.createElement('div');
+        botBubble.className = 'msg-bubble bot';
         
-        const lowerText = text.toLowerCase();
-        if (lowerText.includes('policy') || lowerText.includes('audit')) {
-          agentMsg.textContent = "I can see your policies list. You can upload any policy PDF under the 'Policies' tab, and I'll automatically verify details such as exclusions and waiting periods.";
-        } else if (lowerText.includes('kyc') || lowerText.includes('aadhaar') || lowerText.includes('pan')) {
-          agentMsg.textContent = "To verify your KYC details, click your profile icon (top right on mobile) and select which card to upload. Our compliance officers will review it within 24 hours.";
-        } else if (lowerText.includes('appointment') || lowerText.includes('consult')) {
-          agentMsg.textContent = "You can schedule a direct call back or face-to-face visit with agent Priya K. in the Appointments tab. Let me know if you need help choosing a slot.";
+        const lower = text.toLowerCase();
+        if (lower.includes('policy') || lower.includes('audit')) {
+          botBubble.textContent = "I can see your policies list. You can upload any policy PDF under the 'Policies' tab, and I'll automatically verify details such as exclusions and waiting periods.";
+        } else if (lower.includes('kyc') || lower.includes('aadhaar') || lower.includes('pan')) {
+          botBubble.textContent = "To verify your KYC details, click your profile icon (top right on mobile) and select which card to upload. Our compliance officers will review it within 24 hours.";
+        } else if (lower.includes('appointment') || lower.includes('consult')) {
+          botBubble.textContent = "You can schedule a direct call back or face-to-face visit with agent Priya K. in the Appointments tab. Let me know if you need help choosing a slot.";
         } else {
-          agentMsg.textContent = "Thank you for reaching out! I am a smart assistant. For immediate assistance with claim approvals or emergency hospital cash, feel free to drop us a direct WhatsApp message.";
+          botBubble.textContent = "Thank you for reaching out! I am a smart assistant. For immediate assistance with claim approvals or emergency hospital cash, feel free to drop us a direct WhatsApp message.";
         }
         
-        container.appendChild(agentMsg);
-        container.scrollTop = container.scrollHeight;
+        box.appendChild(botBubble);
+        box.scrollTop = box.scrollHeight;
       }, 1000);
     }
   </script>
