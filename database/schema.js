@@ -49,7 +49,7 @@ createCollectionWithSchema(
       password: { bsonType: 'string', description: 'Stored password string used by the current auth flow.' },
       role: { bsonType: 'string', description: 'User role such as admin, user, partner, or employee.' },
       kyc: { bsonType: 'object', description: 'KYC status and files.' },
-      tsid: { bsonType: 'string', description: 'Custom user ID identifier.' },
+      tsid: { bsonType: 'string', description: 'Sequential unique user ID in format U{YEAR}{3-digit-sequence}, e.g. U2026001. Sequence is based on max existing, never reused if deleted.' },
       createdAt: { bsonType: ['date', 'string'], description: 'Creation timestamp.' },
       updatedAt: { bsonType: ['date', 'string'], description: 'Last update timestamp.' }
     }

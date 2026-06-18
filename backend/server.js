@@ -616,6 +616,27 @@ function createApiRouter() {
         return;
       }
 
+      // Generate sequential unique user ID: U{YEAR}{3-digit count}
+      // Count ALL users ever registered (including deleted ones tracked by max tsid sequence)
+      // to ensure IDs are never reused even if mid-users are deleted.
+      const currentYear = new Date().getFullYear();
+      const db = getDb();
+      const allUserTsids = await db.collection('users')
+        .find({ role: 'user', tsid: { $regex: `^U${currentYear}` } }, { projection: { tsid: 1 } })
+        .toArray();
+
+      // Find the highest sequence number used this year
+      let maxSeq = 0;
+      for (const u of allUserTsids) {
+        const match = u.tsid && u.tsid.match(/^U\d{4}(\d+)$/);
+        if (match) {
+          const seq = parseInt(match[1], 10);
+          if (seq > maxSeq) maxSeq = seq;
+        }
+      }
+      const nextSeq = maxSeq + 1;
+      const generatedTsid = `U${currentYear}${String(nextSeq).padStart(3, '0')}`;
+
       const userId = await insertOne('users', {
         name: data.name,
         email: data.email,
@@ -629,7 +650,7 @@ function createApiRouter() {
           voterid: null,
           photo: null
         },
-        tsid: `TS-${Math.floor(1000 + Math.random() * 9000)}`,
+        tsid: generatedTsid,
         createdAt: new Date(),
         updatedAt: new Date()
       });

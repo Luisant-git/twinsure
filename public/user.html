@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Twinsure - User Portal</title>
+  <title>TwinSure - User Portal</title>
   <link rel="icon" href="assets/logo.png" type="image/png" />
   
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -39,12 +39,23 @@
       box-sizing: border-box;
     }
 
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+
     body {
       font-family: var(--font-family-sans);
       background-color: var(--bg-dark);
       color: var(--text-white);
-      min-height: 100vh;
-      overflow-x: hidden;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
       position: relative;
       
       /* Subtle grid background */
@@ -86,8 +97,9 @@
     /* Container setup */
     .app-layout {
       display: flex;
-      width: 100vw;
-      min-height: 100vh;
+      width: 100%;
+      flex: 1;
+      overflow: hidden;
     }
 
     /* DESKTOP SIDEBAR NAVIGATION */
@@ -115,22 +127,15 @@
       color: var(--text-white);
     }
 
-    .brand-branding .logo-container {
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .brand-branding .logo-container svg {
-      width: 100%;
-      height: 100%;
+    .brand-branding img {
+      height: 28px;
+      width: auto;
+      max-width: 100%;
     }
 
     .brand-branding span {
       font-family: var(--font-family-heading);
-      font-size: 1.4rem;
+      font-size: 1.25rem;
       font-weight: 800;
       letter-spacing: -0.5px;
     }
@@ -150,8 +155,8 @@
       padding: 0.85rem 1.15rem;
       color: var(--text-gray);
       text-decoration: none;
-      border-radius: 12px;
-      font-size: 0.95rem;
+      border-radius: 16px;
+      font-size: 0.85rem;
       font-weight: 500;
       transition: all 0.2s ease;
       border: 1px solid transparent;
@@ -170,7 +175,7 @@
     }
 
     .nav-link-item a i {
-      font-size: 1.1rem;
+      font-size: 1rem;
       width: 20px;
       text-align: center;
     }
@@ -187,7 +192,7 @@
       gap: 0.85rem;
       cursor: pointer;
       padding: 0.5rem;
-      border-radius: 12px;
+      border-radius: 16px;
       transition: background 0.2s;
     }
 
@@ -205,7 +210,7 @@
     }
 
     .user-card-info h4 {
-      font-size: 0.9rem;
+      font-size: 0.82rem;
       font-weight: 600;
       color: var(--text-white);
     }
@@ -220,7 +225,9 @@
       flex: 1;
       margin-left: 260px;
       padding: 2.25rem;
-      min-height: 100vh;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
       display: flex;
       flex-direction: column;
       z-index: 10;
@@ -240,7 +247,7 @@
 
     .header-title {
       font-family: var(--font-family-heading);
-      font-size: 2.2rem;
+      font-size: 1.4rem;
       font-weight: 800;
       letter-spacing: -0.5px;
     }
@@ -287,7 +294,7 @@
     .container-card {
       background: var(--bg-card);
       border: 1px solid var(--border-glass);
-      border-radius: 20px;
+      border-radius: 24px;
       padding: 1.5rem;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
       position: relative;
@@ -319,7 +326,7 @@
 
     .banner-welcome h2 {
       font-family: var(--font-family-heading);
-      font-size: 1.85rem;
+      font-size: 1.3rem;
       font-weight: 800;
       margin-bottom: 0.5rem;
       letter-spacing: -0.5px;
@@ -329,7 +336,7 @@
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      font-size: 0.8rem;
+      font-size: 0.72rem;
       font-weight: 600;
       background: rgba(255, 255, 255, 0.04);
       padding: 0.3rem 0.85rem;
@@ -351,7 +358,7 @@
 
     .banner-welcome .user-tsid {
       margin-top: 0.85rem;
-      font-size: 0.85rem;
+      font-size: 0.78rem;
       color: var(--text-gray);
       font-family: monospace;
       letter-spacing: 0.5px;
@@ -372,11 +379,12 @@
 
     /* Actions Grid */
     .grid-header {
-      font-size: 1.05rem;
+      font-size: 0.8rem;
       font-weight: 700;
       margin-bottom: 1rem;
       color: var(--text-gray);
-      letter-spacing: 0.25px;
+      text-transform: uppercase;
+      letter-spacing: 0.75px;
     }
 
     .actions-grid-2x2 {
@@ -388,20 +396,21 @@
 
     .action-card-btn {
       background: var(--bg-card);
-      border: 1px solid var(--border-glass);
-      border-radius: 16px;
+      border: 1.5px solid rgba(0, 122, 255, 0.35); /* Permanent blue outline glow */
+      border-radius: 24px;
       padding: 1.25rem;
       display: flex;
       align-items: center;
       gap: 1rem;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-shadow: 0 4px 15px rgba(0, 122, 255, 0.05);
     }
 
     .action-card-btn:hover {
       border-color: var(--primary-blue);
       transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0, 122, 255, 0.15);
+      box-shadow: 0 8px 25px rgba(0, 122, 255, 0.2);
     }
 
     .action-card-icon {
@@ -418,13 +427,13 @@
     }
 
     .action-card-info h4 {
-      font-size: 0.95rem;
+      font-size: 0.85rem;
       font-weight: 600;
       margin-bottom: 0.15rem;
     }
 
     .action-card-info p {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: var(--text-gray);
     }
 
@@ -476,7 +485,7 @@
     }
 
     .shortcut-circle-item span {
-      font-size: 0.78rem;
+      font-size: 0.72rem;
       font-weight: 500;
       text-align: center;
       color: var(--text-gray);
@@ -491,7 +500,7 @@
     }
 
     .home-activity-num {
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       font-weight: 700;
       color: var(--text-muted);
       width: 15px;
@@ -512,18 +521,18 @@
     }
 
     .home-activity-details h5 {
-      font-size: 0.9rem;
+      font-size: 0.82rem;
       font-weight: 600;
       margin-bottom: 0.2rem;
     }
 
     .home-activity-details p {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: var(--text-gray);
     }
 
     .home-activity-timestamp {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: var(--text-muted);
     }
 
@@ -535,13 +544,20 @@
       margin-bottom: 1.5rem;
     }
 
+    .policies-title-bar h2 {
+      font-size: 1.5rem !important;
+      font-weight: 800;
+      color: var(--text-white);
+      margin: 0;
+    }
+
     .btn-solid-blue {
       background: var(--primary-blue);
       color: var(--text-white);
       border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 12px;
-      font-size: 0.9rem;
+      padding: 0.6rem 1.25rem;
+      border-radius: 20px;
+      font-size: 0.82rem;
       font-weight: 600;
       cursor: pointer;
       display: flex;
@@ -557,73 +573,76 @@
     }
 
     .policy-item-card {
-      background: var(--bg-card);
+      background: #161b26;
       border: 1px solid var(--border-glass);
-      border-radius: 20px;
-      padding: 1.5rem;
+      border-radius: 24px;
+      padding: 1.25rem;
       display: flex;
       flex-direction: column;
-      gap: 1.25rem;
+      gap: 1rem;
       margin-bottom: 1.25rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
     }
 
     .policy-item-top {
       display: flex;
-      justify-content: space-between;
+      gap: 1rem;
       align-items: flex-start;
     }
 
-    .policy-item-provider {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .policy-item-logo {
-      width: 50px;
-      height: 50px;
+    .policy-brand-logo-container {
+      width: 56px;
+      height: 56px;
       border-radius: 12px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border-glass);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.25rem;
-      color: var(--primary-blue);
+      overflow: hidden;
+      flex-shrink: 0;
     }
 
-    .policy-item-logo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    .policy-item-meta {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
     }
 
     .policy-item-meta h3 {
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: 700;
-      margin-bottom: 0.2rem;
+      color: var(--text-white);
+      margin: 0;
     }
 
     .policy-item-meta p {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: var(--text-gray);
+      margin: 0;
+    }
+
+    .policy-status-row {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
     }
 
     .policy-action-pills {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.75rem;
+      display: flex;
+      gap: 0.5rem;
       border-top: 1px solid rgba(255, 255, 255, 0.04);
-      padding-top: 1rem;
+      padding-top: 0.85rem;
+      width: 100%;
     }
 
     .btn-pill-gray {
-      background: rgba(255, 255, 255, 0.025);
-      border: 1px solid var(--border-glass);
+      flex: 1;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       color: var(--text-white);
-      padding: 0.65rem;
-      border-radius: 10px;
-      font-size: 0.8rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.78rem;
       font-weight: 500;
       cursor: pointer;
       display: flex;
@@ -632,11 +651,12 @@
       gap: 0.4rem;
       transition: all 0.2s;
       text-decoration: none;
+      white-space: nowrap;
     }
 
     .btn-pill-gray:hover {
-      background: rgba(255, 255, 255, 0.06);
-      border-color: var(--text-gray);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
     }
 
     .btn-pill-gray.disabled {
@@ -647,194 +667,262 @@
     /* SERVICES VIEW */
     .services-grid-4col {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 1.25rem;
+    }
+
+    @media (max-width: 992px) {
+      .services-grid-4col {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
 
     .service-glow-card {
       background: var(--bg-card);
-      border: 1px solid var(--border-glass);
+      border: 1.5px solid rgba(0, 122, 255, 0.35);
       border-radius: 20px;
-      padding: 1.75rem 1.5rem;
+      padding: 0.85rem;
       display: flex;
       flex-direction: column;
-      gap: 1.25rem;
+      gap: 0.5rem;
       transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
       position: relative;
-    }
-
-    .service-glow-card::after {
-      content: '';
-      position: absolute;
-      inset: -1px;
-      border-radius: 20px;
-      border: 1px solid transparent;
-      pointer-events: none;
-      transition: border-color 0.3s;
-      z-index: 2;
+      box-shadow: 0 4px 15px rgba(0, 122, 255, 0.05);
     }
 
     .service-glow-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 122, 255, 0.16);
-    }
-
-    .service-glow-card:hover::after {
-      border-color: var(--primary-blue-glow);
+      transform: translateY(-3px);
+      border-color: #007aff;
+      box-shadow: 0 8px 25px rgba(0, 122, 255, 0.2);
     }
 
     .service-glow-icon-box {
-      width: 50px;
-      height: 50px;
-      border-radius: 12px;
-      background: rgba(0, 122, 255, 0.08);
-      border: 1px solid rgba(0, 122, 255, 0.2);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(0, 122, 255, 0.06);
+      border: 1.5px solid #007aff;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.35rem;
-      color: var(--primary-blue);
-      box-shadow: 0 0 15px rgba(0, 122, 255, 0.15);
-      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+      color: #007aff;
+      box-shadow: 0 0 10px rgba(0, 122, 255, 0.18);
+      flex-shrink: 0;
     }
 
     .service-glow-card h3 {
-      font-size: 1.15rem;
+      font-size: 0.85rem;
       font-weight: 700;
       font-family: var(--font-family-heading);
     }
 
     .service-glow-card p {
-      font-size: 0.8rem;
+      font-size: 0.68rem;
       color: var(--text-gray);
-      line-height: 1.45;
-      min-height: 44px;
+      line-height: 1.35;
     }
 
     .service-glow-card .btn-solid-blue {
       width: 100%;
       justify-content: center;
-      padding: 0.65rem;
-      font-size: 0.82rem;
+      padding: 0.5rem;
+      font-size: 0.75rem;
+      border-radius: 14px;
+      margin-top: 0.15rem;
     }
 
     /* APPOINTMENTS VIEW */
     .booking-type-toggle {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 1.15rem;
-      margin-bottom: 2rem;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
     }
 
     .booking-card-option {
-      background: var(--bg-card);
-      border: 1px solid var(--border-glass);
-      border-radius: 16px;
-      padding: 1.5rem;
+      background: #161b26;
+      border: 1.5px solid rgba(255,255,255,0.07);
+      border-radius: 18px;
+      padding: 1.1rem 0.85rem;
       text-align: center;
       cursor: pointer;
-      transition: all 0.25s;
+      transition: all 0.25s cubic-bezier(0.25,0.8,0.25,1);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.45rem;
+    }
+
+    .booking-card-option .bco-icon-wrap {
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.2rem;
+      transition: all 0.25s;
     }
 
     .booking-card-option i {
-      font-size: 1.6rem;
-      color: var(--primary-blue);
-      transition: transform 0.2s;
+      font-size: 1.55rem;
+      color: var(--text-gray);
+      transition: color 0.2s;
     }
 
     .booking-card-option h3 {
-      font-size: 1.05rem;
+      font-size: 0.88rem;
       font-weight: 700;
+      color: var(--text-white);
     }
 
     .booking-card-option p {
-      font-size: 0.78rem;
-      color: var(--text-gray);
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      line-height: 1.3;
     }
 
     .booking-card-option:hover {
-      border-color: var(--primary-blue);
-      box-shadow: 0 4px 15px rgba(0, 122, 255, 0.15);
+      border-color: rgba(0, 122, 255, 0.4);
+      background: rgba(0, 122, 255, 0.04);
     }
 
     .booking-card-option:hover i {
-      transform: scale(1.08);
+      color: var(--primary-blue);
     }
 
     .booking-card-option.active {
-      background: linear-gradient(135deg, rgba(0, 122, 255, 0.15) 0%, rgba(0, 122, 255, 0.03) 100%);
+      background: rgba(0, 122, 255, 0.06);
       border-color: var(--primary-blue);
-      box-shadow: 0 0 15px rgba(0, 122, 255, 0.12);
+      box-shadow: 0 0 0 1px rgba(0,122,255,0.25), 0 6px 20px rgba(0, 122, 255, 0.1);
+    }
+
+    .booking-card-option.active .bco-icon-wrap {
+      background: rgba(0, 122, 255, 0.1);
+      border-color: rgba(0,122,255,0.25);
+    }
+
+    .booking-card-option.active i {
+      color: var(--primary-blue);
+    }
+
+    /* Appointment form section header */
+    .appt-section-title {
+      font-family: var(--font-family-heading);
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-white);
+      margin-bottom: 1.25rem;
+      letter-spacing: -0.25px;
     }
 
     .form-inputs-block {
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
     }
 
     .inputs-grid-2col {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 1.25rem;
-      margin-bottom: 1.25rem;
+      gap: 1rem;
+      margin-bottom: 1rem;
     }
 
     .field-wrapper {
       display: flex;
       flex-direction: column;
-      gap: 0.45rem;
+      gap: 0.35rem;
     }
 
     .field-wrapper label {
-      font-size: 0.78rem;
+      font-size: 0.7rem;
       font-weight: 600;
       color: var(--text-gray);
+      letter-spacing: 0.1px;
     }
 
     .field-control {
-      background: var(--bg-black);
-      border: 1.5px solid var(--border-glass);
+      background: #0d1117;
+      border: 1.5px solid rgba(255,255,255,0.09);
       color: var(--text-white);
-      padding: 0.75rem 1rem;
-      border-radius: 12px;
-      font-size: 0.88rem;
+      padding: 0.65rem 0.9rem;
+      border-radius: 14px;
+      font-size: 0.8rem;
       outline: none;
       transition: all 0.2s;
       width: 100%;
+      font-family: var(--font-family-sans);
     }
 
     .field-control:focus {
       border-color: var(--primary-blue);
-      box-shadow: 0 0 10px rgba(0, 122, 255, 0.2);
+      box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+      background: #0f1520;
     }
 
     .field-control::placeholder {
-      color: var(--text-muted);
+      color: #3a4560;
+    }
+
+    .field-control.input-error {
+      border-color: var(--danger-red);
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+    }
+
+    .field-error-msg {
+      font-size: 0.65rem;
+      color: var(--danger-red);
+      font-weight: 500;
+      display: none;
+    }
+
+    .field-error-msg.visible {
+      display: block;
     }
 
     select.field-control {
       cursor: pointer;
       appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%238e9ebb'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23475569'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 1rem center;
-      background-size: 1.1rem;
-      padding-right: 2.5rem;
+      background-position: right 0.85rem center;
+      background-size: 1rem;
+      padding-right: 2.25rem;
     }
 
     select.field-control option {
-      background-color: var(--bg-dark);
+      background-color: #0b0e14;
       color: var(--text-white);
     }
 
-    .form-inputs-block .btn-solid-blue {
+    /* Date input calendar icon color fix */
+    input[type="date"].field-control::-webkit-calendar-picker-indicator {
+      filter: invert(0.5) brightness(0.8);
+      cursor: pointer;
+    }
+
+    .form-inputs-block .btn-appt-submit {
       width: 100%;
       justify-content: center;
-      padding: 0.85rem;
-      margin-top: 0.5rem;
+      padding: 0.9rem;
+      margin-top: 0.75rem;
+      border-radius: 16px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      background: var(--primary-blue);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.3px;
+    }
+
+    .form-inputs-block .btn-appt-submit:hover {
+      background: #006ce6;
+      box-shadow: 0 0 20px rgba(0,122,255,0.35);
+      transform: translateY(-1px);
     }
 
     /* Chronological Timeline */
@@ -843,7 +931,7 @@
       padding-left: 1.75rem;
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 1.25rem;
     }
 
     .timeline-path::before {
@@ -853,7 +941,7 @@
       top: 4px;
       bottom: 4px;
       width: 2px;
-      background: var(--border-glass);
+      background: rgba(255, 255, 255, 0.15);
     }
 
     .timeline-step-node {
@@ -863,18 +951,17 @@
     .timeline-circle-node {
       position: absolute;
       left: -1.75rem;
-      top: 4px;
-      width: 14px;
-      height: 14px;
+      top: 35px; /* Aligns dot vertically with center of card's circular icon */
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
-      background: var(--primary-blue);
-      border: 3.5px solid var(--bg-dark);
-      box-shadow: 0 0 0 1.5px var(--border-glass);
+      background: #475569; /* Slate gray dot default */
+      border: 3px solid var(--bg-dark);
       z-index: 2;
     }
 
     .timeline-circle-node.completed {
-      background: var(--success-green);
+      background: var(--primary-blue);
     }
 
     .timeline-circle-node.pending {
@@ -882,13 +969,104 @@
     }
 
     .timeline-box-card {
-      background: var(--bg-card);
+      background: #161b26; /* Sleek dark card background matching mockup */
       border: 1px solid var(--border-glass);
-      border-radius: 16px;
-      padding: 1rem 1.25rem;
+      border-radius: 20px;
+      padding: 1.25rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .timeline-card-icon-box {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(0, 122, 255, 0.1);
+      border: 1.5px solid rgba(0, 122, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #007aff;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .timeline-card-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .timeline-card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+    }
+
+    .timeline-card-title {
+      font-family: var(--font-family-sans);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-white);
+    }
+
+    .timeline-card-time {
+      font-size: 0.72rem;
+      color: var(--text-gray);
+    }
+
+    .timeline-card-message {
+      font-size: 0.78rem;
+      color: var(--text-gray);
+      line-height: 1.4;
+    }
+
+    .timeline-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.4rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      padding-top: 0.6rem;
+    }
+
+    .timeline-card-status-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    /* Badges as pills matching mockup */
+    .status-badge-pill {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.3rem 0.75rem;
+      border-radius: 16px;
+      display: inline-block;
+    }
+
+    .status-badge-pill.status-approved,
+    .status-badge-pill.verified {
+      background: rgba(36, 180, 126, 0.15);
+      color: #24b47e;
+      border: 1px solid rgba(36, 180, 126, 0.25);
+    }
+
+    .status-badge-pill.status-pending,
+    .status-badge-pill.status-pending-verification,
+    .status-badge-pill.pending {
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.25);
+    }
+
+    .status-badge-pill.status-confirmed,
+    .status-badge-pill.confirmed {
+      background: rgba(0, 122, 255, 0.15);
+      color: #007aff;
+      border: 1px solid rgba(0, 122, 255, 0.25);
     }
 
     .timeline-desc h4 {
@@ -917,7 +1095,7 @@
       color: var(--text-gray);
       padding: 0.45rem 1.25rem;
       border-radius: 30px;
-      font-size: 0.82rem;
+      font-size: 0.75rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
@@ -965,7 +1143,7 @@
 
     .profile-nav-title {
       font-family: var(--font-family-heading);
-      font-size: 1.25rem;
+      font-size: 1.15rem;
       font-weight: 700;
       position: absolute;
       left: 50%;
@@ -1010,13 +1188,13 @@
 
     .profile-center-hero h2 {
       font-family: var(--font-family-heading);
-      font-size: 1.65rem;
+      font-size: 1.35rem;
       font-weight: 700;
       letter-spacing: -0.25px;
     }
 
     .profile-center-hero p {
-      font-size: 0.88rem;
+      font-size: 0.78rem;
       color: var(--text-gray);
       margin-top: -0.2rem;
     }
@@ -1033,12 +1211,12 @@
     }
 
     .kyc-status-block span {
-      font-size: 0.95rem;
+      font-size: 0.85rem;
       font-weight: 600;
     }
 
     .documents-header {
-      font-size: 0.95rem;
+      font-size: 0.78rem;
       font-weight: 700;
       color: var(--text-gray);
       margin-bottom: 1rem;
@@ -1080,7 +1258,7 @@
     }
 
     .doc-row-details span {
-      font-size: 0.88rem;
+      font-size: 0.78rem;
       font-weight: 500;
     }
 
@@ -1090,7 +1268,7 @@
     }
 
     .doc-action-link {
-      font-size: 0.82rem;
+      font-size: 0.75rem;
       font-weight: 600;
       color: var(--primary-blue);
       text-decoration: none;
@@ -1116,7 +1294,7 @@
       padding: 1rem 1.25rem;
       background: var(--bg-card);
       border: 1px solid var(--border-glass);
-      border-radius: 16px;
+      border-radius: 20px;
       cursor: pointer;
       text-decoration: none;
       color: var(--text-white);
@@ -1142,7 +1320,7 @@
     }
 
     .setting-row-left span {
-      font-size: 0.88rem;
+      font-size: 0.78rem;
       font-weight: 500;
     }
 
@@ -1183,13 +1361,19 @@
       left: 0;
       right: 0;
       height: 72px;
+      height: calc(72px + env(safe-area-inset-bottom, 0px));
+      padding-bottom: env(safe-area-inset-bottom, 0px);
       background-color: var(--bg-nav);
       border-top: 1px solid var(--border-glass);
-      z-index: 150;
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+      z-index: 9999;
       justify-content: space-around;
       align-items: center;
       padding: 0 0.5rem;
-      box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.5);
+      transform: translate3d(0, 0, 0);
+      -webkit-transform: translate3d(0, 0, 0);
     }
 
     .bottom-nav-link {
@@ -1200,7 +1384,7 @@
       gap: 0.25rem;
       color: var(--text-gray);
       text-decoration: none;
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       font-weight: 600;
       flex: 1;
       height: 100%;
@@ -1208,7 +1392,7 @@
     }
 
     .bottom-nav-link i {
-      font-size: 1.35rem;
+      font-size: 1.2rem;
       margin-top: 2px;
     }
 
@@ -1218,49 +1402,48 @@
     }
 
     /* FLOATING ACTIONS PILLS */
-    .floater-actions-container {
+    .floating-actions {
       position: fixed;
-      bottom: 2rem;
-      right: 2rem;
+      bottom: 30px;
+      right: 30px;
       display: flex;
       flex-direction: column;
-      gap: 0.85rem;
-      z-index: 200;
+      gap: 15px;
+      z-index: 1000;
     }
 
-    .floater-btn {
-      height: 48px;
-      border-radius: 24px;
-      display: inline-flex;
+    .float-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
       align-items: center;
-      gap: 0.55rem;
-      padding: 0 1.25rem;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-white);
+      justify-content: center;
+      font-size: 1.8rem;
+      color: #fff;
       cursor: pointer;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.3s ease;
+      position: relative;
       text-decoration: none;
+      transform: translate3d(0, 0, 0);
+      -webkit-transform: translate3d(0, 0, 0);
     }
 
-    .floater-btn i {
-      font-size: 1.15rem;
+    .float-ai {
+      background: linear-gradient(135deg, #00509d, #003f88);
+      box-shadow: 0 0 15px rgba(0, 80, 157, 0.3);
     }
 
-    .floater-btn:hover {
-      transform: scale(1.04) translateY(-2px);
+    .float-wa {
+      background: #25d366;
+      box-shadow: 0 0 15px rgba(37, 211, 102, 0.3);
     }
 
-    .floater-btn.ai-copilot {
-      background: linear-gradient(135deg, #007aff 0%, #00d2ff 100%);
-      box-shadow: 0 0 15px rgba(0, 122, 255, 0.3);
-    }
-
-    .floater-btn.whatsapp-support {
-      background: linear-gradient(135deg, #24b47e 0%, #128c7e 100%);
-      box-shadow: 0 0 15px rgba(36, 180, 126, 0.3);
+    .float-btn:hover {
+      transform: scale(1.06) translateY(-3px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
     }
 
     /* Modal windows */
@@ -1357,6 +1540,42 @@
       .header-bar {
         display: none;
       }
+
+      .mobile-page-title {
+        display: block;
+        font-family: var(--font-family-heading);
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin-top: 0.5rem;
+        margin-bottom: 1.25rem;
+        letter-spacing: -0.5px;
+        color: var(--text-white);
+      }
+
+      .policies-title-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+        width: 100%;
+      }
+      .policies-title-bar h2 {
+        font-size: 1.35rem !important;
+        font-weight: 800;
+        color: var(--text-white);
+        font-family: var(--font-family-heading);
+        margin: 0;
+        white-space: nowrap;
+      }
+      .policies-title-bar .btn-solid-blue {
+        width: auto;
+        padding: 0.5rem 0.85rem;
+        border-radius: 20px;
+        font-size: 0.78rem;
+        white-space: nowrap;
+      }
       
       /* Mobile fixed header bar */
       .header-bar-mobile {
@@ -1365,11 +1584,19 @@
         align-items: center;
         background-color: var(--bg-nav);
         border-bottom: 1px solid var(--border-glass);
-        padding: 0.85rem 1.25rem;
+        padding: 0.35rem 1rem;
         position: sticky;
         top: 0;
         z-index: 160;
         box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        min-height: 52px;
+      }
+      .header-bar-mobile .brand-branding img {
+        height: 24px;
+        width: auto;
+      }
+      .header-bar-mobile .brand-branding span {
+        font-size: 1.15rem;
       }
       .header-bar-mobile .brand-branding {
         margin-bottom: 0;
@@ -1389,33 +1616,65 @@
         display: flex;
       }
       
-      .floater-actions-container {
-        bottom: 5.5rem; /* Elevate actions above bottom navbar */
-        right: 1.25rem;
+      .floating-actions {
+        bottom: 90px; /* Elevate actions above bottom navbar */
+        right: 20px;
+        gap: 12px;
       }
       
-      .floater-btn {
-        height: 44px;
-        padding: 0 1rem;
-        font-size: 0.78rem;
+      .float-btn {
+        width: 54px;
+        height: 54px;
+        font-size: 1.6rem;
       }
     }
 
     @media (max-width: 600px) {
       .actions-grid-2x2 {
-        grid-template-columns: 1fr;
-        gap: 0.85rem;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+      }
+      .action-card-btn {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        padding: 0.85rem;
+        border-radius: 20px;
+      }
+      .action-card-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+        border-radius: 10px;
+      }
+      .action-card-info h4 {
+        font-size: 0.75rem;
+      }
+      .action-card-info p {
+        font-size: 0.62rem;
       }
       .services-grid-4col {
-        grid-template-columns: 1fr;
-        gap: 1rem;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
       }
       .inputs-grid-2col {
         grid-template-columns: 1fr;
         gap: 1rem;
       }
+      .policy-item-card {
+        padding: 1rem;
+      }
       .policy-action-pills {
-        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: row;
+        gap: 0.35rem;
+        padding-top: 0.75rem;
+      }
+      .btn-pill-gray {
+        padding: 0.5rem 0.35rem;
+        font-size: 0.7rem;
+        gap: 0.2rem;
+        border-radius: 16px;
       }
       .shortcuts-panel {
         padding: 1rem 0.5rem;
@@ -1427,6 +1686,13 @@
         width: 42px;
         height: 42px;
         font-size: 1rem;
+      }
+      .policies-title-bar h2 {
+        font-size: 1.2rem !important;
+      }
+      .policies-title-bar .btn-solid-blue {
+        padding: 0.45rem 0.75rem !important;
+        font-size: 0.72rem !important;
       }
     }
 
@@ -1478,14 +1744,8 @@
   <!-- MOBILE TOP FIXED BAR -->
   <div class="header-bar-mobile">
     <a href="index.html" class="brand-branding">
-      <div class="logo-container">
-        <!-- SVG Shield Logo -->
-        <svg viewBox="0 0 100 100">
-          <path d="M 50,10 Q 80,18 80,42 C 80,70 50,90 50,90 C 50,90 20,70 20,42 Q 20,18 50,10 Z" fill="none" stroke="#007aff" stroke-width="8"></path>
-          <path d="M 40,50 C 40,43 45,43 50,50 C 55,57 60,57 60,50 C 60,43 55,43 50,50 C 45,57 40,57 40,50 Z" fill="none" stroke="#007aff" stroke-width="6" stroke-linecap="round"></path>
-        </svg>
-      </div>
-      <span>Twinsure</span>
+      <img src="assets/logo.png" alt="TwinSure Logo" />
+      <span>TwinSure</span>
     </a>
     <div class="header-controls">
       <div class="header-bell" onclick="switchTab('updates')">
@@ -1501,13 +1761,8 @@
     <!-- DESKTOP LEFT SIDEBAR -->
     <aside class="sidebar">
       <a href="index.html" class="brand-branding">
-        <div class="logo-container">
-          <svg viewBox="0 0 100 100">
-            <path d="M 50,10 Q 80,18 80,42 C 80,70 50,90 50,90 C 50,90 20,70 20,42 Q 20,18 50,10 Z" fill="none" stroke="#007aff" stroke-width="8"></path>
-            <path d="M 40,50 C 40,43 45,43 50,50 C 55,57 60,57 60,50 C 60,43 55,43 50,50 C 45,57 40,57 40,50 Z" fill="none" stroke="#007aff" stroke-width="6" stroke-linecap="round"></path>
-          </svg>
-        </div>
-        <span>Twinsure</span>
+        <img src="assets/logo.png" alt="TwinSure Logo" />
+        <span>TwinSure</span>
       </a>
       
       <ul class="nav-list">
@@ -1674,32 +1929,33 @@
 
       <!-- TAB 3: SERVICES VIEW -->
       <section id="view-services" class="tab-view">
+        <h2 class="mobile-page-title">Services</h2>
         <p class="grid-header" style="font-size: 0.95rem; margin-top: -1rem; margin-bottom: 2rem;">Explore and manage your insurance services.</p>
         
         <div class="services-grid-4col">
           <div class="service-glow-card">
-            <div class="service-glow-icon-box"><i class="fas fa-hand-holding-heart"></i></div>
+            <div class="service-glow-icon-box"><i class="fas fa-shield-heart"></i></div>
             <h3>Icare</h3>
             <p>Health Insurance Support & Claims Assistance</p>
             <button class="btn-solid-blue" onclick="openServiceRequestModal('Icare')">Get Support</button>
           </div>
           
           <div class="service-glow-card">
-            <div class="service-glow-icon-box"><i class="fas fa-arrow-rotate-right"></i></div>
+            <div class="service-glow-icon-box"><i class="fas fa-arrows-rotate"></i></div>
             <h3>Re.New.All</h3>
             <p>Renewal Management & Policy Tracking</p>
             <button class="btn-solid-blue" onclick="switchTab('policies')">Manage Policies</button>
           </div>
           
           <div class="service-glow-card">
-            <div class="service-glow-icon-box"><i class="fas fa-hospital-user"></i></div>
+            <div class="service-glow-icon-box"><i class="fas fa-hospital"></i></div>
             <h3>HosPos</h3>
             <p>Hospital Support & Cashless Guidance</p>
             <button class="btn-solid-blue" onclick="openServiceRequestModal('HosPos')">Find Support</button>
           </div>
           
           <div class="service-glow-card">
-            <div class="service-glow-icon-box"><i class="fas fa-shield-halved"></i></div>
+            <div class="service-glow-icon-box"><i class="fas fa-robot"></i></div>
             <h3>Pre Policy Audit</h3>
             <p>AI Powered Policy Analysis</p>
             <button class="btn-solid-blue" onclick="openServiceRequestModal('Pre Policy Audit')">Start Audit</button>
@@ -1709,74 +1965,92 @@
 
       <!-- TAB 4: APPOINTMENTS VIEW -->
       <section id="view-appointments" class="tab-view">
+        <h2 class="mobile-page-title">Appointments</h2>
+
+        <!-- Booking type toggle cards -->
         <div class="booking-type-toggle">
           <div class="booking-card-option active" id="booking-type-call" onclick="selectBookingType('call')">
-            <i class="fas fa-phone-volume"></i>
+            <div class="bco-icon-wrap">
+              <i class="fas fa-phone-volume"></i>
+            </div>
             <h3>Request a Call</h3>
             <p>Speak with our advisor</p>
           </div>
           <div class="booking-card-option" id="booking-type-office" onclick="selectBookingType('office')">
-            <i class="fas fa-building-user"></i>
+            <div class="bco-icon-wrap">
+              <i class="fas fa-building-columns"></i>
+            </div>
             <h3>Visit Office</h3>
             <p>Meet us at the branch</p>
           </div>
         </div>
 
+        <!-- New Appointment Form -->
         <div class="container-card form-inputs-block">
-          <h3 class="grid-header" style="margin-bottom: 1.25rem;">New Appointment</h3>
-          <form id="appointmentForm" onsubmit="bookNewAppointment(event)">
+          <h3 class="appt-section-title">New Appointment</h3>
+          <form id="appointmentForm" onsubmit="bookNewAppointment(event)" novalidate>
             <input type="hidden" id="bookingTypeField" value="call" />
-            
+
+            <!-- Row 1: Primary Mobile | Alternative Mobile (call only) -->
             <div class="inputs-grid-2col">
               <div class="field-wrapper">
                 <label for="primaryMobile">Primary Mobile Number</label>
-                <input type="tel" id="primaryMobile" class="field-control" placeholder="+91 XXXXX XXXXX" required />
+                <input
+                  type="tel"
+                  id="primaryMobile"
+                  class="field-control"
+                  placeholder="98765 43210"
+                  maxlength="10"
+                  inputmode="numeric"
+                  autocomplete="tel"
+                  oninput="enforceNumericOnly(this)"
+                />
+                <span class="field-error-msg" id="err-primary-mobile"></span>
               </div>
-              <div class="field-wrapper">
+              <div class="field-wrapper" id="alternative-mobile-wrapper">
                 <label for="alternativeMobile">Alternative Mobile Number</label>
-                <input type="tel" id="alternativeMobile" class="field-control" placeholder="+91 XXXXX XXXXX" />
+                <input
+                  type="tel"
+                  id="alternativeMobile"
+                  class="field-control"
+                  placeholder="91234 55789"
+                  maxlength="10"
+                  inputmode="numeric"
+                  autocomplete="off"
+                  oninput="enforceNumericOnly(this)"
+                />
+                <span class="field-error-msg" id="err-alt-mobile"></span>
               </div>
             </div>
-            
+
+            <!-- Row 2: Preferred Date | Preferred Time Slot -->
             <div class="inputs-grid-2col">
               <div class="field-wrapper">
                 <label for="preferredDate">Preferred Date</label>
-                <input type="date" id="preferredDate" class="field-control" required />
+                <input type="date" id="preferredDate" class="field-control" onchange="refreshTimeSlotOptions()" />
+                <span class="field-error-msg" id="err-preferred-date"></span>
               </div>
               <div class="field-wrapper">
                 <label for="preferredTime">Preferred Time Slot</label>
-                <select id="preferredTime" class="field-control" required>
-                  <option value="" disabled selected>Select Time Slot</option>
-                  <option value="09:00 AM - 10:00 AM">09:00 AM - 10:00 AM</option>
-                  <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
-                  <option value="11:00 AM - 12:00 PM">11:00 AM - 12:00 PM</option>
-                  <option value="12:00 PM - 01:00 PM">12:00 PM - 01:00 PM</option>
-                  <option value="02:00 PM - 03:00 PM">02:00 PM - 03:00 PM</option>
-                  <option value="03:00 PM - 04:00 PM">03:00 PM - 04:00 PM</option>
-                  <option value="04:00 PM - 05:00 PM">04:00 PM - 05:00 PM</option>
-                  <option value="05:00 PM - 06:00 PM">05:00 PM - 06:00 PM</option>
+                <select id="preferredTime" class="field-control">
+                  <option value="" disabled selected>Select a date first</option>
                 </select>
+                <span class="field-error-msg" id="err-preferred-time"></span>
               </div>
             </div>
-            
+
+            <!-- Row 3: Alternative Time (call only) | Purpose Dropdown -->
             <div class="inputs-grid-2col">
-              <div class="field-wrapper">
+              <div class="field-wrapper" id="alternative-time-wrapper">
                 <label for="alternativeTime">Alternative Time Slot</label>
                 <select id="alternativeTime" class="field-control">
-                  <option value="" disabled selected>Select Alternative Time Slot</option>
-                  <option value="09:00 AM - 10:00 AM">09:00 AM - 10:00 AM</option>
-                  <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
-                  <option value="11:00 AM - 12:00 PM">11:00 AM - 12:00 PM</option>
-                  <option value="12:00 PM - 01:00 PM">12:00 PM - 01:00 PM</option>
-                  <option value="02:00 PM - 03:00 PM">02:00 PM - 03:00 PM</option>
-                  <option value="03:00 PM - 04:00 PM">03:00 PM - 04:00 PM</option>
-                  <option value="04:00 PM - 05:00 PM">04:00 PM - 05:00 PM</option>
-                  <option value="05:00 PM - 06:00 PM">05:00 PM - 06:00 PM</option>
+                  <option value="" disabled selected>Select a date first</option>
                 </select>
+                <span class="field-error-msg" id="err-alt-time"></span>
               </div>
-              <div class="field-wrapper">
-                <label for="apptPurpose">Purpose Dropdown</label>
-                <select id="apptPurpose" class="field-control" required>
+              <div class="field-wrapper" id="purpose-wrapper">
+                <label for="apptPurpose">Purpose</label>
+                <select id="apptPurpose" class="field-control">
                   <option value="" disabled selected>Select Purpose</option>
                   <option value="Policy Clarification">Policy Clarification</option>
                   <option value="Claims Inquiry">Claims Inquiry</option>
@@ -1784,18 +2058,32 @@
                   <option value="KYC Verification Help">KYC Verification Help</option>
                   <option value="Others">Others</option>
                 </select>
+                <span class="field-error-msg" id="err-purpose"></span>
               </div>
             </div>
 
-            <button type="submit" class="btn-solid-blue">Book Appointment</button>
+            <!-- Office visit info note (shown only for office bookings) -->
+            <div id="office-visit-info" style="display:none; margin-bottom: 1rem;">
+              <div style="background: rgba(0,122,255,0.06); border: 1.5px solid rgba(0,122,255,0.2); border-radius: 14px; padding: 0.85rem 1rem; display: flex; align-items: flex-start; gap: 0.65rem;">
+                <i class="fas fa-map-marker-alt" style="color:#007aff; margin-top:2px; font-size:0.9rem; flex-shrink:0;"></i>
+                <div style="font-size:0.75rem; color:var(--text-gray); line-height:1.5;">
+                  <strong style="color:var(--text-white); display:block; margin-bottom:0.2rem;">TwinSure Office</strong>
+                  6, 2nd cross, Gowripuram Extension, Gowripuram, Karur, Tamil Nadu 639002
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-appt-submit">
+              <i class="fas fa-calendar-check" style="margin-right:0.4rem;"></i> Book Appointment
+            </button>
           </form>
         </div>
 
-        <div class="container-card">
-          <h3 class="grid-header" style="margin-bottom: 1.25rem;">Recent Appointments</h3>
+        <!-- Recent Appointments -->
+        <div class="container-card" style="margin-top: 1.5rem;">
+          <h3 class="appt-section-title">Recent Appointments</h3>
           <div class="timeline-path" id="appointments-timeline-list">
-            <!-- Dynamic timeline of appointments -->
-            <div style="color: var(--text-muted); font-size: 0.85rem; padding: 1rem 0;">
+            <div style="color: var(--text-muted); font-size: 0.82rem; padding: 0.75rem 0;">
               No appointments scheduled yet.
             </div>
           </div>
@@ -1804,6 +2092,7 @@
 
       <!-- TAB 5: UPDATES VIEW -->
       <section id="view-updates" class="tab-view">
+        <h2 class="mobile-page-title">Updates</h2>
         <div class="pills-filter-row">
           <button class="filter-pill-btn active" onclick="filterUpdatesList('all', this)">All</button>
           <button class="filter-pill-btn" onclick="filterUpdatesList('Policies', this)">Policies</button>
@@ -2006,14 +2295,12 @@
   </nav>
 
   <!-- FLOAT WIDGET BUTTONS -->
-  <div class="floater-actions-container">
-    <button class="floater-btn ai-copilot" onclick="openAiCopilotModal()">
+  <div class="floating-actions">
+    <a href="userchat.html" class="float-btn float-ai" data-tooltip="Insurance Recommender">
       <i class="fas fa-robot"></i>
-      <span>AI Agent</span>
-    </button>
-    <a href="https://wa.me/919750003600" target="_blank" class="floater-btn whatsapp-support" id="whatsapp-support-link">
+    </a>
+    <a href="https://wa.me/919750003600?text=Hello,%20I%20would%20like%20to%20know%20more%20about%20TwinSure%20services." class="float-btn float-wa" data-tooltip="Professional WhatsApp" target="_blank" rel="noopener noreferrer" id="whatsapp-support-link">
       <i class="fab fa-whatsapp"></i>
-      <span>WhatsApp</span>
     </a>
   </div>
 
@@ -2105,13 +2392,13 @@
   <div class="modal-backdrop" id="ai-copilot-backdrop" onclick="closeAiCopilotModal(event)">
     <div class="modal-wrapper">
       <div class="modal-header">
-        <h3>Twinsure AI Copilot</h3>
+        <h3>TwinSure AI Copilot</h3>
         <button class="modal-close-btn" onclick="closeAiCopilotModal(event, true)"><i class="fas fa-times"></i></button>
       </div>
       <div class="modal-body ai-chat-block">
         <div class="chat-scroll-area" id="copilot-messages-box">
           <div class="msg-bubble bot">
-            Hello! I am your Twinsure AI Agent. How can I help you audit your policies or look up cashless hospital availability today?
+            Hello! I am your TwinSure AI Agent. How can I help you audit your policies or look up cashless hospital availability today?
           </div>
         </div>
         <div class="chat-input-wrapper">
@@ -2160,6 +2447,9 @@
       await loadUserPolicies();
       await loadUserAppointments();
       await loadUserUpdates();
+
+      // Initialise appointment date constraints
+      initAppointmentDateFilter();
       
       // Select home tab initially
       switchTab('home');
@@ -2266,6 +2556,14 @@
         document.getElementById('editAddress').value = user.address || '';
         document.getElementById('editPincode').value = user.pincode || '';
         document.getElementById('editEmergency').value = user.emergencyContact || '';
+
+        // Pre-populate appointment primary mobile from user profile
+        const primaryMobileInput = document.getElementById('primaryMobile');
+        if (primaryMobileInput && user.phone) {
+          // Strip non-digit characters, take last 10 digits
+          const cleanPhone = user.phone.replace(/\D/g, '').slice(-10);
+          primaryMobileInput.value = cleanPhone;
+        }
         
         // Document links update
         updateKycDocumentRowLink('aadhaar', user.kyc && user.kyc.aadhaar);
@@ -2399,6 +2697,39 @@
       }
     }
 
+    function getProviderLogoHtml(provider) {
+      const p = provider.toLowerCase();
+      if (p.includes('star')) {
+        return `
+          <div class="policy-brand-logo-container star-health">
+            <svg viewBox="0 0 100 100" style="width: 100%; height: 100%; display: block; border-radius: 12px;">
+              <rect width="100%" height="100%" fill="#ffffff"></rect>
+              <polygon points="32,25 36,38 50,38 38,46 43,58 32,50 21,58 26,46 14,38 28,38" fill="#0c4a94"></polygon>
+              <path d="M 14,38 A 20,20 0 0,0 32,60" stroke="#00a3e0" stroke-width="3.5" fill="none" stroke-linecap="round"></path>
+              <text x="70" y="44" font-size="15" font-weight="900" fill="#0c4a94" text-anchor="middle" font-family="'Outfit', sans-serif">STAR</text>
+              <text x="70" y="60" font-size="10" font-weight="800" fill="#00a3e0" text-anchor="middle" font-family="'Outfit', sans-serif">HEALTH</text>
+            </svg>
+          </div>`;
+      } else if (p.includes('hdfc')) {
+        return `
+          <div class="policy-brand-logo-container hdfc-ergo">
+            <svg viewBox="0 0 100 100" style="width: 100%; height: 100%; display: block; border-radius: 12px;">
+              <rect width="100%" height="100%" fill="#d11218"></rect>
+              <text x="50" y="46" font-size="18" font-weight="900" fill="#ffffff" text-anchor="middle" font-family="'Outfit', sans-serif">HDFC</text>
+              <text x="50" y="76" font-size="18" font-weight="900" fill="#ffffff" text-anchor="middle" font-family="'Outfit', sans-serif">ERGO</text>
+            </svg>
+          </div>`;
+      } else {
+        return `
+          <div class="policy-brand-logo-container default-provider">
+            <svg viewBox="0 0 100 100" style="width: 100%; height: 100%; display: block; border-radius: 12px;">
+              <rect width="100%" height="100%" fill="#1e293b"></rect>
+              <path d="M 50,25 Q 70,30 70,45 C 70,62 50,75 50,75 C 50,75 30,62 30,45 Q 30,30 50,25 Z" fill="none" stroke="#007aff" stroke-width="6"></path>
+            </svg>
+          </div>`;
+      }
+    }
+
     // Load user policies list
     async function loadUserPolicies() {
       try {
@@ -2420,31 +2751,28 @@
           const fileUrl = p.filePath ? window.BACKEND_ROOT + '/' + p.filePath : '#';
           const fileClass = p.filePath ? '' : 'disabled';
           
+          let statusBadgeClass = 'status-' + p.status.toLowerCase().replace(/\s+/g, '-');
+          
           return `
             <div class="policy-item-card">
               <div class="policy-item-top">
-                <div class="policy-item-provider">
-                  <div class="policy-item-logo">
-                    <i class="fas fa-shield-halved"></i>
+                ${getProviderLogoHtml(p.provider)}
+                <div class="policy-item-meta">
+                  <h3>${p.provider}</h3>
+                  <p>Policy Number: ${p.policyNumber}</p>
+                  <div class="policy-status-row">
+                    <span>Status:</span>
+                    <span class="status-badge-pill ${statusBadgeClass}">${p.status}</span>
                   </div>
-                  <div class="policy-item-meta">
-                    <h3>${p.provider}</h3>
-                    <p>Policy Number: ${p.policyNumber}</p>
-                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">Type: ${p.type}</p>
-                  </div>
-                </div>
-                <div class="status-badge ${p.status === 'Approved' ? 'verified' : 'pending'}">
-                  <i class="fas ${p.status === 'Approved' ? 'fa-circle-check' : 'fa-clock'}"></i>
-                  <span>${p.status}</span>
                 </div>
               </div>
               
-              ${p.notes ? `<p style="font-size: 0.82rem; color: var(--text-gray); background: rgba(255,255,255,0.015); padding: 0.65rem; border-radius: 8px; border: 1px solid var(--border-glass);">${p.notes}</p>` : ''}
+              ${p.notes ? `<p style="font-size: 0.78rem; color: var(--text-gray); background: rgba(255,255,255,0.015); padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-glass); margin-top: 0.25rem;">${p.notes}</p>` : ''}
               
               <div class="policy-action-pills">
-                <a href="${fileUrl}" target="_blank" class="btn-pill-gray ${fileClass}"><i class="fas fa-eye"></i> View</a>
+                <a href="${fileUrl}" target="_blank" class="btn-pill-gray ${fileClass}"><i class="fas fa-magnifying-glass"></i> View</a>
                 <a href="${fileUrl}" download class="btn-pill-gray ${fileClass}"><i class="fas fa-download"></i> Download</a>
-                <a href="https://wa.me/919750003600?text=I%20have%20an%20issue%20with%20my%20${encodeURIComponent(p.provider)}%20policy%20${p.policyNumber}" target="_blank" class="btn-pill-gray"><i class="far fa-comments"></i> Contact Agent</a>
+                <a href="https://wa.me/919750003600?text=I%20have%20an%20issue%20with%20my%20${encodeURIComponent(p.provider)}%20policy%20${p.policyNumber}" target="_blank" class="btn-pill-gray"><i class="fas fa-phone-volume"></i> Contact Agent</a>
               </div>
             </div>`;
         }).join('');
@@ -2454,36 +2782,331 @@
       }
     }
 
-    // Appointment selection
+    // Enforce numeric-only input for phone fields
+    function enforceNumericOnly(input) {
+      input.value = input.value.replace(/[^0-9]/g, '').slice(0, 10);
+    }
+
+    // All available appointment time slots (in order)
+    const ALL_TIME_SLOTS = [
+      { value: '09:00 AM - 10:00 AM', label: '09:00 AM – 10:00 AM', startH: 9,  startM: 0  },
+      { value: '10:00 AM - 11:00 AM', label: '10:00 AM – 11:00 AM', startH: 10, startM: 0  },
+      { value: '11:00 AM - 12:00 PM', label: '11:00 AM – 12:00 PM', startH: 11, startM: 0  },
+      { value: '12:00 PM - 01:00 PM', label: '12:00 PM – 01:00 PM', startH: 12, startM: 0  },
+      { value: '02:00 PM - 03:00 PM', label: '02:00 PM – 03:00 PM', startH: 14, startM: 0  },
+      { value: '03:00 PM - 04:00 PM', label: '03:00 PM – 04:00 PM', startH: 15, startM: 0  },
+      { value: '04:00 PM - 05:00 PM', label: '04:00 PM – 05:00 PM', startH: 16, startM: 0  },
+      { value: '05:00 PM - 06:00 PM', label: '05:00 PM – 06:00 PM', startH: 17, startM: 0  },
+    ];
+
+    // Set today as the minimum date for the calendar, and clear past choices
+    function initAppointmentDateFilter() {
+      const dateInput = document.getElementById('preferredDate');
+      if (!dateInput) return;
+      const today = new Date();
+      const yyyy  = today.getFullYear();
+      const mm    = String(today.getMonth() + 1).padStart(2, '0');
+      const dd    = String(today.getDate()).padStart(2, '0');
+      dateInput.min = `${yyyy}-${mm}-${dd}`;
+    }
+
+    // Rebuild time-slot <option> lists based on the selected date and booking type.
+    // For 'call': only slots that start >= (now + 1hr) are shown.
+    // For 'office': only slots that start >= now are shown.
+    // For a future date (not today): all slots are available.
+    function refreshTimeSlotOptions() {
+      const dateVal  = document.getElementById('preferredDate').value;
+      const type     = document.getElementById('bookingTypeField').value;
+
+      const prefSel  = document.getElementById('preferredTime');
+      const altSel   = document.getElementById('alternativeTime');
+
+      if (!dateVal) {
+        // No date yet — reset both selects
+        const blankHtml = '<option value="" disabled selected>Select a date first</option>';
+        prefSel.innerHTML = blankHtml;
+        altSel.innerHTML  = blankHtml;
+        return;
+      }
+
+      const now       = new Date();
+      const todayStr  = (() => {
+        const y = now.getFullYear(), m = String(now.getMonth()+1).padStart(2,'0'), d = String(now.getDate()).padStart(2,'0');
+        return `${y}-${m}-${d}`;
+      })();
+      const isToday   = (dateVal === todayStr);
+
+      // Determine the cutoff time
+      let cutoff = null;
+      if (isToday) {
+        cutoff = new Date(now);
+        if (type === 'call') {
+          // Call slots must be at least 1 hour from now
+          cutoff = new Date(now.getTime() + 60 * 60 * 1000);
+        }
+        // Office: cutoff = now (slot must not have started yet)
+      }
+
+      // Filter slots
+      const validSlots = ALL_TIME_SLOTS.filter(slot => {
+        if (!isToday) return true;  // Future date — all slots valid
+        const slotStart = new Date(dateVal + 'T00:00:00');
+        slotStart.setHours(slot.startH, slot.startM, 0, 0);
+        return slotStart > cutoff;
+      });
+
+      // Build options HTML
+      const emptyLabel  = validSlots.length === 0
+        ? (type === 'call' ? 'No slots available (call needs 1 hr notice)' : 'No slots remaining today')
+        : 'Select Time Slot';
+      const emptyOpt    = `<option value="" disabled selected>${emptyLabel}</option>`;
+      const optionsHtml = validSlots.map(s => `<option value="${s.value}">${s.label}</option>`).join('');
+
+      // Reset selects preserving previous valid selection if still available
+      const prevPref = prefSel.value;
+      const prevAlt  = altSel.value;
+
+      prefSel.innerHTML = emptyOpt + optionsHtml;
+      altSel.innerHTML  = emptyOpt + optionsHtml;
+
+      // Restore previous selections if still valid
+      const validValues = validSlots.map(s => s.value);
+      if (validValues.includes(prevPref)) prefSel.value = prevPref;
+      if (validValues.includes(prevAlt))  altSel.value  = prevAlt;
+
+      // Clear stale errors on these fields
+      clearFieldError('preferredTime', 'err-preferred-time');
+      clearFieldError('alternativeTime', 'err-alt-time');
+    }
+
+
+    // Clear field error
+    function clearFieldError(fieldId, errId) {
+      const field = document.getElementById(fieldId);
+      const err = document.getElementById(errId);
+      if (field) field.classList.remove('input-error');
+      if (err) { err.textContent = ''; err.classList.remove('visible'); }
+    }
+
+    // Show field error
+    function showFieldError(fieldId, errId, message) {
+      const field = document.getElementById(fieldId);
+      const err = document.getElementById(errId);
+      if (field) field.classList.add('input-error');
+      if (err) { err.textContent = message; err.classList.add('visible'); }
+    }
+
+    // Helper: parse a time-slot string like "09:00 AM - 10:00 AM" and return a Date on a given date string
+    function parseTimeSlotStart(dateStr, slotStr) {
+      // Extract start time, e.g. "09:00 AM"
+      const match = slotStr.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+      if (!match) return null;
+      let hours = parseInt(match[1], 10);
+      const mins = parseInt(match[2], 10);
+      const ampm = match[3].toUpperCase();
+      if (ampm === 'PM' && hours !== 12) hours += 12;
+      if (ampm === 'AM' && hours === 12) hours = 0;
+      const d = new Date(dateStr + 'T00:00:00');
+      d.setHours(hours, mins, 0, 0);
+      return d;
+    }
+
+    // Appointment booking type toggle
     function selectBookingType(type) {
       document.getElementById('bookingTypeField').value = type;
       document.getElementById('booking-type-call').classList.remove('active');
       document.getElementById('booking-type-office').classList.remove('active');
-      
       document.getElementById(`booking-type-${type}`).classList.add('active');
+
+      const altMobileWrapper  = document.getElementById('alternative-mobile-wrapper');
+      const altTimeWrapper    = document.getElementById('alternative-time-wrapper');
+      const officeInfoBlock   = document.getElementById('office-visit-info');
+      const purposeWrapper    = document.getElementById('purpose-wrapper');
+
+      if (type === 'call') {
+        altMobileWrapper.style.display = '';
+        altTimeWrapper.style.display   = '';
+        officeInfoBlock.style.display  = 'none';
+        purposeWrapper.style.gridColumn = '';
+        clearFieldError('alternativeMobile', 'err-alt-mobile');
+        clearFieldError('alternativeTime', 'err-alt-time');
+      } else {
+        altMobileWrapper.style.display = 'none';
+        altTimeWrapper.style.display   = 'none';
+        officeInfoBlock.style.display  = '';
+        purposeWrapper.style.gridColumn = 'span 2';
+        document.getElementById('alternativeMobile').value = '';
+        document.getElementById('alternativeTime').value   = '';
+        clearFieldError('alternativeMobile', 'err-alt-mobile');
+        clearFieldError('alternativeTime', 'err-alt-time');
+      }
+
+      // Re-filter time slots since the cutoff rule differs between call and office
+      refreshTimeSlotOptions();
     }
 
-    // Book Appointment
+    // Show the office visit confirmation banner below the form
+    function showOfficeConfirmationBanner(dateStr, timeSlot, purpose) {
+      // Remove any existing banner first
+      const existing = document.getElementById('office-booking-confirmation');
+      if (existing) existing.remove();
+
+      const banner = document.createElement('div');
+      banner.id = 'office-booking-confirmation';
+      banner.style.cssText = 'margin-top:1.25rem; animation: tabFadeIn 0.35s ease;';
+      banner.innerHTML = `
+        <div style="background:linear-gradient(135deg,rgba(36,180,126,0.1) 0%,rgba(0,122,255,0.07) 100%); border:1.5px solid rgba(36,180,126,0.3); border-radius:20px; padding:1.25rem 1.25rem;">
+          <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:1rem;">
+            <div style="width:34px;height:34px;border-radius:50%;background:rgba(36,180,126,0.15);border:1.5px solid rgba(36,180,126,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <i class="fas fa-circle-check" style="color:#24b47e;font-size:1rem;"></i>
+            </div>
+            <div>
+              <div style="font-weight:700;font-size:0.9rem;color:#24b47e;">Appointment Requested!</div>
+              <div style="font-size:0.7rem;color:var(--text-muted);">Office Visit • ${dateStr} • ${timeSlot}</div>
+            </div>
+          </div>
+          <div style="background:rgba(0,0,0,0.25);border-radius:14px;padding:1rem;margin-bottom:0.85rem;">
+            <div style="font-size:0.7rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:0.6rem;">Office Address</div>
+            <div style="display:flex;align-items:flex-start;gap:0.6rem;">
+              <i class="fas fa-map-marker-alt" style="color:#007aff;margin-top:2px;font-size:0.85rem;flex-shrink:0;"></i>
+              <div style="font-size:0.82rem;color:var(--text-white);line-height:1.5;font-weight:500;">6, 2nd cross, Gowripuram Extension, Gowripuram,<br>Karur, Tamil Nadu 639002</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.6rem;margin-top:0.75rem;">
+              <i class="fas fa-phone-alt" style="color:#007aff;font-size:0.85rem;flex-shrink:0;"></i>
+              <a href="tel:+919750003600" style="font-size:0.82rem;color:var(--text-white);font-weight:600;text-decoration:none;">+91 9750003600</a>
+            </div>
+          </div>
+          <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:12px;padding:0.65rem 0.85rem;display:flex;align-items:flex-start;gap:0.5rem;">
+            <i class="fas fa-circle-info" style="color:#f59e0b;font-size:0.8rem;margin-top:2px;flex-shrink:0;"></i>
+            <span style="font-size:0.7rem;color:#f59e0b;line-height:1.45;"><strong>Note:</strong> In case any route guidance is required, please call us at +91 9750003600 before visiting the office.</span>
+          </div>
+        </div>`;
+
+      // Insert after the form card
+      const formCard = document.querySelector('#view-appointments .form-inputs-block');
+      if (formCard) formCard.insertAdjacentElement('afterend', banner);
+
+      // Auto-remove after 30 seconds
+      setTimeout(() => { if (banner.parentNode) banner.remove(); }, 30000);
+    }
+
+    // Book Appointment with full validation
     async function bookNewAppointment(event) {
       event.preventDefault();
-      const payload = {
-        type: document.getElementById('bookingTypeField').value,
-        primaryPhone: document.getElementById('primaryMobile').value,
-        alternativePhone: document.getElementById('alternativeMobile').value,
-        date: document.getElementById('preferredDate').value,
-        timeSlot: document.getElementById('preferredTime').value,
-        alternativeTimeSlot: document.getElementById('alternativeTime').value,
-        purpose: document.getElementById('apptPurpose').value
-      };
-      
+
+      const type         = document.getElementById('bookingTypeField').value;
+      const primaryPhone = document.getElementById('primaryMobile').value.trim();
+      const altPhone     = document.getElementById('alternativeMobile').value.trim();
+      const prefDate     = document.getElementById('preferredDate').value;
+      const prefTime     = document.getElementById('preferredTime').value;
+      const altTime      = document.getElementById('alternativeTime').value;
+      const purpose      = document.getElementById('apptPurpose').value;
+
+      // Clear all prior errors
+      ['primaryMobile','alternativeMobile','preferredDate','preferredTime','alternativeTime','apptPurpose']
+        .forEach(id => { const el = document.getElementById(id); if(el) el.classList.remove('input-error'); });
+      ['err-primary-mobile','err-alt-mobile','err-preferred-date','err-preferred-time','err-alt-time','err-purpose']
+        .forEach(id => { const el = document.getElementById(id); if(el){ el.textContent=''; el.classList.remove('visible'); } });
+
+      let hasError = false;
+
+      // --- Primary phone ---
+      if (!primaryPhone || !/^[0-9]{10}$/.test(primaryPhone)) {
+        showFieldError('primaryMobile', 'err-primary-mobile', 'Enter a valid 10-digit mobile number.');
+        hasError = true;
+      }
+
+      // --- Alternative phone (call only, optional) ---
+      if (type === 'call' && altPhone) {
+        if (!/^[0-9]{10}$/.test(altPhone)) {
+          showFieldError('alternativeMobile', 'err-alt-mobile', 'Enter a valid 10-digit number.');
+          hasError = true;
+        } else if (altPhone === primaryPhone) {
+          showFieldError('alternativeMobile', 'err-alt-mobile', 'Alternative number must differ from primary number.');
+          hasError = true;
+        }
+      }
+
+      // --- Date validation ---
+      if (!prefDate) {
+        showFieldError('preferredDate', 'err-preferred-date', 'Please select a preferred date.');
+        hasError = true;
+      } else {
+        const today = new Date(); today.setHours(0,0,0,0);
+        const selectedDay = new Date(prefDate + 'T00:00:00');
+        if (selectedDay < today) {
+          showFieldError('preferredDate', 'err-preferred-date', 'Date must be today or in the future.');
+          hasError = true;
+        }
+      }
+
+      // --- Preferred time slot validation ---
+      if (!prefTime) {
+        showFieldError('preferredTime', 'err-preferred-time', 'Please select a preferred time slot.');
+        hasError = true;
+      } else if (prefDate && !hasError) {
+        const slotStart = parseTimeSlotStart(prefDate, prefTime);
+        if (slotStart) {
+          const now = new Date();
+          if (type === 'call') {
+            // Call appointments: slot must start at least 1 hour from now
+            const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+            if (slotStart < oneHourLater) {
+              showFieldError('preferredTime', 'err-preferred-time', 'For a call, please choose a time slot at least 1 hour from now.');
+              hasError = true;
+            }
+          } else {
+            // Office visit: slot must be in the future (not already past)
+            if (slotStart <= now) {
+              showFieldError('preferredTime', 'err-preferred-time', 'Selected time slot has already passed. Please choose a future slot.');
+              hasError = true;
+            }
+          }
+        }
+      }
+
+      // --- Alternative time (call only): must differ from preferred ---
+      if (type === 'call' && altTime && altTime === prefTime) {
+        showFieldError('alternativeTime', 'err-alt-time', 'Alternative time must differ from preferred time slot.');
+        hasError = true;
+      }
+
+      // --- Purpose ---
+      if (!purpose) {
+        showFieldError('apptPurpose', 'err-purpose', 'Please select a purpose for the appointment.');
+        hasError = true;
+      }
+
+      if (hasError) return;
+
+      // Build payload
+      const payload = { type, primaryPhone, date: prefDate, timeSlot: prefTime, purpose };
+      if (type === 'call') {
+        payload.alternativePhone     = altPhone || null;
+        payload.alternativeTimeSlot  = altTime  || null;
+      } else {
+        // Office visit — fixed address stored in backend notes
+        payload.notes = '6, 2nd cross, Gowripuram Extension, Gowripuram, Karur, Tamil Nadu 639002';
+      }
+
       try {
         const res = await api.post('/users/appointments', payload);
-        alert(res.message || 'Appointment requested successfully.');
+
+        // Reset form first
         document.getElementById('appointmentForm').reset();
+        selectBookingType('call');
+
+        if (type === 'office') {
+          // Show the office address confirmation banner
+          showOfficeConfirmationBanner(prefDate, prefTime, purpose);
+        } else {
+          alert(res.message || 'Appointment requested successfully. We will call you at the selected time.');
+        }
+
         await loadUserAppointments();
         await loadUserUpdates();
       } catch (err) {
-        alert('Failed to schedule appointment.');
+        alert('Failed to schedule appointment. Please try again.');
       }
     }
 
@@ -2636,20 +3259,75 @@
       
       container.innerHTML = list.map(u => {
         let dotClass = '';
-        if (u.status === 'Approved' || u.status === 'Confirmed') dotClass = 'completed';
+        if (u.status === 'Approved' || u.status === 'Confirmed' || u.status === 'Completed') dotClass = 'completed';
         else if (u.status === 'Pending') dotClass = 'pending';
         
+        // Icon selection based on category/title
+        let iconHtml = '<i class="fas fa-bell"></i>';
+        if (u.category === 'Policies' || u.title.toLowerCase().includes('policy') || u.title.toLowerCase().includes('kyc')) {
+          iconHtml = '<i class="fas fa-shield-halved"></i>';
+        } else if (u.category === 'Appointments' || u.title.toLowerCase().includes('appointment') || u.title.toLowerCase().includes('agent')) {
+          if (u.title.toLowerCase().includes('agent')) {
+            iconHtml = '<i class="fas fa-user"></i>';
+          } else {
+            iconHtml = '<i class="fas fa-calendar-days"></i>';
+          }
+        } else if (u.category === 'Services' || u.title.toLowerCase().includes('service')) {
+          iconHtml = '<i class="fas fa-cubes"></i>';
+        }
+
+        // Relative time helper or raw createdAt
+        let timeStr = 'Today';
+        if (u.createdAt) {
+          const createdDate = new Date(u.createdAt);
+          const now = new Date();
+          const diffMs = now - createdDate;
+          const diffMins = Math.floor(diffMs / 60000);
+          const diffHours = Math.floor(diffMins / 60);
+          const diffDays = Math.floor(diffHours / 24);
+          
+          if (diffMins < 60) {
+            timeStr = diffMins <= 1 ? 'Just now' : `${diffMins} Minutes Ago`;
+          } else if (diffHours < 24) {
+            timeStr = diffHours === 1 ? '1 Hour Ago' : `${diffHours} Hours Ago`;
+          } else if (diffDays === 1) {
+            timeStr = 'Yesterday';
+          } else {
+            timeStr = createdDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+          }
+        }
+
+        // Status text left label
+        let statusLeftLabel = 'Status Chip';
+        const timeRegex = /\b\d{1,2}(?::\d{2})?\s*(?:AM|PM)\b/i;
+        if (u.title.toLowerCase().includes('appointment')) {
+          const match = u.message.match(timeRegex);
+          if (match) {
+            statusLeftLabel = `Status ${match[0]}`;
+          }
+        }
+
+        let statusBadgeClass = 'pending';
+        if (u.status === 'Approved' || u.status === 'Completed' || u.status === 'Verified') statusBadgeClass = 'verified';
+        else if (u.status === 'Confirmed' || u.status === 'Booked') statusBadgeClass = 'confirmed';
+
         return `
           <div class="timeline-step-node">
             <div class="timeline-circle-node ${dotClass}"></div>
             <div class="timeline-box-card">
-              <div class="timeline-desc" style="flex: 1; margin-right: 1.25rem;">
-                <h4 style="font-size: 0.92rem; font-weight: 700; margin-bottom: 0.25rem;">${u.title}</h4>
-                <p style="font-size: 0.8rem; color: var(--text-gray); line-height: 1.45;">${u.message}</p>
-                <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.45rem;"><i class="far fa-clock"></i> ${u.createdAt ? u.createdAt.slice(0, 10) : 'Today'}</p>
+              <div class="timeline-card-icon-box">
+                ${iconHtml}
               </div>
-              <div class="status-badge ${u.status === 'Approved' || u.status === 'Confirmed' ? 'verified' : 'pending'}">
-                <span>${u.status}</span>
+              <div class="timeline-card-content">
+                <div class="timeline-card-header">
+                  <span class="timeline-card-title">${u.title}</span>
+                  <span class="timeline-card-time">${timeStr}</span>
+                </div>
+                <p class="timeline-card-message">${u.message}</p>
+                <div class="timeline-card-footer">
+                  <span class="timeline-card-status-label">${statusLeftLabel}</span>
+                  <span class="status-badge-pill ${statusBadgeClass}">${u.status}</span>
+                </div>
               </div>
             </div>
           </div>`;
