@@ -945,6 +945,7 @@ function createApiRouter() {
     const claimId = normalizeString(data.claimId);
     const claimName = normalizeString(data.claimName) || 'Claim Form';
     const claimCategory = normalizeString(data.claimCategory);
+    const additionalClaimIds = Array.isArray(data.additionalClaimIds) ? data.additionalClaimIds : [];
 
     const namePattern = /^[A-Za-z][A-Za-z\s.'-]{1,79}$/;
     if (!name || !namePattern.test(name)) {
@@ -976,11 +977,21 @@ function createApiRouter() {
         return;
       }
 
+      // Fetch additional claim forms if requested
+      let additionalClaims = [];
+      if (method === 'email' && additionalClaimIds.length > 0) {
+        const objectIds = additionalClaimIds.map(id => toObjectId(id)).filter(id => id !== null);
+        additionalClaims = await findMany('claims', { _id: { $in: objectIds } });
+      }
+
+      const allRequestedClaims = [claim].concat(additionalClaims);
+      const formNamesList = allRequestedClaims.map(c => c.name);
+
       const requestId = `fhr_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
       const timestamp = formatDateTime(new Date());
 
       const description = method === 'email'
-        ? `Sent Claim Form to Email: ${email}`
+        ? `Sent Claim Form(s) to Email: ${email} (${formNamesList.join(', ')})`
         : `Downloaded Claim Form (Phone: ${phone})`;
 
       await insertOne('form_help_requests', {
@@ -990,7 +1001,7 @@ function createApiRouter() {
         email: method === 'email' ? email : '',
         description,
         claimId,
-        claimName,
+        claimName: formNamesList.join(', '),
         claimCategory,
         status: 'new',
         submittedAt: timestamp,
@@ -998,7 +1009,12 @@ function createApiRouter() {
         source: method === 'email' ? 'download_email' : 'download_phone'
       });
 
+      // Increment downloads count for primary form
       await updateOne('claims', { _id: toObjectId(claimId) }, { $inc: { downloads: 1 } });
+      // Increment downloads count for additional forms
+      for (const addon of additionalClaims) {
+        await updateOne('claims', { _id: toObjectId(addon._id) }, { $inc: { downloads: 1 } });
+      }
 
       if (method === 'email') {
         const smtpUser = process.env.SMTP_USER || '';
@@ -1014,25 +1030,73 @@ function createApiRouter() {
           return;
         }
 
-        const absoluteFilePath = path.join(publicDir, claim.filePath);
-        if (!fs.existsSync(absoluteFilePath)) {
-          console.error(`PDF file not found at path: ${absoluteFilePath}`);
-          sendJson(res, 404, { message: 'PDF file not found on server.' });
+        // Build email attachments list and claim details HTML block
+        const attachments = [];
+        let claimFormsHtml = '';
+
+        for (const c of allRequestedClaims) {
+          const absoluteFilePath = path.join(publicDir, c.filePath);
+          if (fs.existsSync(absoluteFilePath)) {
+            attachments.push({
+              filename: c.fileName || `${c.name}.pdf`,
+              path: absoluteFilePath
+            });
+
+            // HTML display item for each claim form
+            claimFormsHtml += `
+            <div style="margin-bottom: 20px; padding: 15px; border-left: 4px solid #00296b; background-color: #f8fafc; border-radius: 0 8px 8px 0;">
+              <h3 style="margin: 0 0 5px 0; color: #00296b; font-size: 16px; font-family: 'Outfit', sans-serif;">${c.name}</h3>
+              <span style="display: inline-block; font-size: 11px; background-color: #003f88; color: #ffffff; padding: 2px 8px; border-radius: 12px; margin-bottom: 8px; font-weight: 600;">${c.category || 'General'}</span>
+              <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #475569; white-space: pre-line;">${c.description || 'Download this form to start your claim.'}</p>
+            </div>
+            `;
+          } else {
+            console.error(`PDF file not found at path: ${absoluteFilePath}`);
+          }
+        }
+
+        if (attachments.length === 0) {
+          sendJson(res, 404, { message: 'Requested PDF document files not found on server.' });
           return;
+        }
+
+        // Clean subject line logic
+        let subject = `Your Requested Claim Form: ${claim.name}`;
+        if (additionalClaims.length > 0) {
+          subject = `Your Requested Claim Forms - Twinsure`;
         }
 
         const mailOptions = {
           from: `"Twinsure Claims" <${smtpUser}>`,
           to: email,
-          subject: `Your Requested Claim Form: ${claimName}`,
-          text: `Dear ${name},\n\nPlease find attached the claim form "${claimName}" you requested from Twinsure.\n\nBest regards,\nTwinsure Team`,
-          html: `<p>Dear <strong>${name}</strong>,</p><p>Please find attached the claim form <strong>"${claimName}"</strong> you requested from Twinsure.</p><br><p>Best regards,<br>Twinsure Team</p>`,
-          attachments: [
-            {
-              filename: claim.fileName || `${claimName}.pdf`,
-              path: absoluteFilePath
-            }
-          ]
+          subject: subject,
+          html: `
+<div style="font-family: 'Inter', Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+  <div style="background-color: #001533; padding: 20px; text-align: center; border-bottom: 3px solid #fdc500;">
+    <h1 style="color: #ffffff; margin: 0; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 24px; letter-spacing: 1px;">Twinsure</h1>
+  </div>
+  <div style="padding: 30px; background-color: #ffffff; color: #334155;">
+    <h2 style="color: #00296b; margin-top: 0; font-size: 20px; font-family: 'Outfit', sans-serif;">Requested Claim Documents</h2>
+    <p style="font-size: 15px; line-height: 1.6;">Dear <strong>${name}</strong>,</p>
+    <p style="font-size: 15px; line-height: 1.6;">Thank you for contacting Twinsure. Please find attached the claim form(s) you requested. The details of the requested documents are shown below:</p>
+    
+    ${claimFormsHtml}
+    
+    <div style="margin: 25px 0; padding: 15px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+      <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #475569;">
+        <strong>Need professional support?</strong><br>
+        Our claims experts can guide you through form-filling, document verification, and admission/discharge negotiation with the insurer.
+      </p>
+    </div>
+  </div>
+  <div style="background-color: #f1f5f9; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b;">
+    <p style="margin: 0 0 5px 0;"><strong>Twinsure Support & Services</strong></p>
+    <p style="margin: 0 0 5px 0;">Email: support@twinsure.com | Phone: +91 9750003600</p>
+    <p style="margin: 0;">Twinsure H.Q., 6, 2nd cross, Gowripuram Extension, Gowripuram, Karur, Tamil Nadu - 639002</p>
+  </div>
+</div>
+          `,
+          attachments: attachments
         };
 
         await mailTransporter.sendMail(mailOptions);
