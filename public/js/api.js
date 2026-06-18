@@ -45,6 +45,23 @@ const api = {
         }
     },
 
+    async register(name, email, phone, password) {
+        const response = await fetch(`${BASE_URL}/auth/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name, email, phone, password })
+        });
+        
+        const data = await parseResponseBody(response);
+        if (response.ok) {
+            return { success: true, message: data.message || 'Registration successful.' };
+        } else {
+            return { success: false, message: data.message || 'Registration failed.' };
+        }
+    },
+
     logout(redirectUrl = 'index.html') {
         localStorage.removeItem('token');
         localStorage.removeItem('role');
@@ -66,7 +83,6 @@ const api = {
         return parseResponseBody(response);
     },
 
-    
     async put(endpoint, payload) {
         const token = localStorage.getItem('token');
         const response = await fetch(`${BASE_URL}${endpoint}`, {

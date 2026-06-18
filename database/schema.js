@@ -45,14 +45,18 @@ createCollectionWithSchema(
     properties: {
       name: { bsonType: 'string', description: 'Display name.' },
       email: { bsonType: 'string', description: 'Unique login email.' },
+      phone: { bsonType: 'string', description: 'Unique login phone.' },
       password: { bsonType: 'string', description: 'Stored password string used by the current auth flow.' },
       role: { bsonType: 'string', description: 'User role such as admin, user, partner, or employee.' },
+      kyc: { bsonType: 'object', description: 'KYC status and files.' },
+      tsid: { bsonType: 'string', description: 'Custom user ID identifier.' },
       createdAt: { bsonType: ['date', 'string'], description: 'Creation timestamp.' },
       updatedAt: { bsonType: ['date', 'string'], description: 'Last update timestamp.' }
     }
   },
   [
     { keys: { email: 1 }, options: { unique: true } },
+    { keys: { phone: 1 }, options: { unique: true, sparse: true } },
     { keys: { role: 1 }, options: {} }
   ]
 );
@@ -303,5 +307,99 @@ createCollectionWithSchema(
   ]
 );
 
+// 11. user_policies
+createCollectionWithSchema(
+  'user_policies',
+  {
+    bsonType: 'object',
+    additionalProperties: true,
+    properties: {
+      userId: { bsonType: 'string', description: 'Associated User ID.' },
+      policyNumber: { bsonType: 'string', description: 'Insurance Policy Number.' },
+      provider: { bsonType: 'string', description: 'Insurance Provider Name.' },
+      type: { bsonType: 'string', description: 'Policy Type (Health, Motor, Life, etc.).' },
+      notes: { bsonType: 'string', description: 'Remarks or notes.' },
+      fileName: { bsonType: ['string', 'null'], description: 'Stored PDF file name.' },
+      filePath: { bsonType: ['string', 'null'], description: 'Path to policy file.' },
+      fileSize: { bsonType: ['string', 'null'], description: 'Human-readable file size.' },
+      status: { bsonType: 'string', description: 'Policy verification status.' },
+      createdAt: { bsonType: ['date', 'string'], description: 'Creation timestamp.' },
+      updatedAt: { bsonType: ['date', 'string'], description: 'Last update timestamp.' }
+    }
+  },
+  [
+    { keys: { userId: 1 }, options: {} },
+    { keys: { policyNumber: 1 }, options: {} }
+  ]
+);
+
+// 12. appointments
+createCollectionWithSchema(
+  'appointments',
+  {
+    bsonType: 'object',
+    additionalProperties: true,
+    properties: {
+      userId: { bsonType: 'string', description: 'Associated User ID.' },
+      type: { bsonType: 'string', description: 'Appointment type (call/office).' },
+      primaryPhone: { bsonType: 'string', description: 'Primary contact phone.' },
+      alternativePhone: { bsonType: 'string', description: 'Secondary contact phone.' },
+      date: { bsonType: 'string', description: 'Preferred date string.' },
+      timeSlot: { bsonType: 'string', description: 'Preferred time slot.' },
+      alternativeTimeSlot: { bsonType: 'string', description: 'Alternative time slot.' },
+      purpose: { bsonType: 'string', description: 'Purpose of consultation.' },
+      status: { bsonType: 'string', description: 'Status of booking.' },
+      createdAt: { bsonType: ['date', 'string'], description: 'Creation timestamp.' },
+      updatedAt: { bsonType: ['date', 'string'], description: 'Last update timestamp.' }
+    }
+  },
+  [
+    { keys: { userId: 1 }, options: {} },
+    { keys: { date: 1 }, options: {} }
+  ]
+);
+
+// 13. user_services
+createCollectionWithSchema(
+  'user_services',
+  {
+    bsonType: 'object',
+    additionalProperties: true,
+    properties: {
+      userId: { bsonType: 'string', description: 'Associated User ID.' },
+      category: { bsonType: 'string', description: 'Service category (Icare, HosPos, etc.).' },
+      description: { bsonType: 'string', description: 'Details of service request.' },
+      preferredTime: { bsonType: 'string', description: 'Preferred time to contact.' },
+      notes: { bsonType: 'string', description: 'Additional notes.' },
+      status: { bsonType: 'string', description: 'Workflow status.' },
+      createdAt: { bsonType: ['date', 'string'], description: 'Creation timestamp.' }
+    }
+  },
+  [
+    { keys: { userId: 1 }, options: {} }
+  ]
+);
+
+// 14. user_updates
+createCollectionWithSchema(
+  'user_updates',
+  {
+    bsonType: 'object',
+    additionalProperties: true,
+    properties: {
+      userId: { bsonType: 'string', description: 'Associated User ID.' },
+      title: { bsonType: 'string', description: 'Notification title.' },
+      message: { bsonType: 'string', description: 'Detailed update message.' },
+      category: { bsonType: 'string', description: 'Category (Policies, Appointments, Services, etc.).' },
+      status: { bsonType: 'string', description: 'Display status.' },
+      createdAt: { bsonType: ['date', 'string'], description: 'Creation timestamp.' }
+    }
+  },
+  [
+    { keys: { userId: 1 }, options: {} },
+    { keys: { createdAt: -1 }, options: {} }
+  ]
+);
+
 print('\nDatabase schema creation complete.');
-print('Collections created: users, services, partners, recommendation_questions, leads, form_help_requests, settings, contacts, claims, testimonials');
+print('Collections created: users, services, partners, recommendation_questions, leads, form_help_requests, settings, contacts, claims, testimonials, user_policies, appointments, user_services, user_updates');

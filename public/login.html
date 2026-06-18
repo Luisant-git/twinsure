@@ -921,16 +921,15 @@
                 style="display: flex; flex-direction: column; gap: 1.2rem"
               >
                 <div class="form-group">
-                  <label for="email">Email ID</label>
+                  <label for="email">Email ID or Phone Number</label>
                   <div class="input-wrapper">
                     <i class="far fa-envelope input-icon-left"></i>
                     <input
-                      type="email"
+                      type="text"
                       id="email"
                       class="input-field"
-                      placeholder="Enter your email address"
+                      placeholder="Enter your email or phone number"
                       required
-                      autocomplete="email"
                     />
                   </div>
                 </div>
@@ -1003,6 +1002,19 @@
                       id="regEmail"
                       class="input-field"
                       placeholder="Enter your email address"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="regPhone">Phone Number</label>
+                  <div class="input-wrapper">
+                    <i class="fas fa-phone input-icon-left"></i>
+                    <input
+                      type="tel"
+                      id="regPhone"
+                      class="input-field"
+                      placeholder="Enter your phone number"
                       required
                     />
                   </div>
@@ -1228,34 +1240,48 @@
         }
         animate();
       }
-      (document
+      document
         .getElementById("loginForm")
         .addEventListener("submit", async (e) => {
           e.preventDefault();
-          var e = document.getElementById("email").value,
-            t = document.getElementById("password").value,
-            a = document.getElementById("loginAlert");
-          let n = await api.login(e, t);
+          var emailVal = document.getElementById("email").value,
+            passVal = document.getElementById("password").value,
+            alertEl = document.getElementById("loginAlert");
+          let n = await api.login(emailVal, passVal);
           n.success
-            ? ((a.className = "alert success"),
-              (a.textContent = "Login successful! Redirecting..."),
+            ? ((alertEl.className = "alert success"),
+              (alertEl.textContent = "Login successful! Redirecting..."),
               setTimeout(() => {
-                "admin" === n.data.role
-                  ? (window.location.href = "admin.html")
-                  : (alert("Dashboard not available for this role yet."),
-                    api.logout());
+                if (n.data.role === "admin") {
+                  window.location.href = "admin.html";
+                } else if (n.data.role === "user") {
+                  window.location.href = "user.html";
+                } else {
+                  alert("Dashboard not available for this role yet.");
+                  api.logout();
+                }
               }, 1e3))
-            : ((a.className = "alert error"),
-              (a.textContent = n.message || "Login failed."));
-        }),
-        document
-          .getElementById("registerForm")
-          .addEventListener("submit", (e) => {
-            (e.preventDefault(),
-              alert(
-                "Registration request successfully recorded. Our verification team will review and approve your partner account.",
-              ));
-          }));
+            : ((alertEl.className = "alert error"),
+              (alertEl.textContent = n.message || "Login failed."));
+        });
+
+      document
+        .getElementById("registerForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const name = document.getElementById("regName").value;
+          const email = document.getElementById("regEmail").value;
+          const phone = document.getElementById("regPhone").value;
+          const password = document.getElementById("regPassword").value;
+          
+          let res = await api.register(name, email, phone, password);
+          if (res.success) {
+            alert("Registration successful! You can now log in.");
+            document.getElementById("goToLogin").click();
+          } else {
+            alert(res.message || "Registration failed. Please try again.");
+          }
+        });
       let goBackBtnEl = document.getElementById("goBackBtn");
       goBackBtnEl &&
         goBackBtnEl.addEventListener("click", (e) => {

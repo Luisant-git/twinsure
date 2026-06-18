@@ -48,6 +48,8 @@ const rootDir = path.join(__dirname, '..');
 const publicDir = path.join(rootDir, 'public');
 const claimsUploadDir = path.join(publicDir, 'uploads', 'claims');
 const partnersUploadDir = path.join(publicDir, 'uploads', 'partners');
+const policiesUploadDir = path.join(publicDir, 'uploads', 'policies');
+const kycUploadDir = path.join(publicDir, 'uploads', 'kyc');
 const upload = multer({ storage: multer.memoryStorage() });
 
 const nodemailer = require('nodemailer');
@@ -191,8 +193,10 @@ async function connectAndSeed() {
   await getDb();
   ensureDirectory(claimsUploadDir);
   ensureDirectory(partnersUploadDir);
+  ensureDirectory(policiesUploadDir);
+  ensureDirectory(kycUploadDir);
 
-  const collectionsToCreate = ['users', 'services', 'partners', 'recommendation_questions', 'leads', 'form_help_requests', 'settings', 'contacts', 'claims', 'testimonials'];
+  const collectionsToCreate = ['users', 'services', 'partners', 'recommendation_questions', 'leads', 'form_help_requests', 'settings', 'contacts', 'claims', 'testimonials', 'user_policies', 'appointments', 'user_services', 'user_updates'];
   for (const collectionName of collectionsToCreate) {
     await createCollectionIfNotExists(collectionName);
   }
@@ -540,6 +544,8 @@ app.use((err, req, res, next) => {
 
 app.use('/uploads/claims', express.static(claimsUploadDir));
 app.use('/uploads/partners', express.static(partnersUploadDir));
+app.use('/uploads/policies', express.static(policiesUploadDir));
+app.use('/uploads/kyc', express.static(kycUploadDir));
 app.use(express.static(publicDir));
 app.get('/', (req, res) => {
   res.sendFile(path.join(publicDir, 'index.html'));
@@ -557,7 +563,12 @@ function createApiRouter() {
     }
 
     try {
-      const user = await findOne('users', { email: data.email });
+      const user = await findOne('users', {
+        $or: [
+          { email: data.email },
+          { phone: data.email }
+        ]
+      });
       if (!user) {
         sendJson(res, 401, { message: 'User not found.' });
         return;
@@ -581,6 +592,60 @@ function createApiRouter() {
       });
     } catch (error) {
       console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
+    }
+  });
+
+  router.post('/auth/register', globalLimiter, async (req, res) => {
+    const data = collectBody(req);
+    if (!data.name || !data.email || !data.phone || !data.password) {
+      sendJson(res, 400, { message: 'Incomplete registration data.' });
+      return;
+    }
+
+    try {
+      const existingUser = await findOne('users', {
+        $or: [
+          { email: data.email },
+          { phone: data.phone }
+        ]
+      });
+
+      if (existingUser) {
+        sendJson(res, 400, { message: 'User with this email or phone number already exists.' });
+        return;
+      }
+
+      const userId = await insertOne('users', {
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        password: data.password,
+        role: 'user',
+        kyc: {
+          status: 'Not Verified',
+          aadhaar: null,
+          pan: null,
+          voterid: null,
+          photo: null
+        },
+        tsid: `TS-${Math.floor(1000 + Math.random() * 9000)}`,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+
+      await insertOne('user_updates', {
+        userId: String(userId),
+        title: 'Welcome to Twinsure!',
+        message: 'Your user profile has been successfully created. Complete your KYC verification to get started.',
+        category: 'Services',
+        status: 'Approved',
+        createdAt: new Date()
+      });
+
+      sendJson(res, 201, { message: 'Registration successful.' });
+    } catch (error) {
+      console.error('Database/Server Error during registration:', error.message);
       sendJson(res, 500, { message: 'An internal server error occurred.' });
     }
   });
@@ -1753,6 +1818,315 @@ function createApiRouter() {
     } catch (error) {
       console.error('Database/Server Error:', error.message);
       sendJson(res, 500, { error: 'An internal server error occurred.' });
+    }
+  });
+
+  // --- USER DASHBOARD ENDPOINTS ---
+
+  router.get('/users/profile', requireRole('user'), async (req, res) => {
+    try {
+      const user = await findOne('users', { _id: toObjectId(req.user.id) });
+      if (!user) {
+        sendJson(res, 404, { message: 'User not found.' });
+        return;
+      }
+      const clone = { ...user };
+      delete clone.password;
+      sendJson(res, 200, clone);
+    } catch (error) {
+      console.error('Error fetching profile:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
+    }
+  });
+
+  router.put('/users/profile', requireRole('user'), async (req, res) => {
+    const data = collectBody(req);
+    try {
+      const updateData = {};
+      if (data.email !== undefined) updateData.email = normalizeString(data.email);
+      if (data.phone !== undefined) updateData.phone = normalizeString(data.phone);
+      if (data.name !== undefined) updateData.name = normalizeString(data.name);
+      if (data.address !== undefined) updateData.address = normalizeString(data.address);
+      if (data.pincode !== undefined) updateData.pincode = normalizeString(data.pincode);
+      if (data.emergencyContact !== undefined) updateData.emergencyContact = normalizeString(data.emergencyContact);
+
+      updateData.updatedAt = new Date();
+
+      await updateOne('users', { _id: toObjectId(req.user.id) }, { $set: updateData });
+      sendJson(res, 200, { message: 'Profile updated successfully.' });
+    } catch (error) {
+      console.error('Error updating profile:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
+    }
+  });
+
+  router.put('/users/password', requireRole('user'), async (req, res) => {
+    const data = collectBody(req);
+    if (!data.oldPassword || !data.newPassword) {
+      sendJson(res, 400, { message: 'Missing password parameters.' });
+      return;
+    }
+
+    try {
+      const user = await findOne('users', { _id: toObjectId(req.user.id) });
+      if (!user) {
+        sendJson(res, 404, { message: 'User not found.' });
+        return;
+      }
+
+      if (user.password !== data.oldPassword) {
+        sendJson(res, 400, { message: 'Incorrect old password.' });
+        return;
+      }
+
+      await updateOne('users', { _id: toObjectId(req.user.id) }, { $set: { password: data.newPassword, updatedAt: new Date() } });
+      sendJson(res, 200, { message: 'Password updated successfully.' });
+    } catch (error) {
+      console.error('Error updating password:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
+    }
+  });
+
+  router.get('/users/policies', requireRole('user'), async (req, res) => {
+    try {
+      const policies = await findMany('user_policies', { userId: req.user.id });
+      sendJson(res, 200, policies);
+    } catch (error) {
+      console.error('Error fetching policies:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
+    }
+  });
+
+  router.post('/users/policies', requireRole('user'), upload.single('file'), async (req, res) => {
+    const body = collectBody(req);
+    const provider = normalizeString(body.provider);
+    const policyNumber = normalizeString(body.policyNumber);
+    const type = normalizeString(body.type);
+    const notes = normalizeString(body.notes);
+
+    if (!provider || !policyNumber || !type) {
+      sendJson(res, 400, { message: 'Provider, Policy Number, and Type are required.' });
+      return;
+    }
+
+    try {
+      let fileName = null;
+      let filePath = null;
+      let fileSize = null;
+
+      if (req.file) {
+        if (!isPdfFile(req.file)) {
+          sendJson(res, 400, { message: 'Only PDF files are allowed.' });
+          return;
+        }
+
+        const cleanName = sanitizeFileName(req.file.originalname);
+        fileName = `${Math.floor(Date.now() / 1000)}_${cleanName}`;
+        filePath = path.join(policiesUploadDir, fileName);
+        fileBufferToPath(filePath, req.file.buffer);
+        fileSize = formatFileSize(req.file.size);
+      }
+
+      await insertOne('user_policies', {
+        userId: req.user.id,
+        policyNumber,
+        provider,
+        type,
+        notes,
+        fileName,
+        filePath: fileName ? `uploads/policies/${fileName}` : null,
+        fileSize,
+        status: 'Pending Verification',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+
+      await insertOne('user_updates', {
+        userId: req.user.id,
+        title: 'Policy Added',
+        message: `${provider} Policy (${policyNumber}) added and pending verification.`,
+        category: 'Policies',
+        status: 'Pending',
+        createdAt: new Date()
+      });
+
+      sendJson(res, 201, { message: 'Policy added successfully.' });
+    } catch (error) {
+      console.error('Error adding policy:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
+    }
+  });
+
+  router.get('/users/appointments', requireRole('user'), async (req, res) => {
+    try {
+      const appointments = await findMany('appointments', { userId: req.user.id });
+      sendJson(res, 200, appointments);
+    } catch (error) {
+      console.error('Error fetching appointments:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
+    }
+  });
+
+  router.post('/users/appointments', requireRole('user'), async (req, res) => {
+    const data = collectBody(req);
+    const type = normalizeString(data.type);
+    const primaryPhone = normalizeString(data.primaryPhone);
+    const alternativePhone = normalizeString(data.alternativePhone);
+    const date = normalizeString(data.date);
+    const timeSlot = normalizeString(data.timeSlot);
+    const alternativeTimeSlot = normalizeString(data.alternativeTimeSlot);
+    const purpose = normalizeString(data.purpose);
+
+    if (!type || !primaryPhone || !date || !timeSlot || !purpose) {
+      sendJson(res, 400, { message: 'Incomplete appointment details.' });
+      return;
+    }
+
+    try {
+      await insertOne('appointments', {
+        userId: req.user.id,
+        type,
+        primaryPhone,
+        alternativePhone,
+        date,
+        timeSlot,
+        alternativeTimeSlot,
+        purpose,
+        status: 'Booked',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+
+      await insertOne('user_updates', {
+        userId: req.user.id,
+        title: 'Appointment Booked',
+        message: `Your appointment request for ${purpose} is scheduled for ${date} at ${timeSlot}.`,
+        category: 'Appointments',
+        status: 'Confirmed',
+        createdAt: new Date()
+      });
+
+      sendJson(res, 201, { message: 'Appointment booked successfully.' });
+    } catch (error) {
+      console.error('Error booking appointment:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
+    }
+  });
+
+  router.get('/users/services', requireRole('user'), async (req, res) => {
+    try {
+      const services = await findMany('user_services', { userId: req.user.id });
+      sendJson(res, 200, services);
+    } catch (error) {
+      console.error('Error fetching services:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
+    }
+  });
+
+  router.post('/users/services', requireRole('user'), async (req, res) => {
+    const data = collectBody(req);
+    const category = normalizeString(data.category);
+    const description = normalizeString(data.description);
+    const preferredTime = normalizeString(data.preferredTime);
+    const notes = normalizeString(data.notes);
+
+    if (!category) {
+      sendJson(res, 400, { message: 'Service category is required.' });
+      return;
+    }
+
+    try {
+      await insertOne('user_services', {
+        userId: req.user.id,
+        category,
+        description,
+        preferredTime,
+        notes,
+        status: 'pending',
+        createdAt: new Date()
+      });
+
+      await insertOne('user_updates', {
+        userId: req.user.id,
+        title: 'Service Requested',
+        message: `Service request for ${category} has been submitted.`,
+        category: 'Services',
+        status: 'Pending',
+        createdAt: new Date()
+      });
+
+      sendJson(res, 201, { message: 'Service requested successfully.' });
+    } catch (error) {
+      console.error('Error requesting service:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
+    }
+  });
+
+  router.get('/users/updates', requireRole('user'), async (req, res) => {
+    try {
+      const updates = await findMany('user_updates', { userId: req.user.id }, { sort: { createdAt: -1 } });
+      sendJson(res, 200, updates);
+    } catch (error) {
+      console.error('Error fetching updates:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
+    }
+  });
+
+  router.post('/users/kyc', requireRole('user'), upload.single('file'), async (req, res) => {
+    const body = collectBody(req);
+    const documentType = normalizeString(body.documentType);
+
+    if (!documentType || !['aadhaar', 'pan', 'voterid', 'photo'].includes(documentType)) {
+      sendJson(res, 400, { message: 'Valid documentType is required.' });
+      return;
+    }
+
+    if (!req.file) {
+      sendJson(res, 400, { message: 'Document file is required.' });
+      return;
+    }
+
+    try {
+      if (!isImageFile(req.file) && !isPdfFile(req.file)) {
+        sendJson(res, 400, { message: 'Only PDF or Image files (PNG, JPG, JPEG) are allowed.' });
+        return;
+      }
+
+      const cleanName = sanitizeFileName(req.file.originalname);
+      const fileName = `${Math.floor(Date.now() / 1000)}_${cleanName}`;
+      const filePath = path.join(kycUploadDir, fileName);
+      fileBufferToPath(filePath, req.file.buffer);
+
+      const db = await getDb();
+      const user = await findOne('users', { _id: toObjectId(req.user.id) });
+      if (!user) {
+        sendJson(res, 404, { message: 'User not found.' });
+        return;
+      }
+
+      const kycData = user.kyc || { status: 'Not Verified', aadhaar: null, pan: null, voterid: null, photo: null };
+      kycData[documentType] = {
+        fileName,
+        filePath: `uploads/kyc/${fileName}`,
+        uploadedAt: new Date()
+      };
+      kycData.status = 'Pending Verification';
+
+      await updateOne('users', { _id: toObjectId(req.user.id) }, { $set: { kyc: kycData, updatedAt: new Date() } });
+
+      await insertOne('user_updates', {
+        userId: req.user.id,
+        title: 'KYC Uploaded',
+        message: `${documentType.toUpperCase()} document uploaded for verification.`,
+        category: 'Services',
+        status: 'Pending',
+        createdAt: new Date()
+      });
+
+      sendJson(res, 200, { message: `${documentType.toUpperCase()} uploaded successfully. Status set to Pending Verification.` });
+    } catch (error) {
+      console.error('Error uploading KYC:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
     }
   });
 

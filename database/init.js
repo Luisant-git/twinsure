@@ -1,7 +1,7 @@
 const { config, createCollectionIfNotExists, findOne, insertOne, ObjectId } = require('../backend/lib/database');
 
 async function main() {
-  const collectionsToCreate = ['users', 'services', 'partners', 'recommendation_questions', 'leads', 'form_help_requests', 'settings', 'contacts', 'claims', 'testimonials'];
+  const collectionsToCreate = ['users', 'services', 'partners', 'recommendation_questions', 'leads', 'form_help_requests', 'settings', 'contacts', 'claims', 'testimonials', 'user_policies', 'appointments', 'user_services', 'user_updates'];
 
   console.log(`Connected to MongoDB.`);
   console.log(`Initializing database: ${config.mongodbDatabase}\n`);

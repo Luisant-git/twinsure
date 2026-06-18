@@ -1,0 +1,2615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Dashboard - Twinsure</title>
+  <link rel="icon" href="assets/logo.png" type="image/png" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --bg-dark: #070d19;
+      --bg-card: rgba(22, 30, 49, 0.7);
+      --bg-nav: #0b132b;
+      --border-glow: rgba(0, 122, 255, 0.15);
+      --border-glass: rgba(255, 255, 255, 0.08);
+      
+      --primary-blue: #007aff;
+      --accent-neon: #00d2ff;
+      --success-green: #34c759;
+      --warning-orange: #ff9500;
+      
+      --text-white: #ffffff;
+      --text-gray: #8e9ebb;
+      --text-muted: #53627c;
+      --font-family-sans: 'Inter', sans-serif;
+      --font-family-heading: 'Outfit', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-family-sans);
+      background-color: var(--bg-dark);
+      color: var(--text-white);
+      min-height: 100vh;
+      overflow-x: hidden;
+      
+      /* Subtle grid background */
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+      background-size: 24px 24px;
+      display: flex;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.1);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--text-muted);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-gray);
+    }
+
+    /* Main layout */
+    .dashboard-container {
+      display: flex;
+      width: 100vw;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* Sidebar - Desktop Only */
+    .sidebar {
+      width: 260px;
+      background-color: var(--bg-nav);
+      border-right: 1px solid var(--border-glass);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      padding: 1.5rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 2.5rem;
+      text-decoration: none;
+      color: var(--text-white);
+    }
+
+    .brand-logo img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+
+    .brand-logo span {
+      font-family: var(--font-family-heading);
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex: 1;
+    }
+
+    .nav-item a {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.85rem 1.2rem;
+      color: var(--text-gray);
+      text-decoration: none;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .nav-item a:hover {
+      color: var(--text-white);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .nav-item.active a {
+      color: var(--text-white);
+      background: linear-gradient(135deg, rgba(0, 122, 255, 0.15) 0%, rgba(0, 122, 255, 0.05) 100%);
+      border: 1px solid var(--border-glow);
+      box-shadow: 0 4px 15px rgba(0, 122, 255, 0.1);
+    }
+
+    .nav-item a i {
+      font-size: 1.1rem;
+      width: 20px;
+      text-align: center;
+    }
+
+    .sidebar-footer {
+      border-top: 1px solid var(--border-glass);
+      padding-top: 1.25rem;
+    }
+
+    .profile-card-small {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 12px;
+      transition: background 0.2s;
+    }
+
+    .profile-card-small:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .profile-card-small img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid var(--primary-blue);
+      object-fit: cover;
+    }
+
+    .profile-card-info h4 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-white);
+    }
+
+    .profile-card-info p {
+      font-size: 0.75rem;
+      color: var(--text-gray);
+    }
+
+    /* Content Area */
+    .content-area {
+      flex: 1;
+      margin-left: 260px;
+      padding: 2rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Header Nav */
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      z-index: 90;
+    }
+
+    .top-header-mobile {
+      display: none;
+    }
+
+    .page-title {
+      font-family: var(--font-family-heading);
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .notif-bell {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-white);
+      font-size: 1.15rem;
+      transition: all 0.2s;
+    }
+
+    .notif-bell:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .notif-badge {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      background: var(--primary-blue);
+      color: var(--text-white);
+      font-size: 0.68rem;
+      font-weight: 800;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--bg-dark);
+    }
+
+    /* View containers */
+    .view-pane {
+      display: none;
+      animation: fadeIn 0.4s ease-out;
+      flex: 1;
+    }
+
+    .view-pane.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Common Card Styling - Glassmorphic */
+    .glass-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.15) 0%, transparent 100%);
+    }
+
+    /* Status badge style */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .status-badge.verified, .status-badge.approved {
+      background: rgba(52, 199, 89, 0.1);
+      color: var(--success-green);
+      border: 1px solid rgba(52, 199, 89, 0.2);
+    }
+
+    .status-badge.pending {
+      background: rgba(255, 149, 0, 0.1);
+      color: var(--warning-orange);
+      border: 1px solid rgba(255, 149, 0, 0.2);
+    }
+
+    .status-badge.unverified {
+      background: rgba(142, 158, 187, 0.1);
+      color: var(--text-gray);
+      border: 1px solid var(--border-glass);
+    }
+
+    /* HOME VIEW SPECIFICS */
+    .greeting-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .greeting-main h2 {
+      font-family: var(--font-family-heading);
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .greeting-main .kyc-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 0.3rem 0.8rem;
+      border-radius: 30px;
+      width: fit-content;
+      border: 1px solid var(--border-glass);
+    }
+
+    .greeting-main .kyc-badge.verified {
+      color: var(--success-green);
+      border-color: rgba(52, 199, 89, 0.3);
+      background: rgba(52, 199, 89, 0.05);
+    }
+
+    .greeting-main .id-badge {
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: var(--text-gray);
+      font-family: monospace;
+    }
+
+    .greeting-card img {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 3px solid var(--primary-blue);
+      object-fit: cover;
+      box-shadow: 0 0 20px rgba(0, 122, 255, 0.25);
+    }
+
+    /* Action Grid */
+    .action-grid-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text-gray);
+    }
+
+    .quick-action-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .action-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: 16px;
+      padding: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .action-card:hover {
+      border-color: var(--primary-blue);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 122, 255, 0.15);
+    }
+
+    .action-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(0, 122, 255, 0.1);
+      border: 1px solid rgba(0, 122, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-blue);
+      font-size: 1.2rem;
+    }
+
+    .action-info h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+
+    .action-info p {
+      font-size: 0.75rem;
+      color: var(--text-gray);
+    }
+
+    /* Service shortcuts */
+    .shortcuts-container {
+      margin-bottom: 2rem;
+    }
+
+    .shortcuts-list {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-glass);
+      padding: 1.25rem;
+      border-radius: 20px;
+    }
+
+    .shortcut-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--text-white);
+      flex: 1;
+    }
+
+    .shortcut-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-glass);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      color: var(--primary-blue);
+      transition: all 0.2s;
+    }
+
+    .shortcut-item:hover .shortcut-icon {
+      background: var(--primary-blue);
+      color: var(--text-white);
+      transform: scale(1.08);
+      box-shadow: 0 0 15px rgba(0, 122, 255, 0.3);
+    }
+
+    .shortcut-item span {
+      font-size: 0.78rem;
+      font-weight: 500;
+      text-align: center;
+      color: var(--text-gray);
+    }
+
+    /* Timeline style recent activity */
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .activity-item {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .activity-num {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      width: 15px;
+      margin-top: 2px;
+    }
+
+    .activity-content {
+      flex: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      padding-bottom: 0.85rem;
+    }
+
+    .activity-details h5 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+
+    .activity-details p {
+      font-size: 0.75rem;
+      color: var(--text-gray);
+    }
+
+    .activity-time {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* POLICIES VIEW SPECIFICS */
+    .policies-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn-primary {
+      background: var(--primary-blue);
+      color: var(--text-white);
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: #0066d6;
+      box-shadow: 0 0 15px rgba(0, 122, 255, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .policy-cards-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .policy-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: 20px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .policy-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .policy-provider-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .policy-logo-wrapper {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-glass);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: var(--primary-blue);
+      overflow: hidden;
+    }
+
+    .policy-logo-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .policy-meta h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .policy-meta p {
+      font-size: 0.8rem;
+      color: var(--text-gray);
+    }
+
+    .policy-card-actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 1rem;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-glass);
+      color: var(--text-white);
+      padding: 0.65rem;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: var(--text-gray);
+    }
+
+    /* SERVICES VIEW SPECIFICS */
+    .services-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-gray);
+      margin-bottom: 1.5rem;
+      margin-top: -1rem;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+    }
+
+    .service-detail-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: 20px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      transition: all 0.2s;
+    }
+
+    .service-detail-card:hover {
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 20px rgba(0, 122, 255, 0.2);
+    }
+
+    .service-header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .service-detail-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(0, 122, 255, 0.1);
+      border: 1px solid rgba(0, 122, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      color: var(--primary-blue);
+      box-shadow: 0 0 15px rgba(0, 122, 255, 0.15);
+    }
+
+    .service-header h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      font-family: var(--font-family-heading);
+    }
+
+    .service-header p {
+      font-size: 0.8rem;
+      color: var(--text-gray);
+      line-height: 1.4;
+      min-height: 45px;
+    }
+
+    .service-detail-card .btn-primary {
+      width: 100%;
+      justify-content: center;
+      padding: 0.65rem;
+      font-size: 0.82rem;
+    }
+
+    /* APPOINTMENTS VIEW SPECIFICS */
+    .appointment-type-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .type-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: 16px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .type-card i {
+      font-size: 1.5rem;
+      color: var(--primary-blue);
+    }
+
+    .type-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .type-card p {
+      font-size: 0.75rem;
+      color: var(--text-gray);
+    }
+
+    .type-card:hover {
+      border-color: var(--primary-blue);
+      box-shadow: 0 4px 15px rgba(0, 122, 255, 0.15);
+    }
+
+    .type-card.active {
+      background: linear-gradient(135deg, rgba(0, 122, 255, 0.15) 0%, rgba(0, 122, 255, 0.05) 100%);
+      border-color: var(--primary-blue);
+    }
+
+    .appointment-form-section {
+      margin-bottom: 2.5rem;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      color: var(--text-gray);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-group label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-gray);
+    }
+
+    .form-control {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1.5px solid var(--border-glass);
+      color: var(--text-white);
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      outline: none;
+      transition: all 0.2s;
+      width: 100%;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 10px rgba(0, 122, 255, 0.15);
+    }
+
+    .form-control::placeholder {
+      color: var(--text-muted);
+    }
+
+    select.form-control {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%238e9ebb'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 1.2rem;
+      padding-right: 2.5rem;
+    }
+
+    select.form-control option {
+      background-color: var(--bg-dark);
+      color: var(--text-white);
+    }
+
+    .appointment-form-section .btn-primary {
+      width: 100%;
+      justify-content: center;
+      padding: 0.85rem;
+      margin-top: 0.5rem;
+    }
+
+    /* Chronological Timeline on Appointments and Updates */
+    .timeline-container {
+      position: relative;
+      padding-left: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .timeline-container::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      background: var(--border-glass);
+    }
+
+    .timeline-node {
+      position: relative;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -1.75rem;
+      top: 4px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--primary-blue);
+      border: 3px solid var(--bg-dark);
+      box-shadow: 0 0 0 2px var(--border-glass);
+      z-index: 2;
+    }
+
+    .timeline-dot.completed {
+      background: var(--success-green);
+    }
+
+    .timeline-dot.pending {
+      background: var(--warning-orange);
+    }
+
+    .timeline-content-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: 16px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .timeline-info h4 {
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+    }
+
+    .timeline-info p {
+      font-size: 0.75rem;
+      color: var(--text-gray);
+    }
+
+    /* UPDATES VIEW SPECIFICS */
+    .updates-filters {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+
+    .filter-pill {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-glass);
+      color: var(--text-gray);
+      padding: 0.45rem 1.15rem;
+      border-radius: 30px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .filter-pill:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-white);
+    }
+
+    .filter-pill.active {
+      background: var(--primary-blue);
+      color: var(--text-white);
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 10px rgba(0, 122, 255, 0.35);
+    }
+
+    /* Floating action buttons */
+    .floating-actions {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      z-index: 200;
+    }
+
+    .floating-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.45rem;
+      color: var(--text-white);
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      border: none;
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .floating-btn:hover {
+      transform: scale(1.08) translateY(-3px);
+    }
+
+    .floating-btn.ai-agent {
+      background: linear-gradient(135deg, #007aff 0%, #00d2ff 100%);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .floating-btn.whatsapp {
+      background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .floating-label {
+      position: absolute;
+      right: 70px;
+      background: var(--bg-nav);
+      border: 1px solid var(--border-glass);
+      color: var(--text-white);
+      padding: 0.35rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    }
+
+    .floating-btn:hover .floating-label {
+      opacity: 1;
+    }
+
+    /* Modal dialog styling */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      padding: 1.5rem;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-wrapper {
+      background: var(--bg-nav);
+      border: 1px solid var(--border-glass);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+      overflow: hidden;
+    }
+
+    .modal-overlay.active .modal-wrapper {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-glass);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      font-family: var(--font-family-heading);
+      font-size: 1.25rem;
+      font-weight: 800;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-gray);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0.25rem;
+    }
+
+    .modal-close:hover {
+      color: var(--text-white);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    .modal-footer {
+      padding: 1.25rem 1.5rem;
+      border-top: 1px solid var(--border-glass);
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+
+    /* Side drawer style for Profile */
+    .drawer-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(5px);
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .drawer-wrapper {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      right: -420px;
+      width: 420px;
+      max-width: 100vw;
+      background: var(--bg-nav);
+      border-left: 1px solid var(--border-glass);
+      box-shadow: -10px 0 30px rgba(0,0,0,0.3);
+      z-index: 1001;
+      display: flex;
+      flex-direction: column;
+      transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .drawer-overlay.active + .drawer-wrapper,
+    .drawer-wrapper.active {
+      right: 0;
+    }
+
+    .drawer-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-glass);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .drawer-header h3 {
+      font-family: var(--font-family-heading);
+      font-size: 1.25rem;
+      font-weight: 800;
+    }
+
+    .drawer-body {
+      padding: 1.5rem;
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+    }
+
+    /* KYC document upload cards inside drawer */
+    .kyc-upload-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .kyc-upload-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-glass);
+      border-radius: 12px;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .kyc-doc-info h5 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 0.15rem;
+    }
+
+    .kyc-doc-info p {
+      font-size: 0.72rem;
+      color: var(--text-gray);
+    }
+
+    .kyc-upload-btn {
+      background: rgba(0, 122, 255, 0.1);
+      border: 1px solid rgba(0, 122, 255, 0.2);
+      color: var(--primary-blue);
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .kyc-upload-btn:hover {
+      background: var(--primary-blue);
+      color: var(--text-white);
+    }
+
+    .logout-btn-wrapper {
+      margin-top: 1rem;
+      border-top: 1px solid var(--border-glass);
+      padding-top: 1.25rem;
+    }
+
+    .btn-danger {
+      background: rgba(255, 59, 48, 0.1);
+      border: 1px solid rgba(255, 59, 48, 0.2);
+      color: #ff3b30;
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+
+    .btn-danger:hover {
+      background: #ff3b30;
+      color: var(--text-white);
+    }
+
+    /* Bottom Nav for Mobile/Tablet */
+    .bottom-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 72px;
+      background-color: var(--bg-nav);
+      border-top: 1px solid var(--border-glass);
+      z-index: 150;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0 0.5rem;
+      box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .bottom-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.25rem;
+      color: var(--text-gray);
+      text-decoration: none;
+      font-size: 0.65rem;
+      font-weight: 600;
+      flex: 1;
+      height: 100%;
+      transition: all 0.2s;
+    }
+
+    .bottom-nav-item i {
+      font-size: 1.3rem;
+      margin-top: 2px;
+    }
+
+    .bottom-nav-item.active {
+      color: var(--primary-blue);
+      text-shadow: 0 0 10px rgba(0, 122, 255, 0.2);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+      body {
+        flex-direction: column;
+      }
+      .sidebar {
+        display: none;
+      }
+      .content-area {
+        margin-left: 0;
+        padding: 1rem 1rem 90px 1rem; /* Padding at bottom for bottom-nav */
+      }
+      .top-header {
+        display: none;
+      }
+      
+      /* Mobile fixed top header */
+      .top-header-mobile {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: var(--bg-nav);
+        border-bottom: 1px solid var(--border-glass);
+        padding: 0.85rem 1.25rem;
+        position: sticky;
+        top: 0;
+        z-index: 160;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      }
+      .top-header-mobile .mobile-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        text-decoration: none;
+        color: var(--text-white);
+      }
+      .top-header-mobile .mobile-brand img {
+        width: 28px;
+        height: 28px;
+      }
+      .top-header-mobile .mobile-brand span {
+        font-family: var(--font-family-heading);
+        font-size: 1.15rem;
+        font-weight: 800;
+      }
+      .top-header-mobile .header-actions {
+        gap: 0.85rem;
+      }
+      .top-header-mobile .header-actions img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 2px solid var(--primary-blue);
+        object-fit: cover;
+      }
+      
+      .bottom-nav {
+        display: flex;
+      }
+      
+      .floating-actions {
+        bottom: 5.5rem; /* Make room for bottom nav */
+        right: 1.25rem;
+      }
+      
+      .floating-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
+      }
+      
+      .floating-label {
+        display: none; /* Hide labels on mobile */
+      }
+    }
+
+    @media (max-width: 600px) {
+      .quick-action-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+      .services-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      .drawer-wrapper {
+        width: 100vw;
+      }
+      .policy-card-actions {
+        grid-template-columns: 1fr;
+      }
+      .shortcuts-list {
+        padding: 1rem 0.5rem;
+      }
+      .shortcut-item span {
+        font-size: 0.7rem;
+      }
+      .shortcut-icon {
+        width: 42px;
+        height: 42px;
+        font-size: 1rem;
+      }
+    }
+
+    /* AI Agent Drawer Simulation */
+    .ai-drawer {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .chat-messages {
+      height: 250px;
+      overflow-y: auto;
+      border: 1px solid var(--border-glass);
+      border-radius: 12px;
+      padding: 0.75rem;
+      background: rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .chat-msg {
+      padding: 0.6rem 0.85rem;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      max-width: 80%;
+    }
+    .chat-msg.agent {
+      background: rgba(0, 122, 255, 0.15);
+      color: var(--text-white);
+      align-self: flex-start;
+      border-bottom-left-radius: 2px;
+    }
+    .chat-msg.user {
+      background: var(--bg-card);
+      color: var(--text-white);
+      align-self: flex-end;
+      border-bottom-right-radius: 2px;
+      border: 1px solid var(--border-glass);
+    }
+    .chat-input-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .chat-input-row .form-control {
+      padding: 0.6rem;
+    }
+    .chat-input-row .btn-primary {
+      padding: 0.6rem 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MOBILE STATIC TOP BAR -->
+  <div class="top-header-mobile">
+    <a href="index.html" class="mobile-brand">
+      <img src="assets/logo.png" alt="Twinsure" />
+      <span>Twinsure</span>
+    </a>
+    <div class="header-actions">
+      <div class="notif-bell" onclick="switchTab('updates')">
+        <i class="far fa-bell"></i>
+        <div class="notif-badge" id="mobile-notif-count">3</div>
+      </div>
+      <img src="https://ui-avatars.com/api/?name=User&background=007aff&color=fff" id="mobile-user-avatar" onclick="openProfileDrawer()" alt="User" />
+    </div>
+  </div>
+
+  <div class="dashboard-container">
+    
+    <!-- DESKTOP LEFT SIDEBAR -->
+    <aside class="sidebar">
+      <a href="index.html" class="brand-logo">
+        <img src="assets/logo.png" alt="Twinsure" />
+        <span>Twinsure</span>
+      </a>
+      
+      <ul class="nav-menu">
+        <li class="nav-item active" id="side-nav-home">
+          <a href="#" onclick="switchTab('home')">
+            <i class="fas fa-house"></i>
+            <span>Home</span>
+          </a>
+        </li>
+        <li class="nav-item" id="side-nav-policies">
+          <a href="#" onclick="switchTab('policies')">
+            <i class="fas fa-file-shield"></i>
+            <span>Policies</span>
+          </a>
+        </li>
+        <li class="nav-item" id="side-nav-services">
+          <a href="#" onclick="switchTab('services')">
+            <i class="fas fa-cubes"></i>
+            <span>Services</span>
+          </a>
+        </li>
+        <li class="nav-item" id="side-nav-appointments">
+          <a href="#" onclick="switchTab('appointments')">
+            <i class="fas fa-calendar-check"></i>
+            <span>Appointments</span>
+          </a>
+        </li>
+        <li class="nav-item" id="side-nav-updates">
+          <a href="#" onclick="switchTab('updates')">
+            <i class="fas fa-bell"></i>
+            <span>Updates</span>
+          </a>
+        </li>
+      </ul>
+      
+      <div class="sidebar-footer">
+        <div class="profile-card-small" onclick="openProfileDrawer()">
+          <img src="https://ui-avatars.com/api/?name=User&background=007aff&color=fff" id="sidebar-user-avatar" alt="User" />
+          <div class="profile-card-info">
+            <h4 id="sidebar-user-name">Loading...</h4>
+            <p id="sidebar-user-tsid">TS-XXXX</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CONTENT DISPLAY AREA -->
+    <main class="content-area">
+      
+      <!-- DESKTOP TOP HEADER -->
+      <header class="top-header">
+        <h1 class="page-title" id="page-title-text">Dashboard</h1>
+        <div class="header-actions">
+          <div class="notif-bell" onclick="switchTab('updates')">
+            <i class="far fa-bell"></i>
+            <div class="notif-badge" id="desktop-notif-count">3</div>
+          </div>
+          <button class="btn-primary" onclick="openProfileDrawer()" style="padding: 0.6rem 1.2rem; border-radius: 30px;">
+            <i class="far fa-user-circle"></i>
+            <span>My Profile</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- PANES / VIEWS -->
+      
+      <!-- 1. HOME VIEW -->
+      <section id="view-home" class="view-pane active">
+        <div class="glass-card greeting-card" style="margin-bottom: 1.5rem;">
+          <div class="greeting-main">
+            <h2 id="home-greeting">Good Morning, User</h2>
+            <div class="kyc-badge" id="home-kyc-badge">
+              <i class="fas fa-circle-notch fa-spin"></i> Checking KYC...
+            </div>
+            <div class="id-badge" id="home-user-id">My ID: TS-XXXX</div>
+          </div>
+          <img src="https://ui-avatars.com/api/?name=User&background=007aff&color=fff" id="home-user-avatar" alt="Avatar" />
+        </div>
+
+        <h3 class="action-grid-title">Quick Action</h3>
+        <div class="quick-action-grid">
+          <div class="action-card" onclick="openAddPolicyModal()">
+            <div class="action-icon"><i class="fas fa-file-arrow-up"></i></div>
+            <div class="action-info">
+              <h4>Upload Policy</h4>
+              <p>Instantly digitize policy</p>
+            </div>
+          </div>
+          <div class="action-card" onclick="switchTab('services')">
+            <div class="action-icon"><i class="fas fa-screwdriver-wrench"></i></div>
+            <div class="action-info">
+              <h4>Request Service</h4>
+              <p>Get assistance</p>
+            </div>
+          </div>
+          <div class="action-card" onclick="switchTab('appointments')">
+            <div class="action-icon"><i class="fas fa-calendar-days"></i></div>
+            <div class="action-info">
+              <h4>Book Appointment</h4>
+              <p>Meet your Agent</p>
+            </div>
+          </div>
+          <div class="action-card" onclick="openServiceModal('Pre Policy Audit')">
+            <div class="action-icon"><i class="fas fa-magnifying-glass-chart"></i></div>
+            <div class="action-info">
+              <h4>AI Policy Audit</h4>
+              <p>Review coverage</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="shortcuts-container">
+          <h3 class="action-grid-title">Service Shortcuts</h3>
+          <div class="shortcuts-list">
+            <a href="#" class="shortcut-item" onclick="openServiceModal('Icare')">
+              <div class="shortcut-icon"><i class="fas fa-hand-holding-heart"></i></div>
+              <span>Icare</span>
+            </a>
+            <a href="#" class="shortcut-item" onclick="openServiceModal('Re.New.All')">
+              <div class="shortcut-icon"><i class="fas fa-arrow-rotate-right"></i></div>
+              <span>Re.New All</span>
+            </a>
+            <a href="#" class="shortcut-item" onclick="openServiceModal('HosPos')">
+              <div class="shortcut-icon"><i class="fas fa-hospital-user"></i></div>
+              <span>HosPos</span>
+            </a>
+            <a href="#" class="shortcut-item" onclick="openServiceModal('Pre Policy Audit')">
+              <div class="shortcut-icon"><i class="fas fa-shield-halved"></i></div>
+              <span>Pre Policy Audit</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <h3 class="action-grid-title" style="margin-bottom: 1.25rem;">Recent Activity</h3>
+          <div class="activity-list" id="home-activity-list">
+            <!-- Dynamic activities list -->
+            <div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 1rem 0;">
+              No recent activity recorded.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. POLICIES VIEW -->
+      <section id="view-policies" class="view-pane">
+        <div class="policies-header">
+          <h2 class="page-title" style="font-size: 1.5rem;">My Policies</h2>
+          <button class="btn-primary" onclick="openAddPolicyModal()">
+            <i class="fas fa-plus"></i>
+            <span>Add Existing Policy</span>
+          </button>
+        </div>
+
+        <div class="policy-cards-container" id="policies-list">
+          <!-- Dynamic loaded policies -->
+          <div class="glass-card" style="text-align: center; padding: 3rem 1.5rem; color: var(--text-gray);">
+            <i class="fas fa-folder-open" style="font-size: 2.5rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+            <h3>No Policies Added</h3>
+            <p style="font-size: 0.85rem; margin-top: 0.5rem;">Click the button above to upload and track your active insurance policies.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. SERVICES VIEW -->
+      <section id="view-services" class="view-pane">
+        <p class="services-subtitle">Explore and manage your insurance services.</p>
+        
+        <div class="services-grid">
+          <div class="service-detail-card">
+            <div class="service-header">
+              <div class="service-detail-icon"><i class="fas fa-hand-holding-heart"></i></div>
+              <h3>Icare</h3>
+              <p>Health Insurance Support & Claims Assistance</p>
+            </div>
+            <button class="btn-primary" onclick="openServiceModal('Icare')">Get Support</button>
+          </div>
+          
+          <div class="service-detail-card">
+            <div class="service-header">
+              <div class="service-detail-icon"><i class="fas fa-arrow-rotate-right"></i></div>
+              <h3>Re.New.All</h3>
+              <p>Renewal Management & Policy Tracking</p>
+            </div>
+            <button class="btn-primary" onclick="switchTab('policies')">Manage Policies</button>
+          </div>
+          
+          <div class="service-detail-card">
+            <div class="service-header">
+              <div class="service-detail-icon"><i class="fas fa-hospital-user"></i></div>
+              <h3>HosPos</h3>
+              <p>Hospital Support & Cashless Guidance</p>
+            </div>
+            <button class="btn-primary" onclick="openServiceModal('HosPos')">Find Support</button>
+          </div>
+          
+          <div class="service-detail-card">
+            <div class="service-header">
+              <div class="service-detail-icon"><i class="fas fa-shield-halved"></i></div>
+              <h3>Pre Policy Audit</h3>
+              <p>AI Powered Policy Analysis</p>
+            </div>
+            <button class="btn-primary" onclick="openServiceModal('Pre Policy Audit')">Start Audit</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. APPOINTMENTS VIEW -->
+      <section id="view-appointments" class="view-pane">
+        <div class="appointment-type-grid">
+          <div class="type-card active" id="appt-type-call" onclick="selectApptType('call')">
+            <i class="fas fa-phone-volume"></i>
+            <h3>Request a Call</h3>
+            <p>Speak with our advisor</p>
+          </div>
+          <div class="type-card" id="appt-type-office" onclick="selectApptType('office')">
+            <i class="fas fa-building-user"></i>
+            <h3>Visit Office</h3>
+            <p>Meet us at the branch</p>
+          </div>
+        </div>
+
+        <div class="glass-card appointment-form-section">
+          <h3 class="section-title">New Appointment</h3>
+          <form id="appointmentForm" onsubmit="bookAppointment(event)">
+            <input type="hidden" id="apptType" value="call" />
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="primaryMobile">Primary Mobile Number</label>
+                <input type="tel" id="primaryMobile" class="form-control" placeholder="+91 XXXXX XXXXX" required />
+              </div>
+              <div class="form-group">
+                <label for="altMobile">Alternative Mobile Number</label>
+                <input type="tel" id="altMobile" class="form-control" placeholder="+91 XXXXX XXXXX" />
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="preferredDate">Preferred Date</label>
+                <input type="date" id="preferredDate" class="form-control" required />
+              </div>
+              <div class="form-group">
+                <label for="preferredTime">Preferred Time Slot</label>
+                <select id="preferredTime" class="form-control" required>
+                  <option value="" disabled selected>Select Time Slot</option>
+                  <option value="09:00 AM - 10:00 AM">09:00 AM - 10:00 AM</option>
+                  <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
+                  <option value="11:00 AM - 12:00 PM">11:00 AM - 12:00 PM</option>
+                  <option value="12:00 PM - 01:00 PM">12:00 PM - 01:00 PM</option>
+                  <option value="02:00 PM - 03:00 PM">02:00 PM - 03:00 PM</option>
+                  <option value="03:00 PM - 04:00 PM">03:00 PM - 04:00 PM</option>
+                  <option value="04:00 PM - 05:00 PM">04:00 PM - 05:00 PM</option>
+                  <option value="05:00 PM - 06:00 PM">05:00 PM - 06:00 PM</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="altTime">Alternative Time Slot</label>
+                <select id="altTime" class="form-control">
+                  <option value="" disabled selected>Select Alternative Time Slot</option>
+                  <option value="09:00 AM - 10:00 AM">09:00 AM - 10:00 AM</option>
+                  <option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
+                  <option value="11:00 AM - 12:00 PM">11:00 AM - 12:00 PM</option>
+                  <option value="12:00 PM - 01:00 PM">12:00 PM - 01:00 PM</option>
+                  <option value="02:00 PM - 03:00 PM">02:00 PM - 03:00 PM</option>
+                  <option value="03:00 PM - 04:00 PM">03:00 PM - 04:00 PM</option>
+                  <option value="04:00 PM - 05:00 PM">04:00 PM - 05:00 PM</option>
+                  <option value="05:00 PM - 06:00 PM">05:00 PM - 06:00 PM</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="apptPurpose">Purpose Dropdown</label>
+                <select id="apptPurpose" class="form-control" required>
+                  <option value="" disabled selected>Select Purpose</option>
+                  <option value="Policy Clarification">Policy Clarification</option>
+                  <option value="Claims Inquiry">Claims Inquiry</option>
+                  <option value="New Insurance Consultation">New Insurance Consultation</option>
+                  <option value="KYC Verification Help">KYC Verification Help</option>
+                  <option value="Others">Others</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-primary">Book Appointment</button>
+          </form>
+        </div>
+
+        <div class="glass-card">
+          <h3 class="section-title">Recent Appointments</h3>
+          <div class="timeline-container" id="appointments-timeline">
+            <!-- Dynamic loaded appts -->
+            <div style="color: var(--text-muted); font-size: 0.85rem; padding: 1rem 0;">
+              No appointments found. Use the form above to book an appointment.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. UPDATES VIEW -->
+      <section id="view-updates" class="view-pane">
+        <div class="updates-filters">
+          <button class="filter-pill active" onclick="filterUpdates('all', this)">All</button>
+          <button class="filter-pill" onclick="filterUpdates('Policies', this)">Policies</button>
+          <button class="filter-pill" onclick="filterUpdates('Appointments', this)">Appointments</button>
+          <button class="filter-pill" onclick="filterUpdates('Services', this)">Services</button>
+        </div>
+
+        <div class="timeline-container" id="updates-timeline">
+          <!-- Dynamic loaded updates -->
+          <div style="color: var(--text-muted); font-size: 0.85rem; padding: 2rem 0; text-align: center;">
+            No updates available.
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- BOTTOM MOBILE NAVIGATION BAR -->
+  <nav class="bottom-nav">
+    <a href="#" class="bottom-nav-item active" id="bot-nav-home" onclick="switchTab('home')">
+      <i class="fas fa-house"></i>
+      <span>Home</span>
+    </a>
+    <a href="#" class="bottom-nav-item" id="bot-nav-policies" onclick="switchTab('policies')">
+      <i class="fas fa-file-shield"></i>
+      <span>Policies</span>
+    </a>
+    <a href="#" class="bottom-nav-item" id="bot-nav-services" onclick="switchTab('services')">
+      <i class="fas fa-cubes"></i>
+      <span>Services</span>
+    </a>
+    <a href="#" class="bottom-nav-item" id="bot-nav-appointments" onclick="switchTab('appointments')">
+      <i class="fas fa-calendar-check"></i>
+      <span>Appointments</span>
+    </a>
+    <a href="#" class="bottom-nav-item" id="bot-nav-updates" onclick="switchTab('updates')">
+      <i class="fas fa-bell"></i>
+      <span>Updates</span>
+    </a>
+  </nav>
+
+  <!-- FLOATING ACTION BUTTONS -->
+  <div class="floating-actions">
+    <button class="floating-btn ai-agent" onclick="openAiAgentChat()">
+      <i class="fas fa-robot"></i>
+      <span class="floating-label">AI Agent</span>
+    </button>
+    <a href="https://wa.me/919750003600" target="_blank" class="floating-btn whatsapp" id="whatsapp-link">
+      <i class="fab fa-whatsapp"></i>
+      <span class="floating-label">WhatsApp</span>
+    </a>
+  </div>
+
+  <!-- DRAWERS & MODALS -->
+
+  <!-- Drawer: User Profile Settings -->
+  <div class="drawer-overlay" id="profile-drawer-overlay" onclick="closeProfileDrawer()"></div>
+  <div class="drawer-wrapper" id="profile-drawer">
+    <div class="drawer-header">
+      <h3>My Profile Settings</h3>
+      <button class="modal-close" onclick="closeProfileDrawer()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="drawer-body">
+      
+      <!-- Profile Details Form -->
+      <form id="profileForm" onsubmit="updateProfile(event)">
+        <h4 style="margin-bottom: 0.85rem; font-size: 0.95rem; border-bottom: 1px solid var(--border-glass); padding-bottom: 0.4rem; color: var(--primary-blue);">Edit Contact Details</h4>
+        <div class="form-group" style="margin-bottom: 0.85rem;">
+          <label>Full Name</label>
+          <input type="text" id="profName" class="form-control" required />
+        </div>
+        <div class="form-group" style="margin-bottom: 0.85rem;">
+          <label>Email ID</label>
+          <input type="email" id="profEmail" class="form-control" required />
+        </div>
+        <div class="form-group" style="margin-bottom: 0.85rem;">
+          <label>Phone Number</label>
+          <input type="tel" id="profPhone" class="form-control" required />
+        </div>
+        <div class="form-group" style="margin-bottom: 0.85rem;">
+          <label>Residential Address</label>
+          <input type="text" id="profAddress" class="form-control" placeholder="No. 123, Main Street" />
+        </div>
+        <div class="form-row" style="margin-bottom: 0.85rem;">
+          <div class="form-group">
+            <label>Pincode</label>
+            <input type="text" id="profPincode" class="form-control" placeholder="600001" />
+          </div>
+          <div class="form-group">
+            <label>Emergency Contact</label>
+            <input type="tel" id="profEmergency" class="form-control" placeholder="Guardian Phone" />
+          </div>
+        </div>
+        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.65rem;">Save Changes</button>
+      </form>
+
+      <!-- Change Password Form -->
+      <form id="passwordForm" onsubmit="changePassword(event)">
+        <h4 style="margin-bottom: 0.85rem; font-size: 0.95rem; border-bottom: 1px solid var(--border-glass); padding-bottom: 0.4rem; color: var(--primary-blue);">Security & Password</h4>
+        <div class="form-group" style="margin-bottom: 0.85rem;">
+          <label>Current Password</label>
+          <input type="password" id="oldPass" class="form-control" required />
+        </div>
+        <div class="form-group" style="margin-bottom: 0.85rem;">
+          <label>New Password</label>
+          <input type="password" id="newPass" class="form-control" required />
+        </div>
+        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.65rem;">Change Password</button>
+      </form>
+
+      <!-- KYC Document Upload Blocks -->
+      <div class="kyc-upload-container">
+        <h4 style="margin-bottom: 0.25rem; font-size: 0.95rem; color: var(--primary-blue); border-bottom: 1px solid var(--border-glass); padding-bottom: 0.4rem;">KYC Upload verification</h4>
+        
+        <div class="kyc-upload-card">
+          <div class="kyc-doc-info">
+            <h5>Aadhaar Card</h5>
+            <p id="kyc-status-aadhaar">Not uploaded</p>
+          </div>
+          <button class="kyc-upload-btn" onclick="triggerKycUpload('aadhaar')">Upload</button>
+        </div>
+        
+        <div class="kyc-upload-card">
+          <div class="kyc-doc-info">
+            <h5>PAN Card</h5>
+            <p id="kyc-status-pan">Not uploaded</p>
+          </div>
+          <button class="kyc-upload-btn" onclick="triggerKycUpload('pan')">Upload</button>
+        </div>
+        
+        <div class="kyc-upload-card">
+          <div class="kyc-doc-info">
+            <h5>Voter ID Card</h5>
+            <p id="kyc-status-voterid">Not uploaded</p>
+          </div>
+          <button class="kyc-upload-btn" onclick="triggerKycUpload('voterid')">Upload</button>
+        </div>
+        
+        <div class="kyc-upload-card">
+          <div class="kyc-doc-info">
+            <h5>Profile Photo</h5>
+            <p id="kyc-status-photo">Not uploaded</p>
+          </div>
+          <button class="kyc-upload-btn" onclick="triggerKycUpload('photo')">Upload</button>
+        </div>
+
+        <input type="file" id="kycFileInput" style="display: none;" onchange="handleKycFileSelected(event)" />
+      </div>
+
+      <!-- Sign Out -->
+      <div class="logout-btn-wrapper">
+        <button class="btn-danger" onclick="api.logout()">
+          <i class="fas fa-right-from-bracket"></i>
+          <span>Sign Out</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal: Add Existing Policy -->
+  <div class="modal-overlay" id="add-policy-modal" onclick="closeAddPolicyModal(event)">
+    <div class="modal-wrapper">
+      <div class="modal-header">
+        <h3>Add Existing Policy</h3>
+        <button class="modal-close" onclick="closeAddPolicyModal(event, true)"><i class="fas fa-times"></i></button>
+      </div>
+      <form id="addPolicyForm" onsubmit="uploadPolicy(event)">
+        <div class="modal-body">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label>Insurance Provider</label>
+            <select id="policyProvider" class="form-control" required>
+              <option value="" disabled selected>Select Provider</option>
+              <option value="Star Health">Star Health</option>
+              <option value="HDFC Ergo">HDFC Ergo</option>
+              <option value="Care Health">Care Health</option>
+              <option value="Niva Bupa">Niva Bupa</option>
+              <option value="ICICI Lombard">ICICI Lombard</option>
+              <option value="Chola MS">Chola MS</option>
+              <option value="Others">Others</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label>Policy Number</label>
+            <input type="text" id="policyNumber" class="form-control" placeholder="e.g. 00000034453" required />
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label>Policy Type</label>
+            <select id="policyType" class="form-control" required>
+              <option value="" disabled selected>Select Type</option>
+              <option value="Health">Health Insurance</option>
+              <option value="Motor">Motor Insurance</option>
+              <option value="Life">Life Insurance</option>
+              <option value="Others">Others</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label>Notes / Remarks</label>
+            <input type="text" id="policyNotes" class="form-control" placeholder="Any additional notes" />
+          </div>
+          <div class="form-group">
+            <label>Policy PDF Document</label>
+            <input type="file" id="policyFile" class="form-control" accept="application/pdf" required />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeAddPolicyModal(event, true)">Cancel</button>
+          <button type="submit" class="btn-primary">Add Policy</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Service Request Forms -->
+  <div class="modal-overlay" id="service-request-modal" onclick="closeServiceModal(event)">
+    <div class="modal-wrapper">
+      <div class="modal-header">
+        <h3 id="service-modal-title">Request Support</h3>
+        <button class="modal-close" onclick="closeServiceModal(event, true)"><i class="fas fa-times"></i></button>
+      </div>
+      <form id="serviceRequestForm" onsubmit="submitServiceRequest(event)">
+        <input type="hidden" id="serviceCategory" />
+        <div class="modal-body">
+          <p id="service-modal-description" style="font-size: 0.85rem; color: var(--text-gray); margin-bottom: 1.25rem; line-height: 1.4;"></p>
+          
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label>Preferred Time to Contact</label>
+            <input type="text" id="servicePreferredTime" class="form-control" placeholder="e.g. Morning 10AM, Any time" required />
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label>Description of Assistance Required</label>
+            <textarea id="serviceDescription" class="form-control" rows="3" placeholder="Tell us how we can help you with this service" required style="resize: none; font-family: inherit;"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Upload Supporting Documents (Optional)</label>
+            <input type="file" id="serviceFile" class="form-control" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeServiceModal(event, true)">Cancel</button>
+          <button type="submit" class="btn-primary">Submit Request</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: AI Agent Simulator Drawer -->
+  <div class="modal-overlay" id="ai-agent-modal" onclick="closeAiAgentChat(event)">
+    <div class="modal-wrapper">
+      <div class="modal-header">
+        <h3>Twinsure AI Copilot</h3>
+        <button class="modal-close" onclick="closeAiAgentChat(event, true)"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body ai-drawer">
+        <div class="chat-messages" id="chat-messages-container">
+          <div class="chat-msg agent">
+            Hello! I am your Twinsure AI Agent. How can I help you audit your policies or look up cashless hospital availability today?
+          </div>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" id="chat-input-field" class="form-control" placeholder="Ask something..." onkeydown="handleChatKeyDown(event)" />
+          <button class="btn-primary" onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- API CONNECTIVITY SCRIPTS -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    // State management
+    let state = {
+      user: null,
+      policies: [],
+      appointments: [],
+      updates: [],
+      activeTab: 'home',
+      kycUploadType: null
+    };
+
+    // Page Load Checks
+    window.addEventListener('DOMContentLoaded', async () => {
+      const token = localStorage.getItem('token');
+      const role = localStorage.getItem('role');
+      
+      if (!token || !role) {
+        api.logout('login.html');
+        return;
+      }
+      
+      if (role !== 'user') {
+        if (role === 'admin') {
+          window.location.href = 'admin.html';
+        } else {
+          api.logout('login.html');
+        }
+        return;
+      }
+      
+      // Load user profile details
+      await fetchUserProfile();
+      
+      // Fetch dynamic collections
+      await fetchUserPolicies();
+      await fetchUserAppointments();
+      await fetchUserUpdates();
+      
+      // Switch tab state on load
+      switchTab('home');
+    });
+
+    // Tab Switching
+    function switchTab(tabId) {
+      state.activeTab = tabId;
+      
+      // Hide all panels
+      document.querySelectorAll('.view-pane').forEach(el => el.classList.remove('active'));
+      
+      // Show active panel
+      const activePane = document.getElementById(`view-pane` !== `view-${tabId}` ? `view-${tabId}` : `view-pane`);
+      if (activePane) activePane.classList.add('active');
+      
+      // Update sidebar nav active state
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      const sideNavItem = document.getElementById(`side-nav-${tabId}`);
+      if (sideNavItem) sideNavItem.classList.add('active');
+      
+      // Update bottom nav active state
+      document.querySelectorAll('.bottom-nav-item').forEach(el => el.classList.remove('active'));
+      const botNavItem = document.getElementById(`bot-nav-${tabId}`);
+      if (botNavItem) botNavItem.classList.add('active');
+      
+      // Update header title text
+      const titleText = document.getElementById('page-title-text');
+      if (titleText) {
+        titleText.textContent = tabId.charAt(0).toUpperCase() + tabId.slice(1);
+      }
+      
+      // Scroll to top
+      window.scrollTo(0, 0);
+    }
+
+    // Profile drawer toggle
+    function openProfileDrawer() {
+      document.getElementById('profile-drawer-overlay').classList.add('active');
+      document.getElementById('profile-drawer').classList.add('active');
+    }
+
+    function closeProfileDrawer() {
+      document.getElementById('profile-drawer-overlay').classList.remove('active');
+      document.getElementById('profile-drawer').classList.remove('active');
+    }
+
+    // Fetch and populate Profile Drawer
+    async function fetchUserProfile() {
+      try {
+        const user = await api.get('/users/profile');
+        state.user = user;
+        
+        // Update user interfaces names & TSID
+        document.getElementById('sidebar-user-name').textContent = user.name;
+        document.getElementById('sidebar-user-tsid').textContent = user.tsid || 'TS-XXXX';
+        document.getElementById('home-greeting').textContent = `Good Morning, ${user.name.split(' ')[0]}`;
+        document.getElementById('home-user-id').textContent = `My ID: ${user.tsid || 'TS-XXXX'}`;
+        
+        // Generate avatar or fetch uploaded
+        let avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=007aff&color=fff`;
+        if (user.kyc && user.kyc.photo && user.kyc.photo.filePath) {
+          avatarUrl = window.BACKEND_ROOT + '/' + user.kyc.photo.filePath;
+        }
+        
+        document.getElementById('sidebar-user-avatar').src = avatarUrl;
+        document.getElementById('home-user-avatar').src = avatarUrl;
+        document.getElementById('mobile-user-avatar').src = avatarUrl;
+        
+        // KYC Badge home page
+        const homeKyc = document.getElementById('home-kyc-badge');
+        const kycStatus = (user.kyc && user.kyc.status) ? user.kyc.status : 'Not Verified';
+        
+        if (kycStatus === 'Verified') {
+          homeKyc.className = 'kyc-badge verified';
+          homeKyc.innerHTML = `<i class="fas fa-circle-check"></i> KYC Verified`;
+        } else if (kycStatus === 'Pending Verification') {
+          homeKyc.className = 'kyc-badge';
+          homeKyc.style.color = 'var(--warning-orange)';
+          homeKyc.style.borderColor = 'rgba(255, 149, 0, 0.3)';
+          homeKyc.style.background = 'rgba(255, 149, 0, 0.05)';
+          homeKyc.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Pending Verification`;
+        } else {
+          homeKyc.className = 'kyc-badge';
+          homeKyc.innerHTML = `<i class="fas fa-circle-exclamation"></i> KYC Not Verified`;
+        }
+        
+        // Update profile form fields
+        document.getElementById('profName').value = user.name || '';
+        document.getElementById('profEmail').value = user.email || '';
+        document.getElementById('profPhone').value = user.phone || '';
+        document.getElementById('profAddress').value = user.address || '';
+        document.getElementById('profPincode').value = user.pincode || '';
+        document.getElementById('profEmergency').value = user.emergencyContact || '';
+        
+        // Update KYC Status fields in profile drawer
+        updateKycDrawerRow('aadhaar', user.kyc && user.kyc.aadhaar);
+        updateKycDrawerRow('pan', user.kyc && user.kyc.pan);
+        updateKycDrawerRow('voterid', user.kyc && user.kyc.voterid);
+        updateKycDrawerRow('photo', user.kyc && user.kyc.photo);
+        
+      } catch (err) {
+        console.error('Error fetching user profile:', err);
+      }
+    }
+
+    function updateKycDrawerRow(docType, fileObj) {
+      const label = document.getElementById(`kyc-status-${docType}`);
+      if (!label) return;
+      
+      if (fileObj && fileObj.fileName) {
+        label.textContent = 'Uploaded & Pending';
+        label.style.color = 'var(--warning-orange)';
+      } else {
+        label.textContent = 'Not uploaded';
+        label.style.color = 'var(--text-muted)';
+      }
+    }
+
+    // Edit Profile details submit
+    async function updateProfile(event) {
+      event.preventDefault();
+      const payload = {
+        name: document.getElementById('profName').value,
+        email: document.getElementById('profEmail').value,
+        phone: document.getElementById('profPhone').value,
+        address: document.getElementById('profAddress').value,
+        pincode: document.getElementById('profPincode').value,
+        emergencyContact: document.getElementById('profEmergency').value
+      };
+      
+      try {
+        const res = await api.put('/users/profile', payload);
+        alert(res.message || 'Profile details updated successfully.');
+        await fetchUserProfile();
+      } catch (err) {
+        alert('Failed to update contact details.');
+      }
+    }
+
+    // Change Password submit
+    async function changePassword(event) {
+      event.preventDefault();
+      const oldPassword = document.getElementById('oldPass').value;
+      const newPassword = document.getElementById('newPass').value;
+      
+      try {
+        const res = await api.put('/users/password', { oldPassword, newPassword });
+        alert(res.message || 'Password changed successfully.');
+        document.getElementById('passwordForm').reset();
+      } catch (err) {
+        alert('Failed to change password. Please verify current password.');
+      }
+    }
+
+    // KYC File upload selection triggers
+    function triggerKycUpload(docType) {
+      state.kycUploadType = docType;
+      document.getElementById('kycFileInput').click();
+    }
+
+    async function handleKycFileSelected(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      const docType = state.kycUploadType;
+      if (!docType) return;
+      
+      const formData = new FormData();
+      formData.append('documentType', docType);
+      formData.append('file', file);
+      
+      try {
+        const res = await api.postMultipart('/users/kyc', formData);
+        alert(res.message || 'KYC document uploaded successfully.');
+        await fetchUserProfile();
+        await fetchUserUpdates();
+      } catch (err) {
+        alert('KYC upload failed. Ensure the document is a PDF or an Image file.');
+      } finally {
+        document.getElementById('kycFileInput').value = '';
+      }
+    }
+
+    // Policies Modal
+    function openAddPolicyModal() {
+      document.getElementById('add-policy-modal').classList.add('active');
+    }
+
+    function closeAddPolicyModal(event, force = false) {
+      if (force || event.target === document.getElementById('add-policy-modal')) {
+        document.getElementById('add-policy-modal').classList.remove('active');
+        document.getElementById('addPolicyForm').reset();
+      }
+    }
+
+    // Fetch user policies list
+    async function fetchUserPolicies() {
+      try {
+        const policies = await api.get('/users/policies');
+        state.policies = policies;
+        
+        const container = document.getElementById('policies-list');
+        if (policies.length === 0) {
+          container.innerHTML = `
+            <div class="glass-card" style="text-align: center; padding: 3rem 1.5rem; color: var(--text-gray);">
+              <i class="fas fa-folder-open" style="font-size: 2.5rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+              <h3>No Policies Added</h3>
+              <p style="font-size: 0.85rem; margin-top: 0.5rem;">Click the button above to upload and track your active insurance policies.</p>
+            </div>`;
+          return;
+        }
+        
+        container.innerHTML = policies.map(p => {
+          const downloadUrl = p.filePath ? window.BACKEND_ROOT + '/' + p.filePath : '#';
+          const fileClass = p.filePath ? '' : 'disabled';
+          
+          return `
+            <div class="policy-card">
+              <div class="policy-card-top">
+                <div class="policy-provider-info">
+                  <div class="policy-logo-wrapper">
+                    <i class="fas fa-shield-halved"></i>
+                  </div>
+                  <div class="policy-meta">
+                    <h3>${p.provider}</h3>
+                    <p>Policy Number: ${p.policyNumber}</p>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">Type: ${p.type}</p>
+                  </div>
+                </div>
+                <div class="status-badge ${p.status === 'Approved' ? 'approved' : 'pending'}">
+                  <i class="fas ${p.status === 'Approved' ? 'fa-circle-check' : 'fa-clock'}"></i>
+                  <span>${p.status}</span>
+                </div>
+              </div>
+              
+              ${p.notes ? `<p style="font-size: 0.82rem; color: var(--text-gray); background: rgba(255,255,255,0.02); padding: 0.6rem; border-radius: 8px; border: 1px solid var(--border-glass);">${p.notes}</p>` : ''}
+              
+              <div class="policy-card-actions">
+                <a href="${downloadUrl}" target="_blank" class="btn-secondary ${fileClass}"><i class="fas fa-eye"></i> View</a>
+                <a href="${downloadUrl}" download class="btn-secondary ${fileClass}"><i class="fas fa-download"></i> Download</a>
+                <a href="https://wa.me/919750003600?text=I%20have%20an%20issue%20with%20my%20${encodeURIComponent(p.provider)}%20policy%20${p.policyNumber}" target="_blank" class="btn-secondary"><i class="far fa-comments"></i> Contact Agent</a>
+              </div>
+            </div>`;
+        }).join('');
+        
+      } catch (err) {
+        console.error('Error fetching user policies:', err);
+      }
+    }
+
+    // Add Policy action
+    async function uploadPolicy(event) {
+      event.preventDefault();
+      const provider = document.getElementById('policyProvider').value;
+      const policyNumber = document.getElementById('policyNumber').value;
+      const type = document.getElementById('policyType').value;
+      const notes = document.getElementById('policyNotes').value;
+      const file = document.getElementById('policyFile').files[0];
+      
+      if (!file) return;
+      
+      const formData = new FormData();
+      formData.append('provider', provider);
+      formData.append('policyNumber', policyNumber);
+      formData.append('type', type);
+      formData.append('notes', notes);
+      formData.append('file', file);
+      
+      try {
+        const res = await api.postMultipart('/users/policies', formData);
+        alert(res.message || 'Policy added and uploaded successfully.');
+        document.getElementById('add-policy-modal').classList.remove('active');
+        document.getElementById('addPolicyForm').reset();
+        await fetchUserPolicies();
+        await fetchUserUpdates();
+      } catch (err) {
+        alert('Failed to upload policy document. Ensure file is a valid PDF.');
+      }
+    }
+
+    // Appointment selection
+    function selectApptType(type) {
+      document.getElementById('apptType').value = type;
+      document.getElementById('appt-type-call').classList.remove('active');
+      document.getElementById('appt-type-office').classList.remove('active');
+      
+      document.getElementById(`appt-type-${type}`).classList.add('active');
+    }
+
+    // Book Appointment
+    async function bookAppointment(event) {
+      event.preventDefault();
+      const payload = {
+        type: document.getElementById('apptType').value,
+        primaryPhone: document.getElementById('primaryMobile').value,
+        alternativePhone: document.getElementById('altMobile').value,
+        date: document.getElementById('preferredDate').value,
+        timeSlot: document.getElementById('preferredTime').value,
+        alternativeTimeSlot: document.getElementById('altTime').value,
+        purpose: document.getElementById('apptPurpose').value
+      };
+      
+      try {
+        const res = await api.post('/users/appointments', payload);
+        alert(res.message || 'Appointment requested successfully.');
+        document.getElementById('appointmentForm').reset();
+        await fetchUserAppointments();
+        await fetchUserUpdates();
+      } catch (err) {
+        alert('Failed to request appointment.');
+      }
+    }
+
+    // Fetch user appointments
+    async function fetchUserAppointments() {
+      try {
+        const appts = await api.get('/users/appointments');
+        state.appointments = appts;
+        
+        const container = document.getElementById('appointments-timeline');
+        if (appts.length === 0) {
+          container.innerHTML = `
+            <div style="color: var(--text-muted); font-size: 0.85rem; padding: 1rem 0;">
+              No appointments found. Use the form above to book an appointment.
+            </div>`;
+          return;
+        }
+        
+        container.innerHTML = appts.map(appt => {
+          let dotClass = '';
+          if (appt.status === 'Completed') dotClass = 'completed';
+          else if (appt.status === 'Booked') dotClass = 'pending';
+          
+          return `
+            <div class="timeline-node">
+              <div class="timeline-dot ${dotClass}"></div>
+              <div class="timeline-content-card">
+                <div class="timeline-info">
+                  <h4>${appt.purpose}</h4>
+                  <p>Type: ${appt.type === 'call' ? 'Call Assistance' : 'Office Visit'}</p>
+                  <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">Date: ${appt.date} at ${appt.timeSlot}</p>
+                </div>
+                <div class="status-badge ${appt.status === 'Completed' ? 'verified' : 'pending'}">
+                  <span>${appt.status}</span>
+                </div>
+              </div>
+            </div>`;
+        }).join('');
+        
+      } catch (err) {
+        console.error('Error fetching appointments:', err);
+      }
+    }
+
+    // Services Modals Toggle
+    const servicesMeta = {
+      'Icare': 'Reach out to our health insurance support team for claims filing assistance, claims rejection review, and general health scheme guidance.',
+      'Re.New.All': 'Renewal management assistance. Leave details of the policies you wish to track and renew, and our team will get in touch with optimized rate options.',
+      'HosPos': 'HosPos hospital support. Get cashless verification assistance, find network hospitals in your city, and get seamless entry pre-approvals.',
+      'Pre Policy Audit': 'Submit your policy coordinates for a complete visual review. Our AI tool alongside underwriters will audit your inclusions/exclusions.'
+    };
+
+    function openServiceModal(category) {
+      document.getElementById('serviceCategory').value = category;
+      document.getElementById('service-modal-title').textContent = `${category} Assistance`;
+      document.getElementById('service-modal-description').textContent = servicesMeta[category] || 'Request support coordinates.';
+      document.getElementById('service-request-modal').classList.add('active');
+    }
+
+    function closeServiceModal(event, force = false) {
+      if (force || event.target === document.getElementById('service-request-modal')) {
+        document.getElementById('service-request-modal').classList.remove('active');
+        document.getElementById('serviceRequestForm').reset();
+      }
+    }
+
+    // Submit service request
+    async function submitServiceRequest(event) {
+      event.preventDefault();
+      const payload = {
+        category: document.getElementById('serviceCategory').value,
+        preferredTime: document.getElementById('servicePreferredTime').value,
+        description: document.getElementById('serviceDescription').value,
+        notes: ''
+      };
+      
+      try {
+        const res = await api.post('/users/services', payload);
+        alert(res.message || 'Support service requested successfully.');
+        document.getElementById('service-request-modal').classList.remove('active');
+        document.getElementById('serviceRequestForm').reset();
+        await fetchUserUpdates();
+      } catch (err) {
+        alert('Failed to request service assistance.');
+      }
+    }
+
+    // Fetch user updates
+    async function fetchUserUpdates() {
+      try {
+        const updates = await api.get('/users/updates');
+        state.updates = updates;
+        
+        // Render mobile and desktop unread counts
+        const pendingCount = updates.filter(u => u.status === 'Pending' || u.status === 'Confirmed').length;
+        document.getElementById('mobile-notif-count').textContent = pendingCount;
+        document.getElementById('desktop-notif-count').textContent = pendingCount;
+        if (pendingCount === 0) {
+          document.getElementById('mobile-notif-count').style.display = 'none';
+          document.getElementById('desktop-notif-count').style.display = 'none';
+        } else {
+          document.getElementById('mobile-notif-count').style.display = 'flex';
+          document.getElementById('desktop-notif-count').style.display = 'flex';
+        }
+
+        // Render Home page recent activity (maximum 3 items)
+        const recentActivity = updates.slice(0, 3);
+        const homeActivityList = document.getElementById('home-activity-list');
+        
+        if (recentActivity.length === 0) {
+          homeActivityList.innerHTML = `
+            <div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 1rem 0;">
+              No recent activity recorded.
+            </div>`;
+        } else {
+          homeActivityList.innerHTML = recentActivity.map((act, index) => {
+            const timeFormatted = act.createdAt ? act.createdAt.slice(11, 16) || 'Today' : 'Today';
+            return `
+              <div class="activity-item">
+                <div class="activity-num">${index + 1}.</div>
+                <div class="activity-content">
+                  <div class="activity-details">
+                    <h5>${act.title}</h5>
+                    <p>${act.message}</p>
+                  </div>
+                  <div class="activity-time">${timeFormatted}</div>
+                </div>
+              </div>`;
+          }).join('');
+        }
+
+        // Render full Updates view timeline
+        renderUpdatesTimeline(updates);
+
+      } catch (err) {
+        console.error('Error fetching user updates:', err);
+      }
+    }
+
+    function renderUpdatesTimeline(list) {
+      const container = document.getElementById('updates-timeline');
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div style="color: var(--text-muted); font-size: 0.85rem; padding: 2rem 0; text-align: center;">
+            No updates available in this category.
+          </div>`;
+        return;
+      }
+      
+      container.innerHTML = list.map(u => {
+        let dotClass = '';
+        if (u.status === 'Approved' || u.status === 'Confirmed') dotClass = 'completed';
+        else if (u.status === 'Pending') dotClass = 'pending';
+        
+        return `
+          <div class="timeline-node">
+            <div class="timeline-dot ${dotClass}"></div>
+            <div class="timeline-content-card">
+              <div class="timeline-info" style="flex: 1; margin-right: 1rem;">
+                <h4 style="font-size: 0.92rem; font-weight: 700; margin-bottom: 0.25rem;">${u.title}</h4>
+                <p style="font-size: 0.8rem; color: var(--text-gray); line-height: 1.4;">${u.message}</p>
+                <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.4rem;"><i class="far fa-clock"></i> ${u.createdAt ? u.createdAt.slice(0, 10) : 'Today'}</p>
+              </div>
+              <div class="status-badge ${u.status === 'Approved' || u.status === 'Confirmed' ? 'approved' : 'pending'}">
+                <span>${u.status}</span>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    // Filter updates on click
+    function filterUpdates(category, pillBtn) {
+      document.querySelectorAll('.updates-filters .filter-pill').forEach(el => el.classList.remove('active'));
+      pillBtn.classList.add('active');
+      
+      if (category === 'all') {
+        renderUpdatesTimeline(state.updates);
+      } else {
+        const filtered = state.updates.filter(u => u.category === category);
+        renderUpdatesTimeline(filtered);
+      }
+    }
+
+    // AI Agent simulator Modal triggers
+    function openAiAgentChat() {
+      document.getElementById('ai-agent-modal').classList.add('active');
+      document.getElementById('chat-input-field').focus();
+    }
+
+    function closeAiAgentChat(event, force = false) {
+      if (force || event.target === document.getElementById('ai-agent-modal')) {
+        document.getElementById('ai-agent-modal').classList.remove('active');
+      }
+    }
+
+    function handleChatKeyDown(event) {
+      if (event.key === 'Enter') {
+        sendChatMessage();
+      }
+    }
+
+    function sendChatMessage() {
+      const input = document.getElementById('chat-input-field');
+      const text = input.value.trim();
+      if (!text) return;
+      
+      // Render user message
+      const container = document.getElementById('chat-messages-container');
+      const userMsg = document.createElement('div');
+      userMsg.className = 'chat-msg user';
+      userMsg.textContent = text;
+      container.appendChild(userMsg);
+      
+      input.value = '';
+      container.scrollTop = container.scrollHeight;
+      
+      // Simulate simple agent response after 1 second
+      setTimeout(() => {
+        const agentMsg = document.createElement('div');
+        agentMsg.className = 'chat-msg agent';
+        
+        const lowerText = text.toLowerCase();
+        if (lowerText.includes('policy') || lowerText.includes('audit')) {
+          agentMsg.textContent = "I can see your policies list. You can upload any policy PDF under the 'Policies' tab, and I'll automatically verify details such as exclusions and waiting periods.";
+        } else if (lowerText.includes('kyc') || lowerText.includes('aadhaar') || lowerText.includes('pan')) {
+          agentMsg.textContent = "To verify your KYC details, click your profile icon (top right on mobile) and select which card to upload. Our compliance officers will review it within 24 hours.";
+        } else if (lowerText.includes('appointment') || lowerText.includes('consult')) {
+          agentMsg.textContent = "You can schedule a direct call back or face-to-face visit with agent Priya K. in the Appointments tab. Let me know if you need help choosing a slot.";
+        } else {
+          agentMsg.textContent = "Thank you for reaching out! I am a smart assistant. For immediate assistance with claim approvals or emergency hospital cash, feel free to drop us a direct WhatsApp message.";
+        }
+        
+        container.appendChild(agentMsg);
+        container.scrollTop = container.scrollHeight;
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
