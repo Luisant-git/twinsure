@@ -2180,9 +2180,15 @@ app.get('/private/*', async (req, res) => {
     return;
   }
 
+  let decoded;
   try {
-    const decoded = jwt.verify(token, config.jwtSecret);
-    
+    decoded = jwt.verify(token, config.jwtSecret);
+  } catch (jwtErr) {
+    res.status(401).send('Invalid or expired token.');
+    return;
+  }
+
+  try {
     // Authorization logic:
     // 1. Admins can access any file.
     // 2. Regular users can only access files they own (KYC or policies).
@@ -2222,7 +2228,11 @@ app.get('/private/*', async (req, res) => {
     res.redirect(signedUrl);
   } catch (error) {
     console.error('Error serving private file from R2:', key, error.message);
-    res.status(401).send('Invalid or expired token.');
+    if (error.message.includes('R2 configuration') || error.message.includes('R2_')) {
+      res.status(500).send(`Storage Error: ${error.message}`);
+    } else {
+      res.status(500).send('An internal server error occurred.');
+    }
   }
 });
 
