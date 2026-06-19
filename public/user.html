@@ -2647,7 +2647,8 @@
         // Avatar source resolves
         let avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=007aff&color=fff`;
         if (user.kyc && user.kyc.photo && user.kyc.photo.filePath) {
-          avatarUrl = window.BACKEND_ROOT + '/' + user.kyc.photo.filePath;
+          const token = localStorage.getItem('token');
+          avatarUrl = window.BACKEND_ROOT + '/' + user.kyc.photo.filePath + (token ? '?token=' + encodeURIComponent(token) : '');
         }
         
         document.getElementById('sidebar-avatar-img').src = avatarUrl;
@@ -2711,7 +2712,8 @@
       if (!viewBtn) return;
       
       if (fileObj && fileObj.filePath) {
-        viewBtn.href = window.BACKEND_ROOT + '/' + fileObj.filePath;
+        const token = localStorage.getItem('token');
+        viewBtn.href = window.BACKEND_ROOT + '/' + fileObj.filePath + (token ? '?token=' + encodeURIComponent(token) : '');
         viewBtn.style.display = 'inline-block';
       } else {
         viewBtn.style.display = 'none';
@@ -2878,7 +2880,9 @@
         }
         
         container.innerHTML = policies.map(p => {
-          const fileUrl = p.filePath ? window.BACKEND_ROOT + '/' + p.filePath : '#';
+          const token = localStorage.getItem('token');
+          const tokenSuffix = token ? '?token=' + encodeURIComponent(token) : '';
+          const fileUrl = p.filePath ? window.BACKEND_ROOT + '/' + p.filePath + tokenSuffix : '#';
           const fileClass = p.filePath ? '' : 'disabled';
           
           let statusBadgeClass = 'status-' + p.status.toLowerCase().replace(/\s+/g, '-');

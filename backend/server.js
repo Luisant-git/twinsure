@@ -1,7 +1,6 @@
 const crypto = require('crypto');
 const express = require('express');
 const compression = require('compression');
-const fs = require('fs');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const jwt = require('jsonwebtoken');
@@ -20,6 +19,7 @@ const {
   updateOne
 } = require('./lib/database');
 const { requireRole } = require('./lib/auth');
+const r2 = require('./lib/r2');
 
 const app = express();
 app.set('trust proxy', 1);
@@ -46,10 +46,8 @@ app.use((req, res, next) => {
 });
 const rootDir = path.join(__dirname, '..');
 const publicDir = path.join(rootDir, 'public');
-const claimsUploadDir = path.join(publicDir, 'uploads', 'claims');
-const partnersUploadDir = path.join(publicDir, 'uploads', 'partners');
-const policiesUploadDir = path.join(publicDir, 'uploads', 'policies');
-const kycUploadDir = path.join(publicDir, 'uploads', 'kyc');
+
+// Files are now stored in Cloudflare R2 — multer keeps buffers in memory only
 const upload = multer({ storage: multer.memoryStorage() });
 
 const nodemailer = require('nodemailer');
@@ -73,18 +71,6 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 
-function ensureDirectory(directoryPath) {
-  try {
-    fs.mkdirSync(directoryPath, { recursive: true });
-  } catch (err) {
-    if (err && err.code === 'EEXIST') {
-      // Already exists — ignore
-      return;
-    }
-    throw err;
-  }
-}
-
 function sendJson(res, statusCode, payload) {
   res.status(statusCode).type('application/json').send(JSON.stringify(payload));
 }
@@ -95,6 +81,7 @@ function methodNotAllowed(res, req = null, message = 'Method not allowed.') {
   }
   sendJson(res, 405, { message });
 }
+
 function normalizeString(value) {
   return typeof value === 'string' ? value.trim() : '';
 }
@@ -107,24 +94,19 @@ function formatFileSize(size) {
   if (size >= 1048576) {
     return `${Math.round((size / 1048576) * 10) / 10} MB`;
   }
-
   return `${Math.round(size / 1024)} KB`;
 }
 
 function validateFileSignature(buffer, expectedTypes) {
   if (!buffer || buffer.length < 4) return false;
-
   const hex = buffer.toString('hex', 0, 4).toUpperCase();
-
   if (expectedTypes.includes('pdf')) {
     if (hex.startsWith('25504446')) return true; // %PDF
   }
-
   if (expectedTypes.includes('image')) {
-    if (hex.startsWith('FFD8FF')) return true; // JPEG
+    if (hex.startsWith('FFD8FF')) return true;   // JPEG
     if (hex.startsWith('89504E47')) return true; // PNG
   }
-
   return false;
 }
 
@@ -138,17 +120,6 @@ function isImageFile(file) {
   const originalName = file?.originalname || '';
   const ext = path.extname(originalName).toLowerCase();
   return ['.jpg', '.jpeg', '.png'].includes(ext) && validateFileSignature(file?.buffer, ['image']);
-}
-
-function fileBufferToPath(filePath, buffer) {
-  ensureDirectory(path.dirname(filePath));
-  fs.writeFileSync(filePath, buffer);
-}
-
-function deleteFileIfExists(filePath) {
-  if (filePath && fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-    fs.unlinkSync(filePath);
-  }
 }
 
 function collectBody(req) {
@@ -191,10 +162,6 @@ function normalizeHelpRequestStatus(status) {
 
 async function connectAndSeed() {
   await getDb();
-  ensureDirectory(claimsUploadDir);
-  ensureDirectory(partnersUploadDir);
-  ensureDirectory(policiesUploadDir);
-  ensureDirectory(kycUploadDir);
 
   const collectionsToCreate = ['users', 'services', 'partners', 'recommendation_questions', 'leads', 'form_help_requests', 'settings', 'contacts', 'claims', 'testimonials', 'user_policies', 'appointments', 'user_services', 'user_updates'];
   for (const collectionName of collectionsToCreate) {
@@ -315,153 +282,7 @@ async function connectAndSeed() {
     }
   }
 
-  const existingClaim = await findOne('claims', {});
-  if (!existingClaim) {
-    console.log('Seeding initial claims...');
-    const initialClaims = [
-      {
-        _id: toObjectId("6a2849c79c64d9a23efcd2fe"),
-        name: "Care Health: Claim Form (Reimbursement)",
-        category: "Health",
-        description: "Standard Care Health claim form for reimbursement. Part A to be filled by the insured, Part B by the hospital.",
-        status: "active",
-        fileName: "1781025223_CARE_HEALTH_CLAIM_FORM.pdf",
-        filePath: "uploads/claims/1781025223_CARE_HEALTH_CLAIM_FORM.pdf",
-        fileSize: "1.5 MB",
-        downloads: 2,
-        uploadedBy: "Naresh",
-        createdAt: new Date(),
-        lastUpdated: new Date()
-      },
-      {
-        _id: toObjectId("6a276d18e8bb34d38376685d"),
-        name: "Care Health: Pre-Authorization Form",
-        category: "Health",
-        description: "FAX/SCAN Page 1 & 2 only to Care Health for cashless approval. Page 3 (Declaration) should NOT be faxed.\n\nPage 1 & 2 மட்டும் FAX/SCAN செய்யுங்கள். Page 3 (Declaration) fax செய்யாதீர்கள்.",
-        status: "active",
-        fileName: "1780968728_care-pre-authorization-form.pdf",
-        filePath: "uploads/claims/1780968728_care-pre-authorization-form.pdf",
-        fileSize: "100 KB",
-        downloads: 1,
-        uploadedBy: "Naresh",
-        createdAt: new Date(),
-        lastUpdated: new Date()
-      },
-      {
-        _id: toObjectId("6a276cece8bb34d38376685c"),
-        name: "Chola MS: Health Claim Form (Reimbursement)",
-        category: "Health",
-        description: "Submit claim documents within 30 days of discharge. NEFT cannot be done without a cancelled cheque — always attach one.\n\nDischarge-ஆன 30 நாட்களில் submit செய்யுங்கள். Cancelled cheque இல்லாமல் NEFT முடியாது — எப்போதும் attach செய்யுங்கள்.",
-        status: "active",
-        fileName: "1780968684_CHOLA_Health-Claim-Form.pdf",
-        filePath: "uploads/claims/1780968684_CHOLA_Health-Claim-Form.pdf",
-        fileSize: "3.1 MB",
-        downloads: 0,
-        uploadedBy: "Naresh",
-        createdAt: new Date(),
-        lastUpdated: new Date()
-      },
-      {
-        _id: toObjectId("6a276cbde8bb34d38376685b"),
-        name: "Chola MS: Pre-Authorization Form for Cashless",
-        category: "Others",
-        description: "FAX/SCAN PAGE 1 ONLY to Chola MS for cashless approval before or during hospital admission.\n\nCashless approval-க்கு PAGE 1 மட்டும் FAX/SCAN செய்யுங்கள் — hospitalization-க்கு முன்பு அல்லது நேரத்தில்.",
-        status: "active",
-        fileName: "1780968637_Chola-MS-Pre-Authorisation-Form.pdf",
-        filePath: "uploads/claims/1780968637_Chola-MS-Pre-Authorisation-Form.pdf",
-        fileSize: "926 KB",
-        downloads: 0,
-        uploadedBy: "Naresh",
-        createdAt: new Date(),
-        lastUpdated: new Date()
-      },
-      {
-        _id: toObjectId("6a276c8ee8bb34d38376685a"),
-        name: "ICICI Lombard: Hospitalization Claim Form",
-        category: "Health",
-        description: "Full reimbursement claim form with 4 parts. Submit with all original bills within 30 days of discharge.\n\n4 parts உள்ள complete reimbursement claim form. Discharge-ஆன 30 நாட்களில் original bills-உடன் submit செய்யவும்.",
-        status: "active",
-        fileName: "1780968590_icici_claim_form.pdf",
-        filePath: "uploads/claims/1780968590_icici_claim_form.pdf",
-        fileSize: "367 KB",
-        downloads: 0,
-        uploadedBy: "Naresh",
-        createdAt: new Date(),
-        lastUpdated: new Date()
-      },
-      {
-        _id: toObjectId("6a276c49e8bb34d383766859"),
-        name: "ICICI Lombard: Cashless Authorization Request Form",
-        category: "Others",
-        description: "Used to request cashless treatment before or during hospitalization. Send by fax or email to ICICI Lombard's cashless team.\n\nHospitalization-க்கு முன்பு அல்லது நேரத்தில் cashless கோர பயன்படும். Fax / email மூலம் ICICI-க்கு அனுப்பவும்.",
-        status: "active",
-        fileName: "1780968521_ICICI_LOMBOARD-pre-authorisation-form.pdf",
-        filePath: "uploads/claims/1780968521_ICICI_LOMBOARD-pre-authorisation-form.pdf",
-        fileSize: "55 KB",
-        downloads: 0,
-        uploadedBy: "Naresh",
-        createdAt: new Date(),
-        lastUpdated: new Date()
-      },
-      {
-        _id: toObjectId("6a276c16e8bb34d383766858"),
-        name: "Niva Bupa: Health Insurance Claim Form",
-        category: "Health",
-        description: "Standard health claim form. Part A filled by insured. Part B filled by hospital. Submit within 30 days of discharge.\n\nStandard health claim form. Part A-வை insured, Part B-வை hospital fill செய்யும். Discharge-ஆன 30 நாட்களில் submit செய்யுங்கள்.",
-        status: "active",
-        fileName: "1780968470_NIVA_BUPA_claim-form.pdf",
-        filePath: "uploads/claims/1780968470_NIVA_BUPA_claim-form.pdf",
-        fileSize: "453 KB",
-        downloads: 0,
-        uploadedBy: "Naresh",
-        createdAt: new Date(),
-        lastUpdated: new Date()
-      },
-      {
-        _id: toObjectId("6a276b7fe8bb34d383766857"),
-        name: "Star Health: Accident Care Insurance Claim Form",
-        category: "Health",
-        description: "Used for accident-related insurance claims. Submit after accident to claim compensation for injury, disability, or death.\n\nவிபத்து காரணமாக ஏற்பட்ட காயம், மரணம் அல்லது disability-க்கு பணம் கோர பயன்படும்.",
-        status: "active",
-        fileName: "1780968319_STAR_accident_claim_form.pdf",
-        filePath: "uploads/claims/1780968319_STAR_accident_claim_form.pdf",
-        fileSize: "327 KB",
-        downloads: 0,
-        uploadedBy: "Naresh",
-        createdAt: new Date(),
-        lastUpdated: new Date()
-      },
-      {
-        _id: toObjectId("6a276b30e8bb34d383766856"),
-        name: "Star Health: Pre-Authorization Form for Cashless",
-        category: "Health",
-        description: "This form is sent to Star Health BEFORE admission for cashless treatment. Hospital fills most of it. Patient fills personal details.\n\nஇந்த form hospitalization-க்கு முன்பே cashless-க்கு அனுமதி கேட்க பயன்படுகிறது. Hospital பெரும்பாலும் fill செய்யும்.",
-        status: "active",
-        fileName: "1780968240_StarHealthPreAuthForm.pdf",
-        filePath: "uploads/claims/1780968240_StarHealthPreAuthForm.pdf",
-        fileSize: "642 KB",
-        downloads: 0,
-        uploadedBy: "Naresh",
-        createdAt: new Date(),
-        lastUpdated: new Date()
-      }
-    ];
-    for (const claim of initialClaims) {
-      await insertOne('claims', claim);
-    }
-  } else {
-    const testClaim = await findOne('claims', { fileName: "1781025223_CARE_HEALTH_CLAIM_FORM.pdf" });
-    if (testClaim && (testClaim.name === 'test' || testClaim.category === 'Life')) {
-      await updateOne('claims', { _id: toObjectId(testClaim._id) }, {
-        $set: {
-          name: "Care Health: Claim Form (Reimbursement)",
-          category: "Health",
-          description: "Standard Care Health claim form for reimbursement. Part A to be filled by the insured, Part B by the hospital.",
-          lastUpdated: new Date()
-        }
-      });
-    }
-  }
+
 }
 
 const allowedOrigins = [
@@ -542,10 +363,7 @@ app.use((err, req, res, next) => {
   next(err);
 });
 
-app.use('/uploads/claims', express.static(claimsUploadDir));
-app.use('/uploads/partners', express.static(partnersUploadDir));
-app.use('/uploads/policies', express.static(policiesUploadDir));
-app.use('/uploads/kyc', express.static(kycUploadDir));
+// Static upload routes removed — files are now served from Cloudflare R2
 app.use(express.static(publicDir));
 app.get('/', (req, res) => {
   res.sendFile(path.join(publicDir, 'index.html'));
@@ -1121,11 +939,14 @@ function createApiRouter() {
         let claimFormsHtml = '';
 
         for (const c of allRequestedClaims) {
-          const absoluteFilePath = path.join(publicDir, c.filePath);
-          if (fs.existsSync(absoluteFilePath)) {
+          if (!c.filePath) continue;
+          try {
+            // Fetch file buffer directly from R2 (no local disk involved)
+            const buffer = await r2.getBufferFromR2(c.filePath);
             attachments.push({
-              filename: c.fileName || `${c.name}.pdf`,
-              path: absoluteFilePath
+              filename    : c.fileName || `${c.name}.pdf`,
+              content     : buffer,
+              contentType : 'application/pdf'
             });
 
             // HTML display item for each claim form
@@ -1136,8 +957,8 @@ function createApiRouter() {
               <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #475569; white-space: pre-line;">${c.description || 'Download this form to start your claim.'}</p>
             </div>
             `;
-          } else {
-            console.error(`PDF file not found at path: ${absoluteFilePath}`);
+          } catch (fetchErr) {
+            console.error(`Failed to fetch claim PDF from R2 (key: ${c.filePath}):`, fetchErr.message);
           }
         }
 
@@ -1216,7 +1037,10 @@ function createApiRouter() {
       }
 
       await updateOne('claims', { _id: toObjectId(id) }, { $inc: { downloads: 1 } });
-      res.redirect(`/${claim.filePath}`);
+
+      // Redirect to R2 URL (public files get permanent URL; private files get 5-min signed URL)
+      const fileUrl = await r2.getFileUrl(claim.filePath, 300);
+      res.redirect(fileUrl);
     } catch (error) {
       console.error('Database/Server Error:', error.message);
       res.status(500).send('An internal server error occurred.');
@@ -1273,8 +1097,9 @@ function createApiRouter() {
 
         const cleanName = sanitizeFileName(req.file.originalname);
         fileName = `${Math.floor(Date.now() / 1000)}_${cleanName}`;
-        filePath = path.join(claimsUploadDir, fileName);
-        fileBufferToPath(filePath, req.file.buffer);
+        const r2Key = `${r2.R2_PATHS.CLAIM_FORMS}/${fileName}`;
+        await r2.uploadToR2(req.file.buffer, r2Key, 'application/pdf');
+        filePath = r2Key;
         fileSize = formatFileSize(req.file.size);
       }
 
@@ -1286,6 +1111,7 @@ function createApiRouter() {
       const now = new Date();
       const adminName = await getAdminName(req.user.id);
 
+      // Store R2 key directly (no local path)
       if (!id) {
         await insertOne('claims', {
           name,
@@ -1293,11 +1119,11 @@ function createApiRouter() {
           description,
           status,
           fileName,
-          filePath: `uploads/claims/${fileName}`,
+          filePath,          // R2 key e.g. "public/claim-forms/xxx.pdf"
           fileSize,
-          downloads: 0,
-          uploadedBy: adminName,
-          createdAt: now,
+          downloads  : 0,
+          uploadedBy : adminName,
+          createdAt  : now,
           lastUpdated: now
         });
         sendJson(res, 201, { success: true, message: 'Claim form published successfully.' });
@@ -1305,11 +1131,16 @@ function createApiRouter() {
       }
 
       const finalFileName = fileName !== null ? fileName : existingClaim.fileName;
-      const finalFilePath = filePath !== null ? `uploads/claims/${fileName}` : existingClaim.filePath;
+      const finalFilePath = filePath !== null ? filePath : existingClaim.filePath;
       const finalFileSize = fileSize !== null ? fileSize : existingClaim.fileSize;
 
+      // Delete the old file from R2 if a new file was uploaded
       if (filePath !== null && existingClaim.filePath) {
-        deleteFileIfExists(path.join(publicDir, existingClaim.filePath));
+        try {
+          await r2.deleteFromR2(existingClaim.filePath);
+        } catch (r2Err) {
+          console.error(`Failed to delete old file from R2 for claim ${id}:`, r2Err.message);
+        }
       }
 
       await updateOne('claims', { _id: toObjectId(id) }, {
@@ -1328,7 +1159,11 @@ function createApiRouter() {
       sendJson(res, 200, { success: true, message: 'Claim form updated successfully.' });
     } catch (error) {
       console.error('Database/Server Error:', error.message);
-      sendJson(res, 500, { message: 'An internal server error occurred.' });
+      if (error.message.includes('R2 configuration') || error.message.includes('R2_')) {
+        sendJson(res, 500, { message: `Storage Error: ${error.message}` });
+      } else {
+        sendJson(res, 500, { message: 'An internal server error occurred.' });
+      }
     }
   });
 
@@ -1343,7 +1178,11 @@ function createApiRouter() {
     try {
       const claim = await findOne('claims', { _id: toObjectId(id) });
       if (claim && claim.filePath) {
-        deleteFileIfExists(path.join(publicDir, claim.filePath));
+        try {
+          await r2.deleteFromR2(claim.filePath);
+        } catch (r2Err) {
+          console.error(`Failed to delete file from R2 for claim ${id}:`, r2Err.message);
+        }
       }
 
       await deleteOne('claims', { _id: toObjectId(id) });
@@ -1533,10 +1372,9 @@ function createApiRouter() {
         const ext = path.extname(originalName).toLowerCase();
         const safe = path.basename(originalName, ext).replace(/[^a-zA-Z0-9_\-.]/g, '_');
         const filename = `${safe}_${Date.now()}${ext}`;
-        const destination = path.join(partnersUploadDir, filename);
-        ensureDirectory(path.dirname(destination));
-        fs.writeFileSync(destination, req.file.buffer);
-        photoPath = `uploads/partners/${filename}`;
+        const r2Key = `${r2.R2_PATHS.PARTNERS}/${filename}`;
+        await r2.uploadToR2(req.file.buffer, r2Key, r2.getContentType(filename));
+        photoPath = r2Key;
       }
 
       const insertedId = await insertOne('partners', {
@@ -1555,7 +1393,11 @@ function createApiRouter() {
       sendJson(res, 201, { message: 'Partner created', id: String(insertedId) });
     } catch (error) {
       console.error('Database/Server Error:', error.message);
-      sendJson(res, 500, { message: 'An internal server error occurred.' });
+      if (error.message.includes('R2 configuration') || error.message.includes('R2_')) {
+        sendJson(res, 500, { message: `Storage Error: ${error.message}` });
+      } else {
+        sendJson(res, 500, { message: 'An internal server error occurred.' });
+      }
     }
   });
 
@@ -2007,23 +1849,24 @@ function createApiRouter() {
 
         const cleanName = sanitizeFileName(req.file.originalname);
         fileName = `${Math.floor(Date.now() / 1000)}_${cleanName}`;
-        filePath = path.join(policiesUploadDir, fileName);
-        fileBufferToPath(filePath, req.file.buffer);
+        const r2Key = `${r2.R2_PATHS.POLICIES}/${fileName}`;
+        await r2.uploadToR2(req.file.buffer, r2Key, 'application/pdf');
+        filePath = r2Key;
         fileSize = formatFileSize(req.file.size);
       }
 
       await insertOne('user_policies', {
-        userId: req.user.id,
+        userId       : req.user.id,
         policyNumber,
         provider,
         type,
         notes,
         fileName,
-        filePath: fileName ? `uploads/policies/${fileName}` : null,
+        filePath,          // R2 key e.g. "private/policies/xxx.pdf" (or null)
         fileSize,
-        status: 'Pending Verification',
-        createdAt: new Date(),
-        updatedAt: new Date()
+        status     : 'Pending Verification',
+        createdAt  : new Date(),
+        updatedAt  : new Date()
       });
 
       await insertOne('user_updates', {
@@ -2038,7 +1881,11 @@ function createApiRouter() {
       sendJson(res, 201, { message: 'Policy added successfully.' });
     } catch (error) {
       console.error('Error adding policy:', error.message);
-      sendJson(res, 500, { message: 'An internal server error occurred.' });
+      if (error.message.includes('R2 configuration') || error.message.includes('R2_')) {
+        sendJson(res, 500, { message: `Storage Error: ${error.message}` });
+      } else {
+        sendJson(res, 500, { message: 'An internal server error occurred.' });
+      }
     }
   });
 
@@ -2177,10 +2024,13 @@ function createApiRouter() {
         return;
       }
 
-      const cleanName = sanitizeFileName(req.file.originalname);
-      const fileName = `${Math.floor(Date.now() / 1000)}_${cleanName}`;
-      const filePath = path.join(kycUploadDir, fileName);
-      fileBufferToPath(filePath, req.file.buffer);
+      const cleanName   = sanitizeFileName(req.file.originalname);
+      const fileName     = `${Math.floor(Date.now() / 1000)}_${cleanName}`;
+
+      // Route to the correct R2 private folder based on document type
+      const folder = r2.KYC_FOLDER_MAP[documentType];
+      const r2Key  = `${folder}/${fileName}`;
+      await r2.uploadToR2(req.file.buffer, r2Key, r2.getContentType(fileName));
 
       const db = await getDb();
       const user = await findOne('users', { _id: toObjectId(req.user.id) });
@@ -2192,7 +2042,7 @@ function createApiRouter() {
       const kycData = user.kyc || { status: 'Not Verified', aadhaar: null, pan: null, voterid: null, photo: null };
       kycData[documentType] = {
         fileName,
-        filePath: `uploads/kyc/${fileName}`,
+        filePath  : r2Key,   // R2 key e.g. "private/aadhaar/xxx.pdf"
         uploadedAt: new Date()
       };
       kycData.status = 'Pending Verification';
@@ -2211,7 +2061,86 @@ function createApiRouter() {
       sendJson(res, 200, { message: `${documentType.toUpperCase()} uploaded successfully. Status set to Pending Verification.` });
     } catch (error) {
       console.error('Error uploading KYC:', error.message);
-      sendJson(res, 500, { message: 'An internal server error occurred.' });
+      if (error.message.includes('R2 configuration') || error.message.includes('R2_')) {
+        sendJson(res, 500, { message: `Storage Error: ${error.message}` });
+      } else {
+        sendJson(res, 500, { message: 'An internal server error occurred.' });
+      }
+    }
+  });
+
+  // ── Signed URL endpoint ────────────────────────────────────────────────────
+  // GET /backend/api/file/signed?key=private/aadhaar/xxx.pdf
+  // Returns a short-lived pre-signed URL for any private/ R2 object.
+  // Security:
+  //   - Authenticated users (JWT) only.
+  //   - Users may only request URLs for files that belong to them.
+  //   - Admins may request any private/ file.
+  //   - Public/ keys are rejected here — they already have permanent public URLs.
+  router.get('/file/signed', async (req, res) => {
+    // Verify JWT manually to support both user and admin roles
+    const authHeader = (req.get('Authorization') || req.get('authorization') || '').replace(/^Bearer\s+/i, '');
+    if (!authHeader) {
+      sendJson(res, 401, { message: 'Unauthorized.' });
+      return;
+    }
+
+    let decoded;
+    try {
+      decoded = require('jsonwebtoken').verify(authHeader, config.jwtSecret);
+    } catch {
+      sendJson(res, 401, { message: 'Invalid or expired token.' });
+      return;
+    }
+
+    const key = normalizeString(req.query.key);
+
+    if (!key) {
+      sendJson(res, 400, { message: 'File key is required.' });
+      return;
+    }
+
+    // Only private/ keys are served through this endpoint
+    if (!key.startsWith('private/')) {
+      sendJson(res, 403, { message: 'Access denied. Use the public URL for public files.' });
+      return;
+    }
+
+    try {
+      if (decoded.role !== 'admin') {
+        // Verify the requesting user owns this file
+        const user = await findOne('users', { _id: toObjectId(decoded.id) });
+        if (!user) {
+          sendJson(res, 404, { message: 'User not found.' });
+          return;
+        }
+
+        const ownedKeys = [];
+
+        // Collect KYC file keys
+        const kyc = user.kyc || {};
+        for (const doc of ['aadhaar', 'pan', 'voterid', 'photo']) {
+          if (kyc[doc]?.filePath) ownedKeys.push(kyc[doc].filePath);
+        }
+
+        // Collect policy file keys
+        const policies = await findMany('user_policies', { userId: decoded.id });
+        for (const p of policies) {
+          if (p.filePath) ownedKeys.push(p.filePath);
+        }
+
+        if (!ownedKeys.includes(key)) {
+          sendJson(res, 403, { message: 'Access denied. You do not own this file.' });
+          return;
+        }
+      }
+
+      // Generate a 15-minute pre-signed GET URL
+      const url = await r2.getSignedUrl(key, 900);
+      sendJson(res, 200, { url });
+    } catch (error) {
+      console.error('Error generating signed URL:', error.message);
+      sendJson(res, 500, { message: 'Could not generate file access URL.' });
     }
   });
 
@@ -2223,6 +2152,79 @@ function createApiRouter() {
 }
 
 app.use('/backend/api', createApiRouter());
+
+// ── Public files proxy/redirect route ────────────────────────────────────────
+// Catch requests to /public/* (e.g. /public/claim-forms/xxx.pdf, /public/partners/xxx.jpg)
+// and redirect them to the Cloudflare R2 public URL.
+app.get('/public/*', (req, res) => {
+  const key = req.path.replace(/^\//, ''); // removes leading slash to get the R2 key
+  try {
+    const publicUrl = r2.getPublicUrl(key);
+    res.redirect(publicUrl);
+  } catch (error) {
+    console.error('Error resolving public URL for R2 key:', key, error.message);
+    res.status(404).sendFile(path.join(publicDir, '404.html'));
+  }
+});
+
+// ── Private files secure access route ────────────────────────────────────────
+// Catch requests to /private/* (e.g. /private/policies/xxx.pdf)
+// Decodes and validates the JWT passed in the query parameter '?token=...'
+// and redirects to a secure, short-lived (15-min) signed URL from R2.
+app.get('/private/*', async (req, res) => {
+  const key = req.path.replace(/^\//, ''); // removes leading slash to get the R2 key
+  const token = req.query.token;
+
+  if (!token) {
+    res.status(401).send('Unauthorized. Token is required to access private documents.');
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, config.jwtSecret);
+    
+    // Authorization logic:
+    // 1. Admins can access any file.
+    // 2. Regular users can only access files they own (KYC or policies).
+    if (decoded.role !== 'admin') {
+      const user = await findOne('users', { _id: toObjectId(decoded.id) });
+      if (!user) {
+        res.status(404).send('User not found.');
+        return;
+      }
+
+      const ownedKeys = [];
+
+      // Collect user's KYC files
+      const kyc = user.kyc || {};
+      for (const doc of ['aadhaar', 'pan', 'voterid', 'photo']) {
+        if (kyc[doc]?.filePath) {
+          ownedKeys.push(kyc[doc].filePath);
+        }
+      }
+
+      // Collect user's policy files
+      const policies = await findMany('user_policies', { userId: decoded.id });
+      for (const p of policies) {
+        if (p.filePath) {
+          ownedKeys.push(p.filePath);
+        }
+      }
+
+      if (!ownedKeys.includes(key)) {
+        res.status(403).send('Forbidden. Access denied.');
+        return;
+      }
+    }
+
+    // Generate a 15-minute secure signed URL and redirect
+    const signedUrl = await r2.getSignedUrl(key, 900);
+    res.redirect(signedUrl);
+  } catch (error) {
+    console.error('Error serving private file from R2:', key, error.message);
+    res.status(401).send('Invalid or expired token.');
+  }
+});
 
 app.use((req, res) => {
   if (req.path.startsWith('/backend/api') || req.path.endsWith('.php')) {
