@@ -1038,8 +1038,10 @@ function createApiRouter() {
 
       await updateOne('claims', { _id: toObjectId(id) }, { $inc: { downloads: 1 } });
 
-      // Redirect to R2 URL (public files get permanent URL; private files get 5-min signed URL)
-      const fileUrl = await r2.getFileUrl(claim.filePath, 300);
+      // Redirect to proxy URL for public files, or secure signed URL for private files
+      const fileUrl = r2.isPublicKey(claim.filePath)
+        ? '/' + claim.filePath
+        : await r2.getFileUrl(claim.filePath, 300);
       res.redirect(fileUrl);
     } catch (error) {
       console.error('Database/Server Error:', error.message);
@@ -2156,13 +2158,15 @@ app.use('/backend/api', createApiRouter());
 // ── Public files proxy/redirect route ────────────────────────────────────────
 // Catch requests to /public/* (e.g. /public/claim-forms/xxx.pdf, /public/partners/xxx.jpg)
 // and redirect them to the Cloudflare R2 public URL.
-app.get('/public/*', (req, res) => {
+app.get('/public/*', async (req, res) => {
   const key = req.path.replace(/^\//, ''); // removes leading slash to get the R2 key
   try {
-    const publicUrl = r2.getPublicUrl(key);
-    res.redirect(publicUrl);
+    const buffer = await r2.getBufferFromR2(key);
+    const contentType = r2.getContentType(key);
+    res.setHeader('Content-Type', contentType);
+    res.send(buffer);
   } catch (error) {
-    console.error('Error resolving public URL for R2 key:', key, error.message);
+    console.error('Error serving public file from R2:', key, error.message);
     res.status(404).sendFile(path.join(publicDir, '404.html'));
   }
 });
