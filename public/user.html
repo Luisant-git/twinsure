@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta name="robots" content="noindex, nofollow" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TwinSure - User Portal</title>
@@ -2228,6 +2229,7 @@
           <button class="filter-pill-btn" onclick="filterUpdatesList('Policies', this)">Policies</button>
           <button class="filter-pill-btn" onclick="filterUpdatesList('Appointments', this)">Appointments</button>
           <button class="filter-pill-btn" onclick="filterUpdatesList('Services', this)">Services</button>
+          <button class="filter-pill-btn" onclick="filterUpdatesList('KYC', this)">KYC</button>
         </div>
 
         <div class="timeline-path" id="updates-timeline-list">
@@ -2258,6 +2260,7 @@
           <span>KYC Status</span>
           <div class="status-badge" id="profile-kyc-status-badge">Checking...</div>
         </div>
+        <div id="profile-kyc-remarks" style="display:none; color:#ef4444; font-size:0.75rem; margin-top:-1.5rem; margin-bottom:1.5rem; padding: 0.5rem 1rem; background:rgba(239, 68, 68, 0.1); border:1px solid rgba(239, 68, 68, 0.2); border-radius:10px; line-height:1.4;"></div>
 
         <h3 class="documents-header">My Documents</h3>
         <div class="documents-list-block">
@@ -2663,6 +2666,12 @@
         const badgeProfile = document.getElementById('profile-kyc-status-badge');
         badgeProfile.className = 'status-badge';
         
+        const remarksBox = document.getElementById('profile-kyc-remarks');
+        if (remarksBox) {
+          remarksBox.style.display = 'none';
+          remarksBox.innerHTML = '';
+        }
+        
         if (kycStatus === 'Verified') {
           homeKyc.className = 'badge-kyc verified';
           homeKyc.innerHTML = `<i class="fas fa-circle-check"></i> KYC Verified`;
@@ -2673,6 +2682,17 @@
           homeKyc.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Pending Verification`;
           badgeProfile.classList.add('pending');
           badgeProfile.textContent = 'Pending Verification';
+        } else if (kycStatus === 'Rejected') {
+          homeKyc.className = 'badge-kyc'; // Default unverified styling
+          homeKyc.innerHTML = `<i class="fas fa-circle-exclamation"></i> KYC Rejected`;
+          badgeProfile.classList.add('unverified');
+          badgeProfile.textContent = 'Rejected';
+          
+          if (remarksBox && user.kyc && user.kyc.remarks) {
+            remarksBox.innerHTML = `<strong>KYC Rejection Reason:</strong> <span id="kyc-remarks-text"></span>`;
+            document.getElementById('kyc-remarks-text').textContent = user.kyc.remarks;
+            remarksBox.style.display = 'block';
+          }
         } else {
           homeKyc.className = 'badge-kyc';
           homeKyc.innerHTML = `<i class="fas fa-circle-exclamation"></i> KYC Not Verified`;
@@ -3259,19 +3279,28 @@
           return;
         }
         
+        const escapeText = val => (val || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+
         container.innerHTML = appts.map(appt => {
           let dotClass = '';
           if (appt.status === 'Completed') dotClass = 'completed';
           else if (appt.status === 'Booked') dotClass = 'pending';
+          
+          const remarksHtml = appt.remarks 
+            ? `<div style="font-size:0.72rem; color:var(--text-gray); margin-top:0.5rem; padding:0.4rem 0.6rem; background:rgba(253, 197, 0, 0.1); border-radius:6px; border-left:3px solid var(--warning); line-height:1.4;">
+                 <strong>Twinsure Remark:</strong> ${escapeText(appt.remarks)}
+               </div>`
+            : '';
           
           return `
             <div class="timeline-step-node">
               <div class="timeline-circle-node ${dotClass}"></div>
               <div class="timeline-box-card">
                 <div class="timeline-desc">
-                  <h4>${appt.purpose}</h4>
+                  <h4>${escapeText(appt.purpose)}</h4>
                   <p>Type: ${appt.type === 'call' ? 'Call consultation' : 'Office appointment'}</p>
-                  <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;"><i class="far fa-clock"></i> Scheduled: ${appt.date} (${appt.timeSlot})</p>
+                  <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;"><i class="far fa-clock"></i> Scheduled: ${escapeText(appt.date)} (${escapeText(appt.timeSlot)})</p>
+                  ${remarksHtml}
                 </div>
                 <div class="status-badge ${appt.status === 'Completed' ? 'verified' : 'pending'}">
                   <span>${appt.status}</span>

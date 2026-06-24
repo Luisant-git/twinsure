@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+Allow: /index.html
+Allow: /about.html
+Allow: /services.html
+Allow: /downloads.html
+Allow: /partner.html
+Allow: /contact.html
+Allow: /privacy.html
+Allow: /terms.html
+Disallow: /admin.html
+Disallow: /user.html
+Disallow: /userchat.html
+Disallow: /recommendation.html
+Disallow: /login.html
+Disallow: /api/
+Disallow: /uploads/
+
+Sitemap: https://www.twinsure.in/sitemap.xml

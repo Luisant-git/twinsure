@@ -143,6 +143,32 @@ async function getAdminName(adminId) {
   return 'Admin';
 }
 
+async function enrichWithUserInfo(rows) {
+  try {
+    const users = await findMany('users', {});
+    const userMap = new Map(users.map(u => [String(u._id), { name: u.name, email: u.email, phone: u.phone, tsid: u.tsid || '' }]));
+    return rows.map(row => {
+      const user = userMap.get(String(row.userId));
+      return {
+        ...row,
+        userName: user ? user.name : 'Unknown User',
+        userEmail: user ? user.email : 'N/A',
+        userPhone: user ? user.phone : 'N/A',
+        userTsid: user ? (user.tsid || '') : ''
+      };
+    });
+  } catch (error) {
+    console.error('Error enriching users info:', error);
+    return rows.map(row => ({
+      ...row,
+      userName: 'Error Loading User',
+      userEmail: 'N/A',
+      userPhone: 'N/A',
+      userTsid: ''
+    }));
+  }
+}
+
 function normalizeHelpRequestStatus(status) {
   const normalized = normalizeString(status).toLowerCase();
   if (normalized === 'in-progress') {
@@ -1749,6 +1775,238 @@ function createApiRouter() {
       sendJson(res, 500, { error: 'An internal server error occurred.' });
     }
   });
+
+
+  // --- NEW ADMIN PORTAL ENDPOINTS ---
+
+  // KYC Verification Panel endpoints
+  router.get('/admin/kyc', requireRole('admin'), async (req, res) => {
+    try {
+      const users = await findMany('users', {
+        $or: [
+          { 'kyc.aadhaar': { $ne: null } },
+          { 'kyc.pan': { $ne: null } },
+          { 'kyc.voterid': { $ne: null } },
+          { 'kyc.photo': { $ne: null } }
+        ]
+      });
+
+      sendJson(res, 200, users.map(user => {
+        const clone = { ...user };
+        delete clone.password;
+        return clone;
+      }));
+    } catch (error) {
+      console.error('Error fetching KYC users:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
+    }
+  });
+
+  router.post('/admin/kyc/status', requireRole('admin'), async (req, res) => {
+    const data = collectBody(req);
+    const userId = normalizeString(data.id);
+    const status = normalizeString(data.status); // 'Approved' or 'Rejected'
+    const remarks = normalizeString(data.remarks);
+
+    if (!userId || !['Approved', 'Rejected'].includes(status)) {
+      sendJson(res, 400, { message: 'User ID and valid status are required.' });
+      return;
+    }
+
+    try {
+      const user = await findOne('users', { _id: toObjectId(userId) });
+      if (!user) {
+        sendJson(res, 404, { message: 'User not found.' });
+        return;
+      }
+
+      const kyc = user.kyc || {};
+      kyc.status = status;
+      kyc.remarks = remarks || '';
+      kyc.verifiedAt = new Date();
+
+      await updateOne('users', { _id: toObjectId(userId) }, { $set: { kyc, updatedAt: new Date() } });
+
+      await insertOne('user_updates', {
+        userId,
+        title: status === 'Approved' ? 'KYC Approved' : 'KYC Rejected',
+        message: status === 'Approved'
+          ? 'Congratulations! Your KYC verification has been approved.'
+          : `KYC verification was rejected. Reason: ${remarks || 'Invalid documents.'}`,
+        category: 'KYC',
+        status: status === 'Approved' ? 'Approved' : 'Rejected',
+        createdAt: new Date()
+      });
+
+      sendJson(res, 200, { success: true, message: `KYC status updated to ${status}.` });
+    } catch (error) {
+      console.error('Error updating KYC status:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
+    }
+  });
+
+  // User Policies Panel endpoints
+  router.get('/admin/policies', requireRole('admin'), async (req, res) => {
+    try {
+      const policies = await findMany('user_policies', {});
+      const enriched = await enrichWithUserInfo(policies);
+      sendJson(res, 200, enriched);
+    } catch (error) {
+      console.error('Error fetching admin policies:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
+    }
+  });
+
+  router.post('/admin/policies/status', requireRole('admin'), async (req, res) => {
+    const data = collectBody(req);
+    const policyId = normalizeString(data.id);
+    const status = normalizeString(data.status); // 'Verified' or 'Rejected'
+    const remarks = normalizeString(data.remarks);
+
+    if (!policyId || !['Verified', 'Rejected'].includes(status)) {
+      sendJson(res, 400, { message: 'Policy ID and valid status are required.' });
+      return;
+    }
+
+    try {
+      const policy = await findOne('user_policies', { _id: toObjectId(policyId) });
+      if (!policy) {
+        sendJson(res, 404, { message: 'Policy not found.' });
+        return;
+      }
+
+      await updateOne('user_policies', { _id: toObjectId(policyId) }, {
+        $set: { status, remarks: remarks || '', updatedAt: new Date() }
+      });
+
+      await insertOne('user_updates', {
+        userId: policy.userId,
+        title: status === 'Verified' ? 'Policy Verified' : 'Policy Rejected',
+        message: status === 'Verified'
+          ? `Your ${policy.provider} policy (${policy.policyNumber}) has been verified successfully.`
+          : `Your ${policy.provider} policy (${policy.policyNumber}) verification was rejected. Reason: ${remarks || 'Please check policy details.'}`,
+        category: 'Policies',
+        status: status === 'Verified' ? 'Approved' : 'Rejected',
+        createdAt: new Date()
+      });
+
+      sendJson(res, 200, { success: true, message: `Policy status updated to ${status}.` });
+    } catch (error) {
+      console.error('Error updating policy status:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
+    }
+  });
+
+  // Appointment Management endpoints
+  router.get('/admin/appointments', requireRole('admin'), async (req, res) => {
+    try {
+      const appts = await findMany('appointments', {});
+      const enriched = await enrichWithUserInfo(appts);
+      sendJson(res, 200, enriched);
+    } catch (error) {
+      console.error('Error fetching admin appointments:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
+    }
+  });
+
+  router.post('/admin/appointments/status', requireRole('admin'), async (req, res) => {
+    const data = collectBody(req);
+    const appointmentId = normalizeString(data.id);
+    const status = normalizeString(data.status); // 'Confirmed', 'Completed', or 'Cancelled'
+    const remarks = normalizeString(data.remarks);
+    const assignedAgent = normalizeString(data.assignedAgent);
+
+    if (!appointmentId || !['Confirmed', 'Completed', 'Cancelled'].includes(status)) {
+      sendJson(res, 400, { message: 'Appointment ID and valid status are required.' });
+      return;
+    }
+
+    try {
+      const appt = await findOne('appointments', { _id: toObjectId(appointmentId) });
+      if (!appt) {
+        sendJson(res, 404, { message: 'Appointment not found.' });
+        return;
+      }
+
+      const updateData = { status, remarks: remarks || '', updatedAt: new Date() };
+      if (assignedAgent) {
+        updateData.assignedAgent = assignedAgent;
+      }
+
+      await updateOne('appointments', { _id: toObjectId(appointmentId) }, { $set: updateData });
+
+      await insertOne('user_updates', {
+        userId: appt.userId,
+        title: `Appointment ${status}`,
+        message: status === 'Confirmed'
+          ? `Your appointment request for ${appt.purpose} is confirmed for ${appt.date} at ${appt.timeSlot}.${assignedAgent ? ' Agent: ' + assignedAgent : ''}`
+          : `Your appointment request has been marked as ${status.toLowerCase()}.${remarks ? ' Notes: ' + remarks : ''}`,
+        category: 'Appointments',
+        status: status === 'Confirmed' ? 'Confirmed' : (status === 'Completed' ? 'Completed' : 'Rejected'),
+        createdAt: new Date()
+      });
+
+      sendJson(res, 200, { success: true, message: `Appointment status updated to ${status}.` });
+    } catch (error) {
+      console.error('Error updating appointment status:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
+    }
+  });
+
+  // Service Operations endpoints
+  router.get('/admin/services', requireRole('admin'), async (req, res) => {
+    try {
+      const svcs = await findMany('user_services', {});
+      const enriched = await enrichWithUserInfo(svcs);
+      sendJson(res, 200, enriched);
+    } catch (error) {
+      console.error('Error fetching admin services:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
+    }
+  });
+
+  router.post('/admin/services/status', requireRole('admin'), async (req, res) => {
+    const data = collectBody(req);
+    const serviceId = normalizeString(data.id);
+    const status = normalizeString(data.status); // 'Submitted', 'Assigned', 'In Progress', 'Completed'
+    const assignedAgent = normalizeString(data.assignedAgent);
+    const remarks = normalizeString(data.remarks);
+
+    if (!serviceId || !['Submitted', 'Assigned', 'In Progress', 'Completed'].includes(status)) {
+      sendJson(res, 400, { message: 'Service ID and valid status are required.' });
+      return;
+    }
+
+    try {
+      const svc = await findOne('user_services', { _id: toObjectId(serviceId) });
+      if (!svc) {
+        sendJson(res, 404, { message: 'Service request not found.' });
+        return;
+      }
+
+      const updateData = { status, remarks: remarks || '', updatedAt: new Date() };
+      if (assignedAgent) {
+        updateData.assignedAgent = assignedAgent;
+      }
+
+      await updateOne('user_services', { _id: toObjectId(serviceId) }, { $set: updateData });
+
+      await insertOne('user_updates', {
+        userId: svc.userId,
+        title: `Service request status update`,
+        message: `Your service request for ${svc.category} is now: ${status}.${assignedAgent ? ' Assigned to ' + assignedAgent + '.' : ''}`,
+        category: 'Services',
+        status: status === 'Completed' ? 'Completed' : 'Pending',
+        createdAt: new Date()
+      });
+
+      sendJson(res, 200, { success: true, message: `Service request updated to ${status}.` });
+    } catch (error) {
+      console.error('Error updating service status:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
+    }
+  });
+
 
   // --- USER DASHBOARD ENDPOINTS ---
 
