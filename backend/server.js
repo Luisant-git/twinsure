@@ -2174,12 +2174,13 @@ app.get('/public/*', async (req, res) => {
 // ── Private files secure access route ────────────────────────────────────────
 // Catch requests to /private/* (e.g. /private/policies/xxx.pdf)
 // Decodes and validates the JWT passed in the query parameter '?token=...'
-// and redirects to a secure, short-lived (15-min) signed URL from R2.
+// and streams the file directly from Cloudflare R2 bucket.
 app.get('/private/*', async (req, res) => {
   const key = req.path.replace(/^\//, ''); // removes leading slash to get the R2 key
   const token = req.query.token;
 
   if (!token) {
+    console.warn('[PRIVATE ACCESS ERROR] Missing token query parameter for key:', key);
     res.status(401).send('Unauthorized. Token is required to access private documents.');
     return;
   }
@@ -2188,6 +2189,7 @@ app.get('/private/*', async (req, res) => {
   try {
     decoded = jwt.verify(token, config.jwtSecret);
   } catch (jwtErr) {
+    console.error('[PRIVATE ACCESS ERROR] JWT verification failed for key:', key, 'Error:', jwtErr.message, 'Token:', token);
     res.status(401).send('Invalid or expired token.');
     return;
   }
@@ -2199,6 +2201,7 @@ app.get('/private/*', async (req, res) => {
     if (decoded.role !== 'admin') {
       const user = await findOne('users', { _id: toObjectId(decoded.id) });
       if (!user) {
+        console.warn('[PRIVATE ACCESS ERROR] User not found for ID:', decoded.id);
         res.status(404).send('User not found.');
         return;
       }
@@ -2222,14 +2225,17 @@ app.get('/private/*', async (req, res) => {
       }
 
       if (!ownedKeys.includes(key)) {
+        console.warn('[PRIVATE ACCESS ERROR] User', decoded.id, 'attempted unauthorized access to key:', key);
         res.status(403).send('Forbidden. Access denied.');
         return;
       }
     }
 
-    // Generate a 15-minute secure signed URL and redirect
-    const signedUrl = await r2.getSignedUrl(key, 900);
-    res.redirect(signedUrl);
+    // Stream the private file directly from R2
+    const buffer = await r2.getBufferFromR2(key);
+    const contentType = r2.getContentType(key);
+    res.setHeader('Content-Type', contentType);
+    res.send(buffer);
   } catch (error) {
     console.error('Error serving private file from R2:', key, error.message);
     if (error.message.includes('R2 configuration') || error.message.includes('R2_')) {
