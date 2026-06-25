@@ -53,24 +53,40 @@
   }
 
   function applySettings(settings) {
-    const phoneDisplay = formatPhoneDisplay(settings.supportPhone);
-    const phoneHref = normalizePhoneHref(settings.supportPhone);
-    const whatsappHref = String(settings.whatsappGroupLink || DEFAULT_WHATSAPP_LINK).trim() || DEFAULT_WHATSAPP_LINK;
+    if (!settings) return;
 
-    document.querySelectorAll('a[href^="tel:"]').forEach((anchor) => {
-      anchor.setAttribute('href', phoneHref);
-      replaceTextNode(anchor, phoneDisplay);
-    });
+    if (settings.supportPhone) {
+      const phoneDisplay = formatPhoneDisplay(settings.supportPhone);
+      const phoneHref = normalizePhoneHref(settings.supportPhone);
+      document.querySelectorAll('a[href^="tel:"]').forEach((anchor) => {
+        anchor.setAttribute('href', phoneHref);
+        replaceTextNode(anchor, phoneDisplay);
+      });
+    }
 
-    document.querySelectorAll('a[href*="wa.me"], a[href*="whatsapp"]').forEach((anchor) => {
-      anchor.setAttribute('href', whatsappHref);
-      if (!anchor.target) {
-        anchor.target = '_blank';
-      }
-      if (!anchor.rel) {
-        anchor.rel = 'noopener noreferrer';
-      }
-    });
+    if (settings.whatsappGroupLink) {
+      const whatsappHref = String(settings.whatsappGroupLink).trim();
+      document.querySelectorAll('a[href*="wa.me"], a[href*="whatsapp"]').forEach((anchor) => {
+        anchor.setAttribute('href', whatsappHref);
+        if (!anchor.target) {
+          anchor.target = '_blank';
+        }
+        if (!anchor.rel) {
+          anchor.rel = 'noopener noreferrer';
+        }
+      });
+    }
+
+    if (settings.supportEmail) {
+      const emailDisplay = String(settings.supportEmail).trim();
+      document.querySelectorAll('a[href^="mailto:"]').forEach((anchor) => {
+        const href = anchor.getAttribute('href') || '';
+        if (href.includes('support')) {
+          anchor.setAttribute('href', `mailto:${emailDisplay}`);
+          replaceTextNode(anchor, emailDisplay);
+        }
+      });
+    }
   }
 
   function escapeHtml(str) {

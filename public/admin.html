@@ -259,6 +259,10 @@
       background-color: var(--success);
     }
 
+    #set_maintenanceMode:checked+.slider {
+      background-color: var(--danger);
+    }
+
     input:checked+.slider:before {
       transform: translateX(24px);
     }
@@ -583,12 +587,53 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      vertical-align: middle;
       cursor: help;
+    }
+
+    /* Blinking keyframe animation */
+    @keyframes blink-animation {
+      0% { opacity: 1; }
+      50% { opacity: 0.35; }
+      100% { opacity: 1; }
+    }
+
+    /* Maintenance mode top nav badge */
+    .maintenance-blink-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background-color: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: #ef4444;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      animation: blink-animation 1.5s infinite ease-in-out;
+      white-space: nowrap;
+      margin-right: 0.5rem;
+    }
+
+    .maintenance-blink-badge span.dot {
+      width: 8px;
+      height: 8px;
+      background-color: #ef4444;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 6px rgba(239, 68, 68, 0.6);
     }
 
     /* ── Mobile overrides ── */
     @media (max-width: 768px) {
+      .maintenance-blink-badge {
+        padding: 6px 8px !important;
+        gap: 0 !important;
+        margin-right: 0.2rem !important;
+      }
+      .maintenance-blink-badge .m-text {
+        display: none !important;
+      }
       .kyc-modal-window {
         width: 100%;
         max-width: 100%;
@@ -1982,6 +2027,10 @@
       </div>
     </div>
     <div class="nav-right">
+      <div id="navMaintenanceIndicator" class="maintenance-blink-badge" style="display: none;">
+        <span class="dot"></span>
+        <span class="m-text">Maintenance Mode Active</span>
+      </div>
       <div class="nav-icon" style="position: relative; cursor: pointer; font-size: 1.2rem;">
         <i class="fas fa-bell"></i>
         <div class="indicator"
@@ -2127,9 +2176,7 @@
               </div>
               <div class="welcome-stat-item">
                 <span class="welcome-stat-label">Live System Status</span>
-                <span class="welcome-stat-value" style="color: var(--success)"><span class="status-dot online"></span>
-                  SYSTEMS
-                  ONLINE</span>
+                <span id="systemStatusDisplay" class="welcome-stat-value" style="color: var(--success)"><span class="status-dot online"></span> SYSTEMS ONLINE</span>
               </div>
               <div class="welcome-stat-item">
                 <span class="welcome-stat-label">Active Engine</span>
@@ -3264,26 +3311,7 @@
                 security settings.
               </p>
             </div>
-            <div style="display: flex; gap: 0.8rem">
-              <button class="btn btn-primary" style="
-                    background: var(--warning);
-                    color: #111;
-                    display: flex;
-                    align-items: center;
-                    gap: 0.5rem;
-                  " onclick="saveAllSettings()">
-                <i class="fas fa-save"></i> Save Changes
-              </button>
-              <button class="btn" style="
-                    border: 1px solid #cbd5e1;
-                    background: #fff;
-                    display: flex;
-                    align-items: center;
-                    gap: 0.5rem;
-                  " onclick="loadSettings()">
-                <i class="fas fa-undo"></i> Reset Defaults
-              </button>
-            </div>
+            
           </div>
         </div>
         <div class="settings-tabs-container" style="
@@ -3307,7 +3335,7 @@
           <button class="settings-tab" onclick="switchSettingsTab('rec-engine', this)">
             Recommendation Engine
           </button>
-          <button class="settings-tab" onclick="switchSettingsTab('partner', this)">
+          <button class="settings-tab" onclick="switchSettingsTab('partner', this)" style="display: none;">
             Partner Program
           </button>
           <button class="settings-tab" onclick="switchSettingsTab('testimonials', this)">
@@ -3360,37 +3388,6 @@
                     <i class="fas fa-link input-suffix-icon"></i>
                   </div>
                 </div>
-                <div class="settings-form-group">
-                  <label>Office Address</label>
-                  <div class="input-with-icon">
-                    <i class="fas fa-map-marker-alt" style="color: #64748b"></i>
-                    <input id="set_officeAddress" class="settings-input" placeholder="Twinsure H.Q., Chennai..." />
-                  </div>
-                </div>
-                <div class="settings-form-group">
-                  <label>Working Hours</label>
-                  <div class="input-with-icon">
-                    <i class="far fa-clock" style="color: #64748b"></i>
-                    <input id="set_workingHours" class="settings-input" placeholder="Mon-Fri: 9AM - 6PM" />
-                  </div>
-                </div>
-                <div class="settings-form-group">
-                  <label>Time Zone</label>
-                  <select id="set_timeZone" class="settings-select">
-                    <option value="IST">IST</option>
-                    <option value="UTC">UTC</option>
-                    <option value="EST">EST</option>
-                    <option value="PST">PST</option>
-                  </select>
-                </div>
-                <div class="settings-form-group">
-                  <label>Default Language</label>
-                  <select id="set_defaultLanguage" class="settings-select">
-                    <option value="English">English</option>
-                    <option value="Hindi">Hindi</option>
-                    <option value="Tamil">Tamil</option>
-                  </select>
-                </div>
               </div>
               <hr style="
                     border: 0;
@@ -3414,29 +3411,10 @@
                     </div>
                     <span style="font-weight: 600; font-size: 0.9rem; color: #111">Enable Maintenance Mode</span>
                   </div>
-                  <label class="switch"><input type="checkbox" id="set_maintenanceMode" />
-                    <span class="slider" style="background-color: #cbd5e1"></span></label>
+                  <label class="switch"><input type="checkbox" id="set_maintenanceMode" onchange="updateMaintenanceUI(this.checked)" />
+                    <span class="slider"></span></label>
                 </div>
-                <div class="settings-toggle-card">
-                  <div style="display: flex; align-items: center; gap: 0.8rem">
-                    <div style="
-                          width: 36px;
-                          height: 36px;
-                          border-radius: 8px;
-                          background: #eef4ff;
-                          color: #003f88;
-                          display: flex;
-                          align-items: center;
-                          justify-content: center;
-                        ">
-                      <i class="fab fa-whatsapp" style="font-size: 1.2rem"></i>
-                    </div>
-                    <span style="font-weight: 600; font-size: 0.9rem; color: #111">Enable WhatsApp Floating
-                      Button</span>
-                  </div>
-                  <label class="switch"><input type="checkbox" id="set_whatsappButton" />
-                    <span class="slider" style="background-color: #cbd5e1"></span></label>
-                </div>
+
               </div>
             </div>
             <div id="tab-notifications" class="settings-tab-pane" style="display: none">
@@ -3460,23 +3438,7 @@
                   <label class="switch"><input type="checkbox" id="set_emailNotifications" /><span
                       class="slider"></span></label>
                 </div>
-                <div class="settings-list-item">
-                  <div>
-                    <h4 style="margin: 0; font-size: 0.95rem; color: #111">
-                      WhatsApp Notifications
-                    </h4>
-                    <p style="
-                          margin: 0.2rem 0 0 0;
-                          font-size: 0.8rem;
-                          color: #64748b;
-                        ">
-                      Get instant critical alerts on registered WhatsApp
-                      number.
-                    </p>
-                  </div>
-                  <label class="switch"><input type="checkbox" id="set_whatsappNotifications" /><span
-                      class="slider"></span></label>
-                </div>
+
                 <div class="settings-list-item">
                   <div>
                     <h4 style="margin: 0; font-size: 0.95rem; color: #111">
@@ -3493,7 +3455,7 @@
                   <label class="switch"><input type="checkbox" id="set_leadAlerts" /><span
                       class="slider"></span></label>
                 </div>
-                <div class="settings-list-item">
+                <div class="settings-list-item" style="display: none;">
                   <div>
                     <h4 style="margin: 0; font-size: 0.95rem; color: #111">
                       Partner Registration Alerts
@@ -3568,32 +3530,45 @@
                 </div>
               </div>
               <div class="settings-list-card">
-                <div class="settings-list-item">
-                  <div>
-                    <h4 style="margin: 0; font-size: 0.95rem; color: #111">
-                      Change Admin Password
-                    </h4>
-                    <p style="
-                          margin: 0.2rem 0 0 0;
-                          font-size: 0.8rem;
-                          color: #64748b;
-                        ">
-                      Update your master administrator password.
-                    </p>
+                <div class="settings-list-item" style="flex-direction: column; align-items: flex-start; gap: 1rem;">
+                  <div style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                      <h4 style="margin: 0; font-size: 0.95rem; color: #111">
+                        Change Admin Password
+                      </h4>
+                      <p style="
+                            margin: 0.2rem 0 0 0;
+                            font-size: 0.8rem;
+                            color: #64748b;
+                          ">
+                        Update your master administrator password securely.
+                      </p>
+                    </div>
                   </div>
-                  <button class="btn" style="
-                        background: #eef4ff;
-                        color: #003f88;
-                        font-weight: 600;
-                        font-size: 0.8rem;
-                        border: none;
-                        padding: 0.6rem 1rem;
-                        border-radius: 8px;
-                      " onclick="
-                        alert('Password reset link sent to admin email.')
-                      ">
-                    Update Password
-                  </button>
+                  <div style="display: flex; flex-direction: column; gap: 0.8rem; width: 100%; max-width: 400px;">
+                    <div class="settings-form-group" style="margin-bottom: 0;">
+                      <label style="font-size: 0.85rem; font-weight: 600; color: #475569;">Current Password</label>
+                      <input type="password" id="set_oldAdminPassword" class="settings-input" placeholder="Enter current password" />
+                    </div>
+                    <div class="settings-form-group" style="margin-bottom: 0;">
+                      <label style="font-size: 0.85rem; font-weight: 600; color: #475569;">New Password</label>
+                      <input type="password" id="set_newAdminPassword" class="settings-input" placeholder="Enter new password (min 6 chars)" />
+                    </div>
+                    <button class="btn" style="
+                          background: var(--primary-purple);
+                          color: #fff;
+                          font-weight: 600;
+                          font-size: 0.85rem;
+                          border: none;
+                          padding: 0.7rem 1.2rem;
+                          border-radius: 8px;
+                          align-self: flex-start;
+                          margin-top: 0.5rem;
+                          cursor: pointer;
+                        " onclick="updateAdminPasswordDirectly()">
+                      Update Password
+                    </button>
+                  </div>
                 </div>
                 <div class="settings-list-item">
                   <div>
@@ -3641,39 +3616,6 @@
                 Recommendation Engine Settings
               </h3>
               <div class="settings-list-card">
-                <div class="settings-list-item">
-                  <div>
-                    <h4 style="margin: 0; font-size: 0.95rem; color: #111">
-                      Enable Recommendation Engine
-                    </h4>
-                    <p style="
-                          margin: 0.2rem 0 0 0;
-                          font-size: 0.8rem;
-                          color: #64748b;
-                        ">
-                      Toggle the main AI recommendation flow on the public
-                      site.
-                    </p>
-                  </div>
-                  <label class="switch"><input type="checkbox" id="set_recEngineEnabled" /><span
-                      class="slider"></span></label>
-                </div>
-                <div class="settings-list-item">
-                  <div>
-                    <h4 style="margin: 0; font-size: 0.95rem; color: #111">
-                      Enable Lead Collection Popup
-                    </h4>
-                    <p style="
-                          margin: 0.2rem 0 0 0;
-                          font-size: 0.8rem;
-                          color: #64748b;
-                        ">
-                      Show form to collect user details after recommendation
-                      finishes.
-                    </p>
-                  </div>
-                  <label class="switch"><input type="checkbox" id="set_leadPopup" /><span class="slider"></span></label>
-                </div>
                 <div class="settings-list-item" style="border-bottom: none">
                   <div>
                     <h4 style="margin: 0; font-size: 0.95rem; color: #111">
@@ -7936,17 +7878,85 @@
           0 < alertQueue.length && processNextAlert());
       }));
     let confirmPromiseResolve = null;
-    function switchSettingsTab(e, t) {
-      (document
+    let isSettingsDirty = false;
+    let pendingTabToSwitch = null;
+    let pendingTabButton = null;
+
+    function closeDirtyModal() {
+      const modal = document.getElementById("settingsDirtyModal");
+      if (modal) {
+        modal.classList.remove("active");
+        setTimeout(() => modal.style.display = "none", 300);
+      }
+      pendingTabToSwitch = null;
+      pendingTabButton = null;
+    }
+
+    async function discardAndSwitch() {
+      isSettingsDirty = false;
+      await loadSettings();
+      const target = pendingTabToSwitch;
+      const button = pendingTabButton;
+      closeDirtyModal();
+      performTabSwitch(target, button);
+    }
+
+    async function saveAndSwitch() {
+      const saved = await saveAllSettings();
+      if (saved) {
+        isSettingsDirty = false;
+        const target = pendingTabToSwitch;
+        const button = pendingTabButton;
+        closeDirtyModal();
+        performTabSwitch(target, button);
+      }
+    }
+
+    function performTabSwitch(e, t) {
+      document
         .querySelectorAll(".settings-tab-pane")
-        .forEach((e) => (e.style.display = "none")),
-        document
-          .querySelectorAll(".settings-tab")
-          .forEach((e) => e.classList.remove("active")),
-        (document.getElementById("tab-" + e).style.display = "block"),
-        t && t.classList.add("active"));
+        .forEach((e) => (e.style.display = "none"));
+      document
+        .querySelectorAll(".settings-tab")
+        .forEach((e) => e.classList.remove("active"));
+      const tabPane = document.getElementById("tab-" + e);
+      if (tabPane) tabPane.style.display = "block";
+      if (t) t.classList.add("active");
       if (e === "testimonials") {
         loadTestimonials();
+      }
+    }
+
+    function switchSettingsTab(e, t) {
+      if (t && t.classList.contains("active")) {
+        return;
+      }
+      if (isSettingsDirty) {
+        pendingTabToSwitch = e;
+        pendingTabButton = t;
+        const modal = document.getElementById("settingsDirtyModal");
+        if (modal) {
+          modal.style.display = "flex";
+          setTimeout(() => modal.classList.add("active"), 10);
+        }
+        return;
+      }
+      performTabSwitch(e, t);
+    }
+    function updateMaintenanceUI(isMaintenanceOn) {
+      const navIndicator = document.getElementById("navMaintenanceIndicator");
+      if (navIndicator) {
+        navIndicator.style.display = isMaintenanceOn ? "inline-flex" : "none";
+      }
+      const sysStatus = document.getElementById("systemStatusDisplay");
+      if (sysStatus) {
+        if (isMaintenanceOn) {
+          sysStatus.style.color = "var(--danger)";
+          sysStatus.innerHTML = '<span class="status-dot offline" style="background: var(--danger); box-shadow: 0 0 8px rgba(229, 62, 62, 0.5);"></span> MAINTENANCE ON';
+        } else {
+          sysStatus.style.color = "var(--success)";
+          sysStatus.innerHTML = '<span class="status-dot online"></span> SYSTEMS ONLINE';
+        }
       }
     }
     async function loadSettings() {
@@ -7971,29 +7981,22 @@
           (a("set_supportEmail", t.supportEmail),
             a("set_supportPhone", t.supportPhone),
             a("set_whatsappGroupLink", t.whatsappGroupLink),
-            a("set_officeAddress", t.officeAddress),
-            a("set_workingHours", t.workingHours),
-            a("set_timeZone", t.timeZone),
-            a("set_defaultLanguage", t.defaultLanguage),
             a("set_maintenanceMode", t.maintenanceMode),
-            a("set_whatsappButton", t.whatsappButton),
             a("set_emailNotifications", t.emailNotifications),
-            a("set_whatsappNotifications", t.whatsappNotifications),
             a("set_leadAlerts", t.leadAlerts),
             a("set_partnerAlerts", t.partnerAlerts),
             a("set_claimAlerts", t.claimAlerts),
             a("set_notificationPriority", t.notificationPriority),
             a("set_sessionTimeout", t.sessionTimeout),
             a("set_loginAttempts", t.loginAttempts),
-            a("set_recEngineEnabled", t.recEngineEnabled),
-            a("set_leadPopup", t.leadPopup),
             a("set_callbackSlot", t.callbackSlot),
             a("set_partnerRegEnabled", t.partnerRegEnabled),
             a("set_referralTracking", t.referralTracking),
             a("set_publicCommissionInfo", t.publicCommissionInfo),
-            a("set_manualPartnerApproval", t.manualPartnerApproval),
             a("set_minCommission", t.minCommission),
             a("set_maxCommission", t.maxCommission));
+          updateMaintenanceUI(t.maintenanceMode);
+          isSettingsDirty = false;
         }
       } catch (e) {
         console.error("loadSettings error:", e);
@@ -8007,14 +8010,8 @@
             supportEmail: t("set_supportEmail")?.value || "",
             supportPhone: t("set_supportPhone")?.value || "",
             whatsappGroupLink: t("set_whatsappGroupLink")?.value || "",
-            officeAddress: t("set_officeAddress")?.value || "",
-            workingHours: t("set_workingHours")?.value || "",
-            timeZone: t("set_timeZone")?.value || "",
-            defaultLanguage: t("set_defaultLanguage")?.value || "",
             maintenanceMode: !!t("set_maintenanceMode")?.checked,
-            whatsappButton: !!t("set_whatsappButton")?.checked,
             emailNotifications: !!t("set_emailNotifications")?.checked,
-            whatsappNotifications: !!t("set_whatsappNotifications")?.checked,
             leadAlerts: !!t("set_leadAlerts")?.checked,
             partnerAlerts: !!t("set_partnerAlerts")?.checked,
             claimAlerts: !!t("set_claimAlerts")?.checked,
@@ -8022,8 +8019,6 @@
               t("set_notificationPriority")?.value || "normal",
             sessionTimeout: Number(t("set_sessionTimeout")?.value) || 60,
             loginAttempts: Number(t("set_loginAttempts")?.value) || 5,
-            recEngineEnabled: !!t("set_recEngineEnabled")?.checked,
-            leadPopup: !!t("set_leadPopup")?.checked,
             callbackSlot: !!t("set_callbackSlot")?.checked,
             partnerRegEnabled: !!t("set_partnerRegEnabled")?.checked,
             referralTracking: !!t("set_referralTracking")?.checked,
@@ -8040,25 +8035,69 @@
             },
             body: JSON.stringify(a),
           });
-        if (401 === n.status)
-          (alert("You are not authenticated. Please login as admin."),
-            (window.location.href = "login.html"));
-        else {
+        if (401 === n.status) {
+          alert("You are not authenticated. Please login as admin.");
+          window.location.href = "login.html";
+          return false;
+        } else {
           if (!n.ok)
             throw (
               (e = await n.text()),
               new Error(e || "Failed to save settings")
             );
           var r = await n.json();
-          r.success
-            ? alert("Settings successfully updated.")
-            : alert(r.error || "Unknown error occurred.");
+          if (r.success) {
+            alert("Settings successfully updated.");
+            updateMaintenanceUI(a.maintenanceMode);
+            isSettingsDirty = false;
+            return true;
+          } else {
+            alert(r.error || "Unknown error occurred.");
+            return false;
+          }
         }
       } catch (e) {
-        (console.error("saveAllSettings error:", e),
-          alert("Error saving settings: " + (e.message || e)));
+        console.error("saveAllSettings error:", e);
+        alert("Error saving settings: " + (e.message || e));
+        return false;
       }
     }
+
+    async function updateAdminPasswordDirectly() {
+      const oldPassword = document.getElementById('set_oldAdminPassword').value;
+      const newPassword = document.getElementById('set_newAdminPassword').value;
+      if (!oldPassword || !newPassword) {
+        alert('Both current password and new password are required.');
+        return;
+      }
+      if (newPassword.length < 6) {
+        alert('New password must be at least 6 characters.');
+        return;
+      }
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(API_BASE_URL + '/admin/change-password', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify({ oldPassword, newPassword })
+        });
+        const res = await response.json();
+        if (response.ok && res.success) {
+          alert('Admin password changed successfully.');
+          document.getElementById('set_oldAdminPassword').value = '';
+          document.getElementById('set_newAdminPassword').value = '';
+        } else {
+          alert('Failed to change password: ' + (res.message || 'Error occurred'));
+        }
+      } catch (error) {
+        console.error(error);
+        alert('An error occurred while changing the password.');
+      }
+    }
+
     ((window.confirm = function (t) {
       return new Promise((e) => {
         ((confirmPromiseResolve = e),
@@ -8081,6 +8120,11 @@
     };
     window.addEventListener("DOMContentLoaded", () => {
       loadSettings();
+      const settingsSec = document.getElementById("settings");
+      if (settingsSec) {
+        settingsSec.addEventListener("input", () => { isSettingsDirty = true; });
+        settingsSec.addEventListener("change", () => { isSettingsDirty = true; });
+      }
     });
   </script>
 
@@ -9562,6 +9606,25 @@
           <button class="btn btn-primary" style="background: var(--primary-purple); border: none;"
             onclick="submitServiceUpdate()">Update pipeline</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Dirty Warning Modal -->
+  <div class="claim-modal-overlay" id="settingsDirtyModal" style="display: none;">
+    <div class="claim-modal-window" style="max-width: 480px; padding: 1.5rem;">
+      <div class="claim-modal-header" style="margin-bottom: 1rem;">
+        <h3 style="display: flex; align-items: center; gap: 0.5rem; color: #dc2626; font-size: 1.25rem;">
+          <i class="fas fa-exclamation-triangle"></i> Unsaved Changes
+        </h3>
+      </div>
+      <p style="font-size: 0.9rem; color: #475569; line-height: 1.5; margin: 0 0 1.5rem 0;">
+        You have unsaved changes in your settings. Would you like to save them before switching tabs?
+      </p>
+      <div style="display: flex; justify-content: flex-end; gap: 0.8rem;">
+        <button class="btn btn-white" onclick="closeDirtyModal()" style="border: 1px solid #cbd5e1;">Cancel</button>
+        <button class="btn btn-white" onclick="discardAndSwitch()" style="color: #ef4444; border: 1px solid #fee2e2; background: #fef2f2;">Don't Save</button>
+        <button class="btn btn-primary" onclick="saveAndSwitch()" style="background: var(--primary-purple); border: none;">Save Changes</button>
       </div>
     </div>
   </div>

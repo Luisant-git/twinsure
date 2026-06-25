@@ -61,6 +61,35 @@ const mailTransporter = nodemailer.createTransport({
   }
 });
 
+async function sendAdminAlertEmail(subject, htmlContent, priority = 'normal') {
+  try {
+    const settings = await findOne('settings', { _id: 'global' });
+    if (!settings || !settings.emailNotifications) {
+      console.log('Admin alert emails are disabled.');
+      return;
+    }
+    const toEmail = settings.supportEmail || 'support@twinsure.com';
+    const finalPriority = settings.notificationPriority || priority;
+
+    const mailOptions = {
+      from: process.env.SMTP_USER || 'support@twinsure.com',
+      to: toEmail,
+      subject: `[${finalPriority.toUpperCase()}] ${subject}`,
+      html: htmlContent,
+      priority: finalPriority
+    };
+
+    console.log(`Sending alert email to ${toEmail} with subject: ${subject}`);
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      console.warn('SMTP credentials not configured. Simulated email success.');
+      return;
+    }
+    await mailTransporter.sendMail(mailOptions);
+  } catch (err) {
+    console.error('Error sending admin alert email:', err.message);
+  }
+}
+
 // --- Global Error Handlers ---
 process.on('uncaughtException', (err) => {
   console.error('FATAL: Uncaught Exception:', err);
@@ -224,22 +253,14 @@ async function connectAndSeed() {
       supportPhone: '+91 9750003600',
       whatsappGroupLink:
         'https://wa.me/919750003600?text=Hello,%20I%20would%20like%20to%20know%20more%20about%20Twinsure%20services.',
-      officeAddress: 'Twinsure H.Q., Chennai, Tamil Nadu - 600xxx',
-      workingHours: 'Mon-Fri: 9AM - 6PM',
-      timeZone: 'IST',
-      defaultLanguage: 'English',
       maintenanceMode: false,
-      whatsappButton: true,
       emailNotifications: true,
-      whatsappNotifications: true,
       leadAlerts: true,
       partnerAlerts: true,
       claimAlerts: true,
       notificationPriority: 'high',
       sessionTimeout: '60',
       loginAttempts: '5',
-      recEngineEnabled: true,
-      leadPopup: true,
       callbackSlot: true,
       partnerRegEnabled: true,
       referralTracking: true,
@@ -254,16 +275,12 @@ async function connectAndSeed() {
     supportEmail: 'support@twinsure.com',
     supportPhone: '+91 9750003600',
     whatsappGroupLink:
-      'https://wa.me/919750003600?text=Hello,%20I%20would%20like%20to%20know%20more%20about%20Twinsure%20services.',
-    officeAddress: 'Twinsure H.Q., Chennai, Tamil Nadu - 600xxx',
-    workingHours: 'Mon-Fri: 9AM - 6PM',
-    timeZone: 'IST',
-    defaultLanguage: 'English'
+      'https://wa.me/919750003600?text=Hello,%20I%20would%20like%20to%20know%20more%20about%20Twinsure%20services.'
   };
 
   const settingsPatch = {};
   for (const [key, value] of Object.entries(settingsDefaults)) {
-    const currentValue = existingSettings[key];
+    const currentValue = existingSettings ? existingSettings[key] : undefined;
     if (currentValue === undefined || currentValue === null || String(currentValue).trim() === '') {
       settingsPatch[key] = value;
     }
@@ -423,11 +440,18 @@ function createApiRouter() {
         return;
       }
 
+      const settings = await findOne('settings', { _id: 'global' });
+      if (settings && settings.maintenanceMode && user.role !== 'admin') {
+        sendJson(res, 503, { message: 'Maintenance mode - try after some time, or else try contacting admin' });
+        return;
+      }
+
       if (!config.jwtSecret) {
         sendJson(res, 500, { message: 'Server configuration error.' });
         return;
       }
-      const token = jwt.sign({ id: user._id, role: user.role }, config.jwtSecret, { expiresIn: '1h' });
+      const timeoutMinutes = settings && settings.sessionTimeout ? parseInt(settings.sessionTimeout) : 60;
+      const token = jwt.sign({ id: user._id, role: user.role }, config.jwtSecret, { expiresIn: `${timeoutMinutes}m` });
       sendJson(res, 200, {
         message: 'Login successful.',
         token,
@@ -759,10 +783,13 @@ function createApiRouter() {
     try {
       const settings = await findOne('settings', { _id: 'global' });
       sendJson(res, 200, {
+        supportEmail: settings?.supportEmail || 'support@twinsure.com',
         supportPhone: settings?.supportPhone || '+91 9750003600',
         whatsappGroupLink:
           settings?.whatsappGroupLink ||
-          'https://wa.me/919750003600?text=Hello,%20I%20would%20like%20to%20know%20more%20about%20Twinsure%20services.'
+          'https://wa.me/919750003600?text=Hello,%20I%20would%20like%20to%20know%20more%20about%20Twinsure%20services.',
+        callbackSlot: settings?.callbackSlot !== undefined ? settings.callbackSlot : true,
+        maintenanceMode: !!settings?.maintenanceMode
       });
     } catch (error) {
       console.error('Database/Server Error:', error.message);
@@ -804,6 +831,20 @@ function createApiRouter() {
         submittedAt: new Date(),
         status: 'new'
       });
+
+      const settings = await findOne('settings', { _id: 'global' });
+      if (settings && settings.leadAlerts) {
+        const leadSubject = `New Lead Submitted: ${normalizeString(data.name)}`;
+        const leadHtml = `
+          <h3>New Lead Details</h3>
+          <p><strong>Name:</strong> ${normalizeString(data.name)}</p>
+          <p><strong>Phone:</strong> ${normalizeString(data.phone)}</p>
+          <p><strong>Email:</strong> ${normalizeString(data.email || 'N/A')}</p>
+          <p><strong>Submitted At:</strong> ${new Date().toLocaleString()}</p>
+        `;
+        await sendAdminAlertEmail(leadSubject, leadHtml, settings.notificationPriority || 'normal');
+      }
+
       sendJson(res, 200, { success: true, message: 'Lead submitted successfully.' });
     } catch (error) {
       console.error('Database/Server Error:', error.message);
@@ -1566,6 +1607,40 @@ function createApiRouter() {
     }
   });
 
+  router.post('/admin/change-password', requireRole('admin'), async (req, res) => {
+    const data = collectBody(req);
+    if (!data.oldPassword || !data.newPassword) {
+      sendJson(res, 400, { message: 'Old password and new password are required.' });
+      return;
+    }
+
+    if (data.newPassword.length < 6) {
+      sendJson(res, 400, { message: 'New password must be at least 6 characters long.' });
+      return;
+    }
+
+    try {
+      const admin = await findOne('users', { _id: toObjectId(req.user.id) });
+      if (!admin) {
+        sendJson(res, 404, { message: 'Admin not found.' });
+        return;
+      }
+
+      if (admin.password !== data.oldPassword) {
+        sendJson(res, 400, { message: 'Incorrect current password.' });
+        return;
+      }
+
+      await updateOne('users', { _id: toObjectId(req.user.id) }, {
+        $set: { password: data.newPassword, updatedAt: new Date() }
+      });
+      sendJson(res, 200, { success: true, message: 'Password changed successfully.' });
+    } catch (error) {
+      console.error('Change admin password error:', error.message);
+      sendJson(res, 500, { message: 'An internal server error occurred.' });
+    }
+  });
+
   router.get('/admin/users', requireRole('admin'), async (req, res) => {
     try {
       const users = await findMany('users', {});
@@ -2137,6 +2212,21 @@ function createApiRouter() {
         status: 'Pending',
         createdAt: new Date()
       });
+
+      const settings = await findOne('settings', { _id: 'global' });
+      if (settings && settings.claimAlerts) {
+        const claimSubject = `New Policy/Claim Uploaded: ${provider}`;
+        const claimHtml = `
+          <h3>New Policy Uploaded</h3>
+          <p><strong>User ID:</strong> ${req.user.id}</p>
+          <p><strong>Provider:</strong> ${provider}</p>
+          <p><strong>Policy Number:</strong> ${policyNumber}</p>
+          <p><strong>Type:</strong> ${type}</p>
+          <p><strong>Notes:</strong> ${notes || 'None'}</p>
+          <p><strong>Uploaded At:</strong> ${new Date().toLocaleString()}</p>
+        `;
+        await sendAdminAlertEmail(claimSubject, claimHtml, settings.notificationPriority || 'normal');
+      }
 
       sendJson(res, 201, { message: 'Policy added successfully.' });
     } catch (error) {

@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { config } = require('./database');
+const { config, findOne } = require('./database');
 
 /**
  * Extracts the authorization header from the incoming request.
@@ -48,10 +48,22 @@ function authenticate(req, res) {
  * @returns {Function} Express middleware function.
  */
 function requireRole(role) {
-  return (req, res, next) => {
+  return async (req, res, next) => {
     const user = authenticate(req, res);
     if (!user) {
       return;
+    }
+
+    if (user.role !== 'admin') {
+      try {
+        const settings = await findOne('settings', { _id: 'global' });
+        if (settings && settings.maintenanceMode) {
+          res.status(503).json({ message: 'Maintenance mode - try after some time, or else try contacting admin' });
+          return;
+        }
+      } catch (error) {
+        console.error('Error checking maintenance mode in auth middleware:', error);
+      }
     }
 
     if (user.role !== role) {

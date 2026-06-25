@@ -1241,6 +1241,28 @@
         }
         animate();
       }
+
+      // Check maintenance mode on page load
+      (async () => {
+        try {
+          const baseUrl = typeof window.API_BASE_URL !== "undefined" ? window.API_BASE_URL : "/backend/api";
+          const res = await fetch(baseUrl + "/public/settings");
+          if (res.ok) {
+            const settings = await res.json();
+            if ((settings && settings.maintenanceMode) || window.location.search.includes("maintenance=1")) {
+              const alertEl = document.getElementById("loginAlert");
+              if (alertEl) {
+                alertEl.className = "alert error";
+                alertEl.style.display = "block";
+                alertEl.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Maintenance mode - try after some time, or else try contacting admin';
+              }
+            }
+          }
+        } catch (err) {
+          console.error("Failed to fetch settings:", err);
+        }
+      })();
+
       document
         .getElementById("loginForm")
         .addEventListener("submit", async (e) => {

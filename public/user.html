@@ -2574,6 +2574,21 @@
         }
         return;
       }
+
+      // Check maintenance mode on page load before loading profile
+      try {
+        const baseUrl = typeof window.API_BASE_URL !== 'undefined' ? window.API_BASE_URL : '/backend/api';
+        const res = await fetch(baseUrl + '/public/settings');
+        if (res.ok) {
+          const settings = await res.json();
+          if (settings && settings.maintenanceMode) {
+            api.logout('login.html?maintenance=1');
+            return;
+          }
+        }
+      } catch (err) {
+        console.error('Failed to check maintenance mode on load:', err);
+      }
       
       // Load collections
       await loadUserProfile();

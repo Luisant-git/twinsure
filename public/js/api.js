@@ -76,9 +76,9 @@ const api = {
                 'Authorization': `Bearer ${token}`
             }
         });
-        if (response.status === 401 || response.status === 403) {
-            this.logout('login.html');
-            throw new Error('Unauthorized');
+        if (response.status === 401 || response.status === 403 || response.status === 503) {
+            this.logout('login.html?maintenance=1');
+            throw new Error('Unauthorized or Maintenance Mode');
         }
         return parseResponseBody(response);
     },
@@ -93,9 +93,9 @@ const api = {
             },
             body: JSON.stringify(payload)
         });
-        if (response.status === 401 || response.status === 403) {
-            this.logout('login.html');
-            throw new Error('Unauthorized');
+        if (response.status === 401 || response.status === 403 || response.status === 503) {
+            this.logout('login.html?maintenance=1');
+            throw new Error('Unauthorized or Maintenance Mode');
         }
         return parseResponseBody(response);
     },
@@ -110,9 +110,9 @@ const api = {
             },
             body: JSON.stringify(payload)
         });
-        if (response.status === 401 || response.status === 403) {
-            this.logout('login.html');
-            throw new Error('Unauthorized');
+        if (response.status === 401 || response.status === 403 || response.status === 503) {
+            this.logout('login.html?maintenance=1');
+            throw new Error('Unauthorized or Maintenance Mode');
         }
         return parseResponseBody(response);
     },
@@ -126,9 +126,9 @@ const api = {
             },
             body: formData
         });
-        if (response.status === 401 || response.status === 403) {
-            this.logout('login.html');
-            throw new Error('Unauthorized');
+        if (response.status === 401 || response.status === 403 || response.status === 503) {
+            this.logout('login.html?maintenance=1');
+            throw new Error('Unauthorized or Maintenance Mode');
         }
         return parseResponseBody(response);
     },
@@ -141,9 +141,9 @@ const api = {
                 'Authorization': `Bearer ${token}`
             }
         });
-        if (response.status === 401 || response.status === 403) {
-            this.logout('login.html');
-            throw new Error('Unauthorized');
+        if (response.status === 401 || response.status === 403 || response.status === 503) {
+            this.logout('login.html?maintenance=1');
+            throw new Error('Unauthorized or Maintenance Mode');
         }
         return parseResponseBody(response);
     }
