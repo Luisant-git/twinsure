@@ -125,7 +125,7 @@
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 2100;
+      z-index: 20000;
       backdrop-filter: blur(4px);
     }
 
@@ -193,6 +193,8 @@
     }
 
     .claim-form-control {
+      width: 100%;
+      box-sizing: border-box;
       padding: 0.8rem 1rem;
       border: 1px solid var(--border-color);
       border-radius: 10px;
@@ -348,10 +350,15 @@
     }
 
     /* ── Fix select dropdown arrow alignment ── */
-    .kyc-action-bar .claim-form-control,
-    #kycModalAction {
-      -webkit-appearance: auto;
-      appearance: auto;
+    select.claim-form-control {
+      -webkit-appearance: none !important;
+      -moz-appearance: none !important;
+      appearance: none !important;
+      background-image: url("data:image/svg+xml;utf8,<svg fill='%236b7280' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>") !important;
+      background-repeat: no-repeat !important;
+      background-position: right 12px center !important;
+      background-size: 18px !important;
+      padding-right: 2.5rem !important;
     }
 
     .kyc-modal-body {
@@ -403,16 +410,21 @@
     }
 
     .kyc-review-grid {
-      display: grid;
-      grid-template-columns: 220px 1fr;
+      display: flex;
       gap: 1.2rem;
       min-height: 360px;
     }
 
     .kyc-doc-tabs-panel {
+      flex: 1;
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .kyc-review-grid.has-viewer .kyc-doc-tabs-panel {
+      flex: 0 0 220px;
     }
 
     .kyc-doc-tabs-label {
@@ -490,7 +502,8 @@
     }
 
     .kyc-viewer-area {
-      display: flex;
+      display: none;
+      flex: 1;
       flex-direction: column;
       align-items: center;
       justify-content: center;
@@ -500,6 +513,10 @@
       overflow: hidden;
       min-height: 300px;
       position: relative;
+    }
+
+    .kyc-viewer-area.active {
+      display: flex;
     }
 
     .kyc-viewer-placeholder {
@@ -599,12 +616,14 @@
       }
 
       .kyc-review-grid {
-        grid-template-columns: 1fr;
+        flex-direction: column !important;
         min-height: auto;
         gap: 0.9rem;
       }
 
       .kyc-doc-tabs-panel {
+        flex: 1 1 100% !important;
+        width: 100% !important;
         flex-direction: row;
         flex-wrap: wrap;
         gap: 0.4rem;
@@ -621,6 +640,7 @@
 
       .kyc-viewer-area {
         min-height: 240px;
+        width: 100% !important;
       }
 
       .kyc-modal-footer {
@@ -2929,6 +2949,58 @@
           </div>
         </div>
 
+        <!-- Policies Stat Cards -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-header">
+              <i class="fas fa-file-contract" style="background:#f0edff;color:var(--primary-purple)"></i>
+              Total Policies
+            </div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="valPolTotal">0</span>
+              <span class="metric-change">Submitted</span>
+            </div>
+            <div class="sparkline-container" id="sparkPolTotal"></div>
+            <div class="mini-analytics-label">All uploaded policies</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-header">
+              <i class="fas fa-hourglass-half" style="background:#fff8e6;color:var(--warning)"></i>
+              Pending Verification
+            </div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="valPolPending">0</span>
+              <span class="metric-change" style="color:#d97706">Awaiting</span>
+            </div>
+            <div class="sparkline-container" id="sparkPolPending"></div>
+            <div class="mini-analytics-label">Not yet verified</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-header">
+              <i class="fas fa-check-circle" style="background:#e6f6ee;color:var(--success)"></i>
+              Verified Policies
+            </div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="valPolVerified">0</span>
+              <span class="metric-change positive">Verified</span>
+            </div>
+            <div class="sparkline-container" id="sparkPolVerified"></div>
+            <div class="mini-analytics-label">Audit cleared</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-header">
+              <i class="fas fa-times-circle" style="background:#fee2e2;color:#dc2626"></i>
+              Rejected Policies
+            </div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="valPolRejected">0</span>
+              <span class="metric-change" style="color:#dc2626">Declined</span>
+            </div>
+            <div class="sparkline-container" id="sparkPolRejected"></div>
+            <div class="mini-analytics-label">Needs update</div>
+          </div>
+        </div>
+
         <div class="advanced-filter-bar">
           <div class="filter-group">
             <select class="filter-select" id="policyStatusFilter" onchange="filterPolicies()">
@@ -2968,6 +3040,58 @@
               onclick="loadAdminAppointments()">
               <i class="fas fa-sync"></i> Refresh
             </button>
+          </div>
+        </div>
+
+        <!-- Appointments Stat Cards -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-header">
+              <i class="fas fa-calendar-alt" style="background:#f0edff;color:var(--primary-purple)"></i>
+              Total Booked
+            </div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="valApptTotal">0</span>
+              <span class="metric-change">Requests</span>
+            </div>
+            <div class="sparkline-container" id="sparkApptTotal"></div>
+            <div class="mini-analytics-label">All bookings</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-header">
+              <i class="fas fa-calendar-check" style="background:#e0f2fe;color:#0369a1"></i>
+              Confirmed
+            </div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="valApptConfirmed">0</span>
+              <span class="metric-change" style="color:#0369a1">Active</span>
+            </div>
+            <div class="sparkline-container" id="sparkApptConfirmed"></div>
+            <div class="mini-analytics-label">Upcoming calls/visits</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-header">
+              <i class="fas fa-check-circle" style="background:#e6f6ee;color:var(--success)"></i>
+              Completed
+            </div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="valApptCompleted">0</span>
+              <span class="metric-change positive">Resolved</span>
+            </div>
+            <div class="sparkline-container" id="sparkApptCompleted"></div>
+            <div class="mini-analytics-label">Consultations done</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-header">
+              <i class="fas fa-calendar-times" style="background:#fee2e2;color:#dc2626"></i>
+              Cancelled
+            </div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="valApptCancelled">0</span>
+              <span class="metric-change" style="color:#dc2626">Cancelled</span>
+            </div>
+            <div class="sparkline-container" id="sparkApptCancelled"></div>
+            <div class="mini-analytics-label">Cancelled/No show</div>
           </div>
         </div>
 
@@ -3030,6 +3154,58 @@
               onclick="loadAdminServices()">
               <i class="fas fa-sync"></i> Refresh
             </button>
+          </div>
+        </div>
+
+        <!-- Service Requests Stat Cards -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-header">
+              <i class="fas fa-hands-helping" style="background:#f0edff;color:var(--primary-purple)"></i>
+              Total Requests
+            </div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="valSvcTotal">0</span>
+              <span class="metric-change">Tickets</span>
+            </div>
+            <div class="sparkline-container" id="sparkSvcTotal"></div>
+            <div class="mini-analytics-label">All care requests</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-header">
+              <i class="fas fa-clock" style="background:#fff8e6;color:var(--warning)"></i>
+              Pending Action
+            </div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="valSvcPending">0</span>
+              <span class="metric-change" style="color:#d97706">New</span>
+            </div>
+            <div class="sparkline-container" id="sparkSvcPending"></div>
+            <div class="mini-analytics-label">Awaiting assignment</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-header">
+              <i class="fas fa-spinner" style="background:#e0f2fe;color:#0369a1"></i>
+              In Progress
+            </div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="valSvcProgress">0</span>
+              <span class="metric-change" style="color:#0369a1">Active</span>
+            </div>
+            <div class="sparkline-container" id="sparkSvcProgress"></div>
+            <div class="mini-analytics-label">Being processed</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-header">
+              <i class="fas fa-check-double" style="background:#e6f6ee;color:var(--success)"></i>
+              Completed
+            </div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="valSvcCompleted">0</span>
+              <span class="metric-change positive">Resolved</span>
+            </div>
+            <div class="sparkline-container" id="sparkSvcCompleted"></div>
+            <div class="mini-analytics-label">Fully resolved care</div>
           </div>
         </div>
 
@@ -8212,6 +8388,47 @@
 
     // --- NEW ADMIN PORTAL JAVASCRIPT CONTROLLERS ---
 
+    function get7DayTrend(items, dateField = 'createdAt') {
+      const trend = {};
+      const today = new Date();
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        const dateStr = d.toISOString().split('T')[0];
+        trend[dateStr] = 0;
+      }
+      
+      items.forEach(item => {
+        let dateVal = item[dateField];
+        if (!dateVal && item.kyc) {
+          dateVal = item.updatedAt || item.createdAt;
+          const docs = ['aadhaar', 'pan', 'voterid', 'photo'];
+          let maxDocDate = null;
+          docs.forEach(doc => {
+            if (item.kyc[doc] && item.kyc[doc].uploadedAt) {
+              const docDate = new Date(item.kyc[doc].uploadedAt);
+              if (!maxDocDate || docDate > maxDocDate) {
+                maxDocDate = docDate;
+              }
+            }
+          });
+          if (maxDocDate) dateVal = maxDocDate;
+        }
+        
+        if (dateVal) {
+          try {
+            const parsed = new Date(dateVal).toISOString().split('T')[0];
+            if (trend[parsed] !== undefined) {
+              trend[parsed]++;
+            }
+          } catch (err) {
+            // ignore
+          }
+        }
+      });
+      return Object.values(trend);
+    }
+
     // Global Arrays
     let allAdminKyc = [];
     let allAdminPolicies = [];
@@ -8229,10 +8446,28 @@
       try {
         const res = await api.get('/admin/kyc');
         allAdminKyc = res || [];
+        
+        // Compute stats
+        const total = allAdminKyc.length;
+        const pending = allAdminKyc.filter(u => (u.kyc && u.kyc.status) === 'Pending Verification').length;
+        const approved = allAdminKyc.filter(u => (u.kyc && u.kyc.status) === 'Approved').length;
+        const rejected = allAdminKyc.filter(u => (u.kyc && u.kyc.status) === 'Rejected').length;
+        
+        document.getElementById('valKycTotal').textContent = total;
+        document.getElementById('valKycPending').textContent = pending;
+        document.getElementById('valKycApproved').textContent = approved;
+        document.getElementById('valKycRejected').textContent = rejected;
+        
+        // Draw sparklines
+        drawSparkline('sparkKycTotal', get7DayTrend(allAdminKyc), '#5136a8');
+        drawSparkline('sparkKycPending', get7DayTrend(allAdminKyc.filter(u => (u.kyc && u.kyc.status) === 'Pending Verification')), '#d97706');
+        drawSparkline('sparkKycApproved', get7DayTrend(allAdminKyc.filter(u => (u.kyc && u.kyc.status) === 'Approved')), '#38a169');
+        drawSparkline('sparkKycRejected', get7DayTrend(allAdminKyc.filter(u => (u.kyc && u.kyc.status) === 'Rejected')), '#dc2626');
+        
         renderAdminKYC();
       } catch (error) {
         console.error('Error loading KYC users:', error);
-        document.getElementById('kycTableBody').innerHTML = '<tr><td colspan="6" style="padding:3rem;text-align:center;color:#aaa;">Error loading KYC list.</td></tr>';
+        document.getElementById('kycTableBody').innerHTML = '<tr><td colspan="7" style="padding:3rem;text-align:center;color:#aaa;">Error loading KYC list.</td></tr>';
       }
     }
 
@@ -8276,11 +8511,11 @@
           }
         }).join('');
 
-        const displayId = u.tsid || u._id || 'N/A';
+        const displayId = u.tsid || 'N/A';
         return `
             <tr>
               <td style="color:#aaa;">${index + 1}</td>
-              <td><span class="uid-badge" title="Twinsure ID: ${escapeHtml(u.tsid || u._id || '')}">${escapeHtml(displayId)}</span></td>
+              <td><span class="uid-badge" title="Twinsure ID: ${escapeHtml(u.tsid || 'N/A')}">${escapeHtml(displayId)}</span></td>
               <td>
                 <div style="font-weight:600;">${escapeHtml(u.name)}</div>
                 <div style="font-size:0.75rem; color:#888;">Phone: ${escapeHtml(u.phone || 'N/A')}</div>
@@ -8311,9 +8546,9 @@
       selectedKycUser = user;
       document.getElementById('kycModalUserName').innerText = user.name || 'N/A';
       document.getElementById('kycModalUserEmail').innerText = user.email || 'N/A';
-      // New: populate User ID badge & subtitle
+      // New: populate User ID badge & subtitle (strict tsid display)
       const uidEl = document.getElementById('kycModalUserId');
-      if (uidEl) uidEl.innerText = user.tsid || user._id || 'N/A';
+      if (uidEl) uidEl.innerText = user.tsid || 'N/A';
       const subEl = document.getElementById('kycModalHeaderSub');
       if (subEl) subEl.innerText = `KYC Review — ${user.name || ''} (${user.email || ''})`;
       document.getElementById('kycModalAction').value = (user.kyc && user.kyc.status) || '';
@@ -8343,7 +8578,12 @@
         }
       });
 
-      // Clear Viewer
+      // Clear Viewer and hide the preview container by default
+      const viewerArea = document.querySelector('.kyc-viewer-area');
+      const reviewGrid = document.querySelector('.kyc-review-grid');
+      if (viewerArea) viewerArea.classList.remove('active');
+      if (reviewGrid) reviewGrid.classList.remove('has-viewer');
+
       document.getElementById('kycDocViewerPlaceholder').style.display = 'flex';
       document.getElementById('kycDocViewerContent').style.display = 'none';
       document.getElementById('kycDocViewerContent').innerHTML = '';
@@ -8371,6 +8611,12 @@
 
       const docObj = selectedKycUser.kyc && selectedKycUser.kyc[docType];
       if (docObj && docObj.filePath) {
+        // Show viewer area and collapse checklist tabs panel
+        const viewerArea = document.querySelector('.kyc-viewer-area');
+        const reviewGrid = document.querySelector('.kyc-review-grid');
+        if (viewerArea) viewerArea.classList.add('active');
+        if (reviewGrid) reviewGrid.classList.add('has-viewer');
+
         document.getElementById('kycDocViewerPlaceholder').style.display = 'none';
         const viewerContent = document.getElementById('kycDocViewerContent');
         viewerContent.style.display = 'block';
@@ -8389,7 +8635,7 @@
     function toggleKycRemarksField(actionValue) {
       const group = document.getElementById('kycModalRemarksGroup');
       if (actionValue === 'Rejected') {
-        group.style.display = 'block';
+        group.style.display = 'flex';
       } else {
         group.style.display = 'none';
       }
@@ -8480,6 +8726,24 @@
       try {
         const res = await api.get('/admin/policies');
         allAdminPolicies = res || [];
+
+        // Compute stats
+        const total = allAdminPolicies.length;
+        const pending = allAdminPolicies.filter(p => p.status === 'Pending Verification').length;
+        const verified = allAdminPolicies.filter(p => p.status === 'Verified').length;
+        const rejected = allAdminPolicies.filter(p => p.status === 'Rejected').length;
+
+        document.getElementById('valPolTotal').textContent = total;
+        document.getElementById('valPolPending').textContent = pending;
+        document.getElementById('valPolVerified').textContent = verified;
+        document.getElementById('valPolRejected').textContent = rejected;
+
+        // Draw sparklines
+        drawSparkline('sparkPolTotal', get7DayTrend(allAdminPolicies), '#5136a8');
+        drawSparkline('sparkPolPending', get7DayTrend(allAdminPolicies.filter(p => p.status === 'Pending Verification')), '#d97706');
+        drawSparkline('sparkPolVerified', get7DayTrend(allAdminPolicies.filter(p => p.status === 'Verified')), '#38a169');
+        drawSparkline('sparkPolRejected', get7DayTrend(allAdminPolicies.filter(p => p.status === 'Rejected')), '#dc2626');
+
         renderAdminPolicies();
       } catch (error) {
         console.error('Error loading policies:', error);
@@ -8550,12 +8814,12 @@
             `;
         }).join('');
 
-        const displayUid = g.userTsid || userId.slice(-8);
+        const displayUid = g.userTsid || 'N/A';
         return `
             <div class="requests-section-card" style="margin-top:0;">
               <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:1rem; border-bottom:1px solid #f1f5f9; padding-bottom:0.75rem;">
                 <div>
-                  <h4 style="margin:0; font-size:1.05rem; font-weight:800; color:#111;">${escapeHtml(g.userName)} <span class="uid-badge" title="Twinsure ID: ${escapeHtml(g.userTsid || userId)}">${escapeHtml(displayUid)}</span></h4>
+                  <h4 style="margin:0; font-size:1.05rem; font-weight:800; color:#111;">${escapeHtml(g.userName)} <span class="uid-badge" title="Twinsure ID: ${escapeHtml(g.userTsid || 'N/A')}">${escapeHtml(displayUid)}</span></h4>
                   <span style="font-size:0.75rem; color:#666;">${escapeHtml(g.userEmail)} | ${escapeHtml(g.userPhone)}</span>
                 </div>
                 <button class="btn btn-white" style="font-size:0.75rem; padding:0.4rem 0.8rem; display:flex; align-items:center; gap:0.4rem;" onclick="jumpToKYCForUser('${g.userEmail}', 'policies')">
@@ -8622,7 +8886,7 @@
     function togglePolicyRemarksField(val) {
       const group = document.getElementById('policyModalRemarksGroup');
       if (val === 'Rejected') {
-        group.style.display = 'block';
+        group.style.display = 'flex';
       } else {
         group.style.display = 'none';
       }
@@ -8675,6 +8939,24 @@
       try {
         const res = await api.get('/admin/appointments');
         allAdminAppointments = res || [];
+
+        // Compute stats
+        const total = allAdminAppointments.length;
+        const confirmed = allAdminAppointments.filter(a => a.status === 'Confirmed').length;
+        const completed = allAdminAppointments.filter(a => a.status === 'Completed').length;
+        const cancelled = allAdminAppointments.filter(a => a.status === 'Cancelled').length;
+
+        document.getElementById('valApptTotal').textContent = total;
+        document.getElementById('valApptConfirmed').textContent = confirmed;
+        document.getElementById('valApptCompleted').textContent = completed;
+        document.getElementById('valApptCancelled').textContent = cancelled;
+
+        // Draw sparklines
+        drawSparkline('sparkApptTotal', get7DayTrend(allAdminAppointments), '#5136a8');
+        drawSparkline('sparkApptConfirmed', get7DayTrend(allAdminAppointments.filter(a => a.status === 'Confirmed')), '#0369a1');
+        drawSparkline('sparkApptCompleted', get7DayTrend(allAdminAppointments.filter(a => a.status === 'Completed')), '#38a169');
+        drawSparkline('sparkApptCancelled', get7DayTrend(allAdminAppointments.filter(a => a.status === 'Cancelled')), '#dc2626');
+
         renderAdminAppointments();
       } catch (error) {
         console.error('Error loading appointments:', error);
@@ -8705,11 +8987,11 @@
 
       tbody.innerHTML = filtered.map((a, index) => {
         const statusClass = a.status === 'Completed' ? 'verified' : (a.status === 'Booked' ? 'pending' : (a.status === 'Confirmed' ? 'active' : 'unverified'));
-        const displayApptId = a.userTsid || a.userId || 'N/A';
+        const displayApptId = a.userTsid || 'N/A';
         return `
             <tr>
               <td style="color:#aaa;">${index + 1}</td>
-              <td><span class="uid-badge" title="Twinsure ID: ${escapeHtml(a.userTsid || a.userId || '')}">${escapeHtml(displayApptId)}</span></td>
+              <td><span class="uid-badge" title="Twinsure ID: ${escapeHtml(a.userTsid || 'N/A')}">${escapeHtml(displayApptId)}</span></td>
               <td>
                 <div style="font-weight:600;">${escapeHtml(a.userName)}</div>
                 <div style="font-size:0.75rem; color:#888;">${escapeHtml(a.userEmail)}</div>
@@ -8797,10 +9079,28 @@
       try {
         const res = await api.get('/admin/services');
         allAdminServices = res || [];
+
+        // Compute stats
+        const total = allAdminServices.length;
+        const pending = allAdminServices.filter(s => s.status === 'pending').length;
+        const progress = allAdminServices.filter(s => s.status === 'In Progress' || s.status === 'Assigned').length;
+        const completed = allAdminServices.filter(s => s.status === 'Completed').length;
+
+        document.getElementById('valSvcTotal').textContent = total;
+        document.getElementById('valSvcPending').textContent = pending;
+        document.getElementById('valSvcProgress').textContent = progress;
+        document.getElementById('valSvcCompleted').textContent = completed;
+
+        // Draw sparklines
+        drawSparkline('sparkSvcTotal', get7DayTrend(allAdminServices), '#5136a8');
+        drawSparkline('sparkSvcPending', get7DayTrend(allAdminServices.filter(s => s.status === 'pending')), '#d97706');
+        drawSparkline('sparkSvcProgress', get7DayTrend(allAdminServices.filter(s => s.status === 'In Progress' || s.status === 'Assigned')), '#0369a1');
+        drawSparkline('sparkSvcCompleted', get7DayTrend(allAdminServices.filter(s => s.status === 'Completed')), '#38a169');
+
         renderAdminServices();
       } catch (error) {
         console.error('Error loading service requests:', error);
-        document.getElementById('serviceTableBody').innerHTML = '<tr><td colspan="9" style="padding:3rem;text-align:center;color:#aaa;">Error loading service requests.</td></tr>';
+        document.getElementById('serviceTableBody').innerHTML = '<tr><td colspan="10" style="padding:3rem;text-align:center;color:#aaa;">Error loading service requests.</td></tr>';
       }
     }
 
@@ -8827,11 +9127,11 @@
 
       tbody.innerHTML = filtered.map((s, index) => {
         const statusClass = s.status === 'Completed' ? 'verified' : (s.status === 'pending' ? 'pending' : 'active');
-        const displaySvcId = s.userTsid || s.userId || 'N/A';
+        const displaySvcId = s.userTsid || 'N/A';
         return `
             <tr>
               <td style="color:#aaa;">${index + 1}</td>
-              <td><span class="uid-badge" title="Twinsure ID: ${escapeHtml(s.userTsid || s.userId || '')}">${escapeHtml(displaySvcId)}</span></td>
+              <td><span class="uid-badge" title="Twinsure ID: ${escapeHtml(s.userTsid || 'N/A')}">${escapeHtml(displaySvcId)}</span></td>
               <td>
                 <div style="font-weight:600;">${escapeHtml(s.userName)}</div>
                 <div style="font-size:0.75rem; color:#888;">${escapeHtml(s.userEmail)}</div>
@@ -9084,7 +9384,7 @@
               <option value="Rejected">❌ Reject KYC</option>
             </select>
           </div>
-          <div id="kycModalRemarksGroup" style="display:none;">
+          <div class="claim-form-group" id="kycModalRemarksGroup" style="display:none; margin-top: 1rem;">
             <label for="kycModalRemarks"><i class="fas fa-comment-alt" style="margin-right:4px;"></i>Rejection Reason
               <span style="color:#ef4444;">*</span></label>
             <textarea id="kycModalRemarks" class="claim-form-control" rows="3"
