@@ -1105,11 +1105,13 @@ function createApiRouter() {
 
       await updateOne('claims', { _id: toObjectId(id) }, { $inc: { downloads: 1 } });
 
-      // Redirect to proxy URL for public files, or secure signed URL for private files
-      const fileUrl = r2.isPublicKey(claim.filePath)
-        ? '/' + claim.filePath
-        : await r2.getFileUrl(claim.filePath, 300);
-      res.redirect(fileUrl);
+      // Fetch file buffer directly from R2 and serve as attachment
+      const buffer = await r2.getBufferFromR2(claim.filePath);
+      const contentType = r2.getContentType(claim.fileName) || 'application/pdf';
+      
+      res.setHeader('Content-Type', contentType);
+      res.setHeader('Content-Disposition', `attachment; filename="${claim.fileName || 'document.pdf'}"`);
+      res.send(buffer);
     } catch (error) {
       console.error('Database/Server Error:', error.message);
       res.status(500).send('An internal server error occurred.');

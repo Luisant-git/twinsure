@@ -3013,7 +3013,8 @@
       </div>
       <div style="flex: 1; display: flex; flex-direction: column; padding: 1.5rem; gap: 1rem; height: 100%; min-height: 0;">
         <h3 id="mobilePdfTitle" style="color: #fff; font-size: 1.25rem; font-family: 'Outfit', sans-serif; margin: 0; padding-right: 2.5rem; text-align: left;">Preview Form</h3>
-        <div class="preview-frame-shell" style="flex: 1; min-height: 0;">
+        <div class="preview-frame-shell" style="flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; background: rgba(0, 0, 0, 0.2); padding: 0.5rem;">
+          <div id="mobilePdfRenderArea" style="width: 100%; display: none;"></div>
           <iframe id="mobileClaimPdfPreview" title="Mobile Claim form PDF preview" loading="lazy" style="width: 100%; height: 100%; border: none; background: #fff; border-radius: 12px; display: block;"></iframe>
         </div>
       </div>
@@ -3213,6 +3214,7 @@
         class="fab fa-whatsapp"></i></a>
   </div>
   <script src="js/config.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
   <script>
     window.addEventListener("scroll", () => {
       var e = document.getElementById("navbar");
@@ -3763,12 +3765,106 @@
       closeMobilePdfPreview();
     }
 
+    async function renderPdfInline(pdfUrl, containerId) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; padding: 2rem; color: #fff; text-align: center;">
+          <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 1rem; color: var(--accent-gold);"></i>
+          <span style="font-family: Outfit, sans-serif; font-weight: 500;">Loading PDF preview inline...</span>
+        </div>
+      `;
+      
+      try {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+        
+        const loadingTask = pdfjsLib.getDocument(pdfUrl);
+        const pdf = await loadingTask.promise;
+        
+        container.innerHTML = '';
+        
+        const numPages = Math.min(pdf.numPages, 5); // Render up to 5 pages for mobile preview
+        
+        for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+          const page = await pdf.getPage(pageNum);
+          
+          const pageWrapper = document.createElement('div');
+          pageWrapper.style.position = 'relative';
+          pageWrapper.style.width = '100%';
+          pageWrapper.style.marginBottom = '1rem';
+          pageWrapper.style.background = '#fff';
+          pageWrapper.style.borderRadius = '8px';
+          pageWrapper.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+          pageWrapper.style.display = 'flex';
+          pageWrapper.style.justifyContent = 'center';
+          pageWrapper.style.overflow = 'hidden';
+          
+          const canvas = document.createElement('canvas');
+          canvas.style.width = '100%';
+          canvas.style.height = 'auto';
+          canvas.style.display = 'block';
+          pageWrapper.appendChild(canvas);
+          container.appendChild(pageWrapper);
+          
+          // Render at 1.5x scale to keep it readable, using viewport width as bounding size
+          const viewport = page.getViewport({ scale: 1.5 });
+          const context = canvas.getContext('2d');
+          
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          
+          const renderContext = {
+            canvasContext: context,
+            viewport: viewport
+          };
+          
+          await page.render(renderContext).promise;
+        }
+        
+        if (pdf.numPages > 5) {
+          const footerMsg = document.createElement('div');
+          footerMsg.style.textAlign = 'center';
+          footerMsg.style.padding = '1rem';
+          footerMsg.style.color = '#ccc';
+          footerMsg.style.fontSize = '0.85rem';
+          footerMsg.style.fontFamily = 'Outfit, sans-serif';
+          footerMsg.innerText = `Showing 5 of ${pdf.numPages} pages. Download the full PDF to view all pages.`;
+          container.appendChild(footerMsg);
+        }
+      } catch (err) {
+        console.error("Error rendering PDF with PDF.js:", err);
+        // Fallback to iframe
+        container.innerHTML = '';
+        const iframe = document.getElementById("mobileClaimPdfPreview");
+        if (iframe) {
+          iframe.style.display = 'block';
+          iframe.src = pdfUrl ? (pdfUrl + "#toolbar=0") : "";
+        }
+      }
+    }
+
     function openMobilePdfPreview() {
       const modalTitle = document.getElementById("modalFormTitle").innerText;
       document.getElementById("mobilePdfTitle").innerText = modalTitle + " - Preview";
-      const frame = document.getElementById("mobileClaimPdfPreview");
-      if (frame) {
-        frame.src = currentClaimPdfUrl ? (currentClaimPdfUrl + "#toolbar=0") : "";
+      
+      const renderArea = document.getElementById("mobilePdfRenderArea");
+      const iframe = document.getElementById("mobileClaimPdfPreview");
+      
+      if (typeof pdfjsLib !== 'undefined' && currentClaimPdfUrl) {
+        if (renderArea) {
+          renderArea.style.display = 'block';
+          renderArea.innerHTML = '';
+        }
+        if (iframe) {
+          iframe.style.display = 'none';
+          iframe.src = '';
+        }
+        renderPdfInline(currentClaimPdfUrl, "mobilePdfRenderArea");
+      } else {
+        if (renderArea) renderArea.style.display = 'none';
+        if (iframe) {
+          iframe.style.display = 'block';
+          iframe.src = currentClaimPdfUrl ? (currentClaimPdfUrl + "#toolbar=0") : "";
+        }
       }
       document.getElementById("mobilePdfPreviewOverlay").classList.add("active");
     }
@@ -3778,6 +3874,10 @@
       const frame = document.getElementById("mobileClaimPdfPreview");
       if (frame) {
         frame.src = "";
+      }
+      const renderArea = document.getElementById("mobilePdfRenderArea");
+      if (renderArea) {
+        renderArea.innerHTML = "";
       }
     }
 
@@ -3939,8 +4039,6 @@
                     var t = document.createElement("a");
                     t.href = currentClaimPdfUrl;
                     t.download = currentModalFormName + ".pdf";
-                    t.target = "_blank";
-                    t.rel = "noopener noreferrer";
                     document.body.appendChild(t);
                     t.click();
                     document.body.removeChild(t);
@@ -3955,8 +4053,6 @@
                       encodeURIComponent(currentClaimId),
                       t = document.createElement("a");
                     ((t.href = e_url),
-                      (t.target = "_blank"),
-                      (t.rel = "noopener noreferrer"),
                       document.body.appendChild(t),
                       t.click(),
                       document.body.removeChild(t),
