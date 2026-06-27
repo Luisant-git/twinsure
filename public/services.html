@@ -2106,6 +2106,38 @@
       .social-links {
         justify-content: flex-start;
       }
+
+      .cta-banner {
+        flex-direction: column;
+        text-align: center;
+        gap: 2rem;
+        padding: 3rem 1.5rem;
+        border-radius: 24px;
+      }
+
+      .cta-content {
+        max-width: 100%;
+      }
+
+      .cta-content h2 {
+        font-size: 2rem;
+        margin-bottom: 0.8rem;
+      }
+
+      .cta-content p {
+        font-size: 0.95rem;
+      }
+
+      .cta-btn-wrapper {
+        width: 100%;
+      }
+
+      .cta-btn-wrapper .btn {
+        width: 100%;
+        display: inline-flex;
+        justify-content: center;
+        box-sizing: border-box;
+      }
     }
 
     @media (max-width: 576px) {
@@ -2601,123 +2633,7 @@
       line-height: 1.6;
     }
 
-    .mobile-filter-trigger {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: linear-gradient(135deg,
-          var(--primary-mid),
-          var(--primary-lighter));
-      border: 1.5px solid var(--accent-gold);
-      color: #fff;
-      padding: 0.8rem 1.6rem;
-      border-radius: 30px;
-      font-weight: 700;
-      font-size: 0.95rem;
-      display: none;
-      align-items: center;
-      gap: 0.6rem;
-      box-shadow: 0 10px 25px rgba(253, 197, 0, 0.35);
-      z-index: 999;
-      cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
 
-    .mobile-filter-trigger.visible {
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .mobile-filter-trigger:hover {
-      transform: translateX(-50%) scale(1.05) translateY(-3px);
-      box-shadow: 0 12px 30px rgba(253, 197, 0, 0.5);
-    }
-
-    .mobile-tree-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 12, 31, 0.75);
-      backdrop-filter: blur(8px);
-      z-index: 1001;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-    }
-
-    .mobile-tree-overlay.open {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .mobile-tree-drawer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(0, 20, 50, 0.9);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-top: 2px solid var(--accent-gold);
-      border-top-left-radius: 30px;
-      border-top-right-radius: 30px;
-      padding: 2.2rem 1.8rem 2.5rem 1.8rem;
-      z-index: 1002;
-      transform: translateY(100%);
-      box-shadow: 0 -15px 45px rgba(0, 0, 0, 0.6);
-      transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-      max-height: 80vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .mobile-tree-drawer.open {
-      transform: translateY(0);
-    }
-
-    .drawer-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      padding-bottom: 1rem;
-    }
-
-    .drawer-header h3 {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: #fff;
-      font-family: Outfit, sans-serif;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .drawer-close {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #fff;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 1.1rem;
-      transition: all 0.2s ease;
-    }
-
-    .drawer-close:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .drawer-body {
-      overflow-y: auto;
-      flex-grow: 1;
-      padding-right: 0.5rem;
-      scrollbar-width: thin;
-    }
 
     @media (max-width: 1200px) {
       .hub-container {
@@ -2733,9 +2649,6 @@
         display: none;
       }
 
-      .mobile-filter-trigger {
-        display: inline-flex;
-      }
 
       .hub-workspace {
         gap: 4rem;
@@ -3274,21 +3187,7 @@
       </div>
     </div>
   </section>
-  <div class="mobile-filter-trigger" id="mobileFilterTrigger">
-    <i class="fas fa-filter"></i> Filters
-  </div>
-  <div class="mobile-tree-overlay" id="mobileTreeOverlay"></div>
-  <div class="mobile-tree-drawer" id="mobileTreeDrawer">
-    <div class="drawer-header">
-      <h3>
-        <i class="fas fa-filter text-gold"></i> Filters
-      </h3>
-      <button class="drawer-close" id="drawerClose" aria-label="Close drawer">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <div class="drawer-body" id="mobileTreeBody"></div>
-  </div>
+
   <section class="section claims-info-section">
     <div class="claims-split">
       <div class="claims-timeline-container" id="claimsTimelineList">
@@ -3856,98 +3755,7 @@
                   ?.scrollIntoView({ behavior: "smooth", block: "start" });
             }));
         }),
-          document.querySelectorAll(".tree-node.leaf")),
-      mobileTrigger =
-        (leafNodes.forEach((r) => {
-          r.addEventListener("click", () => {
-            (treeNodes.forEach((e) => e.classList.remove("active")),
-              r.classList.add("active"));
-            (e = r.closest(".tree-group")) &&
-              e.querySelector(".tree-node.parent")?.classList.add("active");
-            var e = r.getAttribute("data-target-id");
-            let t = document.getElementById(e);
-            (t &&
-              ((e = document.querySelector(".filter-chip.active")) &&
-                "all" !== e.getAttribute("data-filter") &&
-                (filterChips.forEach((e) => e.classList.remove("active")),
-                  document
-                    .querySelector('.filter-chip[data-filter="all"]')
-                    .classList.add("active")),
-                performSearchAndFilter(),
-                t.scrollIntoView({ behavior: "smooth", block: "center" }),
-                t.classList.add("highlight-active"),
-                setTimeout(() => {
-                  t.classList.remove("highlight-active");
-                }, 2e3)),
-              closeMobileDrawer());
-          });
-        }),
-          document.getElementById("mobileFilterTrigger")),
-      mobileOverlay = document.getElementById("mobileTreeOverlay"),
-      mobileDrawer = document.getElementById("mobileTreeDrawer"),
-      drawerClose = document.getElementById("drawerClose"),
-      mobileTreeBody = document.getElementById("mobileTreeBody"),
-      desktopSidebar = document.getElementById("hubSidebar");
-    if (desktopSidebar && mobileTreeBody) {
-      let r = desktopSidebar.querySelector(".tree-container");
-      if (r) {
-        let e = r.cloneNode(!0),
-          t =
-            (mobileTreeBody.appendChild(e), e.querySelectorAll(".tree-node"));
-        (e.querySelectorAll(".tree-node.parent").forEach((t, e) => {
-          (t.querySelector(".tree-toggle")?.addEventListener("click", (e) => {
-            (e.stopPropagation(),
-              t.parentElement.classList.toggle("collapsed"));
-          }),
-            t.addEventListener("click", () => {
-              (parentNodes[e].click(), closeMobileDrawer());
-            }));
-        }),
-          e.querySelectorAll(".tree-node.leaf").forEach((e, t) => {
-            e.addEventListener("click", () => {
-              (leafNodes[t].click(), closeMobileDrawer());
-            });
-          }));
-      }
-    }
-    function openMobileDrawer() {
-      if (mobileOverlay && mobileDrawer) {
-        mobileOverlay.classList.add("open");
-        mobileDrawer.classList.add("open");
-        document.body.style.overflow = "hidden";
-      }
-      var e,
-        t = document.querySelector("#hubSidebar .tree-node.active");
-      t &&
-        -1 !==
-        (t = Array.from(
-          document.querySelectorAll("#hubSidebar .tree-node"),
-        ).indexOf(t)) &&
-        ((e = document.querySelectorAll(
-          "#mobileTreeDrawer .tree-node",
-        )).forEach((e) => e.classList.remove("active")),
-          e[t]?.classList.add("active"));
-    }
-    function closeMobileDrawer() {
-      if (mobileOverlay && mobileDrawer) {
-        mobileOverlay.classList.remove("open");
-        mobileDrawer.classList.remove("open");
-        document.body.style.overflow = "";
-      }
-    }
-    (mobileTrigger?.addEventListener("click", openMobileDrawer),
-      mobileOverlay?.addEventListener("click", closeMobileDrawer),
-      drawerClose?.addEventListener("click", closeMobileDrawer),
-      window.addEventListener("scroll", () => {
-        var e = document.getElementById("interactive-hub");
-        if (e && mobileTrigger) {
-          ((e = e.getBoundingClientRect()).top < window.innerHeight &&
-            150 < e.bottom &&
-            window.innerWidth <= 1024
-            ? mobileTrigger.classList.add("visible")
-            : mobileTrigger.classList.remove("visible"));
-        }
-      }));
+          document.querySelectorAll(".tree-node.leaf"));
   </script>
   <script src="js/config.js"></script>
   <script src="js/site-contact.js"></script>

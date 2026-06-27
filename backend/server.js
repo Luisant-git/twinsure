@@ -924,19 +924,23 @@ function createApiRouter() {
       return;
     }
 
-    if (method === 'phone') {
+    const hasHelpRequest = !!data.helpDescription;
+
+    if (method === 'phone' || hasHelpRequest) {
       const phonePattern = /^[0-9+\-()\s]{10,18}$/;
       if (!phone || !phonePattern.test(phone) || (phone.match(/\d/g) || []).length < 10) {
         sendJson(res, 400, { message: 'Please enter a valid phone number with at least 10 digits.' });
         return;
       }
-    } else if (method === 'email') {
+    }
+    
+    if (method === 'email') {
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!email || !emailPattern.test(email)) {
         sendJson(res, 400, { message: 'Please enter a valid email address.' });
         return;
       }
-    } else {
+    } else if (method !== 'phone') {
       sendJson(res, 400, { message: 'Invalid download method.' });
       return;
     }
@@ -961,23 +965,30 @@ function createApiRouter() {
       const requestId = `fhr_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
       const timestamp = formatDateTime(new Date());
 
-      const description = method === 'email'
+      const helpDescription = data.helpDescription ? normalizeString(data.helpDescription) : '';
+      const defaultDesc = method === 'email'
         ? `Sent Claim Form(s) to Email: ${email} (${formNamesList.join(', ')})`
         : `Downloaded Claim Form (Phone: ${phone})`;
+      
+      const finalDescription = helpDescription
+        ? `[Help Requested] ${helpDescription} | ${defaultDesc}`
+        : defaultDesc;
 
       await insertOne('form_help_requests', {
         requestId,
         name,
-        phone: method === 'phone' ? phone : '',
+        phone: (method === 'phone' || helpDescription) ? phone : '',
         email: method === 'email' ? email : '',
-        description,
+        description: finalDescription,
         claimId,
         claimName: formNamesList.join(', '),
         claimCategory,
         status: 'new',
         submittedAt: timestamp,
         updatedAt: timestamp,
-        source: method === 'email' ? 'download_email' : 'download_phone'
+        source: helpDescription 
+          ? 'download_help' 
+          : (method === 'email' ? 'download_email' : 'download_phone')
       });
 
       // Increment downloads count for primary form

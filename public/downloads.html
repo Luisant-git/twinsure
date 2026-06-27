@@ -2983,6 +2983,19 @@
               <input type="email" id="dlClientEmail" class="claim-form-control" placeholder="Enter your email address"
                 style="width: 100%;" />
             </div>
+            <!-- Checkbox for Request Help -->
+            <div style="display: flex; align-items: flex-start; gap: 0.6rem; margin-top: 0.4rem; padding: 0.4rem 0.2rem; user-select: none;">
+              <input type="checkbox" id="chkRequestHelp" onchange="toggleHelpDescription()" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent-gold);" />
+              <label for="chkRequestHelp" style="color: #eee; font-size: 0.85rem; font-weight: 600; cursor: pointer; line-height: 1.3; font-family: Outfit, sans-serif;">
+                Request expert help for filling this form
+              </label>
+            </div>
+            
+            <!-- Optional Help Description Wrapper -->
+            <div id="helpDescriptionWrapper" style="display: none; width: 100%; margin-top: 0.2rem;">
+              <textarea id="dlHelpDesc" class="claim-form-control" placeholder="What are you unsure about? (Optional)" rows="2" style="width: 100%; font-family: inherit; resize: vertical; font-size: 0.85rem; padding: 0.6rem; border-radius: 8px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.15); color: #fff;"></textarea>
+            </div>
+
             <button class="btn btn-gold btn-full" onclick="handleDownloadSubmit()" style="margin-top: 0.2rem;">
               <i class="fas fa-paper-plane"></i> <span id="dlSubmitBtnText">Download Form</span>
             </button>
@@ -2991,16 +3004,7 @@
           <button type="button" class="btn btn-outline btn-full" id="btnAddMoreForms" onclick="startMultiSelectFlow()" style="margin-top: 0.4rem; border-color: var(--accent-gold); color: var(--accent-gold) !important;">
             <i class="fas fa-plus"></i> Add More Claim Forms
           </button>
-          <button class="btn btn-outline btn-full" onclick="openHelpRequestModal()" style="margin-top: 0.4rem;">
-            <i class="fas fa-hands-helping"></i> Request Help for Filling
-          </button>
-          <button class="btn btn-outline btn-full" onclick="closeClaimModal()" style="
-                border-color: rgba(255, 255, 255, 0.1);
-                color: var(--text-gray) !important;
-                margin-top: 0.2rem;
-              ">
-            Close Popup
-          </button>
+
         </div>
       </div>
     </div>
@@ -3739,6 +3743,13 @@
       const dlEmail = document.getElementById("dlClientEmail");
       if (dlEmail) dlEmail.value = "";
       
+      const chkHelp = document.getElementById("chkRequestHelp");
+      if (chkHelp) chkHelp.checked = false;
+      const helpDesc = document.getElementById("dlHelpDesc");
+      if (helpDesc) helpDesc.value = "";
+      const helpDescWrap = document.getElementById("helpDescriptionWrapper");
+      if (helpDescWrap) helpDescWrap.style.display = "none";
+      
       document.getElementById("pdfPreviewShell").style.display = "block";
       document.getElementById("multiSelectFormsListShell").style.display = "none";
       document.getElementById("tabPhone").style.display = "block";
@@ -3881,6 +3892,26 @@
       }
     }
 
+    function toggleHelpDescription() {
+      const chk = document.getElementById("chkRequestHelp");
+      const helpDescWrap = document.getElementById("helpDescriptionWrapper");
+      const dlPhoneWrapper = document.getElementById("dlPhoneWrapper");
+      
+      if (chk && chk.checked) {
+        if (helpDescWrap) helpDescWrap.style.display = "block";
+        // If email method is active, we must show the phone wrapper because phone is mandatory for help request
+        if (dlMethod === 'email' && dlPhoneWrapper) {
+          dlPhoneWrapper.style.display = "block";
+        }
+      } else {
+        if (helpDescWrap) helpDescWrap.style.display = "none";
+        // If email method is active, we hide the phone wrapper again
+        if (dlMethod === 'email' && dlPhoneWrapper) {
+          dlPhoneWrapper.style.display = "none";
+        }
+      }
+    }
+
     let dlMethod = 'phone';
     function setDlMethod(method) {
       dlMethod = method;
@@ -3890,6 +3921,9 @@
       const dlEmailWrapper = document.getElementById('dlEmailWrapper');
       const dlSubmitBtnText = document.getElementById('dlSubmitBtnText');
       const addMoreBtn = document.getElementById('btnAddMoreForms');
+      
+      const chk = document.getElementById("chkRequestHelp");
+      const isHelpChecked = chk && chk.checked;
 
       if (method === 'phone') {
         tabPhone.style.background = 'var(--accent-gold)';
@@ -3913,8 +3947,13 @@
         tabPhone.style.color = '#ccc';
         tabPhone.style.fontWeight = '600';
 
-        dlPhoneWrapper.style.display = 'none';
         dlEmailWrapper.style.display = 'block';
+        // Show phone wrapper even in email method if help checkbox is checked
+        if (isHelpChecked) {
+          dlPhoneWrapper.style.display = 'block';
+        } else {
+          dlPhoneWrapper.style.display = 'none';
+        }
         dlSubmitBtnText.textContent = 'Send PDF to Inbox';
         if (addMoreBtn) addMoreBtn.style.display = 'block';
       }
@@ -3928,19 +3967,24 @@
       const emailInput = document.getElementById('dlClientEmail');
       const email = emailInput.value.trim();
 
+      const chk = document.getElementById("chkRequestHelp");
+      const isHelpChecked = chk && chk.checked;
+
       if (!name) {
         alert('Please enter your name.');
         nameInput.focus();
         return;
       }
 
-      if (dlMethod === 'phone') {
+      if (dlMethod === 'phone' || isHelpChecked) {
         if (!phone || phone.length < 10) {
           alert('Please enter a valid 10-12 digit mobile number.');
           phoneInput.focus();
           return;
         }
-      } else {
+      }
+
+      if (dlMethod === 'email') {
         if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
           alert('Please enter a valid email address.');
           emailInput.focus();
@@ -3986,12 +4030,13 @@
           body: JSON.stringify({
             name,
             method: dlMethod,
-            phone: dlMethod === 'phone' ? phone : '',
+            phone: (dlMethod === 'phone' || isHelpChecked) ? phone : '',
             email: dlMethod === 'email' ? email : '',
             claimId: currentClaimId,
             claimName: currentModalFormName,
             claimCategory: currentModalCategory,
-            additionalClaimIds: selectedAddonIds
+            additionalClaimIds: selectedAddonIds,
+            helpDescription: isHelpChecked ? document.getElementById("dlHelpDesc").value.trim() : ""
           })
         });
 

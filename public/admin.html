@@ -1128,6 +1128,16 @@
       z-index: 1001;
     }
 
+    .profile-dropdown::before {
+      content: "";
+      position: absolute;
+      top: -10px;
+      left: 0;
+      right: 0;
+      height: 10px;
+      background: transparent;
+    }
+
     .admin-profile:hover .profile-dropdown {
       display: flex;
     }

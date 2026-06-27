@@ -194,6 +194,16 @@ body {
     z-index: 1000;
 }
 
+.profile-dropdown::before {
+    content: "";
+    position: absolute;
+    top: -25px;
+    left: 0;
+    right: 0;
+    height: 25px;
+    background: transparent;
+}
+
 .admin-profile:hover .profile-dropdown {
     opacity: 1;
     visibility: visible;
