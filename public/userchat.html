@@ -2618,18 +2618,21 @@
 
     @media (max-width: 1100px) {
       .grand-split-layout {
-        height: calc(100vh - 5.2rem) !important;
+        height: calc(100% - 5.2rem) !important;
+        height: calc(100dvh - 5.2rem) !important;
         overflow: hidden !important;
       }
 
       body,
       html {
         overflow: hidden !important;
-        height: 100vh !important;
+        height: 100% !important;
+        height: 100dvh !important;
       }
 
       .page-content-wrapper {
-        height: 100vh !important;
+        height: 100% !important;
+        height: 100dvh !important;
         overflow: hidden !important;
       }
 
@@ -2741,7 +2744,8 @@
       display: flex !important;
       flex-direction: row !important;
       gap: 1rem !important;
-      height: calc(100vh - 5.2rem) !important;
+      height: calc(100% - 5.2rem) !important;
+      height: calc(100dvh - 5.2rem) !important;
       width: 100% !important;
       align-items: stretch !important;
       justify-content: center !important;
@@ -2784,8 +2788,8 @@
     }
 
     .chat-messages-area {
-      flex: 1 1 auto !important;
-      height: auto !important;
+      flex: 1 1 0% !important;
+      min-height: 0 !important;
       overflow-y: auto !important;
       padding: 1rem !important;
     }
@@ -2893,7 +2897,8 @@
       body,
       html {
         overflow: hidden !important;
-        height: 100vh !important;
+        height: 100% !important;
+        height: 100dvh !important;
         width: 100vw !important;
       }
 
@@ -2902,15 +2907,17 @@
       }
 
       .page-content-wrapper {
-        padding: 4rem 0.6rem 1rem 0.6rem !important;
-        height: 100vh !important;
+        padding: 4.2rem 0.6rem 1rem 0.6rem !important;
+        height: 100% !important;
+        height: 100dvh !important;
         overflow: hidden !important;
         max-width: 100% !important;
       }
 
       .grand-split-layout {
         flex-direction: column !important;
-        height: calc(100vh - 5.5rem) !important;
+        height: calc(100% - 5.2rem) !important;
+        height: calc(100dvh - 5.2rem) !important;
         gap: 0.7rem !important;
         width: 100% !important;
         overflow: hidden !important;
@@ -2969,9 +2976,8 @@
       .chat-messages-area {
         padding: 0.9rem !important;
         min-width: 0 !important;
-        max-height: none !important;
-        height: auto !important;
-        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        flex: 1 1 0% !important;
       }
 
       .chat-bottom-actions {
@@ -2987,7 +2993,12 @@
 
       .chat-action-buttons>div {
         width: 100% !important;
-        flex-wrap: wrap !important;
+      }
+
+      .chat-action-buttons>div:last-child {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 0.5rem !important;
       }
 
       .chat-action-buttons .progress-bar-track {
@@ -2997,8 +3008,12 @@
 
       .chat-action-buttons .btn-white-small,
       .chat-action-buttons .btn.btn-gold {
-        width: 100% !important;
+        flex: 1 1 0% !important;
+        width: auto !important;
         justify-content: center !important;
+        white-space: nowrap !important;
+        font-size: 0.78rem !important;
+        padding: 0.55rem 0.5rem !important;
       }
 
       .nav-toggle {
@@ -3138,9 +3153,8 @@
 
       .chat-messages-area {
         padding: 0.75rem !important;
-        max-height: none !important;
-        height: auto !important;
-        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        flex: 1 1 0% !important;
       }
     }
 
@@ -3254,10 +3268,9 @@
       }
 
       .chat-messages-area {
-        max-height: none !important;
         padding: 0.6rem !important;
-        height: auto !important;
-        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        flex: 1 1 0% !important;
       }
 
       .chat-bubble {
