@@ -1,9 +1,3 @@
-// Twinsure Client Configuration
-var API_BASE_URL = (function() {
-    var isLocal = window.location.port === '3000' || 
-                  window.location.hostname === 'localhost' || 
-                  window.location.hostname === '127.0.0.1';
-    return isLocal ? (window.location.protocol + '//' + window.location.hostname + ':8000/backend/api') : '/backend/api';
-})();
-window.API_BASE_URL = API_BASE_URL;
-window.BACKEND_ROOT = window.API_BASE_URL.replace(/\/backend\/api\/?$/, "");
+const isDev = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'; 
+window.API_BASE_URL = isDev ? 'http://127.0.0.1:8000/backend/api' : '/backend/api'; 
+window.BACKEND_ROOT = window.API_BASE_URL.replace(/\/backend\/api\/?$/, ""); 
