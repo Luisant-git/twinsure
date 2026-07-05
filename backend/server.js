@@ -1752,40 +1752,64 @@ function createApiRouter() {
     }
   });
 
-  router.post('/admin/testimonials', requireRole('admin'), async (req, res) => {
-    const data = collectBody(req);
-    if (!data.name || !data.from || !data.before || !data.helped || !data.after) {
+  router.post('/admin/testimonials', requireRole('admin'), upload.single('avatarFile'), async (req, res) => {
+    const body = collectBody(req);
+    const name = normalizeString(body.name);
+    const from = normalizeString(body.from);
+    const before = normalizeString(body.before);
+    const helped = normalizeString(body.helped);
+    const after = normalizeString(body.after);
+    const heading = normalizeString(body.heading);
+    const isActive = body.isActive === 'true' || body.isActive === true;
+
+    if (!name || !from || !before || !helped || !after) {
       sendJson(res, 400, { error: 'Missing required fields: name, from, before, helped, after' });
       return;
     }
 
-    // Validate character limits: before (500), helped (500), after (400)
-    if (data.before.length > 500) {
+    if (heading && heading.length > 50) {
+      sendJson(res, 400, { error: 'Heading cannot exceed 50 characters' });
+      return;
+    }
+    if (before.length > 500) {
       sendJson(res, 400, { error: 'Before field cannot exceed 500 characters' });
       return;
     }
-    if (data.helped.length > 500) {
+    if (helped.length > 500) {
       sendJson(res, 400, { error: 'How Twins Consultancy Helped field cannot exceed 500 characters' });
       return;
     }
-    if (data.after.length > 400) {
+    if (after.length > 400) {
       sendJson(res, 400, { error: 'Result field cannot exceed 400 characters' });
       return;
     }
 
     try {
+      let avatarUrl = body.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`;
+      let avatarPath = null;
+
+      if (req.file) {
+        const cleanName = sanitizeFileName(req.file.originalname);
+        const fileName = `${Math.floor(Date.now() / 1000)}_${cleanName}`;
+        avatarPath = `public/testimonials/${fileName}`;
+        await r2.uploadToR2(req.file.buffer, avatarPath, req.file.mimetype || 'image/jpeg');
+        avatarUrl = await r2.getFileUrl(avatarPath);
+      }
+
       const maxOrder = await findOne('testimonials', {}, { sort: { displayOrder: -1 } });
       const nextOrder = (maxOrder && maxOrder.displayOrder) ? maxOrder.displayOrder + 1 : 1;
 
       const testimonial = {
-        name: data.name,
-        from: data.from,
-        before: data.before,
-        helped: data.helped,
-        after: data.after,
-        avatarUrl: data.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}&background=random`,
+        name,
+        from,
+        before,
+        helped,
+        after,
+        heading: heading || '',
+        avatarUrl,
+        avatarPath,
         displayOrder: nextOrder,
-        isActive: data.isActive !== undefined ? data.isActive : true,
+        isActive,
         createdAt: formatDateTime(new Date()),
         updatedAt: formatDateTime(new Date())
       };
@@ -1798,52 +1822,87 @@ function createApiRouter() {
     }
   });
 
-  router.put('/admin/testimonials/:id', requireRole('admin'), async (req, res) => {
+  router.put('/admin/testimonials/:id', requireRole('admin'), upload.single('avatarFile'), async (req, res) => {
     const testimonialId = req.params.id;
-    const data = collectBody(req);
+    const body = collectBody(req);
+    const name = normalizeString(body.name);
+    const from = normalizeString(body.from);
+    const before = normalizeString(body.before);
+    const helped = normalizeString(body.helped);
+    const after = normalizeString(body.after);
+    const heading = normalizeString(body.heading);
+    const isActive = body.isActive === 'true' || body.isActive === true;
 
-    if (!data.name || !data.from || !data.before || !data.helped || !data.after) {
+    if (!name || !from || !before || !helped || !after) {
       sendJson(res, 400, { error: 'Missing required fields: name, from, before, helped, after' });
       return;
     }
 
-    // Validate character limits
-    if (data.before.length > 500) {
+    if (heading && heading.length > 50) {
+      sendJson(res, 400, { error: 'Heading cannot exceed 50 characters' });
+      return;
+    }
+    if (before.length > 500) {
       sendJson(res, 400, { error: 'Before field cannot exceed 500 characters' });
       return;
     }
-    if (data.helped.length > 500) {
+    if (helped.length > 500) {
       sendJson(res, 400, { error: 'How Twins Consultancy Helped field cannot exceed 500 characters' });
       return;
     }
-    if (data.after.length > 400) {
+    if (after.length > 400) {
       sendJson(res, 400, { error: 'Result field cannot exceed 400 characters' });
       return;
     }
 
     try {
+      const existing = await findOne('testimonials', { _id: new ObjectId(testimonialId) });
+      if (!existing) {
+        sendJson(res, 404, { error: 'Testimonial not found' });
+        return;
+      }
+
+      let avatarUrl = body.avatarUrl || existing.avatarUrl;
+      let avatarPath = existing.avatarPath || null;
+
+      if (req.file) {
+        const cleanName = sanitizeFileName(req.file.originalname);
+        const fileName = `${Math.floor(Date.now() / 1000)}_${cleanName}`;
+        const newAvatarPath = `public/testimonials/${fileName}`;
+        await r2.uploadToR2(req.file.buffer, newAvatarPath, req.file.mimetype || 'image/jpeg');
+        
+        // Delete old R2 file if it exists
+        if (existing.avatarPath) {
+          try {
+            await r2.deleteFromR2(existing.avatarPath);
+          } catch (r2Err) {
+            console.error('Failed to delete old testimonial photo from R2:', r2Err.message);
+          }
+        }
+
+        avatarPath = newAvatarPath;
+        avatarUrl = await r2.getFileUrl(avatarPath);
+      }
+
       const updateData = {
-        name: data.name,
-        from: data.from,
-        before: data.before,
-        helped: data.helped,
-        after: data.after,
-        avatarUrl: data.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}&background=random`,
-        isActive: data.isActive !== undefined ? data.isActive : true,
+        name,
+        from,
+        before,
+        helped,
+        after,
+        heading: heading || '',
+        avatarUrl,
+        avatarPath,
+        isActive,
         updatedAt: formatDateTime(new Date())
       };
 
-      if (data.displayOrder !== undefined) {
-        updateData.displayOrder = data.displayOrder;
+      if (body.displayOrder !== undefined) {
+        updateData.displayOrder = parseInt(body.displayOrder, 10);
       }
 
-      const result = await updateOne('testimonials', { _id: new ObjectId(testimonialId) }, { $set: updateData });
-
-      if (result && result.modifiedCount > 0) {
-        sendJson(res, 200, { success: true, message: 'Testimonial updated successfully' });
-      } else {
-        sendJson(res, 200, { success: true, message: 'Testimonial updated' });
-      }
+      await updateOne('testimonials', { _id: new ObjectId(testimonialId) }, { $set: updateData });
+      sendJson(res, 200, { success: true, message: 'Testimonial updated successfully' });
     } catch (error) {
       console.error('Database/Server Error:', error.message);
       sendJson(res, 500, { error: 'An internal server error occurred.' });
@@ -1854,6 +1913,15 @@ function createApiRouter() {
     const testimonialId = req.params.id;
 
     try {
+      const existing = await findOne('testimonials', { _id: new ObjectId(testimonialId) });
+      if (existing && existing.avatarPath) {
+        try {
+          await r2.deleteFromR2(existing.avatarPath);
+        } catch (r2Err) {
+          console.error('Failed to delete testimonial photo from R2:', r2Err.message);
+        }
+      }
+
       const result = await deleteOne('testimonials', { _id: new ObjectId(testimonialId) });
 
       if (result && result.deletedCount > 0) {

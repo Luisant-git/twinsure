@@ -133,6 +133,22 @@ const api = {
         return parseResponseBody(response);
     },
 
+    async putMultipart(endpoint, formData) {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${BASE_URL}${endpoint}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: formData
+        });
+        if (response.status === 401 || response.status === 403 || response.status === 503) {
+            this.logout('login.html?maintenance=1');
+            throw new Error('Unauthorized or Maintenance Mode');
+        }
+        return parseResponseBody(response);
+    },
+
     async delete(endpoint) {
         const token = localStorage.getItem('token');
         const response = await fetch(`${BASE_URL}${endpoint}`, {

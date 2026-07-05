@@ -99,6 +99,118 @@
       .replace(/'/g, '&#039;');
   }
 
+  let testimonialIndex = 0;
+  let testimonialTimer = null;
+  let testimonialHoldTimer = null;
+  const autoplayDelay = 5000;
+  const holdDelay = 10000;
+
+  function initTestimonialCarousel() {
+    const container = document.getElementById('testimonialsContainer');
+    if (!container) return;
+    const cards = container.querySelectorAll('.testimonial-new-card');
+    if (cards.length === 0) return;
+
+    // Build dots
+    const dotsContainer = document.getElementById('testimonialDots');
+    if (dotsContainer) {
+      dotsContainer.innerHTML = Array.from({ length: cards.length })
+        .map((_, i) => `<div class="carousel-dot ${i === 0 ? 'active' : ''}" data-index="${i}"></div>`)
+        .join('');
+
+      dotsContainer.querySelectorAll('.carousel-dot').forEach(dot => {
+        dot.addEventListener('click', (e) => {
+          const idx = parseInt(e.target.getAttribute('data-index'), 10);
+          testimonialIndex = idx;
+          updateSlide();
+          handleUserInteraction();
+        });
+      });
+    }
+
+    // Set buttons
+    const prevBtn = document.getElementById('btnTestimonialPrev');
+    const nextBtn = document.getElementById('btnTestimonialNext');
+    if (prevBtn) {
+      prevBtn.onclick = () => {
+        slidePrev();
+        handleUserInteraction();
+      };
+    }
+    if (nextBtn) {
+      nextBtn.onclick = () => {
+        slideNext();
+        handleUserInteraction();
+      };
+    }
+
+    testimonialIndex = 0;
+    updateSlide();
+    startAutoplay();
+  }
+
+  function startAutoplay() {
+    stopAutoplay();
+    const container = document.getElementById('testimonialsContainer');
+    if (!container) return;
+    const cards = container.querySelectorAll('.testimonial-new-card');
+    if (cards.length <= 1) return;
+
+    testimonialTimer = setInterval(() => {
+      slideNext();
+    }, autoplayDelay);
+  }
+
+  function stopAutoplay() {
+    if (testimonialTimer) {
+      clearInterval(testimonialTimer);
+      testimonialTimer = null;
+    }
+  }
+
+  function handleUserInteraction() {
+    stopAutoplay();
+    if (testimonialHoldTimer) {
+      clearTimeout(testimonialHoldTimer);
+    }
+    testimonialHoldTimer = setTimeout(() => {
+      startAutoplay();
+    }, holdDelay);
+  }
+
+  function slideNext() {
+    const container = document.getElementById('testimonialsContainer');
+    if (!container) return;
+    const cards = container.querySelectorAll('.testimonial-new-card');
+    if (cards.length <= 1) return;
+    testimonialIndex = (testimonialIndex + 1) % cards.length;
+    updateSlide();
+  }
+
+  function slidePrev() {
+    const container = document.getElementById('testimonialsContainer');
+    if (!container) return;
+    const cards = container.querySelectorAll('.testimonial-new-card');
+    if (cards.length <= 1) return;
+    testimonialIndex = (testimonialIndex - 1 + cards.length) % cards.length;
+    updateSlide();
+  }
+
+  function updateSlide() {
+    const container = document.getElementById('testimonialsContainer');
+    if (!container) return;
+    container.style.transform = `translateX(-${testimonialIndex * 100}%)`;
+
+    const dots = document.querySelectorAll('.carousel-dot');
+    dots.forEach((dot, idx) => {
+      if (idx === testimonialIndex) {
+        dot.classList.add('active');
+      } else {
+        dot.classList.remove('active');
+      }
+    });
+  }
+
   async function loadTestimonials() {
     const container = document.getElementById('testimonialsContainer');
     if (!container) return;
@@ -106,23 +218,40 @@
     try {
       const response = await fetch(`${BASE_URL}/public/testimonials`);
       if (!response.ok) {
+        initTestimonialCarousel();
         return;
       }
 
       const testimonials = await response.json();
       if (!testimonials || testimonials.length === 0) {
+        initTestimonialCarousel();
         return;
       }
 
       container.innerHTML = testimonials.map((t, index) => {
         const isEven = index % 2 !== 0;
         const cardClass = isEven ? 'testimonial-new-card dark' : 'testimonial-new-card';
-        const avatar = t.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&background=random`;
+        
+        let avatar = t.avatarUrl;
+        if (avatar && avatar.includes('your-public-url.r2.dev')) {
+          avatar = avatar.replace(/^https?:\/\/your-public-url\.r2\.dev/, '');
+        }
+        if (avatar && avatar.startsWith('/')) {
+          const backendRoot = typeof window.BACKEND_ROOT !== "undefined" ? window.BACKEND_ROOT : "";
+          avatar = `${backendRoot}${avatar}`;
+        }
+        if (!avatar) {
+          avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&background=random`;
+        }
         const escapedAvatar = escapeHtml(avatar);
+        const headingHtml = t.heading 
+          ? `<div class="testimonial-main-heading">${escapeHtml(t.heading)}</div>` 
+          : '';
         
         return `
         <div class="${cardClass}">
           <div class="testimonial-left">
+            ${headingHtml}
             <div class="testimonial-avatar" style="background-image: url('${escapedAvatar}');"></div>
             <div class="testimonial-name">${escapeHtml(t.name)}</div>
             <div class="testimonial-type">${escapeHtml(t.from)}</div>
@@ -150,10 +279,14 @@
         </div>
         `;
       }).join('');
+
+      initTestimonialCarousel();
     } catch (error) {
       console.warn('Failed to load public testimonials:', error);
+      initTestimonialCarousel();
     }
   }
+
   async function loadSettings() {
     try {
       const response = await fetch(`${BASE_URL}/public/settings`);

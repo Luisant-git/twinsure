@@ -8301,17 +8301,47 @@
     let allTestimonials = [];
     let currentEditTestimonialId = null;
 
+    function previewTestimonialAvatar(input) {
+      const file = input.files[0];
+      const previewContainer = document.getElementById('testimonialPhotoPreviewContainer');
+      const previewImage = document.getElementById('testimonialPhotoPreview');
+      const previewName = document.getElementById('testimonialPhotoName');
+
+      if (file) {
+        if (file.size > 5 * 1024 * 1024) {
+          alert('File size exceeds the 5MB limit.');
+          input.value = '';
+          previewContainer.style.display = 'none';
+          return;
+        }
+        const fileUrl = URL.createObjectURL(file);
+        previewImage.style.backgroundImage = `url('${fileUrl}')`;
+        previewName.innerText = `${file.name} (${formatBytes(file.size)})`;
+        previewContainer.style.display = 'flex';
+      } else {
+        previewContainer.style.display = 'none';
+      }
+    }
+
     function openAddTestimonialModal() {
       currentEditTestimonialId = null;
       document.getElementById('testimonialModalTitle').innerText = 'Add New Testimonial';
       document.getElementById('testimonialName').value = '';
+      document.getElementById('testimonialHeading').value = '';
       document.getElementById('testimonialFrom').value = '';
       document.getElementById('testimonialBefore').value = '';
       document.getElementById('testimonialHelped').value = '';
       document.getElementById('testimonialAfter').value = '';
-      document.getElementById('testimonialAvatar').value = '';
+      document.getElementById('testimonialAvatarFile').value = '';
       document.getElementById('testimonialActive').checked = true;
       document.getElementById('testimonialSubmitBtn').innerText = 'Add Testimonial';
+      
+      // Reset preview
+      document.getElementById('testimonialPhotoPreviewContainer').style.display = 'none';
+      document.getElementById('testimonialPhotoPreview').style.backgroundImage = 'none';
+      document.getElementById('testimonialPhotoName').innerText = '';
+
+      updateCharCount('heading');
       updateCharCount('before');
       updateCharCount('helped');
       updateCharCount('after');
@@ -8326,13 +8356,32 @@
       currentEditTestimonialId = testimonialId;
       document.getElementById('testimonialModalTitle').innerText = 'Edit Testimonial';
       document.getElementById('testimonialName').value = testimonial.name || '';
+      document.getElementById('testimonialHeading').value = testimonial.heading || '';
       document.getElementById('testimonialFrom').value = testimonial.from || '';
       document.getElementById('testimonialBefore').value = testimonial.before || '';
       document.getElementById('testimonialHelped').value = testimonial.helped || '';
       document.getElementById('testimonialAfter').value = testimonial.after || '';
-      document.getElementById('testimonialAvatar').value = testimonial.avatarUrl || '';
+      document.getElementById('testimonialAvatarFile').value = '';
       document.getElementById('testimonialActive').checked = testimonial.isActive !== false;
       document.getElementById('testimonialSubmitBtn').innerText = 'Save Changes';
+
+      const previewContainer = document.getElementById('testimonialPhotoPreviewContainer');
+      const previewImage = document.getElementById('testimonialPhotoPreview');
+      const previewName = document.getElementById('testimonialPhotoName');
+
+      if (testimonial.avatarUrl) {
+        let url = testimonial.avatarUrl;
+        if (url.startsWith('/')) {
+          url = (typeof window.BACKEND_ROOT !== 'undefined' ? window.BACKEND_ROOT : '') + url;
+        }
+        previewImage.style.backgroundImage = `url('${url}')`;
+        previewName.innerText = 'Current Photo';
+        previewContainer.style.display = 'flex';
+      } else {
+        previewContainer.style.display = 'none';
+      }
+
+      updateCharCount('heading');
       updateCharCount('before');
       updateCharCount('helped');
       updateCharCount('after');
@@ -8350,7 +8399,13 @@
       const textarea = document.getElementById(fieldId);
       if (textarea && countSpan) {
         countSpan.textContent = textarea.value.length;
-        if (textarea.value.length >= 450 && fieldType !== 'after') {
+        if (fieldType === 'heading') {
+          if (textarea.value.length >= 45) {
+            countSpan.parentElement.classList.add('testimonial-char-warning');
+          } else {
+            countSpan.parentElement.classList.remove('testimonial-char-warning');
+          }
+        } else if (textarea.value.length >= 450 && fieldType !== 'after') {
           countSpan.parentElement.classList.add('testimonial-char-warning');
         } else if (fieldType === 'after' && textarea.value.length >= 350) {
           countSpan.parentElement.classList.add('testimonial-char-warning');
@@ -8363,34 +8418,47 @@
     async function saveTestimonial(event) {
       event.preventDefault();
 
-      const name = document.getElementById('testimonialName').value;
-      const from = document.getElementById('testimonialFrom').value;
-      const before = document.getElementById('testimonialBefore').value;
-      const helped = document.getElementById('testimonialHelped').value;
-      const after = document.getElementById('testimonialAfter').value;
-      const avatarUrl = document.getElementById('testimonialAvatar').value;
+      const name = document.getElementById('testimonialName').value.trim();
+      const heading = document.getElementById('testimonialHeading').value.trim();
+      const from = document.getElementById('testimonialFrom').value.trim();
+      const before = document.getElementById('testimonialBefore').value.trim();
+      const helped = document.getElementById('testimonialHelped').value.trim();
+      const after = document.getElementById('testimonialAfter').value.trim();
+      const avatarFile = document.getElementById('testimonialAvatarFile').files[0];
       const isActive = document.getElementById('testimonialActive').checked;
 
-      if (!name || !from || !before || !helped || !after) {
+      if (!name || !heading || !from || !before || !helped || !after) {
         alert('Please fill in all required fields');
         return;
       }
 
+      if (heading.length > 50) {
+        alert('Heading cannot exceed 50 characters');
+        return;
+      }
       if (before.length > 500 || helped.length > 500 || after.length > 400) {
         alert('One or more fields exceed character limits');
         return;
       }
 
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('heading', heading);
+      formData.append('from', from);
+      formData.append('before', before);
+      formData.append('helped', helped);
+      formData.append('after', after);
+      formData.append('isActive', isActive);
+      if (avatarFile) {
+        formData.append('avatarFile', avatarFile);
+      }
+
       try {
         let res;
         if (currentEditTestimonialId) {
-          res = await api.put(`/admin/testimonials/${currentEditTestimonialId}`, {
-            name, from, before, helped, after, avatarUrl, isActive
-          });
+          res = await api.putMultipart(`/admin/testimonials/${currentEditTestimonialId}`, formData);
         } else {
-          res = await api.post('/admin/testimonials', {
-            name, from, before, helped, after, avatarUrl, isActive
-          });
+          res = await api.postMultipart('/admin/testimonials', formData);
         }
 
         if (res && (res.success || res.message)) {
@@ -8451,6 +8519,9 @@
               <div class="testimonial-item-content">
                 <h4 class="testimonial-item-name">${escapeHtml(t.name)}</h4>
                 <p class="testimonial-item-from">${escapeHtml(t.from)}</p>
+                <p class="testimonial-item-preview">
+                  <strong>Heading:</strong> ${escapeHtml(t.heading || 'None')}
+                </p>
                 <p class="testimonial-item-preview">
                   <strong>Before:</strong> ${escapeHtml(beforePrev)}
                 </p>
@@ -8538,6 +8609,9 @@
       
       let videoUrl = video.videoUrl;
       if (videoUrl) {
+        if (videoUrl.includes('your-public-url.r2.dev')) {
+          videoUrl = videoUrl.replace(/^https?:\/\/your-public-url\.r2\.dev/, '');
+        }
         if (videoUrl.startsWith('/')) {
           videoUrl = (typeof window.BACKEND_ROOT !== 'undefined' ? window.BACKEND_ROOT : '') + videoUrl;
         }
@@ -9731,6 +9805,14 @@
         </div>
 
         <div class="claim-form-group">
+          <label>Highlighted Heading * <span style="font-size: 0.75rem; text-transform: none; font-weight: normal; color: #777; margin-left: 5px;">Max 50 chars</span></label>
+          <input type="text" id="testimonialHeading" class="claim-form-control" required placeholder="e.g., Recovered ₹6 Lakhs Claim!" maxlength="50" oninput="updateCharCount('heading')" />
+          <div class="testimonial-char-count" style="font-size: 0.75rem; color: #777; margin-top: 0.2rem; text-align: right;">
+            <span id="charCount-heading">0</span> / 50 characters
+          </div>
+        </div>
+
+        <div class="claim-form-group">
           <label>From/Location *</label>
           <input type="text" id="testimonialFrom" class="claim-form-control" required placeholder="e.g., from Karur" />
         </div>
@@ -9773,8 +9855,13 @@
         </div>
 
         <div class="claim-form-group">
-          <label>Avatar URL (Optional)</label>
-          <input type="url" id="testimonialAvatar" class="claim-form-control" placeholder="https://..." />
+          <label id="testimonialPhotoLabel">Profile Photo (Optional)</label>
+          <input type="file" id="testimonialAvatarFile" class="claim-form-control" accept="image/jpeg,image/png" onchange="previewTestimonialAvatar(this)" />
+          <p style="font-size:0.75rem; color:#666; margin-top:0.3rem;">Max file size: 5MB. Leave empty to use placeholder.</p>
+          <div id="testimonialPhotoPreviewContainer" style="display:none; margin-top:1rem; align-items:center; gap:1rem;">
+            <div id="testimonialPhotoPreview" style="width:60px; height:60px; border-radius:50%; background-size:cover; background-position:center; border: 2px solid #ccc;"></div>
+            <span id="testimonialPhotoName" style="font-size:0.8rem; color:#555; word-break:break-all;"></span>
+          </div>
         </div>
 
         <div class="claim-form-group">
