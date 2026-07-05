@@ -3351,6 +3351,9 @@
           <button class="settings-tab" onclick="switchSettingsTab('testimonials', this)">
             Testimonials
           </button>
+          <button class="settings-tab" onclick="switchSettingsTab('listening', this)">
+            Listening
+          </button>
         </div>
         <div class="settings-layout" style="
               display: grid;
@@ -3725,6 +3728,34 @@
               <div class="premium-table-card" style="border: 1px solid #e2e8f0; border-radius: 12px; background: #fff;">
                 <div id="testimonialsListContainer" style="padding: 1.5rem">
                   <p style="color: #999; text-align: center">Loading testimonials...</p>
+                </div>
+              </div>
+            </div>
+            <div id="tab-listening" class="settings-tab-pane" style="display: none">
+              <div id="listeningOrderChangeBanner" style="display: none; background: #fffbeb; border: 1px solid #feebc8; padding: 0.8rem 1rem; border-radius: 8px; margin-bottom: 1rem; align-items: center; justify-content: space-between; font-size: 0.85rem; color: #c05621; font-weight: 600;">
+                <span>Video order changed. Please save changes to apply.</span>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-gold" onclick="saveListeningOrder()" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Save Order</button>
+                  <button class="btn btn-white" onclick="loadListening()" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Reset</button>
+                </div>
+              </div>
+              <div style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 1.2rem;
+                  ">
+                <h3 style="font-size: 1.1rem; color: #111; margin: 0">
+                  Listening Settings (Videos)
+                </h3>
+                <button class="btn btn-gold" onclick="openAddListeningModal()"
+                  style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+                  <i class="fas fa-plus"></i> Add New Video
+                </button>
+              </div>
+              <div class="premium-table-card" style="border: 1px solid #e2e8f0; border-radius: 12px; background: #fff;">
+                <div id="listeningListContainer" style="padding: 1.5rem">
+                  <p style="color: #999; text-align: center">Loading videos...</p>
                 </div>
               </div>
             </div>
@@ -5937,7 +5968,7 @@
           </form>
         </div>
       </div>
-      <div class="claim-modal-overlay" id="customAlertModal">
+      <div class="claim-modal-overlay" id="customAlertModal" style="z-index: 999999 !important;">
         <div class="claim-modal-window" style="
               max-width: 420px;
               border-radius: 20px;
@@ -5991,7 +6022,7 @@
           </button>
         </div>
       </div>
-      <div class="claim-modal-overlay" id="customConfirmModal">
+      <div class="claim-modal-overlay" id="customConfirmModal" style="z-index: 999999 !important;">
         <div class="claim-modal-window" style="
               max-width: 420px;
               border-radius: 20px;
@@ -7935,6 +7966,9 @@
       if (e === "testimonials") {
         loadTestimonials();
       }
+      if (e === "listening") {
+        loadListening();
+      }
     }
 
     function switchSettingsTab(e, t) {
@@ -8438,6 +8472,340 @@
             </div>
           `;
       }).join('');
+    }
+
+    // ===== LISTENING (VIDEO) MANAGEMENT =====
+    let allListeningVideos = [];
+    let currentEditListeningId = null;
+    let dragSrcEl = null;
+
+    function openAddListeningModal() {
+      currentEditListeningId = null;
+      document.getElementById('listeningId').value = '';
+      document.getElementById('listeningTitle').value = '';
+      document.getElementById('listeningDescription').value = '';
+      document.getElementById('listeningFile').value = '';
+      document.getElementById('listeningActive').checked = true;
+
+      const errorDiv = document.getElementById('listeningFileError');
+      errorDiv.style.display = 'none';
+      errorDiv.innerText = '';
+      
+      document.getElementById('listeningFileLabel').innerText = 'Video File (.mp4 / .webm) *';
+      document.getElementById('listeningFile').required = true;
+      document.getElementById('listeningModalTitle').innerText = 'Add New Video';
+      document.getElementById('listeningSubmitBtn').innerText = 'Add Video';
+
+      const modal = document.getElementById('listeningModal');
+      modal.style.display = 'flex';
+      setTimeout(() => modal.classList.add('active'), 10);
+    }
+
+    function openEditListeningModal(id) {
+      const video = allListeningVideos.find(v => v._id === id);
+      if (!video) return;
+
+      currentEditListeningId = id;
+      document.getElementById('listeningId').value = id;
+      document.getElementById('listeningTitle').value = video.title || '';
+      document.getElementById('listeningDescription').value = video.description || '';
+      document.getElementById('listeningFile').value = '';
+      document.getElementById('listeningActive').checked = video.isActive !== false;
+
+      const errorDiv = document.getElementById('listeningFileError');
+      errorDiv.style.display = 'none';
+      errorDiv.innerText = '';
+
+      document.getElementById('listeningFileLabel').innerText = 'Change Video File (Optional)';
+      document.getElementById('listeningFile').required = false;
+      document.getElementById('listeningModalTitle').innerText = 'Edit Video';
+      document.getElementById('listeningSubmitBtn').innerText = 'Save Changes';
+
+      const modal = document.getElementById('listeningModal');
+      modal.style.display = 'flex';
+      setTimeout(() => modal.classList.add('active'), 10);
+    }
+
+    function closeListeningModal() {
+      const modal = document.getElementById('listeningModal');
+      modal.classList.remove('active');
+      setTimeout(() => { modal.style.display = 'none'; }, 300);
+    }
+
+    // Client-side file size verification (250MB limit)
+    function validateListeningFileSize(input) {
+      const file = input.files[0];
+      const errorDiv = document.getElementById('listeningFileError');
+      if (file && file.size > 250 * 1024 * 1024) {
+        errorDiv.innerText = 'File size exceeds the 250MB limit. Please choose a smaller video file.';
+        errorDiv.style.display = 'block';
+        input.value = '';
+      } else {
+        errorDiv.style.display = 'none';
+        errorDiv.innerText = '';
+      }
+    }
+
+    async function saveListening(event) {
+      event.preventDefault();
+
+      const title = document.getElementById('listeningTitle').value.trim();
+      const description = document.getElementById('listeningDescription').value.trim();
+      const isActive = document.getElementById('listeningActive').checked;
+      const fileInput = document.getElementById('listeningFile');
+      const errorDiv = document.getElementById('listeningFileError');
+
+      errorDiv.style.display = 'none';
+      errorDiv.innerText = '';
+
+      if (!title) {
+        errorDiv.innerText = 'Please enter a video title.';
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      if (!currentEditListeningId && !fileInput.files[0]) {
+        errorDiv.innerText = 'Please upload a video file for the new entry.';
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      const formData = new FormData();
+      if (currentEditListeningId) {
+        formData.append('id', currentEditListeningId);
+      }
+      formData.append('title', title);
+      formData.append('description', description);
+      formData.append('isActive', isActive);
+
+      if (fileInput.files[0]) {
+        formData.append('video', fileInput.files[0]);
+      }
+
+      const submitBtn = document.getElementById('listeningSubmitBtn');
+      const originalText = submitBtn.innerText;
+
+      try {
+        submitBtn.innerText = 'Uploading...';
+        submitBtn.disabled = true;
+
+        const res = await api.postMultipart('/admin/listening', formData);
+        
+        submitBtn.innerText = originalText;
+        submitBtn.disabled = false;
+
+        if (res && (res.success || res.message)) {
+          alert(res.message || 'Video saved successfully');
+          closeListeningModal();
+          loadListening();
+        } else {
+          errorDiv.innerText = 'Error: ' + (res.error || res.message || 'Failed to save');
+          errorDiv.style.display = 'block';
+        }
+      } catch (error) {
+        console.error(error);
+        submitBtn.innerText = originalText;
+        submitBtn.disabled = false;
+        errorDiv.innerText = 'An error occurred while saving the video.';
+        errorDiv.style.display = 'block';
+      }
+    }
+
+    async function deleteListening(id) {
+      if (!(await confirm('Are you sure you want to delete this video? This will permanently remove it from Cloudflare storage.'))) return;
+
+      try {
+        const res = await api.delete(`/admin/listening/${id}`);
+        if (res && (res.success || res.message)) {
+          alert(res.message || 'Video deleted successfully');
+          loadListening();
+        } else {
+          alert('Error: ' + (res.error || res.message));
+        }
+      } catch (error) {
+        console.error(error);
+        alert('An error occurred while deleting the video.');
+      }
+    }
+
+    async function loadListening() {
+      try {
+        const res = await api.get('/admin/listening');
+        allListeningVideos = res || [];
+        allListeningVideos.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+        renderListening();
+        document.getElementById('listeningOrderChangeBanner').style.display = 'none';
+      } catch (error) {
+        console.error('Error loading listening videos:', error);
+        document.getElementById('listeningListContainer').innerHTML = '<p style="color: red; text-align: center;">Error loading videos</p>';
+      }
+    }
+
+    function renderListening() {
+      const container = document.getElementById('listeningListContainer');
+      if (!allListeningVideos || allListeningVideos.length === 0) {
+        container.innerHTML = '<p style="color: #999; text-align: center; padding: 2rem;">No videos yet. Add one to get started!</p>';
+        return;
+      }
+
+      let html = `
+        <table class="premium-table" style="width:100%; border-collapse:collapse; font-size:0.9rem;">
+          <thead>
+            <tr style="border-bottom:2px solid #e2e8f0; text-align:left; background:#f8fafc;">
+              <th style="padding:0.8rem; width:40px;"></th>
+              <th style="padding:0.8rem; width:60px;">Order</th>
+              <th style="padding:0.8rem;">Title</th>
+              <th style="padding:0.8rem; width:100px;">Size</th>
+              <th style="padding:0.8rem; width:100px;">Status</th>
+              <th style="padding:0.8rem; width:180px; text-align:center;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="listeningTableBody">
+      `;
+
+      html += allListeningVideos.map((v, index) => {
+        return `
+          <tr draggable="true" 
+              data-id="${v._id}" 
+              data-index="${index}" 
+              style="border-bottom:1px solid #e2e8f0; cursor:move; background: #fff;"
+              class="draggable-video-row">
+            <td style="padding:0.8rem; text-align:center; color:#a0aec0;">
+              <i class="fas fa-grip-vertical"></i>
+            </td>
+            <td style="padding:0.8rem; font-weight:600;">
+              ${v.displayOrder || (index + 1)}
+            </td>
+            <td style="padding:0.8rem;">
+              <div style="font-weight:600; color:#2d3748;">${escapeHtml(v.title)}</div>
+              <div style="font-size:0.75rem; color:#718096; max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                ${escapeHtml(v.description || 'No description')}
+              </div>
+            </td>
+            <td style="padding:0.8rem; color:#718096;">
+              ${escapeHtml(v.fileSize || 'N/A')}
+            </td>
+            <td style="padding:0.8rem;">
+              <span style="display:inline-block; font-size:0.75rem; padding:0.2rem 0.5rem; border-radius:4px; font-weight:600; background:${v.isActive ? '#ccffcc' : '#ffcccc'}; color:${v.isActive ? '#22543d' : '#742a2a'};">
+                ${v.isActive ? 'Active' : 'Inactive'}
+              </span>
+            </td>
+            <td style="padding:0.8rem; text-align:center;">
+              <button class="btn btn-white" onclick="event.stopPropagation(); openEditListeningModal('${v._id}')" style="padding:0.3rem 0.6rem; font-size:0.8rem; margin-right:0.3rem;">
+                <i class="fas fa-edit"></i> Edit
+              </button>
+              <button class="btn btn-white" onclick="event.stopPropagation(); deleteListening('${v._id}')" style="padding:0.3rem 0.6rem; font-size:0.8rem; color:var(--danger);">
+                <i class="fas fa-trash"></i> Delete
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      html += `
+          </tbody>
+        </table>
+      `;
+
+      container.innerHTML = html;
+      initDragAndDrop();
+    }
+
+    function initDragAndDrop() {
+      const rows = document.querySelectorAll('#listeningTableBody tr');
+      rows.forEach(row => {
+        row.addEventListener('dragstart', handleDragStart, false);
+        row.addEventListener('dragenter', handleDragEnter, false);
+        row.addEventListener('dragover', handleDragOver, false);
+        row.addEventListener('dragleave', handleDragLeave, false);
+        row.addEventListener('drop', handleDrop, false);
+        row.addEventListener('dragend', handleDragEnd, false);
+      });
+    }
+
+    function handleDragStart(e) {
+      this.style.opacity = '0.4';
+      dragSrcEl = this;
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/html', this.innerHTML);
+    }
+
+    function handleDragOver(e) {
+      if (e.preventDefault) {
+        e.preventDefault();
+      }
+      e.dataTransfer.dropEffect = 'move';
+      return false;
+    }
+
+    function handleDragEnter(e) {
+      this.classList.add('over');
+      this.style.background = '#edf2f7';
+    }
+
+    function handleDragLeave(e) {
+      this.classList.remove('over');
+      this.style.background = '#fff';
+    }
+
+    function handleDrop(e) {
+      if (e.stopPropagation) {
+        e.stopPropagation();
+      }
+
+      if (dragSrcEl !== this) {
+        const srcIndex = parseInt(dragSrcEl.getAttribute('data-index'), 10);
+        const targetIndex = parseInt(this.getAttribute('data-index'), 10);
+
+        const temp = allListeningVideos[srcIndex];
+        allListeningVideos.splice(srcIndex, 1);
+        allListeningVideos.splice(targetIndex, 0, temp);
+
+        allListeningVideos.forEach((video, i) => {
+          video.displayOrder = i + 1;
+        });
+
+        renderListening();
+        document.getElementById('listeningOrderChangeBanner').style.display = 'flex';
+      }
+      return false;
+    }
+
+    function handleDragEnd(e) {
+      this.style.opacity = '1.0';
+      const rows = document.querySelectorAll('#listeningTableBody tr');
+      rows.forEach(row => {
+        row.classList.remove('over');
+        row.style.background = '#fff';
+      });
+    }
+
+    async function saveListeningOrder() {
+      const orders = allListeningVideos.map(v => ({
+        id: v._id,
+        displayOrder: v.displayOrder
+      }));
+
+      try {
+        const saveBtn = document.querySelector('#listeningOrderChangeBanner button.btn-gold');
+        saveBtn.disabled = true;
+        saveBtn.innerText = 'Saving...';
+
+        const res = await api.post('/admin/listening/reorder', { orders });
+        
+        saveBtn.disabled = false;
+        saveBtn.innerText = 'Save Order';
+
+        if (res && res.success) {
+          alert('Video order updated successfully!');
+          loadListening();
+        } else {
+          alert('Error: ' + (res.error || res.message || 'Failed to save order'));
+        }
+      } catch (error) {
+        console.error(error);
+        alert('An error occurred while saving the video order.');
+      }
     }
 
     // --- NEW ADMIN PORTAL JAVASCRIPT CONTROLLERS ---
@@ -9348,6 +9716,52 @@
         <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
           <button type="button" class="btn btn-white" onclick="closeTestimonialModal()">Cancel</button>
           <button type="submit" class="btn btn-gold" id="testimonialSubmitBtn">Add Testimonial</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Listening Modal (Add/Edit) -->
+  <div class="claim-modal-overlay" id="listeningModal">
+    <div class="claim-modal-window" style="max-width: 650px;">
+      <button class="modal-close-global" onclick="closeListeningModal()">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="claim-modal-header">
+        <h3 id="listeningModalTitle">Add New Video</h3>
+      </div>
+      <form onsubmit="saveListening(event)" style="padding: 1.5rem;" id="listeningForm">
+        <input type="hidden" id="listeningId" />
+        <div class="claim-form-group">
+          <label>Video Title *</label>
+          <input type="text" id="listeningTitle" class="claim-form-control" required placeholder="e.g., Customer Interview Murugan" />
+        </div>
+
+        <div class="claim-form-group">
+          <label>Description (Optional)</label>
+          <textarea id="listeningDescription" class="claim-form-control" placeholder="Describe the video content..." style="min-height: 80px; resize: vertical;"></textarea>
+        </div>
+
+        <div class="claim-form-group">
+          <label id="listeningFileLabel">Video File (.mp4 / .webm) *</label>
+          <input type="file" id="listeningFile" class="claim-form-control" accept="video/mp4,video/webm" onchange="validateListeningFileSize(this)" />
+          <p id="listeningFileHelp" style="font-size:0.75rem; color:#666; margin-top:0.3rem;">Max file size: 250MB</p>
+          <div id="listeningFileError" style="display:none; color:#e53e3e; font-size:0.85rem; margin-top:0.5rem; font-weight:600; padding: 0.5rem; background: #fff5f5; border: 1px solid #fed7d7; border-radius: 6px;"></div>
+        </div>
+
+        <div class="claim-form-group">
+          <div class="status-toggle-wrapper">
+            <label class="switch">
+              <input type="checkbox" id="listeningActive" checked />
+              <span class="slider"></span>
+            </label>
+            <span style="font-size: 0.9rem; font-weight: 600; color: #333;">Active (Display on website)</span>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
+          <button type="button" class="btn btn-white" onclick="closeListeningModal()">Cancel</button>
+          <button type="submit" class="btn btn-gold" id="listeningSubmitBtn">Add Video</button>
         </div>
       </form>
     </div>

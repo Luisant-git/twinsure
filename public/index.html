@@ -1930,7 +1930,7 @@
           Listen, Learn, Protect. Tune in to our expert insights and adapt to a rapidly changing insurance landscape.
           Gain the knowledge you need to secure what matters most.
         </p>
-        <a href="#" class="btn btn-gold" style="font-size: 1.1rem; padding: 1rem 2.5rem;"><i
+        <a href="#" id="btnStartListening" class="btn btn-gold" style="font-size: 1.1rem; padding: 1rem 2.5rem;"><i
             class="fas fa-play-circle"></i> Start Listening</a>
       </div>
       <div class="insights-phones">
@@ -2354,6 +2354,415 @@
       phonesObserver.observe(phonesEl);
     }
   </script>
+  <!-- Floating/Draggable Video Player Widget -->
+  <div id="listeningPlayerOverlay" onclick="closeListeningPlayer()"></div>
+  <div id="listeningPlayerWidget" class="player-modal">
+    <div class="player-header">
+      <div class="player-title" id="listeningPlayerTitle">Twinsure Insight Video</div>
+      <div class="player-controls-top">
+        <button class="player-btn" onclick="togglePlayerMinimize()" title="Minimize / Restore PIP">
+          <i id="btnPlayerMinimizeIcon" class="fas fa-window-minimize"></i>
+        </button>
+        <button class="player-btn" onclick="togglePlayerFullScreen()" title="Fullscreen">
+          <i class="fas fa-expand"></i>
+        </button>
+        <button class="player-btn" onclick="closeListeningPlayer()" title="Close" style="color: #ef4444;">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+    <div class="player-body">
+      <video id="listeningVideoElement" class="player-video" controls autoplay></video>
+      <div id="listeningPlayerNavPrev" class="player-nav-btn player-nav-prev" onclick="playPrevVideo()" style="display:none;">
+        <i class="fas fa-chevron-left"></i>
+      </div>
+      <div id="listeningPlayerNavNext" class="player-nav-btn player-nav-next" onclick="playNextVideo()" style="display:none;">
+        <i class="fas fa-chevron-right"></i>
+      </div>
+    </div>
+    <div class="player-description-pane" id="listeningPlayerDescription"></div>
+  </div>
+
+  <style>
+    #listeningPlayerOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 99999;
+      display: none;
+      backdrop-filter: blur(8px);
+      transition: opacity 0.3s ease;
+    }
+
+    #listeningPlayerWidget {
+      position: fixed;
+      z-index: 100000;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    #listeningPlayerWidget.player-modal {
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      width: 90%;
+      max-width: 800px;
+      height: auto;
+    }
+
+    #listeningPlayerWidget.player-minimized {
+      width: 320px;
+      bottom: 30px;
+      right: 30px;
+      top: auto !important;
+      left: auto !important;
+      transform: none !important;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      border-color: rgba(253, 197, 0, 0.3);
+    }
+
+    #listeningPlayerWidget.player-minimized .player-header {
+      cursor: grab;
+      user-select: none;
+    }
+    #listeningPlayerWidget.player-minimized .player-header:active {
+      cursor: grabbing;
+    }
+
+    .player-header {
+      padding: 0.8rem 1.2rem;
+      background: rgba(15, 23, 42, 0.9);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .player-title {
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 60%;
+    }
+    .player-controls-top {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    .player-btn {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .player-btn:hover {
+      color: #fff;
+      transform: scale(1.1);
+    }
+
+    .player-body {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #000;
+    }
+    .player-video {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .player-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.2s ease;
+    }
+    .player-nav-btn:hover {
+      background: var(--accent-gold);
+      color: #000;
+      border-color: var(--accent-gold);
+      transform: translateY(-50%) scale(1.1);
+    }
+    .player-nav-prev {
+      left: 15px;
+    }
+    .player-nav-next {
+      right: 15px;
+    }
+
+    .player-description-pane {
+      padding: 1rem 1.2rem;
+      color: #cbd5e1;
+      background: rgba(15, 23, 42, 0.8);
+      font-size: 0.85rem;
+      line-height: 1.5;
+      max-height: 90px;
+      overflow-y: auto;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    #listeningPlayerWidget.player-minimized .player-description-pane {
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      #listeningPlayerWidget.player-modal {
+        width: 95%;
+      }
+      #listeningPlayerWidget.player-minimized {
+        width: 240px;
+        bottom: 15px;
+        right: 15px;
+      }
+      .player-header {
+        padding: 0.6rem 0.9rem;
+      }
+      .player-title {
+        font-size: 0.8rem;
+      }
+      .player-nav-btn {
+        width: 32px;
+        height: 32px;
+      }
+    }
+  </style>
+
+  <script>
+    let activeVideos = [];
+    let currentVideoIndex = 0;
+    let isWidgetDragging = false;
+    let dragStartX, dragStartY;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const btn = document.getElementById("btnStartListening");
+      if (btn) {
+        btn.addEventListener("click", async (e) => {
+          e.preventDefault();
+          await startListeningFlow();
+        });
+      }
+
+      const widget = document.getElementById("listeningPlayerWidget");
+      const header = widget.querySelector(".player-header");
+
+      header.addEventListener("mousedown", onWidgetDragStart);
+      header.addEventListener("touchstart", onWidgetDragStart, { passive: true });
+    });
+
+    async function startListeningFlow() {
+      try {
+        const base = typeof API_BASE_URL !== "undefined" ? API_BASE_URL : "/backend/api";
+        const response = await fetch(`${base}/public/listening`);
+        if (!response.ok) throw new Error("Failed to load videos");
+        
+        activeVideos = await response.json();
+        if (!activeVideos || activeVideos.length === 0) {
+          alert("No videos are currently available for listening.");
+          return;
+        }
+
+        currentVideoIndex = 0;
+        openListeningPlayer();
+      } catch (err) {
+        console.error("Error starting listening flow:", err);
+        alert("An error occurred while loading the video playlist.");
+      }
+    }
+
+    function openListeningPlayer() {
+      const widget = document.getElementById("listeningPlayerWidget");
+      const overlay = document.getElementById("listeningPlayerOverlay");
+
+      widget.className = "player-modal";
+      widget.style.left = "";
+      widget.style.top = "";
+      widget.style.bottom = "";
+      widget.style.right = "";
+      
+      document.getElementById("btnPlayerMinimizeIcon").className = "fas fa-window-minimize";
+
+      overlay.style.display = "block";
+      widget.style.display = "flex";
+
+      loadActiveVideo();
+    }
+
+    function loadActiveVideo() {
+      if (activeVideos.length === 0) return;
+      const video = activeVideos[currentVideoIndex];
+      
+      document.getElementById("listeningPlayerTitle").innerText = video.title || "Twinsure Insight Video";
+      document.getElementById("listeningPlayerDescription").innerHTML = video.description 
+        ? video.description.replace(/\n/g, "<br>")
+        : "No description provided.";
+
+      const videoElement = document.getElementById("listeningVideoElement");
+      
+      let videoUrl = video.videoUrl;
+      if (!videoUrl && video.filePath) {
+        const backendRoot = typeof window.BACKEND_ROOT !== "undefined" ? window.BACKEND_ROOT : "";
+        videoUrl = `${backendRoot}/${video.filePath}`;
+      }
+      
+      videoElement.src = videoUrl;
+      videoElement.load();
+      videoElement.play().catch(e => console.log("Playback start deferred: ", e));
+
+      const prevBtn = document.getElementById("listeningPlayerNavPrev");
+      const nextBtn = document.getElementById("listeningPlayerNavNext");
+      
+      if (activeVideos.length > 1) {
+        prevBtn.style.display = "flex";
+        nextBtn.style.display = "flex";
+      } else {
+        prevBtn.style.display = "none";
+        nextBtn.style.display = "none";
+      }
+    }
+
+    function playNextVideo() {
+      if (activeVideos.length <= 1) return;
+      currentVideoIndex = (currentVideoIndex + 1) % activeVideos.length;
+      loadActiveVideo();
+    }
+
+    function playPrevVideo() {
+      if (activeVideos.length <= 1) return;
+      currentVideoIndex = (currentVideoIndex - 1 + activeVideos.length) % activeVideos.length;
+      loadActiveVideo();
+    }
+
+    function closeListeningPlayer() {
+      const widget = document.getElementById("listeningPlayerWidget");
+      const overlay = document.getElementById("listeningPlayerOverlay");
+      const videoElement = document.getElementById("listeningVideoElement");
+
+      videoElement.pause();
+      videoElement.src = "";
+
+      overlay.style.display = "none";
+      widget.style.display = "none";
+    }
+
+    function togglePlayerMinimize() {
+      const widget = document.getElementById("listeningPlayerWidget");
+      const overlay = document.getElementById("listeningPlayerOverlay");
+      const icon = document.getElementById("btnPlayerMinimizeIcon");
+
+      if (widget.classList.contains("player-modal")) {
+        widget.classList.remove("player-modal");
+        widget.classList.add("player-minimized");
+        overlay.style.display = "none";
+        icon.className = "fas fa-window-maximize";
+        
+        widget.style.left = "";
+        widget.style.top = "";
+        widget.style.bottom = "30px";
+        widget.style.right = "30px";
+      } else {
+        widget.classList.remove("player-minimized");
+        widget.classList.add("player-modal");
+        overlay.style.display = "block";
+        icon.className = "fas fa-window-minimize";
+        
+        widget.style.left = "";
+        widget.style.top = "";
+        widget.style.bottom = "";
+        widget.style.right = "";
+      }
+    }
+
+    function togglePlayerFullScreen() {
+      const video = document.getElementById("listeningVideoElement");
+      if (video.requestFullscreen) {
+        video.requestFullscreen();
+      } else if (video.webkitRequestFullscreen) {
+        video.webkitRequestFullscreen();
+      } else if (video.msRequestFullscreen) {
+        video.msRequestFullscreen();
+      }
+    }
+
+    function onWidgetDragStart(e) {
+      const widget = document.getElementById("listeningPlayerWidget");
+      if (!widget.classList.contains("player-minimized")) return;
+
+      isWidgetDragging = true;
+      const clientX = e.type === "touchstart" ? e.touches[0].clientX : e.clientX;
+      const clientY = e.type === "touchstart" ? e.touches[0].clientY : e.clientY;
+
+      const rect = widget.getBoundingClientRect();
+      dragStartX = clientX - rect.left;
+      dragStartY = clientY - rect.top;
+
+      document.addEventListener("mousemove", onWidgetDragMove);
+      document.addEventListener("touchmove", onWidgetDragMove, { passive: false });
+      document.addEventListener("mouseup", onWidgetDragEnd);
+      document.addEventListener("touchend", onWidgetDragEnd);
+    }
+
+    function onWidgetDragMove(e) {
+      if (!isWidgetDragging) return;
+      e.preventDefault();
+
+      const widget = document.getElementById("listeningPlayerWidget");
+      const clientX = e.type === "touchmove" ? e.touches[0].clientX : e.clientX;
+      const clientY = e.type === "touchmove" ? e.touches[0].clientY : e.clientY;
+
+      let newX = clientX - dragStartX;
+      let newY = clientY - dragStartY;
+
+      const maxX = window.innerWidth - widget.offsetWidth;
+      const maxY = window.innerHeight - widget.offsetHeight;
+
+      newX = Math.max(0, Math.min(newX, maxX));
+      newY = Math.max(0, Math.min(newY, maxY));
+
+      widget.style.left = `${newX}px`;
+      widget.style.top = `${newY}px`;
+      widget.style.bottom = "auto";
+      widget.style.right = "auto";
+    }
+
+    function onWidgetDragEnd() {
+      isWidgetDragging = false;
+      document.removeEventListener("mousemove", onWidgetDragMove);
+      document.removeEventListener("touchmove", onWidgetDragMove);
+      document.removeEventListener("mouseup", onWidgetDragEnd);
+      document.removeEventListener("touchend", onWidgetDragEnd);
+    }
+  </script>
+
   <script src="js/config.js"></script>
   <script src="js/site-contact.js"></script>
 </body>

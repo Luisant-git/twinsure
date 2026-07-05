@@ -47,8 +47,11 @@ app.use((req, res, next) => {
 const rootDir = path.join(__dirname, '..');
 const publicDir = path.join(rootDir, 'public');
 
-// Files are now stored in Cloudflare R2 — multer keeps buffers in memory only
 const upload = multer({ storage: multer.memoryStorage() });
+const uploadVideo = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 250 * 1024 * 1024 }
+});
 
 const nodemailer = require('nodemailer');
 const mailTransporter = nodemailer.createTransport({
@@ -218,7 +221,7 @@ function normalizeHelpRequestStatus(status) {
 async function connectAndSeed() {
   await getDb();
 
-  const collectionsToCreate = ['users', 'services', 'partners', 'recommendation_questions', 'leads', 'form_help_requests', 'settings', 'contacts', 'claims', 'testimonials', 'user_policies', 'appointments', 'user_services', 'user_updates'];
+  const collectionsToCreate = ['users', 'services', 'partners', 'recommendation_questions', 'leads', 'form_help_requests', 'settings', 'contacts', 'claims', 'testimonials', 'user_policies', 'appointments', 'user_services', 'user_updates', 'listening'];
   for (const collectionName of collectionsToCreate) {
     await createCollectionIfNotExists(collectionName);
   }
@@ -1858,6 +1861,191 @@ function createApiRouter() {
       } else {
         sendJson(res, 404, { error: 'Testimonial not found' });
       }
+    } catch (error) {
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
+    }
+  });
+
+  // Listening (Video) endpoints
+  router.get('/public/listening', async (req, res) => {
+    try {
+      const videos = await findMany('listening', { isActive: true }, { sort: { displayOrder: 1 } });
+      sendJson(res, 200, videos || []);
+    } catch (error) {
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 200, []);
+    }
+  });
+
+  router.get('/admin/listening', requireRole('admin'), async (req, res) => {
+    try {
+      const videos = await findMany('listening', {}, { sort: { displayOrder: 1 } });
+      sendJson(res, 200, videos || []);
+    } catch (error) {
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
+    }
+  });
+
+  router.post('/admin/listening', requireRole('admin'), (req, res, next) => {
+    uploadVideo.single('video')(req, res, (err) => {
+      if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
+        return sendJson(res, 400, { error: 'Video file size exceeds the 250MB limit.' });
+      } else if (err) {
+        return sendJson(res, 400, { error: err.message || 'File upload error.' });
+      }
+      next();
+    });
+  }, async (req, res) => {
+    const body = collectBody(req);
+    const id = normalizeString(body.id);
+    const title = normalizeString(body.title);
+    const description = normalizeString(body.description);
+    const displayOrderStr = normalizeString(body.displayOrder);
+    const isActive = body.isActive === 'true' || body.isActive === true;
+
+    if (!title) {
+      sendJson(res, 400, { error: 'Video Title is required.' });
+      return;
+    }
+
+    try {
+      let existingVideo = null;
+      if (id) {
+        existingVideo = await findOne('listening', { _id: toObjectId(id) });
+        if (!existingVideo) {
+          sendJson(res, 404, { error: 'Video record not found for updating.' });
+          return;
+        }
+      }
+
+      let fileName = existingVideo ? existingVideo.fileName : null;
+      let filePath = existingVideo ? existingVideo.filePath : null;
+      let fileSize = existingVideo ? existingVideo.fileSize : null;
+      let videoUrl = existingVideo ? existingVideo.videoUrl : null;
+
+      if (req.file) {
+        const originalName = req.file.originalname || '';
+        const ext = path.extname(originalName).toLowerCase();
+        if (!['.mp4', '.webm'].includes(ext)) {
+          sendJson(res, 400, { error: 'Only MP4 and WebM video formats are allowed.' });
+          return;
+        }
+
+        const cleanName = sanitizeFileName(req.file.originalname);
+        fileName = `${Math.floor(Date.now() / 1000)}_${cleanName}`;
+        const r2Key = `public/listening/${fileName}`;
+        await r2.uploadToR2(req.file.buffer, r2Key, req.file.mimetype || 'video/mp4');
+
+        if (existingVideo && existingVideo.filePath) {
+          try {
+            await r2.deleteFromR2(existingVideo.filePath);
+          } catch (r2Err) {
+            console.error(`Failed to delete old video from R2:`, r2Err.message);
+          }
+        }
+
+        filePath = r2Key;
+        fileSize = formatFileSize(req.file.size);
+        videoUrl = await r2.getFileUrl(r2Key);
+      }
+
+      if (!id && !filePath) {
+        sendJson(res, 400, { error: 'Video file upload is required for new entries.' });
+        return;
+      }
+
+      const displayOrder = displayOrderStr ? parseInt(displayOrderStr, 10) : undefined;
+      const now = formatDateTime(new Date());
+
+      if (id) {
+        const updateDoc = {
+          title,
+          description,
+          fileName,
+          filePath,
+          fileSize,
+          videoUrl,
+          isActive,
+          updatedAt: now
+        };
+        if (displayOrder !== undefined) {
+          updateDoc.displayOrder = displayOrder;
+        }
+        await updateOne('listening', { _id: toObjectId(id) }, { $set: updateDoc });
+        sendJson(res, 200, { success: true, message: 'Video updated successfully.' });
+      } else {
+        let finalOrder = displayOrder;
+        if (finalOrder === undefined) {
+          const maxOrder = await findOne('listening', {}, { sort: { displayOrder: -1 } });
+          finalOrder = (maxOrder && maxOrder.displayOrder) ? maxOrder.displayOrder + 1 : 1;
+        }
+
+        await insertOne('listening', {
+          title,
+          description,
+          fileName,
+          filePath,
+          fileSize,
+          videoUrl,
+          displayOrder: finalOrder,
+          isActive,
+          createdAt: now,
+          updatedAt: now
+        });
+        sendJson(res, 201, { success: true, message: 'Video added successfully.' });
+      }
+    } catch (error) {
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
+    }
+  });
+
+  router.delete('/admin/listening/:id', requireRole('admin'), async (req, res) => {
+    const id = req.params.id;
+    try {
+      const video = await findOne('listening', { _id: toObjectId(id) });
+      if (video && video.filePath) {
+        try {
+          await r2.deleteFromR2(video.filePath);
+        } catch (r2Err) {
+          console.error(`Failed to delete video from R2:`, r2Err.message);
+        }
+      }
+
+      const result = await deleteOne('listening', { _id: toObjectId(id) });
+      if (result && result.deletedCount > 0) {
+        sendJson(res, 200, { success: true, message: 'Video deleted successfully.' });
+      } else {
+        sendJson(res, 404, { error: 'Video not found.' });
+      }
+    } catch (error) {
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
+    }
+  });
+
+  router.post('/admin/listening/reorder', requireRole('admin'), async (req, res) => {
+    const body = collectBody(req);
+    const orders = body.orders;
+
+    if (!Array.isArray(orders)) {
+      sendJson(res, 400, { error: 'Orders array is required.' });
+      return;
+    }
+
+    try {
+      for (const item of orders) {
+        if (item.id && item.displayOrder !== undefined) {
+          await updateOne(
+            'listening',
+            { _id: toObjectId(item.id) },
+            { $set: { displayOrder: parseInt(item.displayOrder, 10), updatedAt: formatDateTime(new Date()) } }
+          );
+        }
+      }
+      sendJson(res, 200, { success: true, message: 'Video order updated successfully.' });
     } catch (error) {
       console.error('Database/Server Error:', error.message);
       sendJson(res, 500, { error: 'An internal server error occurred.' });
