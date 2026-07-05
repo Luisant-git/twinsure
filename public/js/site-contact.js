@@ -218,13 +218,15 @@
     try {
       const response = await fetch(`${BASE_URL}/public/testimonials`);
       if (!response.ok) {
-        initTestimonialCarousel();
+        const sec = document.getElementById('testimonialsSection');
+        if (sec) sec.style.display = 'none';
         return;
       }
 
       const testimonials = await response.json();
       if (!testimonials || testimonials.length === 0) {
-        initTestimonialCarousel();
+        const sec = document.getElementById('testimonialsSection');
+        if (sec) sec.style.display = 'none';
         return;
       }
 
@@ -283,8 +285,124 @@
       initTestimonialCarousel();
     } catch (error) {
       console.warn('Failed to load public testimonials:', error);
-      initTestimonialCarousel();
+      const sec = document.getElementById('testimonialsSection');
+      if (sec) sec.style.display = 'none';
     }
+  }
+
+  let blogIndex = 0;
+  let activeBlogsCount = 0;
+
+  async function loadPublicBlogs() {
+    const container = document.getElementById('blogsContainer');
+    if (!container) return;
+
+    try {
+      const response = await fetch(`${BASE_URL}/public/blogs`);
+      if (!response.ok) {
+        const sec = document.getElementById('blogsSection');
+        if (sec) sec.style.display = 'none';
+        return;
+      }
+
+      const blogs = await response.json();
+      if (!blogs || blogs.length === 0) {
+        const sec = document.getElementById('blogsSection');
+        if (sec) sec.style.display = 'none';
+        return;
+      }
+
+      activeBlogsCount = blogs.length;
+
+      container.innerHTML = blogs.map((b) => {
+        const linkHtml = b.link 
+          ? `<div class="blog-card-footer">
+               <a href="${escapeHtml(b.link)}" target="_blank" rel="noopener noreferrer" class="blog-read-btn">
+                 Read Full Article <i class="fas fa-arrow-right"></i>
+               </a>
+             </div>`
+          : '';
+
+        return `
+          <div class="blog-card">
+            <div class="blog-card-header">
+              <h3 class="blog-card-title">${escapeHtml(b.title)}</h3>
+              <div class="blog-card-author">By ${escapeHtml(b.author)}</div>
+            </div>
+            <div class="blog-card-body">
+              <p>${escapeHtml(b.content)}</p>
+            </div>
+            ${linkHtml}
+          </div>
+        `;
+      }).join('');
+
+      initBlogCarousel();
+    } catch (error) {
+      console.warn('Failed to load public blogs:', error);
+      const sec = document.getElementById('blogsSection');
+      if (sec) sec.style.display = 'none';
+    }
+  }
+
+  function initBlogCarousel() {
+    const dotsContainer = document.getElementById('blogDots');
+    if (dotsContainer && activeBlogsCount > 1) {
+      dotsContainer.innerHTML = Array.from({ length: activeBlogsCount })
+        .map((_, i) => `<div class="blog-dot ${i === 0 ? 'active' : ''}" data-index="${i}"></div>`)
+        .join('');
+
+      dotsContainer.querySelectorAll('.blog-dot').forEach(dot => {
+        dot.addEventListener('click', (e) => {
+          const idx = parseInt(e.target.getAttribute('data-index'), 10);
+          blogIndex = idx;
+          updateBlogSlide();
+        });
+      });
+    }
+
+    const prevBtn = document.getElementById('btnBlogPrev');
+    const nextBtn = document.getElementById('btnBlogNext');
+    if (prevBtn) {
+      prevBtn.onclick = () => {
+        slideBlogPrev();
+      };
+    }
+    if (nextBtn) {
+      nextBtn.onclick = () => {
+        slideBlogNext();
+      };
+    }
+
+    blogIndex = 0;
+    updateBlogSlide();
+  }
+
+  function updateBlogSlide() {
+    const container = document.getElementById('blogsContainer');
+    if (!container) return;
+    container.style.transform = `translateX(-${blogIndex * 100}%)`;
+
+    const dots = document.querySelectorAll('.blog-dot');
+    dots.forEach((dot, idx) => {
+      if (idx === blogIndex) {
+        dot.classList.add('active');
+      } else {
+        dot.classList.remove('active');
+      }
+    });
+  }
+
+  function slideBlogNext() {
+    if (activeBlogsCount <= 1) return;
+    blogIndex = (blogIndex + 1) % activeBlogsCount;
+    updateBlogSlide();
+  }
+
+  function slideBlogPrev() {
+    if (activeBlogsCount <= 1) return;
+    blogIndex = (blogIndex - 1 + activeBlogsCount) % activeBlogsCount;
+    updateBlogSlide();
   }
 
   async function loadSettings() {
@@ -306,6 +424,7 @@
     window.applySettings = applySettings;
     loadSettings();
     loadTestimonials();
+    loadPublicBlogs();
   }
 
   if (document.readyState === 'loading') {

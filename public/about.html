@@ -2423,6 +2423,199 @@
         </div>
       </div>
     </section>
+
+    <!-- Blogs Section -->
+    <section class="section" id="blogsSection" style="background: #f8fafc; border-top: 1px solid #edf2f7; border-bottom: 1px solid #edf2f7;">
+      <div style="text-align: center; margin-bottom: 3rem">
+        <p
+          style="
+            color: var(--accent-gold-light);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+          "
+        >
+          Insights & Updates
+        </p>
+        <h2 style="font-size: 3rem; color: var(--primary-dark);">
+          Latest <span class="gradient-text">Blogs</span>
+        </h2>
+      </div>
+
+      <!-- Blogs Carousel Wrapper -->
+      <div class="blog-carousel-wrapper">
+        <button class="blog-carousel-btn prev" id="btnBlogPrev" aria-label="Previous Blog">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="blog-viewport">
+          <div class="blog-container" id="blogsContainer">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+        <button class="blog-carousel-btn next" id="btnBlogNext" aria-label="Next Blog">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+      
+      <!-- Dots Navigation -->
+      <div class="blog-dots" id="blogDots"></div>
+    </section>
+
+    <style>
+      .blog-carousel-wrapper {
+        position: relative;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 3.5rem;
+      }
+      .blog-viewport {
+        overflow: hidden;
+        width: 100%;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 41, 107, 0.08);
+        background: #fff;
+        border: 1px solid #e2e8f0;
+      }
+      .blog-container {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .blog-card {
+        flex: 0 0 100%;
+        width: 100%;
+        padding: 2.5rem;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 380px;
+      }
+      .blog-card-header {
+        margin-bottom: 1.5rem;
+      }
+      .blog-card-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #00296b;
+        margin-bottom: 0.5rem;
+        line-height: 1.3;
+        font-family: 'Montserrat', sans-serif;
+      }
+      .blog-card-author {
+        font-size: 0.9rem;
+        color: #b58900;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .blog-card-body {
+        font-size: 1.05rem;
+        color: #334155;
+        line-height: 1.7;
+        margin-bottom: 2rem;
+        flex-grow: 1;
+        display: -webkit-box;
+        -webkit-line-clamp: 5;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .blog-card-footer {
+        display: flex;
+        justify-content: flex-start;
+      }
+      .blog-read-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #00296b;
+        color: #fff;
+        padding: 0.8rem 1.8rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s;
+        border: 2px solid #00296b;
+      }
+      .blog-read-btn:hover {
+        background: transparent;
+        color: #00296b;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 41, 107, 0.15);
+      }
+      .blog-carousel-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: #fff;
+        border: 1px solid #cbd5e1;
+        color: #00296b;
+        font-size: 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        z-index: 10;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      }
+      .blog-carousel-btn:hover {
+        background: #00296b;
+        border-color: #00296b;
+        color: #fff;
+        box-shadow: 0 6px 15px rgba(0, 41, 107, 0.2);
+      }
+      .blog-carousel-btn.prev {
+        left: 0.75rem;
+      }
+      .blog-carousel-btn.next {
+        right: 0.75rem;
+      }
+      .blog-dots {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 1.5rem;
+      }
+      .blog-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #cbd5e1;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      .blog-dot.active {
+        background: #00296b;
+        transform: scale(1.2);
+      }
+      
+      @media (max-width: 768px) {
+        .blog-carousel-wrapper {
+          padding: 0 1rem;
+        }
+        .blog-carousel-btn {
+          display: none;
+        }
+        .blog-card {
+          padding: 1.5rem;
+          min-height: auto;
+        }
+        .blog-card-title {
+          font-size: 1.4rem;
+        }
+        .blog-card-body {
+          font-size: 0.95rem;
+          margin-bottom: 1.5rem;
+        }
+      }
+    </style>
     
     <div class="testimonial-container">
       <div class="sparkle-star star-left">✦</div>

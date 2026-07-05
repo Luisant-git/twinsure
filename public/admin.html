@@ -3351,6 +3351,9 @@
           <button class="settings-tab" onclick="switchSettingsTab('testimonials', this)">
             Testimonials
           </button>
+          <button class="settings-tab" onclick="switchSettingsTab('blogs', this)">
+            Blogs
+          </button>
           <button class="settings-tab" onclick="switchSettingsTab('listening', this)">
             Listening
           </button>
@@ -3728,6 +3731,34 @@
               <div class="premium-table-card" style="border: 1px solid #e2e8f0; border-radius: 12px; background: #fff;">
                 <div id="testimonialsListContainer" style="padding: 1.5rem">
                   <p style="color: #999; text-align: center">Loading testimonials...</p>
+                </div>
+              </div>
+            </div>
+            <div id="tab-blogs" class="settings-tab-pane" style="display: none">
+              <div style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 1.2rem;
+                  ">
+                <h3 style="font-size: 1.1rem; color: #111; margin: 0">
+                  Blogs Settings
+                </h3>
+                <button class="btn btn-gold" onclick="openAddBlogModal()"
+                  style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+                  <i class="fas fa-plus"></i> Add New Blog
+                </button>
+              </div>
+              <div id="blogOrderChangeBanner" style="display: none; background: #fffbeb; border: 1px solid #feebc8; padding: 0.8rem 1rem; border-radius: 8px; margin-bottom: 1rem; align-items: center; justify-content: space-between; font-size: 0.85rem; color: #c05621; font-weight: 600;">
+                <span>Blog order changed. Please save changes to apply.</span>
+                <div style="display: flex; gap: 0.5rem;">
+                  <button class="btn btn-gold" onclick="saveBlogOrder()" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Save Order</button>
+                  <button class="btn btn-white" onclick="loadBlogs()" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Reset</button>
+                </div>
+              </div>
+              <div class="premium-table-card" style="border: 1px solid #e2e8f0; border-radius: 12px; background: #fff;">
+                <div id="blogsListContainer" style="padding: 1.5rem">
+                  <p style="color: #999; text-align: center">Loading blogs...</p>
                 </div>
               </div>
             </div>
@@ -7966,6 +7997,9 @@
       if (e === "testimonials") {
         loadTestimonials();
       }
+      if (e === "blogs") {
+        loadBlogs();
+      }
       if (e === "listening") {
         loadListening();
       }
@@ -8405,7 +8439,7 @@
           } else {
             countSpan.parentElement.classList.remove('testimonial-char-warning');
           }
-        } else if (textarea.value.length >= 450 && fieldType !== 'after') {
+        } else if (textarea.value.length >= 550 && fieldType !== 'after') {
           countSpan.parentElement.classList.add('testimonial-char-warning');
         } else if (fieldType === 'after' && textarea.value.length >= 350) {
           countSpan.parentElement.classList.add('testimonial-char-warning');
@@ -8436,29 +8470,45 @@
         alert('Heading cannot exceed 50 characters');
         return;
       }
-      if (before.length > 500 || helped.length > 500 || after.length > 400) {
+      if (before.length > 600 || helped.length > 600 || after.length > 400) {
         alert('One or more fields exceed character limits');
         return;
       }
 
-      const formData = new FormData();
-      formData.append('name', name);
-      formData.append('heading', heading);
-      formData.append('from', from);
-      formData.append('before', before);
-      formData.append('helped', helped);
-      formData.append('after', after);
-      formData.append('isActive', isActive);
-      if (avatarFile) {
-        formData.append('avatarFile', avatarFile);
-      }
-
       try {
         let res;
-        if (currentEditTestimonialId) {
-          res = await api.putMultipart(`/admin/testimonials/${currentEditTestimonialId}`, formData);
+        if (avatarFile) {
+          const formData = new FormData();
+          formData.append('name', name);
+          formData.append('heading', heading);
+          formData.append('from', from);
+          formData.append('before', before);
+          formData.append('helped', helped);
+          formData.append('after', after);
+          formData.append('isActive', isActive);
+          formData.append('avatarFile', avatarFile);
+
+          if (currentEditTestimonialId) {
+            res = await api.putMultipart(`/admin/testimonials/${currentEditTestimonialId}`, formData);
+          } else {
+            res = await api.postMultipart('/admin/testimonials', formData);
+          }
         } else {
-          res = await api.postMultipart('/admin/testimonials', formData);
+          const payload = {
+            name,
+            heading,
+            from,
+            before,
+            helped,
+            after,
+            isActive
+          };
+
+          if (currentEditTestimonialId) {
+            res = await api.put(`/admin/testimonials/${currentEditTestimonialId}`, payload);
+          } else {
+            res = await api.post('/admin/testimonials', payload);
+          }
         }
 
         if (res && (res.success || res.message)) {
@@ -8543,6 +8593,301 @@
             </div>
           `;
       }).join('');
+    }
+
+    // ===== BLOGS MANAGEMENT =====
+    let allBlogs = [];
+    let currentEditBlogId = null;
+
+    function updateBlogCharCount() {
+      const content = document.getElementById('blogContent').value;
+      document.getElementById('charCount-blog').innerText = content.length;
+    }
+
+    function openAddBlogModal() {
+      currentEditBlogId = null;
+      document.getElementById('blogTitle').value = '';
+      document.getElementById('blogAuthor').value = '';
+      document.getElementById('blogContent').value = '';
+      document.getElementById('blogLink').value = '';
+      document.getElementById('blogActive').checked = true;
+      document.getElementById('charCount-blog').innerText = '0';
+
+      document.getElementById('blogModalTitle').innerText = 'Add New Blog';
+      document.getElementById('blogSubmitBtn').innerText = 'Add Blog';
+
+      const modal = document.getElementById('blogModal');
+      modal.style.display = 'flex';
+      setTimeout(() => modal.classList.add('active'), 10);
+    }
+
+    function openEditBlogModal(id) {
+      const blog = allBlogs.find(b => b._id === id);
+      if (!blog) return;
+
+      currentEditBlogId = id;
+      document.getElementById('blogTitle').value = blog.title || '';
+      document.getElementById('blogAuthor').value = blog.author || '';
+      document.getElementById('blogContent').value = blog.content || '';
+      document.getElementById('blogLink').value = blog.link || '';
+      document.getElementById('blogActive').checked = blog.isActive === true;
+      document.getElementById('charCount-blog').innerText = (blog.content || '').length;
+
+      document.getElementById('blogModalTitle').innerText = 'Edit Blog';
+      document.getElementById('blogSubmitBtn').innerText = 'Save Changes';
+
+      const modal = document.getElementById('blogModal');
+      modal.style.display = 'flex';
+      setTimeout(() => modal.classList.add('active'), 10);
+    }
+
+    function closeBlogModal() {
+      const modal = document.getElementById('blogModal');
+      modal.classList.remove('active');
+      setTimeout(() => modal.style.display = 'none', 300);
+    }
+
+    async function saveBlog(event) {
+      event.preventDefault();
+
+      const title = document.getElementById('blogTitle').value.trim();
+      const author = document.getElementById('blogAuthor').value.trim();
+      const content = document.getElementById('blogContent').value.trim();
+      const link = document.getElementById('blogLink').value.trim();
+      const isActive = document.getElementById('blogActive').checked;
+
+      if (!title || !author || !content) {
+        alert('Please fill in all required fields');
+        return;
+      }
+
+      if (title.length > 200) {
+        alert('Title cannot exceed 200 characters');
+        return;
+      }
+      if (author.length > 100) {
+        alert('Author/From Whom cannot exceed 100 characters');
+        return;
+      }
+      if (content.length > 1000) {
+        alert('Content cannot exceed 1000 characters');
+        return;
+      }
+      if (link && link.length > 250) {
+        alert('Link cannot exceed 250 characters');
+        return;
+      }
+
+      const payload = {
+        title,
+        author,
+        content,
+        link,
+        isActive
+      };
+
+      try {
+        let res;
+        if (currentEditBlogId) {
+          res = await api.put(`/admin/blogs/${currentEditBlogId}`, payload);
+        } else {
+          res = await api.post('/admin/blogs', payload);
+        }
+
+        if (res && (res.success || res.message)) {
+          alert(res.message || 'Blog saved successfully');
+          closeBlogModal();
+          loadBlogs();
+        } else {
+          alert('Error: ' + (res.error || res.message || 'Failed to save'));
+        }
+      } catch (error) {
+        console.error(error);
+        alert('An error occurred while saving the blog.');
+      }
+    }
+
+    async function deleteBlog(id) {
+      if (!confirm('Are you sure you want to delete this blog?')) return;
+      try {
+        const res = await api.delete(`/admin/blogs/${id}`);
+        if (res && (res.success || res.message)) {
+          alert(res.message || 'Blog deleted successfully');
+          loadBlogs();
+        } else {
+          alert('Error: ' + (res.error || res.message || 'Failed to delete'));
+        }
+      } catch (error) {
+        console.error(error);
+        alert('An error occurred while deleting the blog.');
+      }
+    }
+
+    async function loadBlogs() {
+      try {
+        const container = document.getElementById('blogsListContainer');
+        container.innerHTML = '<p style="color: #999; text-align: center">Loading blogs...</p>';
+        document.getElementById('blogOrderChangeBanner').style.display = 'none';
+
+        const res = await api.get('/admin/blogs');
+        allBlogs = res || [];
+        renderBlogs();
+      } catch (error) {
+        console.error('Error loading blogs:', error);
+        document.getElementById('blogsListContainer').innerHTML = '<p style="color: red; text-align: center;">Error loading blogs</p>';
+      }
+    }
+
+    function renderBlogs() {
+      const container = document.getElementById('blogsListContainer');
+      if (!allBlogs || allBlogs.length === 0) {
+        container.innerHTML = '<p style="color: #999; text-align: center; padding: 2rem;">No blogs yet. Add one to get started!</p>';
+        return;
+      }
+
+      let html = `
+        <table class="premium-table" style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="border-bottom: 2px solid #e2e8f0; text-align: left; background: #f7fafc;">
+              <th style="padding: 0.8rem 1rem; width: 40px;"></th>
+              <th style="padding: 0.8rem 1rem;">Title</th>
+              <th style="padding: 0.8rem 1rem;">From Whom / Author</th>
+              <th style="padding: 0.8rem 1rem;">Content Preview</th>
+              <th style="padding: 0.8rem 1rem; width: 100px;">Status</th>
+              <th style="padding: 0.8rem 1rem; width: 180px; text-align: right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="blogsTableBody">
+      `;
+
+      html += allBlogs.map((b, index) => {
+        const contentSafe = b.content || '';
+        const contentPrev = contentSafe.length > 80 ? contentSafe.substring(0, 80) + '...' : contentSafe;
+        return `
+          <tr draggable="true" data-index="${index}" style="border-bottom: 1px solid #edf2f7; cursor: move; transition: background 0.2s;">
+            <td style="padding: 0.8rem 1rem; color: #a0aec0; text-align: center;"><i class="fas fa-grip-vertical"></i></td>
+            <td style="padding: 0.8rem 1rem; font-weight: 600; color: #2d3748;">${escapeHtml(b.title)}</td>
+            <td style="padding: 0.8rem 1rem; color: #4a5568;">${escapeHtml(b.author)}</td>
+            <td style="padding: 0.8rem 1rem; color: #718096; font-size: 0.85rem;">${escapeHtml(contentPrev)}</td>
+            <td style="padding: 0.8rem 1rem;">
+              <span style="display: inline-block; font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 4px; background: ${b.isActive ? '#e6fffa' : '#fff5f5'}; color: ${b.isActive ? '#319795' : '#e53e3e'}; font-weight: 600;">
+                ${b.isActive ? 'Active' : 'Inactive'}
+              </span>
+            </td>
+            <td style="padding: 0.8rem 1rem; text-align: right; white-space: nowrap;">
+              <button class="btn btn-gold btn-sm" onclick="openEditBlogModal('${b._id}')" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; margin-right: 0.25rem;"><i class="fas fa-edit"></i> Edit</button>
+              <button class="btn btn-red btn-sm" onclick="deleteBlog('${b._id}')" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; background: #e53e3e; color: #fff;"><i class="fas fa-trash"></i> Delete</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      html += `
+          </tbody>
+        </table>
+      `;
+
+      container.innerHTML = html;
+      initBlogDragAndDrop();
+    }
+
+    let dragBlogSrcEl = null;
+
+    function initBlogDragAndDrop() {
+      const rows = document.querySelectorAll('#blogsTableBody tr');
+      rows.forEach(row => {
+        row.addEventListener('dragstart', handleBlogDragStart, false);
+        row.addEventListener('dragenter', handleBlogDragEnter, false);
+        row.addEventListener('dragover', handleBlogDragOver, false);
+        row.addEventListener('dragleave', handleBlogDragLeave, false);
+        row.addEventListener('drop', handleBlogDrop, false);
+        row.addEventListener('dragend', handleBlogDragEnd, false);
+      });
+    }
+
+    function handleBlogDragStart(e) {
+      this.style.opacity = '0.4';
+      dragBlogSrcEl = this;
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/html', this.innerHTML);
+    }
+
+    function handleBlogDragOver(e) {
+      if (e.preventDefault) {
+        e.preventDefault();
+      }
+      e.dataTransfer.dropEffect = 'move';
+      return false;
+    }
+
+    function handleBlogDragEnter(e) {
+      this.classList.add('over');
+      this.style.background = '#edf2f7';
+    }
+
+    function handleBlogDragLeave(e) {
+      this.classList.remove('over');
+      this.style.background = '#fff';
+    }
+
+    function handleBlogDrop(e) {
+      if (e.stopPropagation) {
+        e.stopPropagation();
+      }
+
+      if (dragBlogSrcEl !== this) {
+        const srcIndex = parseInt(dragBlogSrcEl.getAttribute('data-index'), 10);
+        const targetIndex = parseInt(this.getAttribute('data-index'), 10);
+
+        const temp = allBlogs[srcIndex];
+        allBlogs.splice(srcIndex, 1);
+        allBlogs.splice(targetIndex, 0, temp);
+
+        allBlogs.forEach((blog, i) => {
+          blog.displayOrder = i + 1;
+        });
+
+        renderBlogs();
+        document.getElementById('blogOrderChangeBanner').style.display = 'flex';
+      }
+      return false;
+    }
+
+    function handleBlogDragEnd(e) {
+      this.style.opacity = '1.0';
+      const rows = document.querySelectorAll('#blogsTableBody tr');
+      rows.forEach(row => {
+        row.classList.remove('over');
+        row.style.background = '#fff';
+      });
+    }
+
+    async function saveBlogOrder() {
+      const orders = allBlogs.map(b => ({
+        id: b._id,
+        displayOrder: b.displayOrder
+      }));
+
+      try {
+        const saveBtn = document.querySelector('#blogOrderChangeBanner button.btn-gold');
+        saveBtn.disabled = true;
+        saveBtn.innerText = 'Saving...';
+
+        const res = await api.post('/admin/blogs/reorder', { orders });
+        
+        saveBtn.disabled = false;
+        saveBtn.innerText = 'Save Order';
+
+        if (res && res.success) {
+          alert('Blog order updated successfully!');
+          loadBlogs();
+        } else {
+          alert('Error: ' + (res.error || res.message || 'Failed to save order'));
+        }
+      } catch (error) {
+        console.error(error);
+        alert('An error occurred while saving blog order.');
+      }
     }
 
     // ===== LISTENING (VIDEO) MANAGEMENT =====
@@ -8669,16 +9014,47 @@
           previewVideo.pause();
           previewVideo.src = '';
           previewContainer.style.display = 'none';
-        } else {
-          errorDiv.style.display = 'none';
-          errorDiv.innerText = '';
-          
-          const fileUrl = URL.createObjectURL(file);
-          previewVideo.src = fileUrl;
-          previewVideo.load();
-          fileNamePara.innerHTML = `<strong>Selected File:</strong> ${escapeHtml(file.name)} (${formatBytes(file.size)})`;
-          previewContainer.style.display = 'block';
+          return;
         }
+
+        // Validate landscape dimensions (width > height)
+        const tempVideo = document.createElement('video');
+        tempVideo.preload = 'metadata';
+        tempVideo.src = URL.createObjectURL(file);
+        
+        tempVideo.onloadedmetadata = function() {
+          URL.revokeObjectURL(tempVideo.src);
+          const width = tempVideo.videoWidth;
+          const height = tempVideo.videoHeight;
+          
+          if (width <= height) {
+            errorDiv.innerText = 'Only landscape videos are allowed (width must be greater than height). Portrait/square video detected.';
+            errorDiv.style.display = 'block';
+            input.value = '';
+            previewVideo.pause();
+            previewVideo.src = '';
+            previewContainer.style.display = 'none';
+          } else {
+            errorDiv.style.display = 'none';
+            errorDiv.innerText = '';
+            
+            const fileUrl = URL.createObjectURL(file);
+            previewVideo.src = fileUrl;
+            previewVideo.load();
+            fileNamePara.innerHTML = `<strong>Selected File:</strong> ${escapeHtml(file.name)} (${formatBytes(file.size)}) [Landscape: ${width}x${height}]`;
+            previewContainer.style.display = 'block';
+          }
+        };
+
+        tempVideo.onerror = function() {
+          URL.revokeObjectURL(tempVideo.src);
+          errorDiv.innerText = 'Invalid or corrupted video file.';
+          errorDiv.style.display = 'block';
+          input.value = '';
+          previewVideo.pause();
+          previewVideo.src = '';
+          previewContainer.style.display = 'none';
+        };
       }
     }
 
@@ -9820,25 +10196,25 @@
         <div class="claim-form-group">
           <label>Before (Situation) * <span
               style="font-size: 0.75rem; text-transform: none; font-weight: normal; color: #777; margin-left: 5px;">Max
-              500 chars</span></label>
+              600 chars</span></label>
           <textarea id="testimonialBefore" class="claim-form-control" required
-            placeholder="Describe the situation before we helped..." maxlength="500" oninput="updateCharCount('before')"
+            placeholder="Describe the situation before we helped..." maxlength="600" oninput="updateCharCount('before')"
             style="min-height: 90px; resize: vertical;"></textarea>
           <div class="testimonial-char-count"
             style="font-size: 0.75rem; color: #777; margin-top: 0.2rem; text-align: right;">
-            <span id="charCount-before">0</span> / 500 characters
+            <span id="charCount-before">0</span> / 600 characters
           </div>
         </div>
 
         <div class="claim-form-group">
           <label>How Twins Consultancy Helped * <span
               style="font-size: 0.75rem; text-transform: none; font-weight: normal; color: #777; margin-left: 5px;">Max
-              500 chars</span></label>
+              600 chars</span></label>
           <textarea id="testimonialHelped" class="claim-form-control" required placeholder="Describe how we assisted..."
-            maxlength="500" oninput="updateCharCount('helped')" style="min-height: 90px; resize: vertical;"></textarea>
+            maxlength="600" oninput="updateCharCount('helped')" style="min-height: 90px; resize: vertical;"></textarea>
           <div class="testimonial-char-count"
             style="font-size: 0.75rem; color: #777; margin-top: 0.2rem; text-align: right;">
-            <span id="charCount-helped">0</span> / 500 characters
+            <span id="charCount-helped">0</span> / 600 characters
           </div>
         </div>
 
@@ -9877,6 +10253,57 @@
         <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
           <button type="button" class="btn btn-white" onclick="closeTestimonialModal()">Cancel</button>
           <button type="submit" class="btn btn-gold" id="testimonialSubmitBtn">Add Testimonial</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Blogs Modal (Add/Edit) -->
+  <div class="claim-modal-overlay" id="blogModal">
+    <div class="claim-modal-window" style="max-width: 600px;">
+      <button class="modal-close-global" onclick="closeBlogModal()">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="claim-modal-header">
+        <h3 id="blogModalTitle">Add New Blog</h3>
+      </div>
+      <form onsubmit="saveBlog(event)" style="padding: 1.5rem;" id="blogForm">
+        <div class="claim-form-group">
+          <label>Blog Title * <span style="font-size: 0.75rem; text-transform: none; font-weight: normal; color: #777; margin-left: 5px;">Max 200 chars</span></label>
+          <input type="text" id="blogTitle" class="claim-form-control" required placeholder="e.g., Guide to Claim Settlement" maxlength="200" />
+        </div>
+
+        <div class="claim-form-group">
+          <label>From Whom / Author * <span style="font-size: 0.75rem; text-transform: none; font-weight: normal; color: #777; margin-left: 5px;">Max 100 chars</span></label>
+          <input type="text" id="blogAuthor" class="claim-form-control" required placeholder="e.g., Ramesh Kumar, Claims Expert" maxlength="100" />
+        </div>
+
+        <div class="claim-form-group">
+          <label>Blog Content Summary * <span style="font-size: 0.75rem; text-transform: none; font-weight: normal; color: #777; margin-left: 5px;">Max 1000 chars</span></label>
+          <textarea id="blogContent" class="claim-form-control" required placeholder="Provide a brief summary of the blog content..." maxlength="1000" oninput="updateBlogCharCount()" style="min-height: 120px; resize: vertical;"></textarea>
+          <div style="font-size: 0.75rem; color: #777; margin-top: 0.2rem; text-align: right;">
+            <span id="charCount-blog">0</span> / 1000 characters
+          </div>
+        </div>
+
+        <div class="claim-form-group">
+          <label>Article Link / URL (Optional) <span style="font-size: 0.75rem; text-transform: none; font-weight: normal; color: #777; margin-left: 5px;">Max 250 chars</span></label>
+          <input type="url" id="blogLink" class="claim-form-control" placeholder="e.g., https://medium.com/my-article" maxlength="250" />
+        </div>
+
+        <div class="claim-form-group">
+          <div class="status-toggle-wrapper">
+            <label class="switch">
+              <input type="checkbox" id="blogActive" checked />
+              <span class="slider"></span>
+            </label>
+            <span style="font-size: 0.9rem; font-weight: 600; color: #333;">Active (Display on website)</span>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem;">
+          <button type="button" class="btn btn-white" onclick="closeBlogModal()">Cancel</button>
+          <button type="submit" class="btn btn-gold" id="blogSubmitBtn">Add Blog</button>
         </div>
       </form>
     </div>

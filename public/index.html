@@ -2141,7 +2141,7 @@
           class="fas fa-robot"></i> Try Recommender Now</a>
     </div>
   </section>
-  <section class="section">
+  <section class="section" id="testimonialsSection">
     <div class="section-header">
       <h2>Client <span class="gradient-text">Testimonials</span></h2>
       <p>
@@ -2431,7 +2431,7 @@
   </script>
   <!-- Floating/Draggable Video Player Widget -->
   <div id="listeningPlayerOverlay" onclick="closeListeningPlayer()"></div>
-  <div id="listeningPlayerWidget" class="player-modal">
+  <div id="listeningPlayerWidget" style="display: none;">
     <div class="player-header">
       <div class="player-title" id="listeningPlayerTitle">Twinsure Insight Video</div>
       <div class="player-controls-top">
@@ -2804,17 +2804,31 @@
       }
     }
 
+    function getEventCoordinates(e) {
+      let clientX = 0;
+      let clientY = 0;
+      if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      } else if (e.changedTouches && e.changedTouches.length > 0) {
+        clientX = e.changedTouches[0].clientX;
+        clientY = e.changedTouches[0].clientY;
+      } else {
+        clientX = e.clientX !== undefined ? e.clientX : 0;
+        clientY = e.clientY !== undefined ? e.clientY : 0;
+      }
+      return { clientX, clientY };
+    }
+
     function onWidgetDragStart(e) {
       const widget = document.getElementById("listeningPlayerWidget");
       if (!widget.classList.contains("player-minimized")) return;
 
       isWidgetDragging = true;
-      const clientX = e.type === "touchstart" ? e.touches[0].clientX : e.clientX;
-      const clientY = e.type === "touchstart" ? e.touches[0].clientY : e.clientY;
-
+      const coords = getEventCoordinates(e);
       const rect = widget.getBoundingClientRect();
-      dragStartX = clientX - rect.left;
-      dragStartY = clientY - rect.top;
+      dragStartX = coords.clientX - rect.left;
+      dragStartY = coords.clientY - rect.top;
 
       document.addEventListener("mousemove", onWidgetDragMove);
       document.addEventListener("touchmove", onWidgetDragMove, { passive: false });
@@ -2827,17 +2841,18 @@
       e.preventDefault();
 
       const widget = document.getElementById("listeningPlayerWidget");
-      const clientX = e.type === "touchmove" ? e.touches[0].clientX : e.clientX;
-      const clientY = e.type === "touchmove" ? e.touches[0].clientY : e.clientY;
+      const coords = getEventCoordinates(e);
 
-      let newX = clientX - dragStartX;
-      let newY = clientY - dragStartY;
+      let newX = coords.clientX - dragStartX;
+      let newY = coords.clientY - dragStartY;
 
       const maxX = window.innerWidth - widget.offsetWidth;
       const maxY = window.innerHeight - widget.offsetHeight;
 
       newX = Math.max(0, Math.min(newX, maxX));
       newY = Math.max(0, Math.min(newY, maxY));
+
+      if (isNaN(newX) || isNaN(newY)) return;
 
       widget.style.left = `${newX}px`;
       widget.style.top = `${newY}px`;

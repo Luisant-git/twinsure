@@ -1771,12 +1771,12 @@ function createApiRouter() {
       sendJson(res, 400, { error: 'Heading cannot exceed 50 characters' });
       return;
     }
-    if (before.length > 500) {
-      sendJson(res, 400, { error: 'Before field cannot exceed 500 characters' });
+    if (before.length > 600) {
+      sendJson(res, 400, { error: 'Before field cannot exceed 600 characters' });
       return;
     }
-    if (helped.length > 500) {
-      sendJson(res, 400, { error: 'How Twins Consultancy Helped field cannot exceed 500 characters' });
+    if (helped.length > 600) {
+      sendJson(res, 400, { error: 'How Twins Consultancy Helped field cannot exceed 600 characters' });
       return;
     }
     if (after.length > 400) {
@@ -1842,12 +1842,12 @@ function createApiRouter() {
       sendJson(res, 400, { error: 'Heading cannot exceed 50 characters' });
       return;
     }
-    if (before.length > 500) {
-      sendJson(res, 400, { error: 'Before field cannot exceed 500 characters' });
+    if (before.length > 600) {
+      sendJson(res, 400, { error: 'Before field cannot exceed 600 characters' });
       return;
     }
-    if (helped.length > 500) {
-      sendJson(res, 400, { error: 'How Twins Consultancy Helped field cannot exceed 500 characters' });
+    if (helped.length > 600) {
+      sendJson(res, 400, { error: 'How Twins Consultancy Helped field cannot exceed 600 characters' });
       return;
     }
     if (after.length > 400) {
@@ -1929,6 +1929,174 @@ function createApiRouter() {
       } else {
         sendJson(res, 404, { error: 'Testimonial not found' });
       }
+    } catch (error) {
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
+    }
+  });
+
+  // Blogs endpoints
+  router.get('/public/blogs', async (req, res) => {
+    try {
+      const blogs = await findMany('blogs', { isActive: true }, { sort: { displayOrder: 1 } });
+      sendJson(res, 200, blogs);
+    } catch (error) {
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
+    }
+  });
+
+  router.get('/admin/blogs', requireRole('admin'), async (req, res) => {
+    try {
+      const blogs = await findMany('blogs', {}, { sort: { displayOrder: 1 } });
+      sendJson(res, 200, blogs);
+    } catch (error) {
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
+    }
+  });
+
+  router.post('/admin/blogs', requireRole('admin'), async (req, res) => {
+    const body = collectBody(req);
+    const title = normalizeString(body.title);
+    const author = normalizeString(body.author);
+    const content = normalizeString(body.content);
+    const link = normalizeString(body.link);
+    const isActive = body.isActive === 'true' || body.isActive === true;
+
+    if (!title || !author || !content) {
+      sendJson(res, 400, { error: 'Missing required fields: title, author (from whom), content' });
+      return;
+    }
+
+    if (title.length > 200) {
+      sendJson(res, 400, { error: 'Title cannot exceed 200 characters' });
+      return;
+    }
+    if (author.length > 100) {
+      sendJson(res, 400, { error: 'Author/From Whom cannot exceed 100 characters' });
+      return;
+    }
+    if (content.length > 1000) {
+      sendJson(res, 400, { error: 'Content cannot exceed 1000 characters' });
+      return;
+    }
+    if (link && link.length > 250) {
+      sendJson(res, 400, { error: 'Link cannot exceed 250 characters' });
+      return;
+    }
+
+    try {
+      const maxOrder = await findOne('blogs', {}, { sort: { displayOrder: -1 } });
+      const nextOrder = (maxOrder && maxOrder.displayOrder) ? maxOrder.displayOrder + 1 : 1;
+
+      const blog = {
+        title,
+        author,
+        content,
+        link: link || '',
+        displayOrder: nextOrder,
+        isActive,
+        createdAt: formatDateTime(new Date()),
+        updatedAt: formatDateTime(new Date())
+      };
+
+      await insertOne('blogs', blog);
+      sendJson(res, 201, { success: true, message: 'Blog created successfully.' });
+    } catch (error) {
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
+    }
+  });
+
+  router.put('/admin/blogs/:id', requireRole('admin'), async (req, res) => {
+    const blogId = req.params.id;
+    const body = collectBody(req);
+    const title = normalizeString(body.title);
+    const author = normalizeString(body.author);
+    const content = normalizeString(body.content);
+    const link = normalizeString(body.link);
+    const isActive = body.isActive === 'true' || body.isActive === true;
+
+    if (!title || !author || !content) {
+      sendJson(res, 400, { error: 'Missing required fields: title, author (from whom), content' });
+      return;
+    }
+
+    if (title.length > 200) {
+      sendJson(res, 400, { error: 'Title cannot exceed 200 characters' });
+      return;
+    }
+    if (author.length > 100) {
+      sendJson(res, 400, { error: 'Author/From Whom cannot exceed 100 characters' });
+      return;
+    }
+    if (content.length > 1000) {
+      sendJson(res, 400, { error: 'Content cannot exceed 1000 characters' });
+      return;
+    }
+    if (link && link.length > 250) {
+      sendJson(res, 400, { error: 'Link cannot exceed 250 characters' });
+      return;
+    }
+
+    try {
+      const existing = await findOne('blogs', { _id: new ObjectId(blogId) });
+      if (!existing) {
+        sendJson(res, 404, { error: 'Blog not found' });
+        return;
+      }
+
+      await updateOne('blogs', { _id: new ObjectId(blogId) }, {
+        $set: {
+          title,
+          author,
+          content,
+          link: link || '',
+          isActive,
+          updatedAt: formatDateTime(new Date())
+        }
+      });
+
+      sendJson(res, 200, { success: true, message: 'Blog updated successfully.' });
+    } catch (error) {
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
+    }
+  });
+
+  router.delete('/admin/blogs/:id', requireRole('admin'), async (req, res) => {
+    const blogId = req.params.id;
+    try {
+      const result = await deleteOne('blogs', { _id: new ObjectId(blogId) });
+      if (result.deletedCount === 0) {
+        sendJson(res, 404, { error: 'Blog not found' });
+        return;
+      }
+      sendJson(res, 200, { success: true, message: 'Blog deleted successfully.' });
+    } catch (error) {
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
+    }
+  });
+
+  router.post('/admin/blogs/reorder', requireRole('admin'), async (req, res) => {
+    const body = collectBody(req);
+    const orders = body.orders;
+    if (!Array.isArray(orders)) {
+      sendJson(res, 400, { error: 'Invalid orders array' });
+      return;
+    }
+
+    try {
+      for (const item of orders) {
+        if (item.id && typeof item.displayOrder === 'number') {
+          await updateOne('blogs', { _id: new ObjectId(item.id) }, {
+            $set: { displayOrder: item.displayOrder }
+          });
+        }
+      }
+      sendJson(res, 200, { success: true });
     } catch (error) {
       console.error('Database/Server Error:', error.message);
       sendJson(res, 500, { error: 'An internal server error occurred.' });
