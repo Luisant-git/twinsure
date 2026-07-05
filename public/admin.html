@@ -8479,6 +8479,11 @@
     let currentEditListeningId = null;
     let dragSrcEl = null;
 
+    function updateCharCountListening() {
+      const desc = document.getElementById('listeningDescription').value;
+      document.getElementById('charCount-listeningDesc').innerText = desc.length;
+    }
+
     function openAddListeningModal() {
       currentEditListeningId = null;
       document.getElementById('listeningId').value = '';
@@ -8490,6 +8495,14 @@
       const errorDiv = document.getElementById('listeningFileError');
       errorDiv.style.display = 'none';
       errorDiv.innerText = '';
+      
+      document.getElementById('charCount-listeningDesc').innerText = '0';
+
+      // Reset preview
+      document.getElementById('listeningPreviewContainer').style.display = 'none';
+      const previewVideo = document.getElementById('listeningModalPreview');
+      previewVideo.pause();
+      previewVideo.src = '';
       
       document.getElementById('listeningFileLabel').innerText = 'Video File (.mp4 / .webm) *';
       document.getElementById('listeningFile').required = true;
@@ -8516,6 +8529,27 @@
       errorDiv.style.display = 'none';
       errorDiv.innerText = '';
 
+      updateCharCountListening();
+
+      // Load preview of existing video
+      const previewContainer = document.getElementById('listeningPreviewContainer');
+      const previewVideo = document.getElementById('listeningModalPreview');
+      const fileNamePara = document.getElementById('listeningFileCurrentName');
+      
+      let videoUrl = video.videoUrl;
+      if (videoUrl) {
+        if (videoUrl.startsWith('/')) {
+          videoUrl = (typeof window.BACKEND_ROOT !== 'undefined' ? window.BACKEND_ROOT : '') + videoUrl;
+        }
+        previewVideo.src = videoUrl;
+        previewVideo.load();
+        fileNamePara.innerHTML = `<strong>Current File:</strong> ${escapeHtml(video.fileName || '')}`;
+        previewContainer.style.display = 'block';
+      } else {
+        previewVideo.src = '';
+        previewContainer.style.display = 'none';
+      }
+
       document.getElementById('listeningFileLabel').innerText = 'Change Video File (Optional)';
       document.getElementById('listeningFile').required = false;
       document.getElementById('listeningModalTitle').innerText = 'Edit Video';
@@ -8527,22 +8561,50 @@
     }
 
     function closeListeningModal() {
+      const previewVideo = document.getElementById('listeningModalPreview');
+      previewVideo.pause();
+      previewVideo.src = '';
+
       const modal = document.getElementById('listeningModal');
       modal.classList.remove('active');
       setTimeout(() => { modal.style.display = 'none'; }, 300);
+    }
+
+    function formatBytes(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const dm = 2;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     }
 
     // Client-side file size verification (250MB limit)
     function validateListeningFileSize(input) {
       const file = input.files[0];
       const errorDiv = document.getElementById('listeningFileError');
-      if (file && file.size > 250 * 1024 * 1024) {
-        errorDiv.innerText = 'File size exceeds the 250MB limit. Please choose a smaller video file.';
-        errorDiv.style.display = 'block';
-        input.value = '';
-      } else {
-        errorDiv.style.display = 'none';
-        errorDiv.innerText = '';
+      const previewContainer = document.getElementById('listeningPreviewContainer');
+      const previewVideo = document.getElementById('listeningModalPreview');
+      const fileNamePara = document.getElementById('listeningFileCurrentName');
+
+      if (file) {
+        if (file.size > 250 * 1024 * 1024) {
+          errorDiv.innerText = 'File size exceeds the 250MB limit. Please choose a smaller video file.';
+          errorDiv.style.display = 'block';
+          input.value = '';
+          previewVideo.pause();
+          previewVideo.src = '';
+          previewContainer.style.display = 'none';
+        } else {
+          errorDiv.style.display = 'none';
+          errorDiv.innerText = '';
+          
+          const fileUrl = URL.createObjectURL(file);
+          previewVideo.src = fileUrl;
+          previewVideo.load();
+          fileNamePara.innerHTML = `<strong>Selected File:</strong> ${escapeHtml(file.name)} (${formatBytes(file.size)})`;
+          previewContainer.style.display = 'block';
+        }
       }
     }
 
@@ -8560,6 +8622,18 @@
 
       if (!title) {
         errorDiv.innerText = 'Please enter a video title.';
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      if (title.length > 200) {
+        errorDiv.innerText = 'Video Title cannot exceed 200 characters.';
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      if (description.length > 250) {
+        errorDiv.innerText = 'Description cannot exceed 250 characters.';
         errorDiv.style.display = 'block';
         return;
       }
@@ -9734,12 +9808,15 @@
         <input type="hidden" id="listeningId" />
         <div class="claim-form-group">
           <label>Video Title *</label>
-          <input type="text" id="listeningTitle" class="claim-form-control" required placeholder="e.g., Customer Interview Murugan" />
+          <input type="text" id="listeningTitle" class="claim-form-control" required placeholder="e.g., Customer Interview Murugan" maxlength="200" />
         </div>
 
         <div class="claim-form-group">
-          <label>Description (Optional)</label>
-          <textarea id="listeningDescription" class="claim-form-control" placeholder="Describe the video content..." style="min-height: 80px; resize: vertical;"></textarea>
+          <label>Description (Optional) <span style="font-size: 0.75rem; text-transform: none; font-weight: normal; color: #777; margin-left: 5px;">Max 250 chars</span></label>
+          <textarea id="listeningDescription" class="claim-form-control" placeholder="Describe the video content..." maxlength="250" oninput="updateCharCountListening()" style="min-height: 80px; resize: vertical;"></textarea>
+          <div class="testimonial-char-count" style="font-size: 0.75rem; color: #777; margin-top: 0.2rem; text-align: right;">
+            <span id="charCount-listeningDesc">0</span> / 250 characters
+          </div>
         </div>
 
         <div class="claim-form-group">
@@ -9747,6 +9824,11 @@
           <input type="file" id="listeningFile" class="claim-form-control" accept="video/mp4,video/webm" onchange="validateListeningFileSize(this)" />
           <p id="listeningFileHelp" style="font-size:0.75rem; color:#666; margin-top:0.3rem;">Max file size: 250MB</p>
           <div id="listeningFileError" style="display:none; color:#e53e3e; font-size:0.85rem; margin-top:0.5rem; font-weight:600; padding: 0.5rem; background: #fff5f5; border: 1px solid #fed7d7; border-radius: 6px;"></div>
+          <div id="listeningPreviewContainer" style="display:none; margin-top:1rem;">
+            <label style="font-size:0.8rem; color:#555; display:block; margin-bottom:0.3rem;">Video Preview:</label>
+            <video id="listeningModalPreview" controls style="width:100%; border-radius:8px; border:1px solid #ccc; background:#000; max-height:180px;"></video>
+            <p id="listeningFileCurrentName" style="font-size:0.8rem; color:#555; margin-top:0.2rem; word-break:break-all;"></p>
+          </div>
         </div>
 
         <div class="claim-form-group">

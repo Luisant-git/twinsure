@@ -106,6 +106,8 @@ function getContentType(filename) {
     '.jpg'  : 'image/jpeg',
     '.jpeg' : 'image/jpeg',
     '.png'  : 'image/png',
+    '.mp4'  : 'video/mp4',
+    '.webm' : 'video/webm',
   };
   return map[ext] || 'application/octet-stream';
 }
@@ -163,7 +165,9 @@ async function getSignedUrl(key, expiresInSeconds = 900) {
  */
 function getPublicUrl(key) {
   const base = process.env.R2_PUBLIC_URL;
-  if (!base) throw new Error('R2_PUBLIC_URL is not set in .env');
+  if (!base || base.includes('your-public-url.r2.dev')) {
+    return `/${key}`;
+  }
   return `${base.replace(/\/$/, '')}/${key}`;
 }
 
@@ -208,6 +212,33 @@ async function getBufferFromR2(key) {
   return Buffer.concat(chunks);
 }
 
+/**
+ * Returns a readable stream from Cloudflare R2 along with headers and statusCode.
+ * Supports Range requests (Partial Content).
+ * @param {string} key
+ * @param {string} [rangeHeader]
+ * @returns {Promise<{stream: any, headers: Object, statusCode: number}>}
+ */
+async function getStreamFromR2(key, rangeHeader) {
+  const params = { Bucket: getBucket(), Key: key };
+  if (rangeHeader) {
+    params.Range = rangeHeader;
+  }
+  const response = await getClient().send(new GetObjectCommand(params));
+  return {
+    stream: response.Body,
+    headers: {
+      'Content-Type': response.ContentType,
+      'Content-Length': response.ContentLength,
+      'Content-Range': response.ContentRange,
+      'Accept-Ranges': response.AcceptRanges,
+      'ETag': response.ETag,
+      'Last-Modified': response.LastModified
+    },
+    statusCode: response.$metadata.httpStatusCode || 200
+  };
+}
+
 // ── Exports ────────────────────────────────────────────────────────────────
 module.exports = {
   /** Folder path constants — use these when building R2 keys */
@@ -236,6 +267,9 @@ module.exports = {
 
   /** Download R2 object as Buffer (for email attachments) */
   getBufferFromR2,
+
+  /** Streams R2 object directly for chunked/range downloads */
+  getStreamFromR2,
 
   /** Returns true if key is under public/ */
   isPublicKey,

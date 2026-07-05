@@ -1910,6 +1910,16 @@ function createApiRouter() {
       return;
     }
 
+    if (title.length > 200) {
+      sendJson(res, 400, { error: 'Video Title cannot exceed 200 characters.' });
+      return;
+    }
+
+    if (description && description.length > 250) {
+      sendJson(res, 400, { error: 'Description cannot exceed 250 characters.' });
+      return;
+    }
+
     try {
       let existingVideo = null;
       if (id) {
@@ -2710,10 +2720,17 @@ app.use('/backend/api', createApiRouter());
 app.get('/public/*', async (req, res) => {
   const key = req.path.replace(/^\//, ''); // removes leading slash to get the R2 key
   try {
-    const buffer = await r2.getBufferFromR2(key);
-    const contentType = r2.getContentType(key);
-    res.setHeader('Content-Type', contentType);
-    res.send(buffer);
+    const rangeHeader = req.headers.range;
+    const { stream, headers, statusCode } = await r2.getStreamFromR2(key, rangeHeader);
+    
+    res.status(statusCode);
+    Object.keys(headers).forEach(h => {
+      if (headers[h] !== undefined) {
+        res.setHeader(h, headers[h]);
+      }
+    });
+    
+    stream.pipe(res);
   } catch (error) {
     console.error('Error serving public file from R2:', key, error.message);
     res.status(404).sendFile(path.join(publicDir, '404.html'));
@@ -2781,10 +2798,17 @@ app.get('/private/*', async (req, res) => {
     }
 
     // Stream the private file directly from R2
-    const buffer = await r2.getBufferFromR2(key);
-    const contentType = r2.getContentType(key);
-    res.setHeader('Content-Type', contentType);
-    res.send(buffer);
+    const rangeHeader = req.headers.range;
+    const { stream, headers, statusCode } = await r2.getStreamFromR2(key, rangeHeader);
+    
+    res.status(statusCode);
+    Object.keys(headers).forEach(h => {
+      if (headers[h] !== undefined) {
+        res.setHeader(h, headers[h]);
+      }
+    });
+
+    stream.pipe(res);
   } catch (error) {
     console.error('Error serving private file from R2:', key, error.message);
     if (error.message.includes('R2 configuration') || error.message.includes('R2_')) {
