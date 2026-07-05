@@ -724,11 +724,11 @@
     .testimonial-new-card {
       display: flex;
       background: #fff;
-      border-radius: 40px 10px 40px 10px;
-      padding: 1.5rem 2.25rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-      margin-bottom: 3rem;
-      gap: 2.25rem;
+      border-radius: 30px 10px 30px 10px;
+      padding: 1.25rem 1.75rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+      margin-bottom: 2.5rem;
+      gap: 1.75rem;
       align-items: center;
     }
 
@@ -738,7 +738,7 @@
     }
 
     .testimonial-left {
-      flex: 0 0 200px;
+      flex: 0 0 160px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -747,17 +747,17 @@
     }
 
     .testimonial-main-heading {
-      font-size: 0.95rem;
+      font-size: 0.85rem;
       font-weight: 700;
       color: #00296b;
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.5rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       line-height: 1.3;
       text-align: center;
       width: 100%;
       border-bottom: 2px dashed rgba(0, 41, 107, 0.15);
-      padding-bottom: 0.4rem;
+      padding-bottom: 0.3rem;
     }
 
     .testimonial-new-card.dark .testimonial-main-heading {
@@ -766,12 +766,12 @@
     }
 
     .testimonial-avatar {
-      width: 100px;
-      height: 100px;
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
-      margin-bottom: 0.75rem;
-      border: 4px solid #f8fafc;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      margin-bottom: 0.5rem;
+      border: 3px solid #f8fafc;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -785,10 +785,10 @@
       background: var(--accent-gold);
       color: var(--primary-dark);
       font-weight: 800;
-      padding: 0.5rem 1rem;
+      padding: 0.4rem 0.8rem;
       border-radius: 4px;
-      margin-bottom: 0.8rem;
-      font-size: 1.1rem;
+      margin-bottom: 0.4rem;
+      font-size: 0.95rem;
       width: 100%;
       overflow-wrap: break-word;
       word-wrap: break-word;
@@ -796,7 +796,7 @@
     }
 
     .testimonial-type {
-      font-size: 0.95rem;
+      font-size: 0.85rem;
       font-weight: 600;
       color: var(--text-dark);
       overflow-wrap: break-word;
@@ -825,12 +825,12 @@
       color: #fff;
       font-weight: 800;
       font-style: italic;
-      padding: 0.3rem 1rem;
+      padding: 0.25rem 0.75rem;
       display: inline-block;
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.5rem;
       align-self: flex-start;
       text-transform: uppercase;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       letter-spacing: 0.5px;
     }
 
@@ -840,8 +840,8 @@
     }
 
     .testimonial-content {
-      font-size: 0.95rem;
-      line-height: 1.7;
+      font-size: 0.85rem;
+      line-height: 1.5;
       text-align: justify;
       color: #00296b;
       overflow-wrap: break-word;
@@ -1348,13 +1348,14 @@
 
       .testimonial-new-card {
         flex-direction: column;
-        border-radius: 30px 10px 30px 10px;
-        padding: 2rem 1.5rem;
-        gap: 2rem;
+        border-radius: 20px 10px 20px 10px;
+        padding: 1.25rem 1rem;
+        gap: 1.25rem;
       }
 
       .testimonial-right {
         grid-template-columns: 1fr;
+        gap: 1rem;
       }
 
       .testimonial-left {
@@ -2489,18 +2490,15 @@
       top: 50% !important;
       left: 50% !important;
       transform: translate(-50%, -50%) !important;
-      width: 90%;
+      width: 95%;
       max-width: 800px;
-      height: auto;
+      max-height: 90vh; /* Strictly fit within 90% of screen height */
+      display: flex;
+      flex-direction: column;
     }
 
     #listeningPlayerWidget.player-minimized {
       width: 320px;
-      bottom: 30px;
-      right: 30px;
-      top: auto !important;
-      left: auto !important;
-      transform: none !important;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
       border-color: rgba(253, 197, 0, 0.3);
     }
@@ -2555,12 +2553,18 @@
     .player-body {
       position: relative;
       width: 100%;
+      max-height: 55vh;
       aspect-ratio: 16/9;
       background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
     }
     .player-video {
       width: 100%;
       height: 100%;
+      object-fit: contain;
       display: block;
     }
 
@@ -2765,10 +2769,16 @@
         overlay.style.display = "none";
         icon.className = "fas fa-window-maximize";
         
-        widget.style.left = "";
-        widget.style.top = "";
-        widget.style.bottom = "30px";
-        widget.style.right = "30px";
+        // Use pixel placement so dragging is fully functional without top: auto blocks
+        const margin = 30;
+        const width = 320;
+        const height = widget.offsetHeight || 225;
+        
+        widget.style.bottom = "auto";
+        widget.style.right = "auto";
+        widget.style.left = `${window.innerWidth - width - margin}px`;
+        widget.style.top = `${window.innerHeight - height - margin}px`;
+        widget.style.transform = "none";
       } else {
         widget.classList.remove("player-minimized");
         widget.classList.add("player-modal");
@@ -2779,6 +2789,7 @@
         widget.style.top = "";
         widget.style.bottom = "";
         widget.style.right = "";
+        widget.style.transform = "";
       }
     }
 
