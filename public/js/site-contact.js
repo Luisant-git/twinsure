@@ -337,10 +337,20 @@
              </div>`
           : '';
 
-          const coverStyle = b.coverUrl
-            ? `style="position:relative; background-image:url('${b.coverUrl}'); background-size:cover; background-position:center;"`
+          // Normalize cover URL (same logic as testimonial avatars)
+          let coverUrl = b.coverUrl || '';
+          if (coverUrl && coverUrl.includes('your-public-url.r2.dev')) {
+            coverUrl = coverUrl.replace(/^https?:\/\/your-public-url\.r2\.dev/, '');
+          }
+          if (coverUrl && coverUrl.startsWith('/')) {
+            const backendRoot = typeof window.BACKEND_ROOT !== 'undefined' ? window.BACKEND_ROOT : '';
+            coverUrl = `${backendRoot}${coverUrl}`;
+          }
+
+          const coverStyle = coverUrl
+            ? `style="position:relative; background-image:url('${coverUrl}'); background-size:cover; background-position:center;"`
             : '';
-          const hasCover = !!b.coverUrl;
+          const hasCover = !!coverUrl;
 
           return `
           <div class="blog-card${hasCover ? ' has-cover' : ''}" ${coverStyle}>
@@ -360,7 +370,7 @@
               </div>
               ${linkHtml}
             </div>
-            <div class="blog-card-panel"${hasCover ? ` style="background-image:url('${b.coverUrl}'); background-size:cover; background-position:center;"` : ''}>
+            <div class="blog-card-panel"${hasCover ? ` style="background-image:url('${coverUrl}'); background-size:cover; background-position:center;"` : ''}>
               ${hasCover ? '<div class="blog-panel-cover-blur"></div>' : ''}
               <div class="blog-panel-icon" style="z-index:2;"><i class="fas fa-newspaper"></i></div>
               <div class="blog-panel-label" style="z-index:2;">Twinsure<br>Insights</div>
@@ -417,14 +427,14 @@
     cards.forEach((card, idx) => {
       if (idx === blogIndex) {
         card.style.display = 'flex';
-        card.style.opacity = '0';
-        requestAnimationFrame(() => {
-          card.style.transition = 'opacity 0.4s ease';
+        // Double RAF ensures browser has repainted display:flex before opacity transition
+        requestAnimationFrame(() => requestAnimationFrame(() => {
           card.style.opacity = '1';
-        });
+        }));
       } else {
-        card.style.display = 'none';
         card.style.opacity = '0';
+        // Small delay before hiding to allow fade-out if needed
+        setTimeout(() => { if (card.style.opacity === '0') card.style.display = 'none'; }, 50);
       }
     });
 
