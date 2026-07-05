@@ -592,9 +592,17 @@
 
     /* Blinking keyframe animation */
     @keyframes blink-animation {
-      0% { opacity: 1; }
-      50% { opacity: 0.35; }
-      100% { opacity: 1; }
+      0% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.35;
+      }
+
+      100% {
+        opacity: 1;
+      }
     }
 
     /* Maintenance mode top nav badge */
@@ -631,9 +639,11 @@
         gap: 0 !important;
         margin-right: 0.2rem !important;
       }
+
       .maintenance-blink-badge .m-text {
         display: none !important;
       }
+
       .kyc-modal-window {
         width: 100%;
         max-width: 100%;
@@ -2186,7 +2196,8 @@
               </div>
               <div class="welcome-stat-item">
                 <span class="welcome-stat-label">Live System Status</span>
-                <span id="systemStatusDisplay" class="welcome-stat-value" style="color: var(--success)"><span class="status-dot online"></span> SYSTEMS ONLINE</span>
+                <span id="systemStatusDisplay" class="welcome-stat-value" style="color: var(--success)"><span
+                    class="status-dot online"></span> SYSTEMS ONLINE</span>
               </div>
               <div class="welcome-stat-item">
                 <span class="welcome-stat-label">Active Engine</span>
@@ -3321,7 +3332,7 @@
                 security settings.
               </p>
             </div>
-            
+
           </div>
         </div>
         <div class="settings-tabs-container" style="
@@ -3427,7 +3438,8 @@
                     </div>
                     <span style="font-weight: 600; font-size: 0.9rem; color: #111">Enable Maintenance Mode</span>
                   </div>
-                  <label class="switch"><input type="checkbox" id="set_maintenanceMode" onchange="updateMaintenanceUI(this.checked)" />
+                  <label class="switch"><input type="checkbox" id="set_maintenanceMode"
+                      onchange="updateMaintenanceUI(this.checked)" />
                     <span class="slider"></span></label>
                 </div>
 
@@ -3564,11 +3576,13 @@
                   <div style="display: flex; flex-direction: column; gap: 0.8rem; width: 100%; max-width: 400px;">
                     <div class="settings-form-group" style="margin-bottom: 0;">
                       <label style="font-size: 0.85rem; font-weight: 600; color: #475569;">Current Password</label>
-                      <input type="password" id="set_oldAdminPassword" class="settings-input" placeholder="Enter current password" />
+                      <input type="password" id="set_oldAdminPassword" class="settings-input"
+                        placeholder="Enter current password" />
                     </div>
                     <div class="settings-form-group" style="margin-bottom: 0;">
                       <label style="font-size: 0.85rem; font-weight: 600; color: #475569;">New Password</label>
-                      <input type="password" id="set_newAdminPassword" class="settings-input" placeholder="Enter new password (min 6 chars)" />
+                      <input type="password" id="set_newAdminPassword" class="settings-input"
+                        placeholder="Enter new password (min 6 chars)" />
                     </div>
                     <button class="btn" style="
                           background: var(--primary-purple);
@@ -3749,11 +3763,14 @@
                   <i class="fas fa-plus"></i> Add New Blog
                 </button>
               </div>
-              <div id="blogOrderChangeBanner" style="display: none; background: #fffbeb; border: 1px solid #feebc8; padding: 0.8rem 1rem; border-radius: 8px; margin-bottom: 1rem; align-items: center; justify-content: space-between; font-size: 0.85rem; color: #c05621; font-weight: 600;">
+              <div id="blogOrderChangeBanner"
+                style="display: none; background: #fffbeb; border: 1px solid #feebc8; padding: 0.8rem 1rem; border-radius: 8px; margin-bottom: 1rem; align-items: center; justify-content: space-between; font-size: 0.85rem; color: #c05621; font-weight: 600;">
                 <span>Blog order changed. Please save changes to apply.</span>
                 <div style="display: flex; gap: 0.5rem;">
-                  <button class="btn btn-gold" onclick="saveBlogOrder()" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Save Order</button>
-                  <button class="btn btn-white" onclick="loadBlogs()" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Reset</button>
+                  <button class="btn btn-gold" onclick="saveBlogOrder()"
+                    style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Save Order</button>
+                  <button class="btn btn-white" onclick="loadBlogs()"
+                    style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Reset</button>
                 </div>
               </div>
               <div class="premium-table-card" style="border: 1px solid #e2e8f0; border-radius: 12px; background: #fff;">
@@ -3763,11 +3780,14 @@
               </div>
             </div>
             <div id="tab-listening" class="settings-tab-pane" style="display: none">
-              <div id="listeningOrderChangeBanner" style="display: none; background: #fffbeb; border: 1px solid #feebc8; padding: 0.8rem 1rem; border-radius: 8px; margin-bottom: 1rem; align-items: center; justify-content: space-between; font-size: 0.85rem; color: #c05621; font-weight: 600;">
+              <div id="listeningOrderChangeBanner"
+                style="display: none; background: #fffbeb; border: 1px solid #feebc8; padding: 0.8rem 1rem; border-radius: 8px; margin-bottom: 1rem; align-items: center; justify-content: space-between; font-size: 0.85rem; color: #c05621; font-weight: 600;">
                 <span>Video order changed. Please save changes to apply.</span>
                 <div style="display: flex; gap: 0.5rem;">
-                  <button class="btn btn-gold" onclick="saveListeningOrder()" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Save Order</button>
-                  <button class="btn btn-white" onclick="loadListening()" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Reset</button>
+                  <button class="btn btn-gold" onclick="saveListeningOrder()"
+                    style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Save Order</button>
+                  <button class="btn btn-white" onclick="loadListening()"
+                    style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Reset</button>
                 </div>
               </div>
               <div style="
@@ -8369,7 +8389,7 @@
       document.getElementById('testimonialAvatarFile').value = '';
       document.getElementById('testimonialActive').checked = true;
       document.getElementById('testimonialSubmitBtn').innerText = 'Add Testimonial';
-      
+
       // Reset preview
       document.getElementById('testimonialPhotoPreviewContainer').style.display = 'none';
       document.getElementById('testimonialPhotoPreview').style.backgroundImage = 'none';
@@ -8612,6 +8632,9 @@
       document.getElementById('blogLink').value = '';
       document.getElementById('blogActive').checked = true;
       document.getElementById('charCount-blog').innerText = '0';
+      document.getElementById('blogCoverFile').value = '';
+      document.getElementById('blogCoverPreviewWrap').style.display = 'none';
+      document.getElementById('blogCurrentCoverWrap').style.display = 'none';
 
       document.getElementById('blogModalTitle').innerText = 'Add New Blog';
       document.getElementById('blogSubmitBtn').innerText = 'Add Blog';
@@ -8632,6 +8655,14 @@
       document.getElementById('blogLink').value = blog.link || '';
       document.getElementById('blogActive').checked = blog.isActive === true;
       document.getElementById('charCount-blog').innerText = (blog.content || '').length;
+      document.getElementById('blogCoverFile').value = '';
+      document.getElementById('blogCoverPreviewWrap').style.display = 'none';
+      if (blog.coverUrl) {
+        document.getElementById('blogCurrentCover').src = blog.coverUrl;
+        document.getElementById('blogCurrentCoverWrap').style.display = 'block';
+      } else {
+        document.getElementById('blogCurrentCoverWrap').style.display = 'none';
+      }
 
       document.getElementById('blogModalTitle').innerText = 'Edit Blog';
       document.getElementById('blogSubmitBtn').innerText = 'Save Changes';
@@ -8647,6 +8678,25 @@
       setTimeout(() => modal.style.display = 'none', 300);
     }
 
+    function previewBlogCover(input) {
+      const file = input.files[0];
+      const wrap = document.getElementById('blogCoverPreviewWrap');
+      const preview = document.getElementById('blogCoverPreview');
+      if (file) {
+        const url = URL.createObjectURL(file);
+        preview.src = url;
+        wrap.style.display = 'block';
+        document.getElementById('blogCurrentCoverWrap').style.display = 'none';
+      } else {
+        wrap.style.display = 'none';
+      }
+    }
+
+    function clearBlogCover() {
+      document.getElementById('blogCoverFile').value = '';
+      document.getElementById('blogCoverPreviewWrap').style.display = 'none';
+    }
+
     async function saveBlog(event) {
       event.preventDefault();
 
@@ -8655,43 +8705,41 @@
       const content = document.getElementById('blogContent').value.trim();
       const link = document.getElementById('blogLink').value.trim();
       const isActive = document.getElementById('blogActive').checked;
+      const coverFileInput = document.getElementById('blogCoverFile');
+      const coverFile = coverFileInput.files[0];
 
       if (!title || !author || !content) {
         alert('Please fill in all required fields');
         return;
       }
 
-      if (title.length > 200) {
-        alert('Title cannot exceed 200 characters');
-        return;
-      }
-      if (author.length > 100) {
-        alert('Author/From Whom cannot exceed 100 characters');
-        return;
-      }
-      if (content.length > 1000) {
-        alert('Content cannot exceed 1000 characters');
-        return;
-      }
-      if (link && link.length > 250) {
-        alert('Link cannot exceed 250 characters');
-        return;
-      }
-
-      const payload = {
-        title,
-        author,
-        content,
-        link,
-        isActive
-      };
+      if (title.length > 200) { alert('Title cannot exceed 200 characters'); return; }
+      if (author.length > 100) { alert('Author/From Whom cannot exceed 100 characters'); return; }
+      if (content.length > 1000) { alert('Content cannot exceed 1000 characters'); return; }
+      if (link && link.length > 500) { alert('Link cannot exceed 500 characters'); return; }
 
       try {
         let res;
-        if (currentEditBlogId) {
-          res = await api.put(`/admin/blogs/${currentEditBlogId}`, payload);
+        if (coverFile) {
+          const formData = new FormData();
+          formData.append('title', title);
+          formData.append('author', author);
+          formData.append('content', content);
+          formData.append('link', link);
+          formData.append('isActive', String(isActive));
+          formData.append('coverFile', coverFile);
+          if (currentEditBlogId) {
+            res = await api.putMultipart(`/admin/blogs/${currentEditBlogId}`, formData);
+          } else {
+            res = await api.postMultipart('/admin/blogs', formData);
+          }
         } else {
-          res = await api.post('/admin/blogs', payload);
+          const payload = { title, author, content, link, isActive };
+          if (currentEditBlogId) {
+            res = await api.put(`/admin/blogs/${currentEditBlogId}`, payload);
+          } else {
+            res = await api.post('/admin/blogs', payload);
+          }
         }
 
         if (res && (res.success || res.message)) {
@@ -8874,7 +8922,7 @@
         saveBtn.innerText = 'Saving...';
 
         const res = await api.post('/admin/blogs/reorder', { orders });
-        
+
         saveBtn.disabled = false;
         saveBtn.innerText = 'Save Order';
 
@@ -8911,7 +8959,7 @@
       const errorDiv = document.getElementById('listeningFileError');
       errorDiv.style.display = 'none';
       errorDiv.innerText = '';
-      
+
       document.getElementById('charCount-listeningDesc').innerText = '0';
 
       // Reset preview
@@ -8919,7 +8967,7 @@
       const previewVideo = document.getElementById('listeningModalPreview');
       previewVideo.pause();
       previewVideo.src = '';
-      
+
       document.getElementById('listeningFileLabel').innerText = 'Video File (.mp4 / .webm) *';
       document.getElementById('listeningFile').required = true;
       document.getElementById('listeningModalTitle').innerText = 'Add New Video';
@@ -8951,7 +8999,7 @@
       const previewContainer = document.getElementById('listeningPreviewContainer');
       const previewVideo = document.getElementById('listeningModalPreview');
       const fileNamePara = document.getElementById('listeningFileCurrentName');
-      
+
       let videoUrl = video.videoUrl;
       if (videoUrl) {
         if (videoUrl.includes('your-public-url.r2.dev')) {
@@ -9021,12 +9069,12 @@
         const tempVideo = document.createElement('video');
         tempVideo.preload = 'metadata';
         tempVideo.src = URL.createObjectURL(file);
-        
-        tempVideo.onloadedmetadata = function() {
+
+        tempVideo.onloadedmetadata = function () {
           URL.revokeObjectURL(tempVideo.src);
           const width = tempVideo.videoWidth;
           const height = tempVideo.videoHeight;
-          
+
           if (width <= height) {
             errorDiv.innerText = 'Only landscape videos are allowed (width must be greater than height). Portrait/square video detected.';
             errorDiv.style.display = 'block';
@@ -9037,7 +9085,7 @@
           } else {
             errorDiv.style.display = 'none';
             errorDiv.innerText = '';
-            
+
             const fileUrl = URL.createObjectURL(file);
             previewVideo.src = fileUrl;
             previewVideo.load();
@@ -9046,7 +9094,7 @@
           }
         };
 
-        tempVideo.onerror = function() {
+        tempVideo.onerror = function () {
           URL.revokeObjectURL(tempVideo.src);
           errorDiv.innerText = 'Invalid or corrupted video file.';
           errorDiv.style.display = 'block';
@@ -9114,7 +9162,7 @@
         submitBtn.disabled = true;
 
         const res = await api.postMultipart('/admin/listening', formData);
-        
+
         submitBtn.innerText = originalText;
         submitBtn.disabled = false;
 
@@ -9316,7 +9364,7 @@
         saveBtn.innerText = 'Saving...';
 
         const res = await api.post('/admin/listening/reorder', { orders });
-        
+
         saveBtn.disabled = false;
         saveBtn.innerText = 'Save Order';
 
@@ -9343,7 +9391,7 @@
         const dateStr = d.toISOString().split('T')[0];
         trend[dateStr] = 0;
       }
-      
+
       items.forEach(item => {
         let dateVal = item[dateField];
         if (!dateVal && item.kyc) {
@@ -9360,7 +9408,7 @@
           });
           if (maxDocDate) dateVal = maxDocDate;
         }
-        
+
         if (dateVal) {
           try {
             const parsed = new Date(dateVal).toISOString().split('T')[0];
@@ -9392,24 +9440,24 @@
       try {
         const res = await api.get('/admin/kyc');
         allAdminKyc = res || [];
-        
+
         // Compute stats
         const total = allAdminKyc.length;
         const pending = allAdminKyc.filter(u => (u.kyc && u.kyc.status) === 'Pending Verification').length;
         const approved = allAdminKyc.filter(u => (u.kyc && u.kyc.status) === 'Approved').length;
         const rejected = allAdminKyc.filter(u => (u.kyc && u.kyc.status) === 'Rejected').length;
-        
+
         document.getElementById('valKycTotal').textContent = total;
         document.getElementById('valKycPending').textContent = pending;
         document.getElementById('valKycApproved').textContent = approved;
         document.getElementById('valKycRejected').textContent = rejected;
-        
+
         // Draw sparklines
         drawSparkline('sparkKycTotal', get7DayTrend(allAdminKyc), '#5136a8');
         drawSparkline('sparkKycPending', get7DayTrend(allAdminKyc.filter(u => (u.kyc && u.kyc.status) === 'Pending Verification')), '#d97706');
         drawSparkline('sparkKycApproved', get7DayTrend(allAdminKyc.filter(u => (u.kyc && u.kyc.status) === 'Approved')), '#38a169');
         drawSparkline('sparkKycRejected', get7DayTrend(allAdminKyc.filter(u => (u.kyc && u.kyc.status) === 'Rejected')), '#dc2626');
-        
+
         renderAdminKYC();
       } catch (error) {
         console.error('Error loading KYC users:', error);
@@ -10181,9 +10229,13 @@
         </div>
 
         <div class="claim-form-group">
-          <label>Highlighted Heading * <span style="font-size: 0.75rem; text-transform: none; font-weight: normal; color: #777; margin-left: 5px;">Max 50 chars</span></label>
-          <input type="text" id="testimonialHeading" class="claim-form-control" required placeholder="e.g., Recovered ₹6 Lakhs Claim!" maxlength="50" oninput="updateCharCount('heading')" />
-          <div class="testimonial-char-count" style="font-size: 0.75rem; color: #777; margin-top: 0.2rem; text-align: right;">
+          <label>Highlighted Heading * <span
+              style="font-size: 0.75rem; text-transform: none; font-weight: normal; color: #777; margin-left: 5px;">Max
+              50 chars</span></label>
+          <input type="text" id="testimonialHeading" class="claim-form-control" required
+            placeholder="e.g., Recovered ₹6 Lakhs Claim!" maxlength="50" oninput="updateCharCount('heading')" />
+          <div class="testimonial-char-count"
+            style="font-size: 0.75rem; color: #777; margin-top: 0.2rem; text-align: right;">
             <span id="charCount-heading">0</span> / 50 characters
           </div>
         </div>
@@ -10232,10 +10284,15 @@
 
         <div class="claim-form-group">
           <label id="testimonialPhotoLabel">Profile Photo (Optional)</label>
-          <input type="file" id="testimonialAvatarFile" class="claim-form-control" accept="image/jpeg,image/png" onchange="previewTestimonialAvatar(this)" />
-          <p style="font-size:0.75rem; color:#666; margin-top:0.3rem;">Max file size: 5MB. Leave empty to use placeholder.</p>
-          <div id="testimonialPhotoPreviewContainer" style="display:none; margin-top:1rem; align-items:center; gap:1rem;">
-            <div id="testimonialPhotoPreview" style="width:60px; height:60px; border-radius:50%; background-size:cover; background-position:center; border: 2px solid #ccc;"></div>
+          <input type="file" id="testimonialAvatarFile" class="claim-form-control" accept="image/jpeg,image/png"
+            onchange="previewTestimonialAvatar(this)" />
+          <p style="font-size:0.75rem; color:#666; margin-top:0.3rem;">Max file size: 5MB. Leave empty to use
+            placeholder.</p>
+          <div id="testimonialPhotoPreviewContainer"
+            style="display:none; margin-top:1rem; align-items:center; gap:1rem;">
+            <div id="testimonialPhotoPreview"
+              style="width:60px; height:60px; border-radius:50%; background-size:cover; background-position:center; border: 2px solid #ccc;">
+            </div>
             <span id="testimonialPhotoName" style="font-size:0.8rem; color:#555; word-break:break-all;"></span>
           </div>
         </div>
@@ -10269,26 +10326,51 @@
       </div>
       <form onsubmit="saveBlog(event)" style="padding: 1.5rem;" id="blogForm">
         <div class="claim-form-group">
-          <label>Blog Title * <span style="font-size: 0.75rem; text-transform: none; font-weight: normal; color: #777; margin-left: 5px;">Max 200 chars</span></label>
-          <input type="text" id="blogTitle" class="claim-form-control" required placeholder="e.g., Guide to Claim Settlement" maxlength="200" />
+          <label>Blog Title * <span
+              style="font-size: 0.75rem; text-transform: none; font-weight: normal; color: #777; margin-left: 5px;">Max
+              200 chars</span></label>
+          <input type="text" id="blogTitle" class="claim-form-control" required
+            placeholder="e.g., Guide to Claim Settlement" maxlength="200" />
         </div>
 
         <div class="claim-form-group">
-          <label>From Whom / Author * <span style="font-size: 0.75rem; text-transform: none; font-weight: normal; color: #777; margin-left: 5px;">Max 100 chars</span></label>
-          <input type="text" id="blogAuthor" class="claim-form-control" required placeholder="e.g., Ramesh Kumar, Claims Expert" maxlength="100" />
+          <label>From Whom / Author * <span
+              style="font-size: 0.75rem; text-transform: none; font-weight: normal; color: #777; margin-left: 5px;">Max
+              100 chars</span></label>
+          <input type="text" id="blogAuthor" class="claim-form-control" required
+            placeholder="e.g., Ramesh Kumar, Claims Expert" maxlength="100" />
         </div>
 
         <div class="claim-form-group">
-          <label>Blog Content Summary * <span style="font-size: 0.75rem; text-transform: none; font-weight: normal; color: #777; margin-left: 5px;">Max 1000 chars</span></label>
-          <textarea id="blogContent" class="claim-form-control" required placeholder="Provide a brief summary of the blog content..." maxlength="1000" oninput="updateBlogCharCount()" style="min-height: 120px; resize: vertical;"></textarea>
+          <label>Blog Content Summary * <span
+              style="font-size: 0.75rem; text-transform: none; font-weight: normal; color: #777; margin-left: 5px;">Max
+              1000 chars</span></label>
+          <textarea id="blogContent" class="claim-form-control" required
+            placeholder="Provide a brief summary of the blog content..." maxlength="1000"
+            oninput="updateBlogCharCount()" style="min-height: 120px; resize: vertical;"></textarea>
           <div style="font-size: 0.75rem; color: #777; margin-top: 0.2rem; text-align: right;">
             <span id="charCount-blog">0</span> / 1000 characters
           </div>
         </div>
 
         <div class="claim-form-group">
-          <label>Article Link / URL (Optional) <span style="font-size: 0.75rem; text-transform: none; font-weight: normal; color: #777; margin-left: 5px;">Max 250 chars</span></label>
-          <input type="url" id="blogLink" class="claim-form-control" placeholder="e.g., https://medium.com/my-article" maxlength="250" />
+          <label>Article Link / URL (Optional) <span
+              style="font-size: 0.75rem; text-transform: none; font-weight: normal; color: #777; margin-left: 5px;">Max
+              250 chars</span></label>
+          <input type="url" id="blogLink" class="claim-form-control" placeholder="e.g., https://medium.com/my-article"
+            maxlength="250" />
+        </div>
+
+        <div class="claim-form-group">
+          <label>Cover Photo <span style="font-size:0.75rem;text-transform:none;font-weight:normal;color:#777;margin-left:5px;">Optional – blurred background (landscape recommended)</span></label>
+          <input type="file" id="blogCoverFile" class="claim-form-control" accept="image/jpeg,image/png,image/webp" onchange="previewBlogCover(this)" />
+          <div id="blogCoverPreviewWrap" style="display:none; margin-top:0.75rem; position:relative; border-radius:8px; overflow:hidden; height:100px;">
+            <img id="blogCoverPreview" src="" alt="Cover preview" style="width:100%; height:100%; object-fit:cover; border-radius:8px;" />
+            <button type="button" onclick="clearBlogCover()" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.6);color:#fff;border:none;border-radius:50%;width:26px;height:26px;cursor:pointer;font-size:0.75rem;display:flex;align-items:center;justify-content:center;"><i class="fas fa-times"></i></button>
+          </div>
+          <div id="blogCurrentCoverWrap" style="display:none; margin-top:0.5rem; font-size:0.78rem; color:#555;">
+            Current cover: <img id="blogCurrentCover" src="" alt="Current cover" style="height:60px;border-radius:6px;margin-left:0.5rem;vertical-align:middle;object-fit:cover;" />
+          </div>
         </div>
 
         <div class="claim-form-group">
@@ -10322,26 +10404,36 @@
         <input type="hidden" id="listeningId" />
         <div class="claim-form-group">
           <label>Video Title *</label>
-          <input type="text" id="listeningTitle" class="claim-form-control" required placeholder="e.g., Customer Interview Murugan" maxlength="200" />
+          <input type="text" id="listeningTitle" class="claim-form-control" required
+            placeholder="e.g., Customer Interview Murugan" maxlength="200" />
         </div>
 
         <div class="claim-form-group">
-          <label>Description (Optional) <span style="font-size: 0.75rem; text-transform: none; font-weight: normal; color: #777; margin-left: 5px;">Max 250 chars</span></label>
-          <textarea id="listeningDescription" class="claim-form-control" placeholder="Describe the video content..." maxlength="250" oninput="updateCharCountListening()" style="min-height: 80px; resize: vertical;"></textarea>
-          <div class="testimonial-char-count" style="font-size: 0.75rem; color: #777; margin-top: 0.2rem; text-align: right;">
+          <label>Description (Optional) <span
+              style="font-size: 0.75rem; text-transform: none; font-weight: normal; color: #777; margin-left: 5px;">Max
+              250 chars</span></label>
+          <textarea id="listeningDescription" class="claim-form-control" placeholder="Describe the video content..."
+            maxlength="250" oninput="updateCharCountListening()" style="min-height: 80px; resize: vertical;"></textarea>
+          <div class="testimonial-char-count"
+            style="font-size: 0.75rem; color: #777; margin-top: 0.2rem; text-align: right;">
             <span id="charCount-listeningDesc">0</span> / 250 characters
           </div>
         </div>
 
         <div class="claim-form-group">
           <label id="listeningFileLabel">Video File (.mp4 / .webm) *</label>
-          <input type="file" id="listeningFile" class="claim-form-control" accept="video/mp4,video/webm" onchange="validateListeningFileSize(this)" />
+          <input type="file" id="listeningFile" class="claim-form-control" accept="video/mp4,video/webm"
+            onchange="validateListeningFileSize(this)" />
           <p id="listeningFileHelp" style="font-size:0.75rem; color:#666; margin-top:0.3rem;">Max file size: 250MB</p>
-          <div id="listeningFileError" style="display:none; color:#e53e3e; font-size:0.85rem; margin-top:0.5rem; font-weight:600; padding: 0.5rem; background: #fff5f5; border: 1px solid #fed7d7; border-radius: 6px;"></div>
+          <div id="listeningFileError"
+            style="display:none; color:#e53e3e; font-size:0.85rem; margin-top:0.5rem; font-weight:600; padding: 0.5rem; background: #fff5f5; border: 1px solid #fed7d7; border-radius: 6px;">
+          </div>
           <div id="listeningPreviewContainer" style="display:none; margin-top:1rem;">
             <label style="font-size:0.8rem; color:#555; display:block; margin-bottom:0.3rem;">Video Preview:</label>
-            <video id="listeningModalPreview" controls style="width:100%; border-radius:8px; border:1px solid #ccc; background:#000; max-height:180px;"></video>
-            <p id="listeningFileCurrentName" style="font-size:0.8rem; color:#555; margin-top:0.2rem; word-break:break-all;"></p>
+            <video id="listeningModalPreview" controls
+              style="width:100%; border-radius:8px; border:1px solid #ccc; background:#000; max-height:180px;"></video>
+            <p id="listeningFileCurrentName"
+              style="font-size:0.8rem; color:#555; margin-top:0.2rem; word-break:break-all;"></p>
           </div>
         </div>
 
@@ -10643,8 +10735,10 @@
       </p>
       <div style="display: flex; justify-content: flex-end; gap: 0.8rem;">
         <button class="btn btn-white" onclick="closeDirtyModal()" style="border: 1px solid #cbd5e1;">Cancel</button>
-        <button class="btn btn-white" onclick="discardAndSwitch()" style="color: #ef4444; border: 1px solid #fee2e2; background: #fef2f2;">Don't Save</button>
-        <button class="btn btn-primary" onclick="saveAndSwitch()" style="background: var(--primary-purple); border: none;">Save Changes</button>
+        <button class="btn btn-white" onclick="discardAndSwitch()"
+          style="color: #ef4444; border: 1px solid #fee2e2; background: #fef2f2;">Don't Save</button>
+        <button class="btn btn-primary" onclick="saveAndSwitch()"
+          style="background: var(--primary-purple); border: none;">Save Changes</button>
       </div>
     </div>
   </div>

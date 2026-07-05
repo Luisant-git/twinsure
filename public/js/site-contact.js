@@ -199,7 +199,21 @@
   function updateSlide() {
     const container = document.getElementById('testimonialsContainer');
     if (!container) return;
-    container.style.transform = `translateX(-${testimonialIndex * 100}%)`;
+    const cards = container.querySelectorAll('.testimonial-new-card');
+    cards.forEach((card, idx) => {
+      if (idx === testimonialIndex) {
+        card.style.display = 'flex';
+        card.style.opacity = '0';
+        // Fade in
+        requestAnimationFrame(() => {
+          card.style.transition = 'opacity 0.4s ease';
+          card.style.opacity = '1';
+        });
+      } else {
+        card.style.display = 'none';
+        card.style.opacity = '0';
+      }
+    });
 
     const dots = document.querySelectorAll('.carousel-dot');
     dots.forEach((dot, idx) => {
@@ -323,19 +337,37 @@
              </div>`
           : '';
 
-        return `
-          <div class="blog-card">
-            <div class="blog-card-header">
-              <h3 class="blog-card-title">${escapeHtml(b.title)}</h3>
-              <div class="blog-card-author">By ${escapeHtml(b.author)}</div>
+          const coverStyle = b.coverUrl
+            ? `style="position:relative; background-image:url('${b.coverUrl}'); background-size:cover; background-position:center;"`
+            : '';
+          const hasCover = !!b.coverUrl;
+
+          return `
+          <div class="blog-card${hasCover ? ' has-cover' : ''}" ${coverStyle}>
+            ${hasCover ? '<div class="blog-card-cover-overlay"></div>' : ''}
+            <div class="blog-card-accent"></div>
+            <div class="blog-card-content${hasCover ? ' on-cover' : ''}">
+              <div class="blog-card-meta">
+                <span class="blog-card-author"><i class="fas fa-pen-nib"></i> ${escapeHtml(b.author)}</span>
+                <span class="blog-card-tag"><i class="fas fa-bookmark"></i> Insights</span>
+              </div>
+              <div class="blog-card-header">
+                <h3 class="blog-card-title">${escapeHtml(b.title)}</h3>
+              </div>
+              <div class="blog-card-divider"></div>
+              <div class="blog-card-body">
+                <p>${escapeHtml(b.content)}</p>
+              </div>
+              ${linkHtml}
             </div>
-            <div class="blog-card-body">
-              <p>${escapeHtml(b.content)}</p>
+            <div class="blog-card-panel"${hasCover ? ` style="background-image:url('${b.coverUrl}'); background-size:cover; background-position:center;"` : ''}>
+              ${hasCover ? '<div class="blog-panel-cover-blur"></div>' : ''}
+              <div class="blog-panel-icon" style="z-index:2;"><i class="fas fa-newspaper"></i></div>
+              <div class="blog-panel-label" style="z-index:2;">Twinsure<br>Insights</div>
             </div>
-            ${linkHtml}
           </div>
         `;
-      }).join('');
+        }).join('');
 
       initBlogCarousel();
     } catch (error) {
@@ -381,7 +413,20 @@
   function updateBlogSlide() {
     const container = document.getElementById('blogsContainer');
     if (!container) return;
-    container.style.transform = `translateX(-${blogIndex * 100}%)`;
+    const cards = container.querySelectorAll('.blog-card');
+    cards.forEach((card, idx) => {
+      if (idx === blogIndex) {
+        card.style.display = 'flex';
+        card.style.opacity = '0';
+        requestAnimationFrame(() => {
+          card.style.transition = 'opacity 0.4s ease';
+          card.style.opacity = '1';
+        });
+      } else {
+        card.style.display = 'none';
+        card.style.opacity = '0';
+      }
+    });
 
     const dots = document.querySelectorAll('.blog-dot');
     dots.forEach((dot, idx) => {

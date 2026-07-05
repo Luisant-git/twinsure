@@ -1956,7 +1956,7 @@ function createApiRouter() {
     }
   });
 
-  router.post('/admin/blogs', requireRole('admin'), async (req, res) => {
+  router.post('/admin/blogs', requireRole('admin'), upload.single('coverFile'), async (req, res) => {
     const body = collectBody(req);
     const title = normalizeString(body.title);
     const author = normalizeString(body.author);
@@ -1987,6 +1987,17 @@ function createApiRouter() {
     }
 
     try {
+      let coverUrl = '';
+      let coverPath = null;
+
+      if (req.file) {
+        const cleanName = sanitizeFileName(req.file.originalname);
+        const fileName = `${Math.floor(Date.now() / 1000)}_${cleanName}`;
+        coverPath = `public/blogs/covers/${fileName}`;
+        await r2.uploadToR2(req.file.buffer, coverPath, req.file.mimetype || 'image/jpeg');
+        coverUrl = await r2.getFileUrl(coverPath);
+      }
+
       const maxOrder = await findOne('blogs', {}, { sort: { displayOrder: -1 } });
       const nextOrder = (maxOrder && maxOrder.displayOrder) ? maxOrder.displayOrder + 1 : 1;
 
@@ -1995,6 +2006,8 @@ function createApiRouter() {
         author,
         content,
         link: link || '',
+        coverUrl,
+        coverPath,
         displayOrder: nextOrder,
         isActive,
         createdAt: formatDateTime(new Date()),
@@ -2009,7 +2022,7 @@ function createApiRouter() {
     }
   });
 
-  router.put('/admin/blogs/:id', requireRole('admin'), async (req, res) => {
+  router.put('/admin/blogs/:id', requireRole('admin'), upload.single('coverFile'), async (req, res) => {
     const blogId = req.params.id;
     const body = collectBody(req);
     const title = normalizeString(body.title);
@@ -2047,12 +2060,29 @@ function createApiRouter() {
         return;
       }
 
+      let coverUrl = existing.coverUrl || '';
+      let coverPath = existing.coverPath || null;
+
+      if (req.file) {
+        // Delete old cover from R2 if present
+        if (existing.coverPath) {
+          try { await r2.deleteFromR2(existing.coverPath); } catch (_) {}
+        }
+        const cleanName = sanitizeFileName(req.file.originalname);
+        const fileName = `${Math.floor(Date.now() / 1000)}_${cleanName}`;
+        coverPath = `public/blogs/covers/${fileName}`;
+        await r2.uploadToR2(req.file.buffer, coverPath, req.file.mimetype || 'image/jpeg');
+        coverUrl = await r2.getFileUrl(coverPath);
+      }
+
       await updateOne('blogs', { _id: new ObjectId(blogId) }, {
         $set: {
           title,
           author,
           content,
           link: link || '',
+          coverUrl,
+          coverPath,
           isActive,
           updatedAt: formatDateTime(new Date())
         }
