@@ -160,21 +160,21 @@ const ChatInputs = (() => {
                 break;
             }
 
-            /* ─── DATE OF BIRTH ─── */
-            case 'dob': {
+            /* ─── DATE ─── */
+            case 'date': {
                 const todayStr = new Date().toISOString().split('T')[0];
                 html = `
                 <div class="chat-options-container input-block" id="opts_${node.id}">
-                    <label class="date-field-label"><i class="fas fa-birthday-cake"></i> Date of Birth</label>
+                    <label class="date-field-label"><i class="fas fa-calendar-alt"></i> Date</label>
                     <div class="date-cascade" id="casc_${node.id}">
                         <select class="ymd-select" id="yr_${node.id}"
-                            onchange="ChatInputs._cascadeMonth('${node.id}','dob')"
+                            onchange="ChatInputs._cascadeMonth('${node.id}','date')"
                             title="Select Year">
                             <option value="" disabled selected>— Year —</option>
                             ${_yearOptions(new Date().getFullYear(), 1920)}
                         </select>
                         <select class="ymd-select" id="mo_${node.id}" disabled
-                            onchange="ChatInputs._cascadeDay('${node.id}','dob')"
+                            onchange="ChatInputs._cascadeDay('${node.id}','date')"
                             title="Select Month">
                             <option value="" disabled selected>— Month —</option>
                         </select>
@@ -184,8 +184,8 @@ const ChatInputs = (() => {
                         </select>
                     </div>
                     <div class="chat-input-error" id="err_opts_${node.id}" style="display:none"></div>
-                    <button class="btn-send-date" onclick="ChatInputs._submit_dob('${node.id}','${engineName}','${safeTitle}')">
-                        <i class="fas fa-check"></i> Confirm Date of Birth
+                    <button class="btn-send-date" onclick="ChatInputs._submit_date('${node.id}','${engineName}','${safeTitle}')">
+                        <i class="fas fa-check"></i> Confirm Date
                     </button>
                 </div>`;
                 break;
@@ -311,7 +311,7 @@ const ChatInputs = (() => {
         const dySel = document.getElementById(`dy_${cid}`);
 
         const today = new Date();
-        const maxMonth = (mode === 'dob' && year === today.getFullYear()) ? today.getMonth() : 11;
+        const maxMonth = (mode === 'date' && year === today.getFullYear()) ? today.getMonth() : 11;
 
         moSel.innerHTML = '<option value="" disabled selected>— Month —</option>';
         for (let m = 0; m <= maxMonth; m++) {
@@ -330,7 +330,7 @@ const ChatInputs = (() => {
 
         const today = new Date();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
-        const maxDay = (mode === 'dob' && year === today.getFullYear() && month === today.getMonth())
+        const maxDay = (mode === 'date' && year === today.getFullYear() && month === today.getMonth())
             ? today.getDate() : daysInMonth;
 
         const dySel = document.getElementById(`dy_${cid}`);
@@ -434,17 +434,17 @@ const ChatInputs = (() => {
         submitAnswer(nodeId, engineName, 'email_input', val, branchTitle);
     }
 
-    function _submit_dob(nodeId, engineName, branchTitle) {
+    function _submit_date(nodeId, engineName, branchTitle) {
         const y = document.getElementById(`yr_${nodeId}`)?.value;
         const m = document.getElementById(`mo_${nodeId}`)?.value;
         const d = document.getElementById(`dy_${nodeId}`)?.value;
 
         if (!y || m === '' || m === undefined || !d) {
-            ERR.show(`opts_${nodeId}`, 'Please select your complete date of birth (Year → Month → Day).'); return;
+            ERR.show(`opts_${nodeId}`, 'Please select a complete date (Year → Month → Day).'); return;
         }
         const selected = new Date(parseInt(y), parseInt(m), parseInt(d));
         if (selected > new Date()) {
-            ERR.show(`opts_${nodeId}`, 'Date of birth cannot be in the future.'); return;
+            ERR.show(`opts_${nodeId}`, 'Date cannot be in the future.'); return;
         }
         ERR.clear(`opts_${nodeId}`);
         const display = `${d} ${MONTHS_FULL[parseInt(m)]} ${y}`;
@@ -530,7 +530,7 @@ const ChatInputs = (() => {
         _cascadeMonth, _cascadeDay, _onStartDateChange,
         _livePhone, _liveEmail, _liveText,
         _submit_text, _submit_phone, _submit_email,
-        _submit_dob, _submit_daterange,
+        _submit_date, _submit_daterange,
         _clampTime, _toggleAmPm, _setPreset, _submit_time
     };
 })();

@@ -1731,6 +1731,21 @@ function createApiRouter() {
     }
   });
 
+  router.delete('/admin/users/:id', requireRole('admin'), async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const result = await deleteOne('users', { _id: new ObjectId(userId) });
+      if (result && result.deletedCount > 0) {
+        sendJson(res, 200, { success: true, message: 'User deleted successfully.' });
+      } else {
+        sendJson(res, 404, { error: 'User not found.' });
+      }
+    } catch (error) {
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
+    }
+  });
+
   // Testimonials endpoints
   router.get('/public/testimonials', async (req, res) => {
     try {

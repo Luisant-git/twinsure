@@ -386,11 +386,11 @@ class AdvancedBuilder {
                         <span>Email address</span>
                     </div>
                     <div class="port port-out" data-node="${node.id}" data-opt="email_input" style="position:absolute; right:-11px; top:50%; transform:translateY(-50%);"><i class="fas fa-plus"></i></div>`;
-            } else if (node.type === 'dob') {
+            } else if (node.type === 'date') {
                 optionsHtml = `
                     <div class="node-input-preview">
-                        <i class="fas fa-birthday-cake"></i>
-                        <span>Date of Birth (Year → Month → Day)</span>
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Date (Year → Month → Day)</span>
                     </div>
                     <div class="port port-out" data-node="${node.id}" data-opt="date_input" style="position:absolute; right:-11px; top:50%; transform:translateY(-50%);"><i class="fas fa-plus"></i></div>`;
             } else if (node.type === 'daterange') {

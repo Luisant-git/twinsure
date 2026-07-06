@@ -494,6 +494,22 @@
             padding: 1.2rem 1.5rem;
             border-bottom: 1px solid #e2e8f0;
         }
+        #userTableSearch {
+            border: 1.5px solid #cbd5e1 !important;
+            background: #ffffff !important;
+            color: #0f172a !important;
+            caret-color: #0f172a !important;
+            transition: all 0.2s ease !important;
+        }
+        #userTableSearch:focus {
+            border-color: #5136a8 !important;
+            box-shadow: 0 0 0 3px rgba(81, 54, 168, 0.15) !important;
+            background: #ffffff !important;
+            outline: none !important;
+        }
+        header, .top-nav {
+            z-index: 1010 !important;
+        }
     </style>
 </head>
 
@@ -511,10 +527,6 @@
             <div class="nav-icon"><i class="fas fa-bell"></i>
                 <div class="indicator"></div>
             </div>
-            <button class="btn" onclick="exportLeads()"
-                style="background: #fecb00; color: #111; font-weight: 700; padding: 0.5rem 1.2rem; border-radius: 8px; border: none; display: flex; align-items: center; gap: 0.5rem;">
-                <i class="fas fa-file-export"></i> Export
-            </button>
             <div class="admin-profile">
                 <img src="https://ui-avatars.com/api/?name=Admin&background=00296b&color=fff" alt="Admin">
                 <div class="info">
@@ -563,7 +575,7 @@
                                 id="sbPartnerCount">--</span>
                         </a></li>
                     <li><a href="javascript:void(0)" onclick="showSection('users', this)">
-                            <i class="fas fa-user-friends"></i> Team Management
+                            <i class="fas fa-user-friends"></i> User Management
                         </a></li>
                     <li><a href="javascript:void(0)" onclick="showSection('partners', this)">
                             <i class="fas fa-handshake"></i> Partners
@@ -622,7 +634,7 @@
                         <a href="#" class="quick-action-card" onclick="showSection('users')">
                             <div class="quick-action-icon qac-3"><i class="fas fa-user-plus"></i></div>
                             <div class="quick-action-text">
-                                <h4>Manage Team</h4>
+                                <h4>Manage Users</h4>
                                 <p>Add/remove system users</p>
                             </div>
                         </a>
@@ -706,83 +718,9 @@
                                 <div style="padding: 2rem; text-align: center; color: #aaa;">Loading activity...</div>
                             </div>
                         </div>
-
-                        <!-- Recommendation Flow Performance -->
-                        <div class="dashboard-section-card">
-                            <div class="dashboard-section-header">
-                                <h3>Recommendation Flow Performance</h3>
-                                <div class="filter-group">
-                                    <select class="filter-select">
-                                        <option>Property Insurance</option>
-                                        <option>Health Insurance</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div
-                                style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
-                                <div>
-                                    <h4
-                                        style="font-size: 0.8rem; color: #888; margin: 0 0 0.5rem 0; text-transform: uppercase;">
-                                        Most Answered</h4>
-                                    <ol id="dashMostAnswered"
-                                        style="margin: 0; padding-left: 1.2rem; font-size: 0.85rem; color: #444; line-height: 1.6;">
-                                        <li>Loading...</li>
-                                    </ol>
-                                </div>
-                                <div>
-                                    <h4
-                                        style="font-size: 0.8rem; color: #888; margin: 0 0 0.5rem 0; text-transform: uppercase;">
-                                        High Drop-off</h4>
-                                    <ol
-                                        style="margin: 0; padding-left: 1.2rem; font-size: 0.85rem; color: #e53e3e; line-height: 1.6; font-weight: 600;">
-                                        <li>Business Revenue</li>
-                                        <li>Claims History</li>
-                                    </ol>
-                                </div>
-                                <div>
-                                    <h4
-                                        style="font-size: 0.8rem; color: #888; margin: 0 0 0.5rem 0; text-transform: uppercase;">
-                                        Top Path</h4>
-                                    <div id="dashTopPath"
-                                        style="font-size: 0.85rem; color: #444; background: #f9f9f9; padding: 0.5rem; border-radius: 6px; border: 1px solid #eee;">
-                                        <strong>Loading...</strong>
-                                    </div>
-                                    <div style="margin-top: 0.8rem;">
-                                        <span id="dashCompletionRate"
-                                            style="font-size: 1.5rem; font-weight: 800; color: #111;">0%</span>
-                                        <span style="font-size: 0.75rem; color: #888; display: block;">User Completion
-                                            Rate</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Visual Mockups -->
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                                <div class="visual-mockup">
-                                    <i class="fas fa-filter"></i>
-                                    <span>Funnel Chart Analysis<br><small>Visualizing Flow Drop-offs</small></span>
-                                </div>
-                                <div class="visual-mockup">
-                                    <i class="fas fa-project-diagram"></i>
-                                    <span>User Path Diagram<br><small>Interactive Node Traversal</small></span>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
-                    <!-- RIGHT COLUMN -->
                     <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-                        <!-- System Users -->
-                        <div class="dashboard-section-card">
-                            <div class="dashboard-section-header">
-                                <h3>Recent System Users</h3>
-                                <a href="#" class="view-all-link" onclick="showSection('users')">Manage Users</a>
-                            </div>
-                            <div class="partner-list" id="dashRecentUsers">
-                                <div style="padding: 1rem; text-align: center; color: #aaa;">Loading users...</div>
-                            </div>
-                        </div>
 
                         <!-- Pending Enquiries -->
                         <div class="dashboard-section-card">
@@ -798,137 +736,6 @@
                                 <i class="fas fa-arrow-right"></i> Go to Contacts
                             </button>
                         </div>
-
-                        <!-- Notifications & Alerts Panel -->
-                        <div class="dashboard-section-card">
-                            <div class="dashboard-section-header" style="margin-bottom: 0.8rem;">
-                                <h3>Notifications & Alerts Panel</h3>
-                            </div>
-                            <div style="display: flex; flex-direction: column; gap: 0.6rem;">
-                                <div
-                                    style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem; border: 1px solid #fce8e8; border-radius: 8px; background: #fff;">
-                                    <span style="font-size: 0.8rem; font-weight: 600; color: #444;">New Lead
-                                        alerts</span>
-                                    <i class="fas fa-bell" style="color: var(--danger); font-size: 0.8rem;"></i>
-                                </div>
-                                <div
-                                    style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem; border: 1px solid #f0edff; border-radius: 8px; background: #fff;">
-                                    <span style="font-size: 0.8rem; font-weight: 600; color: #444;">Failed
-                                        recommendation</span>
-                                    <i class="fas fa-exclamation-circle"
-                                        style="color: var(--primary-purple); font-size: 0.8rem;"></i>
-                                </div>
-                                <div
-                                    style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem; border: 1px solid #fff8e6; border-radius: 8px; background: #fff;">
-                                    <span style="font-size: 0.8rem; font-weight: 600; color: #444;">Unassigned
-                                        leads</span>
-                                    <i class="fas fa-exclamation-triangle"
-                                        style="color: var(--warning); font-size: 0.8rem;"></i>
-                                </div>
-                                <div
-                                    style="display: flex; justify-content: space-between; align-items: center; padding: 0.8rem; border: 1px solid #fff8e6; border-radius: 8px; background: #fff;">
-                                    <span style="font-size: 0.8rem; font-weight: 600; color: #444;">System
-                                        warnings</span>
-                                    <i class="fas fa-exclamation-triangle"
-                                        style="color: var(--warning); font-size: 0.8rem;"></i>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Conversation Analytics -->
-                        <div class="dashboard-section-card">
-                            <div class="dashboard-section-header" style="margin-bottom: 0.8rem;">
-                                <h3>Conversation Analytics</h3>
-                                <select class="filter-select" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;">
-                                    <option>All companies</option>
-                                </select>
-                            </div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;">
-                                <!-- Pie Chart Mock -->
-                                <div
-                                    style="text-align: center; border: 1px solid #f5f5f5; border-radius: 8px; padding: 0.8rem 0.5rem;">
-                                    <div
-                                        style="font-size: 0.7rem; color: #888; margin-bottom: 0.6rem; font-weight: 600;">
-                                        Total convos</div>
-                                    <div
-                                        style="width: 50px; height: 50px; border-radius: 50%; background: conic-gradient(var(--primary-purple) 0% 60%, var(--success) 60% 85%, var(--warning) 85% 100%); margin: 0 auto;">
-                                    </div>
-                                </div>
-                                <!-- Bar Chart Mock -->
-                                <div
-                                    style="text-align: center; border: 1px solid #f5f5f5; border-radius: 8px; padding: 0.8rem 0.5rem;">
-                                    <div
-                                        style="font-size: 0.7rem; color: #888; margin-bottom: 0.6rem; font-weight: 600;">
-                                        Avg response</div>
-                                    <div
-                                        style="display: flex; align-items: flex-end; justify-content: center; gap: 6px; height: 50px;">
-                                        <div
-                                            style="width: 10px; height: 25px; background: var(--primary-purple); border-radius: 2px;">
-                                        </div>
-                                        <div
-                                            style="width: 10px; height: 35px; background: var(--primary-purple); border-radius: 2px;">
-                                        </div>
-                                        <div
-                                            style="width: 10px; height: 50px; background: var(--primary-purple); border-radius: 2px;">
-                                        </div>
-                                        <div
-                                            style="width: 10px; height: 15px; background: var(--primary-purple); border-radius: 2px;">
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Line Chart Mock 1 -->
-                                <div
-                                    style="text-align: center; border: 1px solid #f5f5f5; border-radius: 8px; padding: 0.8rem 0.5rem;">
-                                    <div
-                                        style="font-size: 0.7rem; color: #888; margin-bottom: 0.6rem; font-weight: 600;">
-                                        Common path</div>
-                                    <div
-                                        style="height: 50px; display: flex; align-items: center; justify-content: center;">
-                                        <svg width="60" height="35" viewBox="0 0 60 35">
-                                            <polyline fill="none" stroke="#7b5eea" stroke-width="2.5"
-                                                points="0,25 15,10 30,30 45,5 60,15" />
-                                        </svg>
-                                    </div>
-                                </div>
-                                <!-- Line Chart Mock 2 -->
-                                <div
-                                    style="text-align: center; border: 1px solid #f5f5f5; border-radius: 8px; padding: 0.8rem 0.5rem;">
-                                    <div
-                                        style="font-size: 0.7rem; color: #888; margin-bottom: 0.6rem; font-weight: 600;">
-                                        Engagement</div>
-                                    <div
-                                        style="height: 50px; display: flex; align-items: center; justify-content: center;">
-                                        <svg width="60" height="35" viewBox="0 0 60 35">
-                                            <polyline fill="none" stroke="#38a169" stroke-width="2.5"
-                                                points="0,30 15,15 30,20 45,5 60,10" />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Export & Reporting Section -->
-                        <div class="dashboard-section-card">
-                            <div class="dashboard-section-header"
-                                style="margin-bottom: 0.8rem; border-bottom: none; padding-bottom: 0;">
-                                <h3 style="font-size: 0.9rem;">Export & Reporting Section</h3>
-                            </div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
-                                <button
-                                    style="background: linear-gradient(135deg, var(--primary-purple), var(--accent-purple)); color: white; border: none; padding: 0.8rem 0.2rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.4rem; text-align: center;"><i
-                                        class="fas fa-download" style="font-size: 1.1rem;"></i> Reports</button>
-                                <button
-                                    style="background: #fff; border: 1px solid #eee; color: #444; padding: 0.8rem 0.2rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.4rem; text-align: center;"><i
-                                        class="fas fa-upload" style="font-size: 1.1rem;"></i> Leads</button>
-                                <button
-                                    style="background: #fff; border: 1px solid #eee; color: #444; padding: 0.8rem 0.2rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.4rem; text-align: center;"><i
-                                        class="fas fa-file-pdf" style="font-size: 1.1rem;"></i> Gen PDF</button>
-                                <button
-                                    style="background: #fff; border: 1px solid #eee; color: #444; padding: 0.8rem 0.2rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.4rem; text-align: center;"><i
-                                        class="fas fa-envelope" style="font-size: 1.1rem;"></i> Emails</button>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
             </section>
@@ -3273,11 +3080,27 @@
                     <td>
                         <div class="action-btns">
                             <div class="action-icon" title="Edit User"><i class="fas fa-user-edit"></i></div>
-                            <div class="action-icon" title="Delete" style="color:#e53e3e;"><i class="fas fa-trash-alt"></i></div>
+                            <div class="action-icon" title="Delete" style="color:#e53e3e;" onclick="deleteUser('${user._id}')"><i class="fas fa-trash-alt"></i></div>
                         </div>
                     </td>
                 </tr>`;
             }).join('');
+        }
+
+        async function deleteUser(userId) {
+            if (!(await confirm("Are you sure you want to delete this user?"))) return;
+            try {
+                const res = await api.delete("/admin/users/" + userId);
+                if (res && (res.success || res.message === 'User deleted successfully.')) {
+                    alert(res.message || "User deleted successfully");
+                    if (typeof loadUsers === 'function') loadUsers();
+                } else {
+                    alert("Error: " + (res.error || res.message));
+                }
+            } catch (error) {
+                console.error("Error deleting user", error);
+                alert("An error occurred while deleting the user.");
+            }
         }
 
         function handleGlobalSearch(query) {
