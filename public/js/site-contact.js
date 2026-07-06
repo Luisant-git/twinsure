@@ -101,9 +101,9 @@
 
   let testimonialIndex = 0;
   let testimonialTimer = null;
-  let testimonialHoldTimer = null;
+  let isTestimonialHovered = false;
+  let isTestimonialManuallySelected = false;
   const autoplayDelay = 5000;
-  const holdDelay = 10000;
 
   function initTestimonialCarousel() {
     const container = document.getElementById('testimonialsContainer');
@@ -144,6 +144,21 @@
       };
     }
 
+    // Hover listeners to pause/resume autoplay
+    const wrapper = document.querySelector('.testimonial-carousel-wrapper');
+    if (wrapper) {
+      wrapper.addEventListener('mouseenter', () => {
+        isTestimonialHovered = true;
+        stopAutoplay();
+      });
+      wrapper.addEventListener('mouseleave', () => {
+        isTestimonialHovered = false;
+        if (!isTestimonialManuallySelected) {
+          startAutoplay();
+        }
+      });
+    }
+
     testimonialIndex = 0;
     updateSlide();
     startAutoplay();
@@ -151,6 +166,7 @@
 
   function startAutoplay() {
     stopAutoplay();
+    if (isTestimonialHovered || isTestimonialManuallySelected) return;
     const container = document.getElementById('testimonialsContainer');
     if (!container) return;
     const cards = container.querySelectorAll('.testimonial-new-card');
@@ -169,13 +185,8 @@
   }
 
   function handleUserInteraction() {
+    isTestimonialManuallySelected = true;
     stopAutoplay();
-    if (testimonialHoldTimer) {
-      clearTimeout(testimonialHoldTimer);
-    }
-    testimonialHoldTimer = setTimeout(() => {
-      startAutoplay();
-    }, holdDelay);
   }
 
   function slideNext() {
