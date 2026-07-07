@@ -1183,7 +1183,7 @@
         z-index: 10001 !important;
         transform: translateY(-100%) !important;
         transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
-        background: linear-gradient(180deg, rgba(0, 21, 51, 0.98) 0%, rgba(0, 34, 77, 0.98) 100%) !important;
+        background: linear-gradient(180deg, rgba(0, 21, 51, 0.98) 0%, rgba(0, 41, 107, 0.98) 100%) !important;
         backdrop-filter: blur(25px) !important;
         -webkit-backdrop-filter: blur(25px) !important;
         box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35) !important;
@@ -2081,9 +2081,7 @@
         </div>
         <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: #888; margin-left: 0.5rem"></i>
         <div class="profile-dropdown">
-          <a href="#"><i class="fas fa-user-circle" style="margin-right: 0.5rem; color: var(--primary-purple)"></i>
-            My Profile</a>
-          <a href="#"><i class="fas fa-cog" style="margin-right: 0.5rem; color: var(--primary-purple)"></i>
+          <a href="javascript:void(0)" onclick="showSection('settings')"><i class="fas fa-cog" style="margin-right: 0.5rem; color: var(--primary-purple)"></i>
             Settings</a>
           <a href="#" id="logoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt" style="margin-right: 0.5rem"></i>
             Logout</a>
@@ -3652,9 +3650,14 @@
                 align-items: center;
               ">
             <div style="display: flex; align-items: center; gap: 1rem">
-              <input type="checkbox" />
-              <span style="font-size: 0.85rem; font-weight: 600; color: #666">Selection Actions
-                <i class="fas fa-chevron-down" style="font-size: 0.7rem"></i></span>
+              <input type="checkbox" id="bulkSelectContacts" onchange="toggleAllContacts()" />
+              <span style="
+                    font-size: 0.85rem;
+                    font-weight: 600;
+                    color: #666;
+                    cursor: pointer;
+                  " onclick="deleteSelectedContacts()">Delete Selected
+                <i class="fas fa-trash" style="font-size: 0.7rem; color: red"></i></span>
             </div>
             <div style="display: flex; gap: 1rem">
               <div class="global-search" style="max-width: 250px">
@@ -3671,7 +3674,7 @@
             <table class="premium-table">
               <thead>
                 <tr>
-                  <th><input type="checkbox" id="selectAllContacts" /></th>
+                  <th><input type="checkbox" id="selectAllContacts" onchange="toggleAllContacts('selectAllContacts')" /></th>
                   <th>ID</th>
                   <th>Customer Name</th>
                   <th>Contact Info</th>
@@ -3722,70 +3725,42 @@
             </div>
             <div class="metric-value-row">
               <span class="metric-value" id="valTotalLeads">0</span>
-              <span class="metric-change positive">+1.83%</span>
             </div>
             <div class="sparkline-container" id="sparkTotalLeads"></div>
-            <div class="mini-analytics-label">Mini Analytics</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-header">
-              <i class="fas fa-comments" style="background: #eef4ff; color: #003f88"></i>
-              Active Conversations
-            </div>
-            <div class="metric-value-row">
-              <span class="metric-value" id="valActiveConv">0</span>
-              <span class="metric-change positive">+2.16%</span>
-            </div>
-            <div class="sparkline-container" id="sparkActiveConv"></div>
-            <div class="mini-analytics-label">Mini Analytics</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-header">
-              <i class="fas fa-check-double" style="background: #e6f6ee; color: var(--success)"></i>
-              Completed
-            </div>
-            <div class="metric-value-row">
-              <span class="metric-value" id="valCompleted">0</span>
-              <span class="metric-change positive">+88%</span>
-            </div>
-            <div class="sparkline-container" id="sparkCompleted"></div>
-            <div class="mini-analytics-label">Mini Analytics</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-header">
-              <i class="fas fa-handshake" style="background: #f0fdf4; color: #1b8a4f"></i>
-              Converted
-            </div>
-            <div class="metric-value-row">
-              <span class="metric-value" id="valConverted">0</span>
-              <span class="metric-change positive">+1.38%</span>
-            </div>
-            <div class="sparkline-container" id="sparkConverted"></div>
-            <div class="mini-analytics-label">Mini Analytics</div>
+            <div class="mini-analytics-label">Last 7 days trend</div>
           </div>
           <div class="metric-card">
             <div class="metric-header">
               <i class="fas fa-clock" style="background: #fff8e6; color: var(--warning)"></i>
-              Pending
+              New Leads
             </div>
             <div class="metric-value-row">
               <span class="metric-value" id="valPending">0</span>
-              <span class="metric-change negative">-28%</span>
             </div>
             <div class="sparkline-container" id="sparkPending"></div>
-            <div class="mini-analytics-label">Mini Analytics</div>
+            <div class="mini-analytics-label">Last 7 days trend</div>
           </div>
           <div class="metric-card">
             <div class="metric-header">
-              <i class="fas fa-bolt" style="background: #fbe9e9; color: var(--danger)"></i>
-              High Priority
+              <i class="fas fa-comments" style="background: #eef4ff; color: #003f88"></i>
+              Contacted Leads
             </div>
             <div class="metric-value-row">
-              <span class="metric-value" id="valHighPriority">0</span>
-              <span class="metric-change positive">+1.38%</span>
+              <span class="metric-value" id="valActiveConv">0</span>
             </div>
-            <div class="sparkline-container" id="sparkHighPriority"></div>
-            <div class="mini-analytics-label">Mini Analytics</div>
+            <div class="sparkline-container" id="sparkActiveConv"></div>
+            <div class="mini-analytics-label">Last 7 days trend</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-header">
+              <i class="fas fa-check-double" style="background: #e6f6ee; color: var(--success)"></i>
+              Converted Leads
+            </div>
+            <div class="metric-value-row">
+              <span class="metric-value" id="valConverted">0</span>
+            </div>
+            <div class="sparkline-container" id="sparkConverted"></div>
+            <div class="mini-analytics-label">Last 7 days trend</div>
           </div>
         </div>
         <div class="advanced-filter-bar">
@@ -3821,9 +3796,6 @@
               <option value="partial">Partial</option>
             </select>
           </div>
-          <button class="advanced-search-btn" onclick="applyAdvancedFilters()">
-            Advanced
-          </button>
         </div>
         <div class="quick-pills">
           <button class="pill active" data-filter="all" onclick="filterLeadsByStatus('all', this)">
@@ -4937,7 +4909,7 @@
                     India
                   </div>
                 </div>
-                <div class="analytics-item">
+                 <div class="analytics-item">
                   <label style="
                         font-size: 0.75rem;
                         color: #999;
@@ -5005,56 +4977,67 @@
             </div>
             <div class="chat-history-area" id="detChatHistory"></div>
           </div>
-          <div class="detail-panel panel-mgmt">
-            <h3 style="margin: 0 0 1rem 0; font-size: 0.9rem; font-weight: 700">
-              Recommendation Summary
-            </h3>
-            <div class="summary-card" id="detSummaryCard">
-              <h4 id="detPlan">—</h4>
-              <p id="detPlanMeta">
-                Based on customer's stated insurance requirements.
-              </p>
+          <div class="detail-panel panel-mgmt" style="width: 320px; display: flex; flex-direction: column; gap: 1rem; border-left: 1px solid #eee;">
+            <div>
+              <h3 style="margin: 0 0 0.8rem 0; font-size: 0.9rem; font-weight: 700; color: #333;">
+                Recommendation Summary
+              </h3>
+              <div class="summary-card" id="detSummaryCard" style="margin-bottom: 0;">
+                <h4 id="detPlan">—</h4>
+                <p id="detPlanMeta">
+                  Based on customer's stated insurance requirements.
+                </p>
+              </div>
             </div>
-            <h3 style="
-                  margin: 0 0 1rem 0;
-                  font-size: 0.8rem;
-                  text-transform: uppercase;
-                  letter-spacing: 1px;
-                  color: var(--text-muted);
-                  font-weight: 700;
-                ">
-              CRM Actions
-            </h3>
-            <button class="crm-action-btn">
-              <i class="fas fa-sticky-note"></i> Add notes
-            </button>
-            <button class="crm-action-btn">
-              <i class="fas fa-tags"></i> Tag Leads
-            </button>
-            <button class="crm-action-btn" onclick="openStatusChange()">
-              <i class="fas fa-sync"></i> Change status
-            </button>
-            <button class="crm-action-btn">
-              <i class="fas fa-calendar-alt"></i> Schedule follow-up
-            </button>
-            <button class="crm-action-btn">
-              <i class="fas fa-paper-plane"></i> Send WhatsApp
-            </button>
-            <div style="
-                  margin-top: 1.5rem;
-                  padding-top: 1rem;
-                  border-top: 1px solid #eee;
-                ">
-              <div style="
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    color: #888;
+
+            <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+              <h3 style="
+                    margin: 0;
                     font-size: 0.8rem;
-                    cursor: pointer;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    color: var(--text-muted);
+                    font-weight: 700;
                   ">
-                <span>View Activity Log</span>
-                <i class="fas fa-chevron-right" style="font-size: 0.7rem"></i>
+                CRM Actions
+              </h3>
+              
+              <!-- Status Dropdown -->
+              <div>
+                <label style="font-size: 0.75rem; color: #666; font-weight: 600; display: block; margin-bottom: 4px;">Lead Status</label>
+                <select id="detStatusSelect" class="filter-select" style="width: 100%; font-weight: 600;" onchange="changeLeadStatusDirect(this.value)">
+                  <option value="new">New</option>
+                  <option value="contacted">Contacted</option>
+                  <option value="closed">Closed</option>
+                </select>
+              </div>
+
+              <!-- Notes Area -->
+              <div>
+                <label style="font-size: 0.75rem; color: #666; font-weight: 600; display: block; margin-bottom: 4px;">Lead Notes</label>
+                <textarea id="detNotesTextarea" rows="3" placeholder="Add custom notes..." style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid #ddd; font-size: 0.8rem; outline: none; font-family: inherit; resize: none;"></textarea>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 4px; padding: 0.4rem; font-size: 0.8rem; font-weight: 700; background: var(--primary-purple); border: none;" onclick="saveLeadNotesDirect()">
+                  Save Notes
+                </button>
+              </div>
+
+              <!-- Follow-up Date -->
+              <div>
+                <label style="font-size: 0.75rem; color: #666; font-weight: 600; display: block; margin-bottom: 4px;">Schedule Follow-up</label>
+                <input type="date" id="detFollowUpInput" style="width: 100%; padding: 0.4rem; border-radius: 8px; border: 1px solid #ddd; font-size: 0.8rem; outline: none; font-family: inherit;" onchange="saveLeadFollowUpDirect(this.value)" />
+              </div>
+
+              <!-- WhatsApp Quick Link -->
+              <button class="crm-action-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: #25D366; color: #fff; border: none; font-weight: 700;" onclick="sendWhatsAppDirect(activeLeadId)">
+                <i class="fab fa-whatsapp" style="font-size: 1.1rem; color: #fff;"></i> Connect on WhatsApp
+              </button>
+            </div>
+
+            <!-- Activity Log -->
+            <div style="border-top: 1px solid #eee; padding-top: 0.8rem; flex: 1; display: flex; flex-direction: column; min-height: 120px;">
+              <h4 style="margin: 0 0 0.5rem 0; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700;">Activity Log</h4>
+              <div id="detActivityLogList" style="flex: 1; overflow-y: auto; font-size: 0.72rem; color: #555; display: flex; flex-direction: column; gap: 6px; max-height: 150px; padding-right: 4px;">
+                <!-- Activity records populated dynamically -->
               </div>
             </div>
           </div>
@@ -5198,6 +5181,10 @@
             <button class="btn btn-primary" style="width: 100%; background: var(--primary-purple)"
               onclick="saveContactStatusUpdate()">
               Update Status
+            </button>
+            <button class="btn" style="width: 100%; margin-top: 0.8rem; background: #ef4444; color: #fff; border: none; font-weight: 700;"
+              onclick="deleteContact(activeContactId)">
+              Delete Enquiry
             </button>
           </div>
         </div>
@@ -5790,7 +5777,7 @@
           )) && e.classList.add("active"),
         "users" === t && loadUsers(),
         "partners" === t && loadPartners(),
-        "leads" === t && loadLeads(),
+        "leads" === t && loadLeads().then(markVisibleLeadsAsSeen),
         "contacts" === t &&
         loadContacts().then(markVisiblePartnerRequestsAsSeen),
         "claims" === t &&
@@ -5923,7 +5910,7 @@
               .map(
                 (e, t) => `
                 <tr>
-                    <td><input type="checkbox"></td>
+                    <td><input type="checkbox" class="contact-checkbox" value="${e._id}" onclick="event.stopPropagation()"></td>
                     <td style="font-weight:700; color:var(--primary-purple);">#C${String(t + 1).padStart(3, "0")}</td>
                     <td style="font-weight:600;">${e.name || "Anonymous"}</td>
                     <td>
@@ -5939,6 +5926,7 @@
                         <div class="action-btns">
                             <div class="action-icon" title="Quick Reply"><i class="fas fa-reply"></i></div>
                             <div class="action-icon" title="View Details" onclick="openContactDetail('${e._id}')"><i class="fas fa-eye"></i></div>
+                            <div class="action-icon" title="Delete" style="color:#e53e3e;" onclick="deleteContact('${e._id}')"><i class="fas fa-trash-alt"></i></div>
                             <div class="action-icon" title="More Options" onclick="toggleContactOptions('${e._id}', event)"><i class="fas fa-ellipsis-h"></i></div>
                         </div>
                     </td>
@@ -6026,82 +6014,69 @@
     }
     async function loadLeads() {
       try {
-        var e = await api.get("/admin/leads"),
-          t = (allLeads = e).filter((e) => "new" === e.status).length,
-          a =
-            (e.filter((e) => "contacted" === e.status).length,
-              e.filter((e) => "closed" === e.status).length),
-          n =
-            ((document.getElementById("valTotalLeads").textContent =
-              e.length),
-              (document.getElementById("valActiveConv").textContent =
-                e.length - a),
-              (document.getElementById("valCompleted").textContent = e.filter(
-                (e) => 0 < (e.answers || []).length,
-              ).length),
-              (document.getElementById("valConverted").textContent = a),
-              (document.getElementById("valPending").textContent = t),
-              (document.getElementById("valHighPriority").textContent =
-                e.filter((e) => 80 < (e.score || 0)).length),
-              (e) => {
-                let t = {},
-                  a = new Date();
-                for (let e = 6; 0 <= e; e--) {
-                  var n = new Date(a);
-                  (n.setDate(n.getDate() - e),
-                    (t[n.toISOString().split("T")[0]] = 0));
-                }
-                return (
-                  e.forEach((e) => {
-                    e.submittedAt &&
-                      ((e = e.submittedAt.split(" ")[0]), void 0 !== t[e]) &&
-                      t[e]++;
-                  }),
-                  Object.values(t)
-                );
-              });
-        (drawSparkline("sparkTotalLeads", n(e), "#5136a8"),
-          drawSparkline(
-            "sparkActiveConv",
-            n(e.filter((e) => "closed" !== e.status)),
-            "#003f88",
-          ),
-          drawSparkline(
-            "sparkCompleted",
-            n(e.filter((e) => 0 < (e.answers || []).length)),
-            "#38a169",
-          ),
-          drawSparkline(
-            "sparkConverted",
-            n(e.filter((e) => "closed" === e.status)),
-            "#1b8a4f",
-          ),
-          drawSparkline(
-            "sparkPending",
-            n(e.filter((e) => "new" === e.status)),
-            "#d97706",
-          ),
-          drawSparkline(
-            "sparkHighPriority",
-            n(e.filter((e) => 80 < (e.score || 0))),
-            "#e53e3e",
-          ),
-          drawSparkline("dashSparkLeads", n(e), "#5136a8"),
-          drawSparkline(
-            "dashSparkSessions",
-            n(e.filter((e) => "closed" !== e.status)),
-            "#003f88",
-          ),
-          drawSparkline(
-            "dashSparkCompleted",
-            n(e.filter((e) => 0 < (e.answers || []).length)),
-            "#38a169",
-          ),
-          updateDashboardOverview(),
-          renderLeads());
-      } catch (e) {
-        console.error("Error loading leads", e);
+        const e = await api.get("/admin/leads");
+        allLeads = e;
+
+        const totalLeads = e.length;
+        const newLeads = e.filter((item) => "new" === item.status).length;
+        const contactedLeads = e.filter((item) => "contacted" === item.status).length;
+        const closedLeads = e.filter((item) => "closed" === item.status).length;
+
+        document.getElementById("valTotalLeads").textContent = totalLeads;
+        document.getElementById("valPending").textContent = newLeads;
+        document.getElementById("valActiveConv").textContent = contactedLeads;
+        document.getElementById("valConverted").textContent = closedLeads;
+
+        const getDailyTrend = (leadsList) => {
+          const trendMap = {};
+          const today = new Date();
+          for (let i = 6; i >= 0; i--) {
+            const date = new Date(today);
+            date.setDate(date.getDate() - i);
+            trendMap[date.toISOString().split("T")[0]] = 0;
+          }
+          leadsList.forEach((lead) => {
+            if (lead.submittedAt) {
+              const dateStr = lead.submittedAt.split(" ")[0];
+              if (trendMap[dateStr] !== undefined) {
+                trendMap[dateStr]++;
+              }
+            }
+          });
+          return Object.values(trendMap);
+        };
+
+        drawSparkline("sparkTotalLeads", getDailyTrend(e), "#5136a8");
+        drawSparkline("sparkPending", getDailyTrend(e.filter((item) => "new" === item.status)), "#d97706");
+        drawSparkline("sparkActiveConv", getDailyTrend(e.filter((item) => "contacted" === item.status)), "#003f88");
+        drawSparkline("sparkConverted", getDailyTrend(e.filter((item) => "closed" === item.status)), "#38a169");
+
+        drawSparkline("dashSparkLeads", getDailyTrend(e), "#5136a8");
+        drawSparkline("dashSparkSessions", getDailyTrend(e.filter((item) => "closed" !== item.status)), "#003f88");
+        drawSparkline("dashSparkCompleted", getDailyTrend(e.filter((item) => item.answers && item.answers.length > 0)), "#38a169");
+
+        updateDashboardOverview();
+        renderLeads();
+      } catch (error) {
+        console.error("Error loading leads", error);
       }
+    }
+    async function markVisibleLeadsAsSeen() {
+      var e = allLeads.filter((e) => "new" === e.status);
+      if (0 !== e.length)
+        try {
+          (await Promise.all(
+            e.map((e) =>
+              api.post("/admin/leads", {
+                id: e._id,
+                status: "contacted",
+              }),
+            ),
+          ),
+            await loadLeads());
+        } catch (e) {
+          console.error("Failed to mark leads as seen", e);
+        }
     }
 
     window.advancedFilters = {
@@ -6269,31 +6244,62 @@
         }
       }
     }
+    let activeLeadId = null;
+
+    function updateLeadDetailsUI(e) {
+      var n = '<span style="color:#bbb; font-style:italic;">Not Available</span>',
+        detPlan = document.getElementById("detPlan"),
+        r = document.getElementById("detSummaryCard");
+      
+      document.getElementById("detId").textContent = e._id.slice(-5).toUpperCase();
+      document.getElementById("detName").innerHTML = e.name || "Anonymous User";
+      document.getElementById("detPhone").innerHTML = e.phone || n;
+      document.getElementById("detEmail").innerHTML = e.email || n;
+      
+      if (e.recommendedPlan) {
+        detPlan.textContent = e.recommendedPlan;
+        r.style.background = "#f0fdf4";
+        r.style.borderColor = "#dcfce7";
+      } else {
+        detPlan.innerHTML = '<span style="color:#888;">No Plan Recommended</span>';
+        r.style.background = "#f9f9f9";
+        r.style.borderColor = "#eee";
+      }
+      
+      document.getElementById("detAvatar").src = `https://ui-avatars.com/api/?name=${encodeURIComponent(e.name || "U")}&background=f0edff&color=5136a8`;
+
+      // Update CRM inputs
+      const statusSelect = document.getElementById("detStatusSelect");
+      if (statusSelect) statusSelect.value = e.status || "new";
+
+      const notesTextarea = document.getElementById("detNotesTextarea");
+      if (notesTextarea) notesTextarea.value = e.notes || "";
+
+      const followUpInput = document.getElementById("detFollowUpInput");
+      if (followUpInput) followUpInput.value = e.followUpDate || "";
+
+      const activityLogList = document.getElementById("detActivityLogList");
+      if (activityLogList) {
+        const log = e.activityLog || [];
+        if (log.length === 0) {
+          activityLogList.innerHTML = '<div style="color: #aaa; font-style: italic; padding: 4px 0;">No activities logged.</div>';
+        } else {
+          activityLogList.innerHTML = log.map(item => `
+            <div style="border-bottom: 1px solid #f9f9f9; padding-bottom: 4px; line-height: 1.3;">
+              <span style="color: #999; font-weight: 600; font-size: 0.65rem; display: block;">${item.timestamp}</span>
+              <span style="color: #444;">${item.message}</span>
+            </div>
+          `).join("");
+        }
+      }
+    }
+
     function openLeadDetail(a) {
+      activeLeadId = a;
       var e = allLeads.find((e) => e._id === a);
       if (e) {
-        var n =
-          '<span style="color:#bbb; font-style:italic;">Not Available</span>',
-          n =
-            ((document.getElementById("detId").textContent = a
-              .slice(-5)
-              .toUpperCase()),
-              (document.getElementById("detName").innerHTML =
-                e.name || "Anonymous User"),
-              (document.getElementById("detPhone").innerHTML = e.phone || n),
-              (document.getElementById("detEmail").innerHTML = e.email || n),
-              document.getElementById("detPlan")),
-          r = document.getElementById("detSummaryCard");
-        (e.recommendedPlan
-          ? ((n.textContent = e.recommendedPlan),
-            (r.style.background = "#f0fdf4"),
-            (r.style.borderColor = "#dcfce7"))
-          : ((n.innerHTML =
-            '<span style="color:#888;">No Plan Recommended</span>'),
-            (r.style.background = "#f9f9f9"),
-            (r.style.borderColor = "#eee")),
-          (document.getElementById("detAvatar").src =
-            `https://ui-avatars.com/api/?name=${encodeURIComponent(e.name || "U")}&background=f0edff&color=5136a8`));
+        updateLeadDetailsUI(e);
+
         let t = document.getElementById("detChatHistory");
         ((t.innerHTML = ""),
           (t.innerHTML += `
@@ -6314,8 +6320,88 @@
           document.getElementById("leadDetailModal").classList.add("active"));
       }
     }
+
     function closeLeadDetail() {
       document.getElementById("leadDetailModal").classList.remove("active");
+      activeLeadId = null;
+    }
+
+    async function changeLeadStatusDirect(status) {
+      if (!activeLeadId) return;
+      try {
+        await api.post("/admin/leads", {
+          id: activeLeadId,
+          status: status,
+          logMessage: "Changed status to: " + status
+        });
+        
+        // Refresh local leads list
+        await loadLeads();
+        
+        // Refresh details modal view
+        const lead = allLeads.find(l => l._id === activeLeadId);
+        if (lead) {
+          updateLeadDetailsUI(lead);
+        }
+      } catch (e) {
+        alert("Failed to update status.");
+      }
+    }
+
+    async function saveLeadNotesDirect() {
+      if (!activeLeadId) return;
+      const notesVal = document.getElementById("detNotesTextarea").value;
+      try {
+        await api.post("/admin/leads", {
+          id: activeLeadId,
+          notes: notesVal,
+          logMessage: "Updated notes"
+        });
+        alert("Notes saved successfully.");
+        await loadLeads();
+        
+        const lead = allLeads.find(l => l._id === activeLeadId);
+        if (lead) {
+          updateLeadDetailsUI(lead);
+        }
+      } catch (e) {
+        alert("Failed to save notes.");
+      }
+    }
+
+    async function saveLeadFollowUpDirect(followUpDate) {
+      if (!activeLeadId) return;
+      try {
+        await api.post("/admin/leads", {
+          id: activeLeadId,
+          followUpDate: followUpDate,
+          logMessage: "Scheduled follow-up date: " + (followUpDate || "(cleared)")
+        });
+        await loadLeads();
+        
+        const lead = allLeads.find(l => l._id === activeLeadId);
+        if (lead) {
+          updateLeadDetailsUI(lead);
+        }
+      } catch (e) {
+        alert("Failed to save follow-up date.");
+      }
+    }
+
+    function sendWhatsAppDirect(leadId) {
+      if (!leadId) return;
+      const lead = allLeads.find(l => l._id === leadId);
+      if (!lead || !lead.phone) {
+        alert("Phone number not available for this lead.");
+        return;
+      }
+      let cleanPhone = lead.phone.replace(/[^0-9]/g, "");
+      if (cleanPhone.length === 10) {
+        cleanPhone = "91" + cleanPhone;
+      }
+      const message = "Hello " + (lead.name || "") + ", this is Twinsure Support regarding your insurance inquiry.";
+      const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+      window.open(url, '_blank');
     }
     let activeContactId = null;
     function openContactDetail(t) {
@@ -6373,13 +6459,73 @@
         }
       }
     }
-    function toggleContactOptions(e, t) {
-      (t.stopPropagation(),
-        alert(
-          "Selection Actions for #C" +
-          e.slice(-5).toUpperCase() +
-          "\n- Delete\n- Mark as Spam\n- Forward to Agent",
-        ));
+    async function deleteContact(contactId) {
+      if (!contactId) return;
+      if (!(await confirm("Are you sure you want to permanently delete this contact request?"))) return;
+      try {
+        const res = await api.delete("/admin/contacts?id=" + contactId);
+        if (res && res.success) {
+          alert("Contact deleted successfully.");
+          closeContactDetail();
+          await loadContacts();
+        } else {
+          alert("Error: " + (res.error || "Failed to delete contact"));
+        }
+      } catch (error) {
+        console.error("Error deleting contact", error);
+        alert("An error occurred while deleting the contact.");
+      }
+    }
+
+    function toggleAllContacts(masterId = 'bulkSelectContacts') {
+      const master = document.getElementById(masterId);
+      if (!master) return;
+      const checkboxes = document.querySelectorAll(".contact-checkbox");
+      checkboxes.forEach((cb) => {
+        cb.checked = master.checked;
+      });
+      const otherId = masterId === 'bulkSelectContacts' ? 'selectAllContacts' : 'bulkSelectContacts';
+      const otherMaster = document.getElementById(otherId);
+      if (otherMaster) otherMaster.checked = master.checked;
+    }
+
+    async function deleteSelectedContacts() {
+      const checkboxes = document.querySelectorAll(".contact-checkbox:checked");
+      const ids = Array.from(checkboxes).map((cb) => cb.value);
+
+      if (ids.length === 0) {
+        alert("Please select at least one contact to delete.");
+        return;
+      }
+
+      if (!(await confirm("Are you sure you want to delete " + ids.length + " selected contact(s)?"))) {
+        return;
+      }
+
+      try {
+        const data = await api.post("/admin/contacts/bulk-delete", { ids });
+
+        if (data && data.success) {
+          alert(data.deletedCount + " contacts deleted successfully.");
+          const bulkMaster = document.getElementById("bulkSelectContacts");
+          if (bulkMaster) bulkMaster.checked = false;
+          const selectAllMaster = document.getElementById("selectAllContacts");
+          if (selectAllMaster) selectAllMaster.checked = false;
+          await loadContacts();
+        } else {
+          alert("Error: " + (data.error || "Failed to delete contacts"));
+        }
+      } catch (e) {
+        console.error(e);
+        alert("An error occurred while deleting contacts.");
+      }
+    }
+
+    async function toggleContactOptions(e, t) {
+      t.stopPropagation();
+      if (await confirm("Do you want to delete this contact request (#C" + e.slice(-5).toUpperCase() + ")?")) {
+        await deleteContact(e);
+      }
     }
     async function updateLeadStatus(e, t) {
       try {
@@ -6539,7 +6685,7 @@
               ? Math.round((t / allLeads.length) * 100) + "%"
               : "0%")),
           (e = document.getElementById("sbLeadCount"))) &&
-        (e.textContent = allLeads.length),
+        (e.textContent = allLeads.filter((e) => "new" === e.status).length),
         void 0 !== allContacts &&
         allContacts.length &&
         ((t = document.getElementById("dashTotalContacts")) &&

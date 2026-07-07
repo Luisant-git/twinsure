@@ -1308,6 +1308,47 @@ function createApiRouter() {
     }
   });
 
+  router.delete('/admin/contacts', requireRole('admin'), async (req, res) => {
+    const id = normalizeString(req.query.id);
+    if (!id) {
+      sendJson(res, 400, { error: 'id required' });
+      return;
+    }
+
+    try {
+      await deleteOne('contacts', { _id: toObjectId(id) });
+      sendJson(res, 200, { success: true, message: 'Contact deleted successfully.' });
+    } catch (error) {
+      console.error('Database/Server Error:', error.message);
+      sendJson(res, 500, { error: 'An internal server error occurred.' });
+    }
+  });
+
+  router.post('/admin/contacts/bulk-delete', requireRole('admin'), async (req, res) => {
+    try {
+      const data = collectBody(req);
+      const ids = data.ids;
+      if (!ids || !Array.isArray(ids)) {
+        sendJson(res, 400, { error: 'Invalid or missing ids array' });
+        return;
+      }
+      const db = await getDb();
+      const collection = db.collection('contacts');
+      const objectIds = ids.map(id => {
+        try {
+          return new ObjectId(id);
+        } catch (e) {
+          return id;
+        }
+      });
+      const result = await collection.deleteMany({ _id: { $in: objectIds } });
+      sendJson(res, 200, { success: true, deletedCount: result.deletedCount });
+    } catch (error) {
+      console.error('Bulk Delete Contacts Error:', error.message);
+      sendJson(res, 500, { error: 'Failed to delete contacts' });
+    }
+  });
+
   router.get('/admin/leads', requireRole('admin'), async (req, res) => {
     try {
       const leads = await findMany('leads', {}, { sort: { submittedAt: -1 } });
@@ -1348,13 +1389,37 @@ function createApiRouter() {
 
   router.post('/admin/leads', requireRole('admin'), async (req, res) => {
     const data = collectBody(req);
-    if (!data.id || !data.status) {
-      sendJson(res, 400, { error: 'id and status required' });
+    if (!data.id) {
+      sendJson(res, 400, { error: 'id is required' });
       return;
     }
 
     try {
-      await updateOne('leads', { _id: toObjectId(data.id) }, { $set: { status: data.status } });
+      const updateFields = {};
+      if (data.status !== undefined) updateFields.status = data.status;
+      if (data.notes !== undefined) updateFields.notes = data.notes;
+      if (data.tags !== undefined) updateFields.tags = data.tags;
+      if (data.followUpDate !== undefined) updateFields.followUpDate = data.followUpDate;
+
+      const updateQuery = {};
+      if (Object.keys(updateFields).length > 0) {
+        updateQuery.$set = updateFields;
+      }
+
+      if (data.logMessage) {
+        const timestamp = formatDateTime(new Date());
+        updateQuery.$push = {
+          activityLog: {
+            message: data.logMessage,
+            timestamp: timestamp
+          }
+        };
+      }
+
+      if (Object.keys(updateQuery).length > 0) {
+        await updateOne('leads', { _id: toObjectId(data.id) }, updateQuery);
+      }
+
       sendJson(res, 200, { success: true });
     } catch (error) {
       console.error('Database/Server Error:', error.message);

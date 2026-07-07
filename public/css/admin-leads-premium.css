@@ -26,7 +26,7 @@ body {
     height: calc(100vh - 65px); /* Assuming top nav is ~65px */
     position: sticky;
     top: 65px;
-    background: rgba(0, 63, 136, 0.85);
+    background: #00296b;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-right: 1px solid rgba(255, 255, 255, 0.1);
