@@ -950,10 +950,16 @@
           display: flex;
         }
         .nav-links a {
-          padding: 0.75rem 0.9rem;
-          width: 100%;
-          border-radius: 12px;
-        }
+        padding: 0.75rem 0.9rem;
+        width: 100%;
+        border-radius: 12px;
+        color: rgba(255, 255, 255, 0.85) !important;
+      }
+
+      .nav-links a:hover,
+      .nav-links a.active {
+        color: var(--accent-gold-light) !important;
+      }
         .nav-links a::after {
           display: none;
         }
