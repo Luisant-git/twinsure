@@ -205,9 +205,24 @@
         The link you followed may be broken, or the page may have been removed.
         Don't worry, our AI is working to keep things on track.
       </p>
-      <a href="index.html" class="btn btn-gold"
+      <a href="index.html" class="btn btn-gold" style="margin-bottom: 2rem;"
         ><i class="fas fa-home"></i> Return to Safety</a
       >
+
+      <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem; margin-top: 1rem;">
+        <p style="font-size: 0.9rem; color: var(--text-gray); margin-bottom: 0.8rem;">Subscribe to our newsletter for updates:</p>
+        <form class="newsletter-form" onsubmit="handleNewsletterSubmit(event, this)" style="display: flex; gap: 8px; max-width: 400px; margin: 0 auto; flex-direction: column;">
+          <div style="display: flex; gap: 8px;">
+            <input type="email" name="email" placeholder="Your email address..." required style="flex: 1; padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: #fff; outline: none; font-size: 0.9rem;" />
+            <button type="submit" style="padding: 10px 16px; border-radius: 8px; border: none; background: var(--accent-gold); color: #000; font-weight: 700; cursor: pointer;">
+              Subscribe
+            </button>
+          </div>
+          <div class="newsletter-msg" style="font-size: 0.82rem; margin-top: 4px;"></div>
+        </form>
+      </div>
     </div>
+    <script src="js/config.js"></script>
+    <script src="js/newsletter.js"></script>
   </body>
 </html>

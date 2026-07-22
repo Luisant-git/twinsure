@@ -93,6 +93,50 @@ async function sendAdminAlertEmail(subject, htmlContent, priority = 'normal') {
   }
 }
 
+async function sendNewsletterConfirmationEmail(email) {
+  try {
+    const subject = "Welcome to TwinSure Newsletter!";
+    const htmlContent = `
+      <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
+        <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 30px; text-align: center;">
+          <h1 style="color: #ffd500; margin: 0; font-size: 26px; font-weight: 800; letter-spacing: 1px;">TwinSure</h1>
+          <p style="color: #94a3b8; margin: 6px 0 0 0; font-size: 14px;">Your Premier Insurance & Financial Advisory Partner</p>
+        </div>
+        <div style="padding: 32px 28px; color: #334155; line-height: 1.6;">
+          <h2 style="color: #0f172a; margin-top: 0; font-size: 20px;">Subscription Confirmed! 🎉</h2>
+          <p>Hello,</p>
+          <p>Thank you for subscribing to the <strong>TwinSure Newsletter</strong>! We are thrilled to have you in our community.</p>
+          <p>You will now receive timely updates on insurance guidelines, claims assistance, policy insights, and exclusive recommendations.</p>
+          <div style="background-color: #f8fafc; border-left: 4px solid #ffd500; padding: 16px; margin: 24px 0; border-radius: 4px;">
+            <p style="margin: 0; font-weight: 600; color: #0f172a;">Need immediate insurance assistance?</p>
+            <p style="margin: 4px 0 0 0; font-size: 14px; color: #64748b;">Visit <a href="https://twinsure.in" style="color: #0284c7; text-decoration: underline;">twinsure.in</a> or reply directly to this email anytime.</p>
+          </div>
+          <p style="margin-top: 28px;">Best regards,<br><strong style="color: #0f172a;">The TwinSure Team</strong></p>
+        </div>
+        <div style="background-color: #f1f5f9; padding: 16px 28px; text-align: center; font-size: 12px; color: #64748b; border-top: 1px solid #e2e8f0;">
+          <p style="margin: 0;">You received this email because you subscribed on TwinSure. If you wish to unsubscribe, <a href="${process.env.PUBLIC_URL || 'https://twinsure.in'}/backend/api/newsletter/unsubscribe?email=${encodeURIComponent(email)}" style="color: #64748b; text-decoration: underline;">click here</a>.</p>
+        </div>
+      </div>
+    `;
+
+    const mailOptions = {
+      from: `"${process.env.SMTP_FROM_NAME || 'TwinSure Newsletter'}" <${process.env.SMTP_USER || 'newsletter@twinsure.in'}>`,
+      to: email,
+      subject: subject,
+      html: htmlContent
+    };
+
+    console.log(`Sending newsletter confirmation email to ${email}`);
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      console.warn('SMTP credentials not configured. Simulated newsletter confirmation email success.');
+      return;
+    }
+    await mailTransporter.sendMail(mailOptions);
+  } catch (err) {
+    console.error('Error sending newsletter confirmation email:', err.message);
+  }
+}
+
 // --- Global Error Handlers ---
 process.on('uncaughtException', (err) => {
   console.error('FATAL: Uncaught Exception:', err);
@@ -3048,6 +3092,240 @@ function createApiRouter() {
     } catch (error) {
       console.error('Error generating signed URL:', error.message);
       sendJson(res, 500, { message: 'Could not generate file access URL.' });
+    }
+  });
+
+  // ── Newsletter Endpoints ──────────────────────────────────────────
+
+  // POST /backend/api/newsletter/subscribe
+  router.post('/newsletter/subscribe', async (req, res) => {
+    const data = collectBody(req);
+    const email = normalizeString(data.email).toLowerCase();
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      sendJson(res, 400, { message: 'Please provide a valid email address.' });
+      return;
+    }
+
+    try {
+      const existing = await findOne('newsletter_subscribers', { email });
+
+      if (existing) {
+        if (existing.status === 'active') {
+          sendJson(res, 200, { success: true, message: 'You are already subscribed to our newsletter!' });
+          return;
+        } else {
+          await updateOne('newsletter_subscribers', { _id: existing._id }, {
+            $set: { status: 'active', resubscribedAt: new Date() }
+          });
+          sendNewsletterConfirmationEmail(email).catch(err => console.error(err));
+          sendJson(res, 200, { success: true, message: 'Welcome back! Your subscription has been reactivated.' });
+          return;
+        }
+      }
+
+      await insertOne('newsletter_subscribers', {
+        email,
+        status: 'active',
+        subscribedAt: new Date()
+      });
+
+      sendNewsletterConfirmationEmail(email).catch(err => console.error(err));
+
+      sendJson(res, 200, {
+        success: true,
+        message: 'Thank you for subscribing! A confirmation email has been sent to your inbox.'
+      });
+    } catch (err) {
+      console.error('Newsletter subscribe error:', err);
+      sendJson(res, 500, { message: 'Server error processing subscription.' });
+    }
+  });
+
+  // GET & POST /backend/api/newsletter/unsubscribe
+  const handleUnsubscribe = async (req, res) => {
+    const data = req.method === 'POST' ? collectBody(req) : req.query;
+    const email = normalizeString(data.email).toLowerCase();
+
+    if (!email) {
+      res.status(400).send('Email is required to unsubscribe.');
+      return;
+    }
+
+    try {
+      await updateOne('newsletter_subscribers', { email }, {
+        $set: { status: 'unsubscribed', unsubscribedAt: new Date() }
+      });
+
+      if (req.headers.accept && req.headers.accept.includes('text/html')) {
+        res.status(200).send(`
+          <!DOCTYPE html>
+          <html>
+          <head><title>Unsubscribed - TwinSure</title></head>
+          <body style="font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; background: #0f172a; color: #fff;">
+            <div style="text-align: center; background: #1e293b; padding: 40px; border-radius: 12px; max-width: 400px; border: 1px solid #334155;">
+              <h2 style="color: #ffd500;">Unsubscribed</h2>
+              <p style="color: #94a3b8;">${email} has been unsubscribed from TwinSure emails.</p>
+              <a href="/" style="display: inline-block; margin-top: 15px; padding: 10px 20px; background: #ffd500; color: #000; font-weight: bold; text-decoration: none; border-radius: 6px;">Return to Home</a>
+            </div>
+          </body>
+          </html>
+        `);
+      } else {
+        sendJson(res, 200, { success: true, message: 'Successfully unsubscribed.' });
+      }
+    } catch (err) {
+      console.error('Unsubscribe error:', err);
+      sendJson(res, 500, { message: 'Server error processing unsubscribe.' });
+    }
+  };
+
+  router.post('/newsletter/unsubscribe', handleUnsubscribe);
+  router.get('/newsletter/unsubscribe', handleUnsubscribe);
+
+  // ── Admin Newsletter Endpoints ─────────────────────────────────────
+
+  // GET /backend/api/admin/newsletter/subscribers
+  router.get('/admin/newsletter/subscribers', requireRole('admin'), async (req, res) => {
+    try {
+      const subscribers = await findMany('newsletter_subscribers', {}, { sort: { subscribedAt: -1 } });
+      sendJson(res, 200, { success: true, subscribers });
+    } catch (err) {
+      console.error('Error fetching subscribers:', err);
+      sendJson(res, 500, { message: 'Error fetching subscribers.' });
+    }
+  });
+
+  // POST /backend/api/admin/newsletter/subscribers/toggle
+  router.post('/admin/newsletter/subscribers/toggle', requireRole('admin'), async (req, res) => {
+    const data = collectBody(req);
+    const { id, status } = data;
+
+    if (!id || !status) {
+      sendJson(res, 400, { message: 'Subscriber ID and status are required.' });
+      return;
+    }
+
+    try {
+      const filter = { _id: toObjectId(id) };
+      await updateOne('newsletter_subscribers', filter, {
+        $set: { status, updatedAt: new Date() }
+      });
+      sendJson(res, 200, { success: true, message: `Subscriber status updated to ${status}.` });
+    } catch (err) {
+      console.error('Error toggling subscriber status:', err);
+      sendJson(res, 500, { message: 'Error updating subscriber status.' });
+    }
+  });
+
+  // DELETE /backend/api/admin/newsletter/subscribers/:id
+  router.delete('/admin/newsletter/subscribers/:id', requireRole('admin'), async (req, res) => {
+    const id = req.params.id;
+    if (!id) {
+      sendJson(res, 400, { message: 'Subscriber ID is required.' });
+      return;
+    }
+
+    try {
+      await deleteOne('newsletter_subscribers', { _id: toObjectId(id) });
+      sendJson(res, 200, { success: true, message: 'Subscriber deleted successfully.' });
+    } catch (err) {
+      console.error('Error deleting subscriber:', err);
+      sendJson(res, 500, { message: 'Error deleting subscriber.' });
+    }
+  });
+
+  // POST /backend/api/admin/newsletter/send
+  router.post('/admin/newsletter/send', requireRole('admin'), async (req, res) => {
+    const data = collectBody(req);
+    const subject = normalizeString(data.subject);
+    const content = normalizeString(data.content);
+
+    if (!subject || !content) {
+      sendJson(res, 400, { message: 'Subject and content are required.' });
+      return;
+    }
+
+    try {
+      const subscribers = await findMany('newsletter_subscribers', { status: 'active' });
+      if (!subscribers || subscribers.length === 0) {
+        sendJson(res, 400, { message: 'No active subscribers found.' });
+        return;
+      }
+
+      let successCount = 0;
+      let failCount = 0;
+
+      for (const sub of subscribers) {
+        const unsubscribeLink = `${process.env.PUBLIC_URL || 'https://twinsure.in'}/backend/api/newsletter/unsubscribe?email=${encodeURIComponent(sub.email)}`;
+        const htmlBody = `
+          <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 650px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
+            <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 30px; text-align: center;">
+              <h1 style="color: #ffd500; margin: 0; font-size: 26px; font-weight: 800; letter-spacing: 1px;">TwinSure</h1>
+              <p style="color: #94a3b8; margin: 6px 0 0 0; font-size: 14px;">Newsletter Broadcast</p>
+            </div>
+            <div style="padding: 32px 28px; color: #334155; line-height: 1.7;">
+              <h2 style="color: #0f172a; margin-top: 0; font-size: 22px;">${subject}</h2>
+              <div style="margin-top: 20px; font-size: 15px;">${content.replace(/\n/g, '<br/>')}</div>
+              <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 32px 0;" />
+              <p style="font-size: 14px; color: #475569; margin: 0;">Warm regards,<br><strong style="color: #0f172a;">The TwinSure Advisory Team</strong></p>
+            </div>
+            <div style="background-color: #f1f5f9; padding: 18px 28px; text-align: center; font-size: 12px; color: #64748b; border-top: 1px solid #e2e8f0;">
+              <p style="margin: 0;">You received this update because you are subscribed to the TwinSure Newsletter.<br/>
+              <a href="${unsubscribeLink}" style="color: #64748b; text-decoration: underline;">Unsubscribe from newsletter</a></p>
+            </div>
+          </div>
+        `;
+
+        try {
+          if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+            await mailTransporter.sendMail({
+              from: `"${process.env.SMTP_FROM_NAME || 'TwinSure'}" <${process.env.SMTP_USER}>`,
+              to: sub.email,
+              subject: subject,
+              html: htmlBody
+            });
+            console.log(`[Newsletter] Sent email to ${sub.email}`);
+          } else {
+            console.log(`[Newsletter SIMULATION] Sent broadcast email to ${sub.email}`);
+          }
+          successCount++;
+        } catch (sendErr) {
+          console.error(`Failed sending newsletter to ${sub.email}:`, sendErr.message);
+          failCount++;
+        }
+      }
+
+      await insertOne('newsletter_history', {
+        subject,
+        content,
+        sentAt: new Date(),
+        recipientsCount: subscribers.length,
+        successCount,
+        failCount,
+        status: 'sent'
+      });
+
+      sendJson(res, 200, {
+        success: true,
+        message: `Newsletter broadcasted successfully to ${successCount} subscriber(s).${failCount > 0 ? ` (${failCount} failed)` : ''}`,
+        sentCount: successCount
+      });
+    } catch (err) {
+      console.error('Error broadcasting admin newsletter:', err);
+      sendJson(res, 500, { message: 'Failed to send newsletter: ' + err.message });
+    }
+  });
+
+  // GET /backend/api/admin/newsletter/history
+  router.get('/admin/newsletter/history', requireRole('admin'), async (req, res) => {
+    try {
+      const history = await findMany('newsletter_history', {}, { sort: { sentAt: -1 } });
+      sendJson(res, 200, { success: true, history });
+    } catch (err) {
+      console.error('Error fetching newsletter history:', err);
+      sendJson(res, 500, { message: 'Error fetching newsletter history.' });
     }
   });
 

@@ -841,6 +841,54 @@
       border-bottom: 1px solid transparent;
     }
 
+    /* Newsletter Tabs Styling */
+    .newsletter-tabs-container {
+      display: flex;
+      background: #eef4ff;
+      border-radius: 12px 12px 0 0;
+      border: 1px solid #e2e8f0;
+      border-bottom: none;
+      overflow: hidden;
+      margin-bottom: 0;
+    }
+
+    .newsletter-tabs-container .newsletter-tab {
+      padding: 1rem 1.5rem;
+      border: none;
+      background: 0 0;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: 0.3s;
+      border-bottom: 1px solid #e2e8f0;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .newsletter-tabs-container .newsletter-tab:hover {
+      color: #003f88;
+    }
+
+    .newsletter-tabs-container .newsletter-tab.active {
+      background: #f8fafc;
+      color: #003f88;
+      border-top: 3px solid var(--warning);
+      border-radius: 0;
+      border-bottom: 1px solid transparent;
+    }
+
+    .newsletter-tab-pane {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+
     .settings-form-group label {
       display: block;
       font-size: 0.8rem;
@@ -2169,6 +2217,9 @@
                 class="fas fa-concierge-bell"></i> Service Requests</a>
           </li>
           <li>
+            <a href="javascript:void(0)" onclick="showSection('newsletter', this)"><i class="fas fa-paper-plane"></i> Newsletter Panel</a>
+          </li>
+          <li>
             <a href="javascript:void(0)" onclick="showSection('settings', this)"><i class="fas fa-cog"></i> Settings</a>
           </li>
         </ul>
@@ -2918,6 +2969,176 @@
               </thead>
               <tbody id="serviceTableBody"></tbody>
             </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Newsletter Section -->
+      <section id="newsletter" class="content-section" style="display: none; padding-top: 0;">
+        <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h1 style="font-size: 1.8rem; margin: 0; color: #111;">Newsletter Management Panel</h1>
+            <p style="color: var(--text-muted); margin-top: 0.3rem;">Manage subscribers and send broadcast email updates to your audience.</p>
+          </div>
+          <button class="btn btn-primary" onclick="loadNewsletterData()" style="display: inline-flex; align-items: center; gap: 8px;">
+            <i class="fas fa-sync-alt"></i> Refresh Data
+          </button>
+        </div>
+
+        <!-- Tabs Header -->
+        <div class="newsletter-tabs-container">
+          <button class="newsletter-tab active" onclick="switchNewsletterTab('compose', this)">
+            <i class="fas fa-paper-plane"></i> Compose & Broadcast
+          </button>
+          <button class="newsletter-tab" onclick="switchNewsletterTab('subscribers', this)">
+            <i class="fas fa-users"></i> Subscribers Directory
+          </button>
+          <button class="newsletter-tab" onclick="switchNewsletterTab('history', this)">
+            <i class="fas fa-history"></i> Broadcast Logs
+          </button>
+        </div>
+
+        <!-- Tab 1: Compose & Broadcast -->
+        <div id="tab-nl-compose" class="newsletter-tab-pane">
+          <!-- Metrics Cards -->
+          <div class="metrics-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.2rem; margin-bottom: 1.5rem;">
+            <div class="metric-card" style="background: #f8fafc; padding: 1.2rem; border-radius: 12px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 1rem;">
+              <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(59, 130, 246, 0.1); color: #2563eb; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                <i class="fas fa-users"></i>
+              </div>
+              <div>
+                <div style="font-size: 0.8rem; color: #64748b; font-weight: 500;">Total Subscribers</div>
+                <div style="font-size: 1.35rem; font-weight: 700; color: #0f172a;" id="nlTotalSubs">0</div>
+              </div>
+            </div>
+
+            <div class="metric-card" style="background: #f8fafc; padding: 1.2rem; border-radius: 12px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 1rem;">
+              <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(34, 197, 94, 0.1); color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                <i class="fas fa-user-check"></i>
+              </div>
+              <div>
+                <div style="font-size: 0.8rem; color: #64748b; font-weight: 500;">Active Subscribers</div>
+                <div style="font-size: 1.35rem; font-weight: 700; color: #0f172a;" id="nlActiveSubs">0</div>
+              </div>
+            </div>
+
+            <div class="metric-card" style="background: #f8fafc; padding: 1.2rem; border-radius: 12px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 1rem;">
+              <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(239, 68, 68, 0.1); color: #dc2626; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                <i class="fas fa-user-minus"></i>
+              </div>
+              <div>
+                <div style="font-size: 0.8rem; color: #64748b; font-weight: 500;">Unsubscribed</div>
+                <div style="font-size: 1.35rem; font-weight: 700; color: #0f172a;" id="nlUnsubscribedSubs">0</div>
+              </div>
+            </div>
+
+            <div class="metric-card" style="background: #f8fafc; padding: 1.2rem; border-radius: 12px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 1rem;">
+              <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(234, 179, 8, 0.1); color: #ca8a04; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                <i class="fas fa-paper-plane"></i>
+              </div>
+              <div>
+                <div style="font-size: 0.8rem; color: #64748b; font-weight: 500;">Broadcasts Sent</div>
+                <div style="font-size: 1.35rem; font-weight: 700; color: #0f172a;" id="nlSentCount">0</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Newsletter Composer Card -->
+          <div style="background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 1.5rem; max-width: 750px; margin: 0 auto;">
+            <h3 style="margin-top: 0; font-size: 1.15rem; color: #0f172a; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 15px;">
+              <i class="fas fa-envelope-open-text" style="color: #ca8a04;"></i> Compose Newsletter Broadcast
+            </h3>
+            
+            <form id="nlComposerForm" onsubmit="sendAdminNewsletter(event)">
+              <div style="margin-bottom: 1rem;">
+                <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; color: #1e293b;">Subject Line</label>
+                <input type="text" id="nlSubject" class="input-field" placeholder="e.g. Important TwinSure Insurance Advisory & Market Update" required style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.95rem; box-sizing: border-box;" />
+              </div>
+
+              <div style="margin-bottom: 1.2rem;">
+                <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; color: #1e293b;">Newsletter Body Content</label>
+                <textarea id="nlContent" rows="8" placeholder="Write your newsletter message here... (Line breaks will be formatted cleanly in email)" required style="width: 100%; padding: 12px 14px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.95rem; font-family: inherit; line-height: 1.5; resize: vertical; box-sizing: border-box;"></textarea>
+              </div>
+
+              <div id="nlSendStatus" style="margin-bottom: 1rem; display: none; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem;"></div>
+
+              <button type="submit" id="nlSendBtn" style="width: 100%; padding: 12px; border-radius: 8px; border: none; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffd500; font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity 0.2s;">
+                <i class="fas fa-paper-plane"></i> Broadcast Newsletter to Active Subscribers
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Tab 2: Subscribers Directory -->
+        <div id="tab-nl-subscribers" class="newsletter-tab-pane" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <h3 style="margin: 0; font-size: 1.15rem; color: #0f172a;">Subscribers Directory</h3>
+              <p style="margin: 4px 0 0 0; font-size: 0.82rem; color: #64748b;">List of all user email subscriptions.</p>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+              <input type="text" id="nlSearchInput" placeholder="Search by email..." onkeyup="filterSubscribersTable()" style="padding: 8px 14px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.9rem; min-width: 220px;" />
+              <button class="btn btn-secondary" onclick="exportSubscribersToCSV()" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; font-size: 0.9rem;">
+                <i class="fas fa-file-csv"></i> Export CSV
+              </button>
+            </div>
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+              <thead>
+                <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0; text-align: left; color: #475569;">
+                  <th style="padding: 12px;">Email Address</th>
+                  <th style="padding: 12px;">Subscribed Date</th>
+                  <th style="padding: 12px; text-align: center;">Status</th>
+                  <th style="padding: 12px; text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="nlSubscribersTableBody">
+                <tr><td colspan="4" style="text-align: center; padding: 25px; color: #94a3b8;">Loading subscribers...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 3: Broadcast History -->
+        <div id="tab-nl-history" class="newsletter-tab-pane" style="display: none;">
+          <div style="margin-bottom: 1rem;">
+            <h3 style="margin: 0; font-size: 1.15rem; color: #0f172a;">Broadcast Logs & History</h3>
+            <p style="margin: 4px 0 0 0; font-size: 0.82rem; color: #64748b;">Review previously dispatched newsletter emails.</p>
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+              <thead>
+                <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0; text-align: left; color: #475569;">
+                  <th style="padding: 12px;">Subject</th>
+                  <th style="padding: 12px;">Sent Date</th>
+                  <th style="padding: 12px; text-align: center;">Recipients</th>
+                  <th style="padding: 12px; text-align: center;">Deliveries</th>
+                  <th style="padding: 12px; text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="nlHistoryTableBody">
+                <tr><td colspan="5" style="text-align: center; padding: 25px; color: #94a3b8;">Loading history...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Newsletter Preview Modal -->
+        <div id="nlPreviewModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; padding: 20px;">
+          <div style="background: #fff; width: 100%; max-width: 650px; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15); display: flex; flex-direction: column; max-height: 85vh;">
+            <div style="padding: 1.2rem; background: #0f172a; color: #fff; display: flex; justify-content: space-between; align-items: center;">
+              <h3 style="margin: 0; font-size: 1.1rem; color: #ffd500;" id="nlPreviewModalTitle">Newsletter Broadcast Preview</h3>
+              <button onclick="closeNewsletterPreviewModal()" style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            </div>
+            <div style="padding: 1.5rem; overflow-y: auto; flex: 1; background: #f8fafc;" id="nlPreviewModalBody">
+              <!-- Rendered email content here -->
+            </div>
+            <div style="padding: 1rem; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; background: #fff;">
+              <button class="btn btn-secondary" onclick="closeNewsletterPreviewModal()">Close</button>
+            </div>
           </div>
         </div>
       </section>
@@ -5788,7 +6009,8 @@
         "kyc" === t && loadAdminKYC(),
         "user-policies" === t && loadAdminPolicies(),
         "appointments" === t && loadAdminAppointments(),
-        "user-services" === t && loadAdminServices());
+        "user-services" === t && loadAdminServices(),
+        "newsletter" === t && loadNewsletterData());
     }
     (checkAuth(),
       window.addEventListener("pageshow", () => {
@@ -10534,6 +10756,255 @@
         }
       });
     });
+
+    // --- Newsletter Management Functions ---
+    let allSubscribersData = [];
+    let sentNewslettersHistory = [];
+
+    function switchNewsletterTab(tabId, el) {
+      document.querySelectorAll('.newsletter-tab-pane').forEach(pane => pane.style.display = 'none');
+      document.querySelectorAll('.newsletter-tab').forEach(tab => tab.classList.remove('active'));
+
+      const targetPane = document.getElementById('tab-nl-' + tabId);
+      if (targetPane) {
+        targetPane.style.display = 'block';
+      }
+      if (el) {
+        el.classList.add('active');
+      }
+    }
+
+    async function loadNewsletterData() {
+      try {
+        const [subRes, histRes] = await Promise.all([
+          api.get('/admin/newsletter/subscribers'),
+          api.get('/admin/newsletter/history')
+        ]);
+
+        if (subRes && subRes.success) {
+          allSubscribersData = subRes.subscribers || [];
+          renderSubscribersTable(allSubscribersData);
+
+          const total = allSubscribersData.length;
+          const active = allSubscribersData.filter(s => s.status === 'active').length;
+          const unsub = total - active;
+
+          document.getElementById('nlTotalSubs').textContent = total;
+          document.getElementById('nlActiveSubs').textContent = active;
+          document.getElementById('nlUnsubscribedSubs').textContent = unsub;
+        }
+
+        if (histRes && histRes.success) {
+          sentNewslettersHistory = histRes.history || [];
+          renderNewsletterHistoryTable(sentNewslettersHistory);
+          document.getElementById('nlSentCount').textContent = sentNewslettersHistory.length;
+        }
+      } catch (err) {
+        console.error('Error loading newsletter data:', err);
+      }
+    }
+
+    function renderSubscribersTable(subscribers) {
+      const tbody = document.getElementById('nlSubscribersTableBody');
+      if (!tbody) return;
+
+      if (!subscribers || subscribers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 25px; color: #94a3b8;">No subscribers found yet.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = subscribers.map(sub => `
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+          <td style="padding: 12px; font-weight: 600; color: #0f172a;">${sub.email}</td>
+          <td style="padding: 12px; color: #64748b; font-size: 0.85rem;">${sub.subscribedAt ? new Date(sub.subscribedAt).toLocaleString() : 'N/A'}</td>
+          <td style="padding: 12px; text-align: center;">
+            <span style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; background: ${sub.status === 'active' ? '#dcfce7' : '#fee2e2'}; color: ${sub.status === 'active' ? '#15803d' : '#b91c1c'};">
+              ${sub.status || 'active'}
+            </span>
+          </td>
+          <td style="padding: 12px; text-align: right;">
+            <button onclick="toggleSubscriber('${sub._id}', '${sub.status === 'active' ? 'unsubscribed' : 'active'}')" class="btn btn-sm" style="padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; background: #e2e8f0; color: #334155; border: none; cursor: pointer; margin-right: 6px;">
+              ${sub.status === 'active' ? 'Deactivate' : 'Activate'}
+            </button>
+            <button onclick="deleteSubscriber('${sub._id}')" class="btn btn-sm" style="padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; background: #fee2e2; color: #b91c1c; border: none; cursor: pointer;">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderNewsletterHistoryTable(history) {
+      const tbody = document.getElementById('nlHistoryTableBody');
+      if (!tbody) return;
+
+      if (!history || history.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 25px; color: #94a3b8;">No sent newsletters yet.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = history.map((item, idx) => `
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+          <td style="padding: 12px; font-weight: 500; color: #1e293b;">${item.subject}</td>
+          <td style="padding: 12px; color: #64748b; font-size: 0.85rem;">${item.sentAt ? new Date(item.sentAt).toLocaleString() : 'N/A'}</td>
+          <td style="padding: 12px; text-align: center; font-weight: 700; color: #2563eb;">${item.recipientsCount || 0}</td>
+          <td style="padding: 12px; text-align: center; color: #16a34a; font-weight: 600;">
+            <i class="fas fa-check-circle"></i> ${item.successCount || 0} Sent
+          </td>
+          <td style="padding: 12px; text-align: right;">
+            <button onclick="previewNewsletterBody(${idx})" class="btn btn-sm btn-secondary" style="padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px;">
+              <i class="fas fa-eye"></i> View Email
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function previewNewsletterBody(idx) {
+      const item = sentNewslettersHistory[idx];
+      if (!item) return;
+
+      const titleEl = document.getElementById('nlPreviewModalTitle');
+      const bodyEl = document.getElementById('nlPreviewModalBody');
+      const modalEl = document.getElementById('nlPreviewModal');
+
+      if (titleEl) titleEl.textContent = `Subject: ${item.subject}`;
+      if (bodyEl) {
+        // Convert plain text with line breaks to readable body preview
+        bodyEl.innerHTML = `
+          <div style="background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; color: #334155; font-size: 0.95rem; line-height: 1.6; font-family: sans-serif;">
+            <div style="font-weight: bold; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 15px; font-size: 1.1rem; color: #0f172a;">
+              ${item.subject}
+            </div>
+            <div style="white-space: pre-wrap;">${item.content}</div>
+          </div>
+        `;
+      }
+      if (modalEl) {
+        modalEl.style.display = 'flex';
+      }
+    }
+
+    function closeNewsletterPreviewModal() {
+      const modalEl = document.getElementById('nlPreviewModal');
+      if (modalEl) modalEl.style.display = 'none';
+    }
+
+    function filterSubscribersTable() {
+      const q = (document.getElementById('nlSearchInput')?.value || '').toLowerCase();
+      const filtered = allSubscribersData.filter(s => s.email.toLowerCase().includes(q));
+      renderSubscribersTable(filtered);
+    }
+
+    function exportSubscribersToCSV() {
+      if (allSubscribersData.length === 0) {
+        alert('No subscribers to export.');
+        return;
+      }
+
+      let csvContent = 'data:text/csv;charset=utf-8,Email,Status,Subscribed At\n';
+      allSubscribersData.forEach(sub => {
+        const dateStr = sub.subscribedAt ? new Date(sub.subscribedAt).toISOString() : '';
+        csvContent += `"${sub.email}","${sub.status}","${dateStr}"\n`;
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `twinsure_newsletter_subscribers_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    async function sendAdminNewsletter(event) {
+      event.preventDefault();
+      const subjectInput = document.getElementById('nlSubject');
+      const contentInput = document.getElementById('nlContent');
+      const btn = document.getElementById('nlSendBtn');
+      const statusDiv = document.getElementById('nlSendStatus');
+
+      const subject = subjectInput ? subjectInput.value.trim() : '';
+      const content = contentInput ? contentInput.value.trim() : '';
+
+      if (!subject || !content) return;
+
+      const activeCount = allSubscribersData.filter(s => s.status === 'active').length;
+      if (activeCount === 0) {
+        alert('There are no active subscribers to send this newsletter to.');
+        return;
+      }
+
+      if (!confirm(`Are you sure you want to broadcast this newsletter to ${activeCount} active subscriber(s)?`)) {
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Broadcasting...';
+
+      if (statusDiv) {
+        statusDiv.style.display = 'block';
+        statusDiv.style.background = '#e0f2fe';
+        statusDiv.style.color = '#0369a1';
+        statusDiv.textContent = 'Sending newsletter via email transporter...';
+      }
+
+      try {
+        const res = await api.post('/admin/newsletter/send', { subject, content });
+        if (res && res.success) {
+          if (statusDiv) {
+            statusDiv.style.background = '#dcfce7';
+            statusDiv.style.color = '#15803d';
+            statusDiv.textContent = res.message || 'Newsletter broadcasted successfully!';
+          }
+          subjectInput.value = '';
+          contentInput.value = '';
+          loadNewsletterData();
+        } else {
+          if (statusDiv) {
+            statusDiv.style.background = '#fee2e2';
+            statusDiv.style.color = '#b91c1c';
+            statusDiv.textContent = (res && res.message) ? res.message : 'Failed to broadcast newsletter.';
+          }
+        }
+      } catch (err) {
+        if (statusDiv) {
+          statusDiv.style.background = '#fee2e2';
+          statusDiv.style.color = '#b91c1c';
+          statusDiv.textContent = 'Error sending newsletter: ' + err.message;
+        }
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Broadcast Newsletter to Active Subscribers';
+      }
+    }
+
+    async function toggleSubscriber(id, status) {
+      try {
+        const res = await api.post('/admin/newsletter/subscribers/toggle', { id, status });
+        if (res && res.success) {
+          loadNewsletterData();
+        } else {
+          alert((res && res.message) || 'Failed to update subscriber.');
+        }
+      } catch (err) {
+        alert('Error updating subscriber: ' + err.message);
+      }
+    }
+
+    async function deleteSubscriber(id) {
+      if (!confirm('Are you sure you want to delete this subscriber?')) return;
+      try {
+        const res = await api.delete('/admin/newsletter/subscribers/' + id);
+        if (res && res.success) {
+          loadNewsletterData();
+        } else {
+          alert((res && res.message) || 'Failed to delete subscriber.');
+        }
+      } catch (err) {
+        alert('Error deleting subscriber: ' + err.message);
+      }
+    }
   </script>
 </body>
 
