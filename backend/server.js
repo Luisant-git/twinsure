@@ -751,7 +751,7 @@ function createApiRouter() {
   <div style="background-color: #f1f5f9; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b;">
     <p style="margin: 0 0 5px 0;"><strong>Twinsure Admin Contact</strong></p>
     <p style="margin: 0 0 5px 0;">Email: support@twinsure.com | Phone: +91 9750003600</p>
-    <p style="margin: 0;">Twinsure H.Q., 6, 2nd cross, Gowripuram Extension, Gowripuram, Karur, Tamil Nadu - 639002</p>
+    <p style="margin: 0;">Twinsure H.Q., No.1, 5th Cross Road, Anna Nagar, OPP. KCP HOUSE WEST GATE, Karur, Tamil Nadu - 639002</p>
   </div>
 </div>
         `
@@ -1124,7 +1124,7 @@ function createApiRouter() {
   <div style="background-color: #f1f5f9; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b;">
     <p style="margin: 0 0 5px 0;"><strong>Twinsure Support & Services</strong></p>
     <p style="margin: 0 0 5px 0;">Email: support@twinsure.com | Phone: +91 9750003600</p>
-    <p style="margin: 0;">Twinsure H.Q., 6, 2nd cross, Gowripuram Extension, Gowripuram, Karur, Tamil Nadu - 639002</p>
+    <p style="margin: 0;">Twinsure H.Q., No.1, 5th Cross Road, Anna Nagar, OPP. KCP HOUSE WEST GATE, Karur, Tamil Nadu - 639002</p>
   </div>
 </div>
           `,
