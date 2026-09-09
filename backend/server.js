@@ -535,7 +535,7 @@ function createApiRouter() {
       // Count ALL users ever registered (including deleted ones tracked by max tsid sequence)
       // to ensure IDs are never reused even if mid-users are deleted.
       const currentYear = new Date().getFullYear();
-      const db = getDb();
+      const db = await getDb();
       const allUserTsids = await db.collection('users')
         .find({ role: 'user', tsid: { $regex: `^U${currentYear}` } }, { projection: { tsid: 1 } })
         .toArray();
