@@ -384,7 +384,8 @@ const allowedOrigins = [
   'https://twinsure.in',
   'https://www.twinsure.in',
   'http://twinsure.in',
-  'http://www.twinsure.in'
+  'http://www.twinsure.in',
+  'https://twinsure.luisant.in'
 ];
 
 app.use(cors({
