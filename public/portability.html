@@ -239,6 +239,7 @@
         max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; text-align: center;
       }
       .hero h1 { font-size: 3rem; font-weight: 800; line-height: 1.2; margin-bottom: 1.5rem; }
+      .hero-main-title { font-size: 2.6rem; max-width: 950px; margin: 0 auto 1.5rem auto; line-height: 1.3; }
       .hero p { font-size: 1rem; color: var(--text-gray); line-height: 1.6; margin: 0 auto 2.5rem auto; max-width: 700px; }
       .hero-btns { display: flex; justify-content: center; gap: 1rem; }
       
@@ -343,6 +344,32 @@
       .faq-item.active .faq-a { display: block; }
       .faq-item.active .faq-q i { transform: rotate(180deg); color: var(--accent-gold); }
 
+      .twinsure-footer-shield {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2.5rem;
+        background: rgba(0, 21, 51, 0.7);
+        border: 1px solid rgba(253, 197, 0, 0.4);
+        border-radius: 24px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        position: relative;
+        overflow: hidden;
+      }
+      .twinsure-footer-shield h3 {
+        color: #fff;
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+        position: relative;
+        z-index: 2;
+      }
+      .twinsure-footer-shield p {
+        color: var(--text-gray);
+        line-height: 1.6;
+        position: relative;
+        z-index: 2;
+      }
+
       .footer { background: #000b1a; padding: 4rem 5% 2rem 5%; border-top: 1px solid rgba(255, 255, 255, 0.05); margin-top: 4rem; }
       /* Include common footer css based on project */
       .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 4rem; max-width: 1400px; margin: 0 auto 3rem auto; }
@@ -373,6 +400,8 @@
         .navbar.nav-open .nav-links { display: flex; }
         .nav-toggle { display: flex; }
         .hero h1 { font-size: 2rem; }
+        .hero-main-title { font-size: 2.2rem; }
+        .hero-main-title br { display: none; }
         .hero { padding: 5rem 5% 1rem 5%; }
         .section { padding: 2rem 5%; }
         .section-header h2 { font-size: 2.2rem; }
@@ -381,9 +410,12 @@
         .footer-bottom { flex-direction: column; text-align: center; justify-content: center; }
         .heading-lg { font-size: 1.8rem; }
         .heading-md { font-size: 1.6rem; }
+        .twinsure-footer-shield { padding: 1.8rem 1.2rem; margin: 1.5rem auto; }
+        .twinsure-footer-shield h3 { font-size: 1.3rem; }
       }
       @media (max-width: 480px) {
         .hero h1 { font-size: 1.6rem; }
+        .hero-main-title { font-size: 1.7rem; line-height: 1.4; }
         .heading-lg { font-size: 1.5rem; }
         .heading-md { font-size: 1.3rem; }
         .glass-card { padding: 1.2rem; }
@@ -394,6 +426,9 @@
         #portSubmitBtn { padding: 0.8rem; font-size: 0.95rem; }
         .cf-input, .cf-select, .cf-textarea { font-size: 0.9rem; }
         .form-title { font-size: 1.4rem; }
+        .twinsure-footer-shield { padding: 1.5rem 1rem; border-radius: 16px; margin: 1rem auto; }
+        .twinsure-footer-shield h3 { font-size: 1.2rem; }
+        .twinsure-footer-shield p { font-size: 0.9rem; }
       }
     </style>
   </head>
@@ -414,7 +449,10 @@
     <header class="hero">
       <div class="hero-container">
         <div>
-          <h1>Make the Right Choice for Your <span class="gradient-text">Medical Insurance</span></h1>
+          <h1 class="hero-main-title">
+            ~95% of people buy health insurance based entirely on <span class="gradient-text">someone else's recommendation.</span><br>
+            Only 5% read the terms first. <span class="gradient-text">Be part of the 5%.</span>
+          </h1>
           <p>
             Get guidance on medical insurance that fits your needs, coverage expectations, and budget. Choosing medical insurance can feel complicated. With different plans, coverage options, and terms to consider, it helps to have someone guide you through the process.
           </p>
@@ -475,7 +513,7 @@
             <li><i class="fas fa-search"></i> <div><h4>Review Coverage</h4><p>Reviewing your current coverage</p></div></li>
             <li><i class="fas fa-shield-alt"></i> <div><h4>Identify Gaps</h4><p>Identifying potential coverage gaps</p></div></li>
             <li><i class="fas fa-balance-scale"></i> <div><h4>Compare Solutions</h4><p>Comparing suitable insurance solutions</p></div></li>
-            <li><i class="fas fa-file-contract"></i> <div><h4>Understand Policy</h4><p>Understanding policy benefits and features</p></div></li>
+            <li><i class="fas fa-file-contract"></i> <div><h4>Understand Policy</h4><p>Understanding policy benefits and features as well as key T&C</p></div></li>
             <li><i class="fas fa-user-md"></i> <div><h4>Choose Wisely</h4><p>Choosing coverage based on your circumstances</p></div></li>
           </ul>
         </div>
@@ -597,6 +635,11 @@
       <p style="color: var(--text-gray); max-width: 600px; margin: 0 auto 2rem auto; line-height: 1.6;">
         Medical expenses can be unpredictable. Having appropriate insurance coverage can help you prepare for unexpected healthcare costs. Take a few minutes today to explore your medical insurance options.
       </p>
+      <div class="twinsure-footer-shield">
+        <h3>Your Shield Against Policy Mis-selling</h3>
+        <p>We don’t sell insurance—we make sure you buy the right coverage. If you were mis-sold a plan, portability lets you set things right. Twinsure guides you toward the ideal plan and hidden benefits while fully preserving your seniority benefits and cumulative bonus under IRDAI norms. Made an undisclosed medical entry in the past through an agent? We fix your health disclosures to eliminate future claim rejections.</p>
+      </div>
+
       <a href="tel:+919750003600" class="btn btn-gold">Talk to an Insurance Expert</a>
     </section>
 
