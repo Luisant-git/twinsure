@@ -232,15 +232,15 @@
       }
       .btn-outline:hover { background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.4); }
       .hero {
-        padding: 10rem 5% 5rem 5%; position: relative;
+        padding: 6rem 5% 2rem 5%; position: relative;
         background: radial-gradient(circle at 80% 20%, rgba(0, 80, 157, 0.15), transparent 40%);
       }
       .hero-container {
-        max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+        max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; text-align: center;
       }
-      .hero h1 { font-size: 3.5rem; font-weight: 800; line-height: 1.2; margin-bottom: 1.5rem; }
-      .hero p { font-size: 1.1rem; color: var(--text-gray); line-height: 1.6; margin-bottom: 2.5rem; max-width: 500px; }
-      .hero-btns { display: flex; gap: 1rem; }
+      .hero h1 { font-size: 3rem; font-weight: 800; line-height: 1.2; margin-bottom: 1.5rem; }
+      .hero p { font-size: 1rem; color: var(--text-gray); line-height: 1.6; margin: 0 auto 2.5rem auto; max-width: 700px; }
+      .hero-btns { display: flex; justify-content: center; gap: 1rem; }
       
       .hero-visuals { display: flex; align-items: center; justify-content: center; position: relative; }
       .visual-support-container { position: relative; width: 100%; max-width: 480px; height: 420px; display: flex; align-items: center; justify-content: center; }
@@ -259,9 +259,11 @@
       @keyframes float-widget-x { 0% { transform: translateX(0) translateY(-50%); } 50% { transform: translateX(10px) translateY(-50%); } 100% { transform: translateX(0) translateY(-50%); } }
       @keyframes pulse-glow { 0% { transform: scale(0.9); opacity: 0.5; } 100% { transform: scale(1.1); opacity: 0.8; } }
       
-      .section { padding: 5rem 5%; max-width: 1400px; margin: 0 auto; }
+      .section { padding: 3rem 5%; max-width: 1400px; margin: 0 auto; }
       .section-header { text-align: center; margin-bottom: 4rem; }
       .section-header h2 { font-size: 2.8rem; margin-bottom: 1rem; }
+      .heading-lg { font-size: 2.5rem; margin-bottom: 1rem; }
+      .heading-md { font-size: 2.2rem; margin-bottom: 1rem; }
       
       .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; }
       .glass-card {
@@ -288,9 +290,9 @@
         border: 1.5px solid rgba(255, 255, 255, 0.08); border-radius: 12px; font-size: 0.95rem; 
         color: #fff; outline: 0; transition: 0.3s; font-family: inherit;
       }
-      .cf-select { appearance: none; cursor: pointer; }
+      .cf-select { appearance: none; cursor: pointer; padding-left: 1rem; padding-right: 2.5rem; }
       .cf-select option { background: var(--primary-dark); color: #fff; }
-      .cf-select-icon { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-gray); pointer-events: none; }
+      .cf-select-icon { position: absolute !important; left: auto !important; right: 1rem !important; top: 50% !important; transform: translateY(-50%) !important; color: var(--text-gray) !important; pointer-events: none; }
       .cf-input:focus, .cf-select:focus, .cf-textarea:focus { border-color: var(--accent-gold); background: rgba(0, 0, 0, 0.4); }
       .cf-input:focus + i, .cf-select:focus + i { color: var(--accent-gold); }
       .cf-select:valid { border-color: var(--accent-gold); }
@@ -331,6 +333,8 @@
       }
       .enq-chip:hover { border-color: var(--accent-gold-light); color: #fff; background: rgba(253, 197, 0, 0.05); }
       .enq-chip.selected { border-color: var(--accent-gold); background: var(--accent-gold); color: var(--primary-dark); font-weight: 700; }
+      .form-title { font-size: 1.8rem; margin-bottom: 0.5rem; }
+      #portSubmitBtn { width: 100%; padding: 1rem; font-size: 1.05rem; margin-top: 1rem; }
       
       .faq-item { margin-bottom: 1.5rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; overflow: hidden; }
       .faq-q { padding: 1.2rem 1.5rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 600; color: #fff; }
@@ -339,7 +343,7 @@
       .faq-item.active .faq-a { display: block; }
       .faq-item.active .faq-q i { transform: rotate(180deg); color: var(--accent-gold); }
 
-      .footer { background: #000b1a; padding: 5rem 5% 2rem 5%; border-top: 1px solid rgba(255, 255, 255, 0.05); margin-top: 6rem; }
+      .footer { background: #000b1a; padding: 4rem 5% 2rem 5%; border-top: 1px solid rgba(255, 255, 255, 0.05); margin-top: 4rem; }
       /* Include common footer css based on project */
       .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 4rem; max-width: 1400px; margin: 0 auto 3rem auto; }
       .footer-logo { font-size: 1.8rem; font-weight: 800; font-family: Montserrat; display: flex; align-items: center; gap: 0.5rem; color: #fff; margin-bottom: 1.5rem; }
@@ -348,11 +352,13 @@
       .footer-col ul li { margin-bottom: 0.8rem; }
       .footer-col ul a { color: #94a3b8; transition: 0.3s; }
       .footer-col ul a:hover { color: var(--accent-gold); padding-left: 5px; }
-      .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; display: flex; flex-direction: column; color: #94a3b8; font-size: 0.9rem; max-width: 1400px; margin: 0 auto; gap: 10px; }
+      .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; display: flex; flex-direction: row; justify-content: space-between; align-items: center; flex-wrap: wrap; color: #94a3b8; font-size: 0.9rem; max-width: 1400px; margin: 0 auto; gap: 15px; }
 
       @media (max-width: 1024px) {
         .hero-container, .grid-2 { grid-template-columns: 1fr; }
-        .hero { padding-top: 8rem; text-align: center; }
+        #form-section .grid-2 > div:nth-child(1) { order: 2; }
+        #form-section .grid-2 > div:nth-child(2) { order: 1; }
+        .hero { padding-top: 5rem; text-align: center; }
         .hero p { margin: 0 auto 2.5rem auto; }
         .hero-btns { justify-content: center; }
         .form-row { grid-template-columns: 1fr; }
@@ -366,20 +372,28 @@
         }
         .navbar.nav-open .nav-links { display: flex; }
         .nav-toggle { display: flex; }
-        .hero h1 { font-size: 2.5rem; }
-        .hero { padding: 7rem 5% 3rem 5%; }
-        .section { padding: 3rem 5%; }
+        .hero h1 { font-size: 2rem; }
+        .hero { padding: 5rem 5% 1rem 5%; }
+        .section { padding: 2rem 5%; }
         .section-header h2 { font-size: 2.2rem; }
         .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
-        .footer { padding-top: 3rem; margin-top: 3rem; }
+        .footer { padding-top: 2rem; margin-top: 2rem; }
+        .footer-bottom { flex-direction: column; text-align: center; justify-content: center; }
+        .heading-lg { font-size: 1.8rem; }
+        .heading-md { font-size: 1.6rem; }
       }
       @media (max-width: 480px) {
-        .hero h1 { font-size: 2rem; }
-        .glass-card { padding: 1.5rem; }
+        .hero h1 { font-size: 1.6rem; }
+        .heading-lg { font-size: 1.5rem; }
+        .heading-md { font-size: 1.3rem; }
+        .glass-card { padding: 1.2rem; }
         .benefit-list li { flex-direction: column; align-items: center; text-align: center; }
         .enquiry-chips { justify-content: center; }
-        .btn { width: 100%; }
+        .enq-chip { padding: 0.5rem 1rem; font-size: 0.8rem; }
+        .btn { padding: 0.6rem 1.2rem; font-size: 0.9rem; width: auto; }
+        #portSubmitBtn { padding: 0.8rem; font-size: 0.95rem; }
         .cf-input, .cf-select, .cf-textarea { font-size: 0.9rem; }
+        .form-title { font-size: 1.4rem; }
       }
     </style>
   </head>
@@ -405,9 +419,10 @@
             Get guidance on medical insurance that fits your needs, coverage expectations, and budget. Choosing medical insurance can feel complicated. With different plans, coverage options, and terms to consider, it helps to have someone guide you through the process.
           </p>
           <div class="hero-btns">
-            <a href="#form-section" class="btn btn-gold">Talk to an Insurance Expert</a>
+            <a href="tel:+919750003600" class="btn btn-gold">Talk to an Insurance Expert</a>
           </div>
         </div>
+        <!--
         <div class="hero-visuals">
           <div class="visual-support-container">
             <div class="visual-backdrop-glow"></div>
@@ -443,13 +458,14 @@
             </div>
           </div>
         </div>
+        -->
       </div>
     </header>
 
     <section class="section" id="form-section">
       <div class="grid-2">
         <div>
-          <h2 style="font-size: 2.2rem; margin-bottom: 1rem;">Do You Have the Right <span class="gradient-text">Medical Insurance Coverage?</span></h2>
+          <h2 class="heading-md">Do You Have the Right <span class="gradient-text">Medical Insurance Coverage?</span></h2>
           <p style="color: var(--text-gray); font-size: 1.05rem; line-height: 1.6; margin-bottom: 1.5rem;">
             Your healthcare needs can change over time. The policy that worked for you before may not provide the coverage you need today. Whether you already have medical insurance or are exploring your options, we can help you better understand your choices.
           </p>
@@ -465,7 +481,7 @@
         </div>
         
         <div class="glass-card">
-          <h3 style="font-size: 1.8rem; margin-bottom: 0.5rem;">Tell Us a Little About Yourself</h3>
+          <h3 class="form-title">Tell Us a Little About Yourself</h3>
           <p style="color: var(--text-gray); margin-bottom: 2rem; font-size: 0.95rem;">Answer a few quick questions so we can understand your requirements and arrange a conversation.</p>
           
           <form id="portabilityForm" onsubmit="submitPortabilityForm(event)">
@@ -519,13 +535,13 @@
               <label>May I know your annual CTC range?</label>
               <div class="cf-input-wrap" style="position: relative;">
                 <select id="portCTC" class="cf-select" required onchange="portLive(this, 'CTC')">
-                  <option value="" disabled selected>Select your approximate annual CTC range</option>
+                  <option value="" disabled selected>Select your CTC range</option>
                   <option value="Under 5 Lakhs">Under 5 Lakhs</option>
                   <option value="5 - 10 Lakhs">5 - 10 Lakhs</option>
                   <option value="10 - 20 Lakhs">10 - 20 Lakhs</option>
                   <option value="Above 20 Lakhs">Above 20 Lakhs</option>
                 </select>
-                <i class="fas fa-chevron-down"></i>
+                <i class="fas fa-chevron-down cf-select-icon"></i>
               </div>
             </div>
 
@@ -537,7 +553,7 @@
               </div>
             </div>
             
-            <button type="submit" id="portSubmitBtn" class="btn btn-gold" style="width: 100%; padding: 1rem; font-size: 1.05rem; margin-top: 1rem;">Request a Consultation</button>
+            <button type="submit" id="portSubmitBtn" class="btn btn-gold">Request a Consultation</button>
             <p style="font-size: 0.75rem; color: var(--text-gray); text-align: center; margin-top: 1rem;">
               By submitting this form, you agree to be contacted regarding medical insurance and related consultation services.
             </p>
@@ -546,6 +562,7 @@
       </div>
     </section>
 
+    <!-- 
     <section class="section" style="background: rgba(255,255,255,0.02); margin-top: 2rem;">
       <div class="section-header">
         <h2>Why Speak With an <span class="gradient-text">Insurance Professional?</span></h2>
@@ -573,15 +590,17 @@
         </div>
       </div>
     </section>
+    -->
 
     <section class="section" style="text-align: center;">
-      <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Your Health Deserves the <span class="gradient-text">Right Protection</span></h2>
+      <h2 class="heading-lg">Your Health Deserves the <span class="gradient-text">Right Protection</span></h2>
       <p style="color: var(--text-gray); max-width: 600px; margin: 0 auto 2rem auto; line-height: 1.6;">
         Medical expenses can be unpredictable. Having appropriate insurance coverage can help you prepare for unexpected healthcare costs. Take a few minutes today to explore your medical insurance options.
       </p>
-      <a href="#form-section" class="btn btn-gold">Talk to an Insurance Expert</a>
+      <a href="tel:+919750003600" class="btn btn-gold">Talk to an Insurance Expert</a>
     </section>
 
+    <!--
     <section class="section">
       <div class="section-header">
         <h2>Frequently Asked <span class="gradient-text">Questions</span></h2>
@@ -619,9 +638,10 @@
         </div>
       </div>
     </section>
+    -->
 
-    <section class="section" style="background: linear-gradient(135deg, rgba(0, 63, 136, 0.4), rgba(0, 41, 107, 0.6)); border-radius: 24px; text-align: center; margin-bottom: 4rem; border: 1px solid var(--glass-border);">
-      <h2 style="font-size: 2.2rem; margin-bottom: 1rem;">Ready to Explore Your Medical Insurance Options?</h2>
+    <section class="section" style="background: linear-gradient(135deg, rgba(0, 63, 136, 0.4), rgba(0, 41, 107, 0.6)); border-radius: 24px; text-align: center; margin-bottom: 2rem; border: 1px solid var(--glass-border);">
+      <h2 class="heading-md">Ready to Explore Your Medical Insurance Options?</h2>
       <p style="color: var(--text-gray); margin-bottom: 2rem;">Tell us a little about yourself and choose a convenient time to talk.</p>
       <a href="#form-section" class="btn btn-gold" style="margin-bottom: 1.5rem;">Get Started</a>
       <p style="font-size: 0.9rem; color: var(--accent-gold-light); font-weight: 600;">Simple Form • Personalized Guidance • Convenient Callback</p>
