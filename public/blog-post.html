@@ -22,8 +22,7 @@
   <meta name="twitter:description" id="twDesc" content="Read expert insights from TwinSure." />
   <meta name="twitter:image" id="twImage" content="https://www.twinsure.in/assets/logo.png" />
 
-  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" /></noscript>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link rel="stylesheet" href="/css/fonts.css" />
   <script src="/js/config.js"></script>
 
@@ -417,7 +416,7 @@
     }
     .share-btn.whatsapp:hover { background: #25d366; border-color: #25d366; }
     .share-btn.linkedin:hover { background: #0077b5; border-color: #0077b5; }
-    .share-btn.twitter:hover { background: #1da1f2; border-color: #1da1f2; }
+    .share-btn.twitter:hover { background: #000; border-color: rgba(255, 255, 255, 0.4); color: #fff; }
     .share-btn.copy:hover { background: var(--accent-gold); border-color: var(--accent-gold); color: #000; }
 
     /* Author Box */
@@ -786,8 +785,8 @@
         <button class="share-btn linkedin" onclick="shareLinkedIn()" title="Share on LinkedIn" aria-label="Share on LinkedIn">
           <i class="fab fa-linkedin-in"></i>
         </button>
-        <button class="share-btn twitter" onclick="shareTwitter()" title="Share on X / Twitter" aria-label="Share on Twitter">
-          <i class="fab fa-x-twitter"></i>
+        <button class="share-btn twitter" onclick="shareTwitter()" title="Share on X (Twitter)" aria-label="Share on X (Twitter)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="display:block;"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
         </button>
         <button class="share-btn copy" onclick="copyArticleLink()" title="Copy link" aria-label="Copy link">
           <i class="fas fa-link"></i>
@@ -1120,7 +1119,7 @@
     function shareTwitter() {
       const url = encodeURIComponent(window.location.href);
       const text = encodeURIComponent(currentPost ? currentPost.title : 'TwinSure Blog');
-      window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + url, '_blank');
+      window.open('https://x.com/intent/tweet?text=' + text + '&url=' + url, '_blank');
     }
 
     function copyArticleLink() {
