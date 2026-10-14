@@ -55,10 +55,12 @@
     .category-pill{padding:0.4rem 1.1rem;border-radius:50px;font-size:0.8rem;font-weight:600;border:1px solid var(--glass-border);color:var(--text-gray);background:var(--glass-bg);cursor:pointer;transition:all 0.2s;}
     .category-pill:hover,.category-pill.active{background:var(--accent-gold);color:#000;border-color:var(--accent-gold);}
     .blog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:2rem;}
-    .blog-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:20px;overflow:hidden;transition:transform 0.3s,box-shadow 0.3s,border-color 0.3s;display:flex;flex-direction:column;}
+    .blog-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:20px;overflow:hidden;transition:transform 0.3s,box-shadow 0.3s,border-color 0.3s;display:flex;flex-direction:column;position:relative;}
     .blog-card:hover{transform:translateY(-6px);box-shadow:0 24px 60px rgba(0,0,0,0.4);border-color:rgba(253,197,0,0.3);}
-    .card-image{width:100%;height:200px;object-fit:cover;display:block;}
-    .card-image-placeholder{width:100%;height:200px;background:linear-gradient(135deg,var(--primary-mid),var(--primary-light));display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.15);font-size:3rem;}
+    .blog-card.no-cover{border-top:4px solid var(--accent-gold);}
+    .card-image-wrap{display:block;width:100%;height:200px;overflow:hidden;background:rgba(0,21,51,0.5);}
+    .card-image{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s;}
+    .blog-card:hover .card-image{transform:scale(1.04);}
     .card-body{padding:1.5rem;flex:1;display:flex;flex-direction:column;gap:0.75rem;}
     .card-meta{display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;}
     .card-category{background:rgba(253,197,0,0.15);color:var(--accent-gold);font-size:0.72rem;font-weight:700;padding:0.25rem 0.75rem;border-radius:50px;text-transform:uppercase;letter-spacing:0.5px;}
@@ -191,14 +193,42 @@
         var dateStr = '';
         if (post.publishedAt) dateStr = new Date(post.publishedAt).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'});
         else if (post.createdAt) dateStr = new Date(post.createdAt).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'});
-        var cover = post.coverImage
-          ? '<img class="card-image" src="' + escHtml(post.coverImage) + '" alt="' + escHtml(post.title) + '" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';" /><div class="card-image-placeholder" style="display:none;"><i class="fas fa-file-alt"></i></div>'
-          : '<div class="card-image-placeholder"><i class="fas fa-file-alt"></i></div>';
-        var tagsHtml = '';
-        if (post.tags && post.tags.length) tagsHtml = '<div class="card-tags">' + post.tags.slice(0,4).map(function(t){ return '<span class="card-tag">' + escHtml(t) + '</span>'; }).join('') + '</div>';
-        var authorInitials = (post.author || 'A').split(' ').map(function(w){ return w[0]; }).join('').toUpperCase().slice(0,2);
         var slug = encodeURIComponent(post.slug);
-        return '<article class="blog-card"><a href="blog-post.html?slug=' + slug + '">' + cover + '</a><div class="card-body"><div class="card-meta"><span class="card-category">' + escHtml(post.category || 'General') + '</span>' + (dateStr ? '<span class="card-date"><i class="far fa-calendar-alt" style="margin-right:3px;"></i>' + dateStr + '</span>' : '') + '</div><a href="blog-post.html?slug=' + slug + '"><h2 class="card-title">' + escHtml(post.title) + '</h2></a>' + (post.excerpt ? '<p class="card-excerpt">' + escHtml(post.excerpt) + '</p>' : '') + tagsHtml + '<div class="card-footer"><div class="card-author"><div class="card-author-avatar">' + authorInitials + '</div><span>' + escHtml(post.author || 'TwinSure Team') + '</span></div><a href="blog-post.html?slug=' + slug + '" class="card-read-more">Read <i class="fas fa-arrow-right"></i></a></div></div></article>';
+        var hasCover = !!(post.coverImage && post.coverImage.trim());
+        var coverHtml = hasCover
+          ? '<a href="blog-post.html?slug=' + slug + '" class="card-image-wrap"><img class="card-image" src="' + escHtml(post.coverImage.trim()) + '" alt="' + escHtml(post.title) + '" loading="lazy" onerror="var p=this.closest(\'.blog-card\');if(p)p.classList.add(\'no-cover\');this.closest(\'.card-image-wrap\').remove();" /></a>'
+          : '';
+        var cardClass = 'blog-card' + (hasCover ? '' : ' no-cover');
+        var tagsHtml = '';
+        if (post.tags && Array.isArray(post.tags) && post.tags.length) {
+          var validTags = post.tags.filter(function(t){ return t && String(t).trim(); });
+          if (validTags.length) {
+            tagsHtml = '<div class="card-tags">' + validTags.slice(0,4).map(function(t){ return '<span class="card-tag">' + escHtml(String(t).trim()) + '</span>'; }).join('') + '</div>';
+          }
+        }
+        var authorName = post.author && post.author.trim() ? post.author.trim() : 'TwinSure Team';
+        var authorInitials = authorName.split(' ').map(function(w){ return w[0]; }).join('').toUpperCase().slice(0,2) || 'TS';
+        var excerptHtml = post.excerpt && post.excerpt.trim() ? '<p class="card-excerpt">' + escHtml(post.excerpt.trim()) + '</p>' : '';
+
+        return '<article class="' + cardClass + '">' +
+          coverHtml +
+          '<div class="card-body">' +
+            '<div class="card-meta">' +
+              '<span class="card-category">' + escHtml(post.category || 'General') + '</span>' +
+              (dateStr ? '<span class="card-date"><i class="far fa-calendar-alt" style="margin-right:3px;"></i>' + dateStr + '</span>' : '') +
+            '</div>' +
+            '<a href="blog-post.html?slug=' + slug + '"><h2 class="card-title">' + escHtml(post.title) + '</h2></a>' +
+            excerptHtml +
+            tagsHtml +
+            '<div class="card-footer">' +
+              '<div class="card-author">' +
+                '<div class="card-author-avatar">' + authorInitials + '</div>' +
+                '<span>' + escHtml(authorName) + '</span>' +
+              '</div>' +
+              '<a href="blog-post.html?slug=' + slug + '" class="card-read-more">Read <i class="fas fa-arrow-right"></i></a>' +
+            '</div>' +
+          '</div>' +
+        '</article>';
       }).join('');
     }
 

@@ -3485,8 +3485,11 @@
 
             <!-- Excerpt -->
             <div class="claim-form-group">
-              <label>Excerpt / Short Description</label>
-              <textarea id="blogExcerpt" class="claim-form-control" rows="2" placeholder="A brief summary shown in the blog listing..." style="resize:vertical;"></textarea>
+              <label style="display:flex; justify-content:space-between; align-items:center;">
+                <span>Excerpt / Short Description (Optional)</span>
+                <span style="font-size:0.75rem; color:#64748b; font-weight:normal;">Auto-adjusts if skipped</span>
+              </label>
+              <textarea id="blogExcerpt" class="claim-form-control" rows="2" placeholder="A brief summary shown in the blog listing (optional)..." style="resize:vertical;"></textarea>
             </div>
 
             <!-- Content (Word Rich Text Editor) -->
@@ -3542,15 +3545,15 @@
             <!-- Cover Image (Upload from Project / Computer) -->
             <div class="claim-form-group">
               <label style="display:flex; justify-content:space-between; align-items:center;">
-                <span>Cover Image (Upload from Project / Device)</span>
-                <span id="coverUploadStatus" style="font-size:0.75rem; color:#64748b; font-weight:normal;">PNG, JPG, WebP supported</span>
+                <span>Cover Image (Optional — Skip to display cleanly without image)</span>
+                <span id="coverUploadStatus" style="font-size:0.75rem; color:#64748b; font-weight:normal;">PNG, JPG, WebP</span>
               </label>
 
               <!-- Upload Click / Drop Box -->
               <div id="coverUploadDropzone" onclick="document.getElementById('blogCoverFileInput').click()" style="border:2px dashed #cbd5e1; border-radius:12px; padding:1.2rem; text-align:center; cursor:pointer; background:#f8fafc; transition:all 0.2s;" onmouseover="this.style.borderColor='#6366f1';this.style.background='#f1f5f9';" onmouseout="this.style.borderColor='#cbd5e1';this.style.background='#f8fafc';">
                 <i class="fas fa-cloud-upload-alt" style="font-size:2rem; color:#6366f1; margin-bottom:0.4rem; display:block;"></i>
-                <div style="font-weight:700; color:#1e293b; font-size:0.9rem;">Click to browse or drop an image file</div>
-                <div style="font-size:0.75rem; color:#94a3b8; margin-top:2px;">Upload a cover image directly from your computer</div>
+                <div style="font-weight:700; color:#1e293b; font-size:0.9rem;">Click to browse or drop an image file (optional)</div>
+                <div style="font-size:0.75rem; color:#94a3b8; margin-top:2px;">Leave empty if you don't want an image — blog UI adjusts automatically</div>
               </div>
 
               <input type="file" id="blogCoverFileInput" accept="image/jpeg,image/png,image/webp,image/gif" style="display:none;" onchange="handleCoverImageSelect(this)" />
@@ -3589,7 +3592,10 @@
 
             <!-- Tags -->
             <div class="claim-form-group" style="margin-top:1.2rem;">
-              <label>Tags (comma-separated)</label>
+              <label style="display:flex; justify-content:space-between; align-items:center;">
+                <span>Tags (Optional, comma-separated)</span>
+                <span style="font-size:0.75rem; color:#64748b; font-weight:normal;">Auto-adjusts if skipped</span>
+              </label>
               <input type="text" id="blogTags" class="claim-form-control" placeholder="insurance, health, tips" />
             </div>
 

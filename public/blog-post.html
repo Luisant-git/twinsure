@@ -568,6 +568,9 @@
       transform: translateY(-4px);
       border-color: rgba(253, 197, 0, 0.3);
     }
+    .related-card.no-cover {
+      border-top: 3px solid var(--accent-gold);
+    }
     .related-img {
       width: 100%;
       height: 140px;
@@ -756,7 +759,7 @@
     </header>
 
     <div class="post-featured-image" id="featuredImageWrap" style="display: none;">
-      <img id="featuredImg" src="" alt="Featured cover image" />
+      <img id="featuredImg" src="" alt="Featured cover image" onerror="this.parentElement.style.display='none';" />
     </div>
 
     <div class="post-lead-excerpt" id="postExcerpt" style="display: none;"></div>
@@ -1000,20 +1003,24 @@
       // Read time
       document.getElementById('readTime').textContent = calculateReadingTime(post.content);
 
-      // Featured Cover Image
+      // Featured Cover Image - auto-collapses if omitted or failed to load
       const featuredWrap = document.getElementById('featuredImageWrap');
       const featuredImg = document.getElementById('featuredImg');
-      if (post.coverImage && featuredWrap && featuredImg) {
-        featuredImg.src = post.coverImage;
-        featuredImg.alt = post.title;
+      if (post.coverImage && post.coverImage.trim() && featuredWrap && featuredImg) {
+        featuredImg.src = post.coverImage.trim();
+        featuredImg.alt = post.title || 'Article cover';
         featuredWrap.style.display = 'block';
+      } else if (featuredWrap) {
+        featuredWrap.style.display = 'none';
       }
 
-      // Excerpt
+      // Excerpt - auto-collapses if omitted
       const excerptEl = document.getElementById('postExcerpt');
-      if (post.excerpt && excerptEl) {
-        excerptEl.textContent = post.excerpt;
+      if (post.excerpt && post.excerpt.trim() && excerptEl) {
+        excerptEl.textContent = post.excerpt.trim();
         excerptEl.style.display = 'block';
+      } else if (excerptEl) {
+        excerptEl.style.display = 'none';
       }
 
       // Content Body
@@ -1022,14 +1029,21 @@
         bodyEl.innerHTML = formatContent(post.content);
       }
 
-      // Tags
+      // Tags - auto-collapses if omitted
       const tagsSection = document.getElementById('postTagsSection');
       const tagsList = document.getElementById('postTagsList');
-      if (post.tags && post.tags.length && tagsSection && tagsList) {
-        tagsList.innerHTML = post.tags.map(t =>
-          `<span class="post-tag">#${escapeHtml(t)}</span>`
-        ).join('');
-        tagsSection.style.display = 'flex';
+      if (post.tags && Array.isArray(post.tags) && post.tags.length && tagsSection && tagsList) {
+        const validTags = post.tags.map(t => (t || '').trim()).filter(Boolean);
+        if (validTags.length > 0) {
+          tagsList.innerHTML = validTags.map(t =>
+            `<span class="post-tag">#${escapeHtml(t)}</span>`
+          ).join('');
+          tagsSection.style.display = 'flex';
+        } else {
+          tagsSection.style.display = 'none';
+        }
+      } else if (tagsSection) {
+        tagsSection.style.display = 'none';
       }
     }
 
@@ -1050,12 +1064,13 @@
         if (!grid || !section) return;
 
         grid.innerHTML = others.map(post => {
-          const imgHtml = post.coverImage
-            ? `<img class="related-img" src="${escapeHtml(post.coverImage)}" alt="${escapeHtml(post.title)}" onerror="this.style.display='none'" />`
-            : `<div class="related-img" style="display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.2);"><i class="fas fa-newspaper" style="font-size:2rem;"></i></div>`;
+          const hasCover = !!(post.coverImage && post.coverImage.trim());
+          const imgHtml = hasCover
+            ? `<img class="related-img" src="${escapeHtml(post.coverImage.trim())}" alt="${escapeHtml(post.title)}" onerror="var c=this.closest('.related-card');if(c)c.classList.add('no-cover');this.remove();" />`
+            : '';
 
           return `
-            <a href="/blog/${encodeURIComponent(post.slug)}" class="related-card">
+            <a href="blog-post.html?slug=${encodeURIComponent(post.slug)}" class="related-card${hasCover ? '' : ' no-cover'}">
               ${imgHtml}
               <div class="related-body">
                 <span class="related-cat">${escapeHtml(post.category || 'General')}</span>
