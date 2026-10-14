@@ -55,9 +55,11 @@
     .category-pill{padding:0.4rem 1.1rem;border-radius:50px;font-size:0.8rem;font-weight:600;border:1px solid var(--glass-border);color:var(--text-gray);background:var(--glass-bg);cursor:pointer;transition:all 0.2s;}
     .category-pill:hover,.category-pill.active{background:var(--accent-gold);color:#000;border-color:var(--accent-gold);}
     .blog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:2rem;}
-    .blog-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:20px;overflow:hidden;transition:transform 0.3s,box-shadow 0.3s,border-color 0.3s;display:flex;flex-direction:column;position:relative;}
-    .blog-card:hover{transform:translateY(-6px);box-shadow:0 24px 60px rgba(0,0,0,0.4);border-color:rgba(253,197,0,0.3);}
-    .blog-card.no-cover{border-top:4px solid var(--accent-gold);}
+    .blog-card{background:linear-gradient(165deg, rgba(255,255,255,0.05) 0%, rgba(0,21,51,0.65) 100%);border:1px solid rgba(255,255,255,0.08);border-radius:20px;overflow:hidden;transition:transform 0.3s cubic-bezier(0.16,1,0.3,1),box-shadow 0.3s,border-color 0.3s;display:flex;flex-direction:column;position:relative;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+    .blog-card:hover{transform:translateY(-6px);box-shadow:0 24px 60px rgba(0,0,0,0.45);border-color:rgba(253,197,0,0.35);}
+    .blog-card.no-cover{background:radial-gradient(circle at top right, rgba(253,197,0,0.08) 0%, transparent 65%), linear-gradient(165deg, rgba(255,255,255,0.06) 0%, rgba(0,21,51,0.7) 100%);}
+    .blog-card.no-cover .card-body{padding:2rem 1.8rem 1.6rem;}
+    .card-icon-badge{width:36px;height:36px;border-radius:10px;background:rgba(253,197,0,0.12);color:var(--accent-gold);display:inline-flex;align-items:center;justify-content:center;font-size:0.95rem;margin-bottom:0.2rem;}
     .card-image-wrap{display:block;width:100%;height:200px;overflow:hidden;background:rgba(0,21,51,0.5);}
     .card-image{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s;}
     .blog-card:hover .card-image{transform:scale(1.04);}
@@ -213,6 +215,7 @@
         return '<article class="' + cardClass + '">' +
           coverHtml +
           '<div class="card-body">' +
+            (!hasCover ? '<div class="card-icon-badge"><i class="fas fa-newspaper"></i></div>' : '') +
             '<div class="card-meta">' +
               '<span class="card-category">' + escHtml(post.category || 'General') + '</span>' +
               (dateStr ? '<span class="card-date"><i class="far fa-calendar-alt" style="margin-right:3px;"></i>' + dateStr + '</span>' : '') +
