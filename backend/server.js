@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const fs = require('fs');
 const express = require('express');
 const compression = require('compression');
 const cors = require('cors');
@@ -265,7 +266,7 @@ function normalizeHelpRequestStatus(status) {
 async function connectAndSeed() {
   await getDb();
 
-  const collectionsToCreate = ['users', 'services', 'partners', 'recommendation_questions', 'leads', 'form_help_requests', 'settings', 'contacts', 'claims', 'testimonials', 'user_policies', 'appointments', 'user_services', 'user_updates', 'listening'];
+  const collectionsToCreate = ['users', 'services', 'partners', 'recommendation_questions', 'leads', 'form_help_requests', 'settings', 'contacts', 'claims', 'testimonials', 'user_policies', 'appointments', 'user_services', 'user_updates', 'listening', 'blogs'];
   for (const collectionName of collectionsToCreate) {
     await createCollectionIfNotExists(collectionName);
   }
@@ -381,6 +382,8 @@ const allowedOrigins = [
   'http://127.0.0.1:3000',
   'http://localhost:8000',
   'http://127.0.0.1:8000',
+  'http://localhost:8080',
+  'http://127.0.0.1:8080',
   'https://twinsure.in',
   'https://www.twinsure.in',
   'http://twinsure.in',
@@ -390,7 +393,7 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin || allowedOrigins.includes(origin) || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -434,6 +437,10 @@ const strictLimiter = rateLimit({
   limit: async (req, res) => await getLoginRateLimit(),
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => {
+    const ip = req.ip || req.connection?.remoteAddress || '';
+    return ip.includes('127.0.0.1') || ip.includes('::1') || ip.includes('localhost');
+  }
 });
 
 app.use(express.json({ limit: '10mb' }));
@@ -458,6 +465,17 @@ app.use((err, req, res, next) => {
 app.use(express.static(publicDir));
 app.get('/', (req, res) => {
   res.sendFile(path.join(publicDir, 'index.html'));
+});
+
+// Blog public pages
+app.get('/blog', (req, res) => {
+  res.sendFile(path.join(publicDir, 'blog.html'));
+});
+app.get('/blogs', (req, res) => {
+  res.sendFile(path.join(publicDir, 'blog.html'));
+});
+app.get('/blog/:slug', (req, res) => {
+  res.sendFile(path.join(publicDir, 'blog-post.html'));
 });
 
 function createApiRouter() {
@@ -494,12 +512,14 @@ function createApiRouter() {
         return;
       }
 
-      if (!config.jwtSecret) {
-        sendJson(res, 500, { message: 'Server configuration error.' });
+      const jwtSecret = config.jwtSecret || process.env.JWT_SECRET;
+      if (!jwtSecret) {
+        console.error('Login error: JWT_SECRET is not configured.');
+        sendJson(res, 500, { message: 'Server configuration error: JWT_SECRET is missing.' });
         return;
       }
       const timeoutMinutes = settings && settings.sessionTimeout ? parseInt(settings.sessionTimeout) : 60;
-      const token = jwt.sign({ id: user._id, role: user.role }, config.jwtSecret, { expiresIn: `${timeoutMinutes}m` });
+      const token = jwt.sign({ id: user._id, role: user.role }, jwtSecret, { expiresIn: `${timeoutMinutes}m` });
       sendJson(res, 200, {
         message: 'Login successful.',
         token,
@@ -507,8 +527,12 @@ function createApiRouter() {
         name: user.name
       });
     } catch (error) {
-      console.error('Database/Server Error:', error.message);
-      sendJson(res, 500, { message: 'An internal server error occurred.' });
+      console.error('Database/Server Error in login:', error);
+      const isDebug = process.env.APP_DEBUG === 'true' || process.env.NODE_ENV !== 'production';
+      sendJson(res, 500, {
+        message: isDebug ? `Login Error: ${error.message}` : 'An internal server error occurred.',
+        error: isDebug ? error.message : undefined
+      });
     }
   });
 
@@ -2071,169 +2095,7 @@ function createApiRouter() {
     }
   });
 
-  router.get('/admin/blogs', requireRole('admin'), async (req, res) => {
-    try {
-      const blogs = await findMany('blogs', {}, { sort: { displayOrder: 1 } });
-      sendJson(res, 200, blogs);
-    } catch (error) {
-      console.error('Database/Server Error:', error.message);
-      sendJson(res, 500, { error: 'An internal server error occurred.' });
-    }
-  });
 
-  router.post('/admin/blogs', requireRole('admin'), upload.single('coverFile'), async (req, res) => {
-    const body = collectBody(req);
-    const title = normalizeString(body.title);
-    const author = normalizeString(body.author);
-    const content = normalizeString(body.content);
-    const link = normalizeString(body.link);
-    const isActive = body.isActive === 'true' || body.isActive === true;
-
-    if (!title || !author || !content) {
-      sendJson(res, 400, { error: 'Missing required fields: title, author (from whom), content' });
-      return;
-    }
-
-    if (title.length > 200) {
-      sendJson(res, 400, { error: 'Title cannot exceed 200 characters' });
-      return;
-    }
-    if (author.length > 100) {
-      sendJson(res, 400, { error: 'Author/From Whom cannot exceed 100 characters' });
-      return;
-    }
-    if (content.length > 1000) {
-      sendJson(res, 400, { error: 'Content cannot exceed 1000 characters' });
-      return;
-    }
-    if (link && link.length > 250) {
-      sendJson(res, 400, { error: 'Link cannot exceed 250 characters' });
-      return;
-    }
-
-    try {
-      let coverUrl = '';
-      let coverPath = null;
-
-      if (req.file) {
-        const cleanName = sanitizeFileName(req.file.originalname);
-        const fileName = `${Math.floor(Date.now() / 1000)}_${cleanName}`;
-        coverPath = `public/blogs/covers/${fileName}`;
-        await r2.uploadToR2(req.file.buffer, coverPath, req.file.mimetype || 'image/jpeg');
-        coverUrl = await r2.getFileUrl(coverPath);
-      }
-
-      const maxOrder = await findOne('blogs', {}, { sort: { displayOrder: -1 } });
-      const nextOrder = (maxOrder && maxOrder.displayOrder) ? maxOrder.displayOrder + 1 : 1;
-
-      const blog = {
-        title,
-        author,
-        content,
-        link: link || '',
-        coverUrl,
-        coverPath,
-        displayOrder: nextOrder,
-        isActive,
-        createdAt: formatDateTime(new Date()),
-        updatedAt: formatDateTime(new Date())
-      };
-
-      await insertOne('blogs', blog);
-      sendJson(res, 201, { success: true, message: 'Blog created successfully.' });
-    } catch (error) {
-      console.error('Database/Server Error:', error.message);
-      sendJson(res, 500, { error: 'An internal server error occurred.' });
-    }
-  });
-
-  router.put('/admin/blogs/:id', requireRole('admin'), upload.single('coverFile'), async (req, res) => {
-    const blogId = req.params.id;
-    const body = collectBody(req);
-    const title = normalizeString(body.title);
-    const author = normalizeString(body.author);
-    const content = normalizeString(body.content);
-    const link = normalizeString(body.link);
-    const isActive = body.isActive === 'true' || body.isActive === true;
-
-    if (!title || !author || !content) {
-      sendJson(res, 400, { error: 'Missing required fields: title, author (from whom), content' });
-      return;
-    }
-
-    if (title.length > 200) {
-      sendJson(res, 400, { error: 'Title cannot exceed 200 characters' });
-      return;
-    }
-    if (author.length > 100) {
-      sendJson(res, 400, { error: 'Author/From Whom cannot exceed 100 characters' });
-      return;
-    }
-    if (content.length > 1000) {
-      sendJson(res, 400, { error: 'Content cannot exceed 1000 characters' });
-      return;
-    }
-    if (link && link.length > 250) {
-      sendJson(res, 400, { error: 'Link cannot exceed 250 characters' });
-      return;
-    }
-
-    try {
-      const existing = await findOne('blogs', { _id: new ObjectId(blogId) });
-      if (!existing) {
-        sendJson(res, 404, { error: 'Blog not found' });
-        return;
-      }
-
-      let coverUrl = existing.coverUrl || '';
-      let coverPath = existing.coverPath || null;
-
-      if (req.file) {
-        // Delete old cover from R2 if present
-        if (existing.coverPath) {
-          try { await r2.deleteFromR2(existing.coverPath); } catch (_) {}
-        }
-        const cleanName = sanitizeFileName(req.file.originalname);
-        const fileName = `${Math.floor(Date.now() / 1000)}_${cleanName}`;
-        coverPath = `public/blogs/covers/${fileName}`;
-        await r2.uploadToR2(req.file.buffer, coverPath, req.file.mimetype || 'image/jpeg');
-        coverUrl = await r2.getFileUrl(coverPath);
-      }
-
-      await updateOne('blogs', { _id: new ObjectId(blogId) }, {
-        $set: {
-          title,
-          author,
-          content,
-          link: link || '',
-          coverUrl,
-          coverPath,
-          isActive,
-          updatedAt: formatDateTime(new Date())
-        }
-      });
-
-      sendJson(res, 200, { success: true, message: 'Blog updated successfully.' });
-    } catch (error) {
-      console.error('Database/Server Error:', error.message);
-      sendJson(res, 500, { error: 'An internal server error occurred.' });
-    }
-  });
-
-  router.delete('/admin/blogs/:id', requireRole('admin'), async (req, res) => {
-    const blogId = req.params.id;
-    try {
-      const result = await deleteOne('blogs', { _id: new ObjectId(blogId) });
-      if (result.deletedCount === 0) {
-        sendJson(res, 404, { error: 'Blog not found' });
-        return;
-      }
-      sendJson(res, 200, { success: true, message: 'Blog deleted successfully.' });
-    } catch (error) {
-      console.error('Database/Server Error:', error.message);
-      sendJson(res, 500, { error: 'An internal server error occurred.' });
-    }
-  });
 
   router.post('/admin/blogs/reorder', requireRole('admin'), async (req, res) => {
     const body = collectBody(req);
@@ -3329,6 +3191,249 @@ function createApiRouter() {
       sendJson(res, 500, { message: 'Error fetching newsletter history.' });
     }
   });
+
+  // ─── Blog Routes ──────────────────────────────────────────────────────────────
+
+  // Helper: generate a URL-safe slug from a title
+  function generateSlug(title) {
+    return title
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_-]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  const blogUploadsDir = path.join(publicDir, 'uploads', 'blogs');
+  try {
+    if (!fs.existsSync(blogUploadsDir)) {
+      fs.mkdirSync(blogUploadsDir, { recursive: true });
+    }
+  } catch (e) {
+    console.warn('Could not create blog uploads dir:', e.message);
+  }
+
+  function saveBlogCoverImage(coverData, uploadedFile = null) {
+    if (uploadedFile && uploadedFile.buffer) {
+      try {
+        const cleanName = sanitizeFileName(uploadedFile.originalname || 'cover.jpg');
+        const fileName = `${Date.now()}_${cleanName}`;
+        const filePath = path.join(blogUploadsDir, fileName);
+        fs.writeFileSync(filePath, uploadedFile.buffer);
+        return `/uploads/blogs/${fileName}`;
+      } catch (err) {
+        console.error('Error saving uploaded cover file:', err.message);
+      }
+    }
+
+    if (!coverData || typeof coverData !== 'string') return '';
+    const match = coverData.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+    if (!match) return coverData; // Already a URL or relative path
+
+    try {
+      let ext = match[1].toLowerCase();
+      if (ext === 'jpeg') ext = 'jpg';
+      if (ext.includes('svg')) ext = 'svg';
+      const buffer = Buffer.from(match[2], 'base64');
+      const fileName = `cover_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${ext}`;
+      const filePath = path.join(blogUploadsDir, fileName);
+      fs.writeFileSync(filePath, buffer);
+      return `/uploads/blogs/${fileName}`;
+    } catch (err) {
+      console.error('Error saving base64 cover image:', err.message);
+      return coverData;
+    }
+  }
+
+  // GET /backend/api/blogs  — public: list published posts
+  router.get('/blogs', async (req, res) => {
+    try {
+      const posts = await findMany('blogs', { status: 'published' }, { sort: { publishedAt: -1 } });
+      sendJson(res, 200, { success: true, posts });
+    } catch (err) {
+      console.error('Error fetching blog posts:', err);
+      sendJson(res, 500, { message: 'Error fetching blog posts.' });
+    }
+  });
+
+  // GET /backend/api/blogs/:slug  — public: get single published post by slug
+  router.get('/blogs/:slug', async (req, res) => {
+    try {
+      const post = await findOne('blogs', { slug: req.params.slug, status: 'published' });
+      if (!post) {
+        sendJson(res, 404, { message: 'Blog post not found.' });
+        return;
+      }
+      sendJson(res, 200, { success: true, post });
+    } catch (err) {
+      console.error('Error fetching blog post:', err);
+      sendJson(res, 500, { message: 'Error fetching blog post.' });
+    }
+  });
+
+  // GET /backend/api/admin/blogs  — admin: list all posts (all statuses)
+  router.get('/admin/blogs', requireRole('admin'), async (req, res) => {
+    try {
+      const posts = await findMany('blogs', {}, { sort: { createdAt: -1 } });
+      sendJson(res, 200, { success: true, posts });
+    } catch (err) {
+      console.error('Error fetching admin blog posts:', err);
+      sendJson(res, 500, { message: 'Error fetching blog posts.' });
+    }
+  });
+
+  // POST /backend/api/admin/blogs  — admin: create new post
+  router.post('/admin/blogs', requireRole('admin'), upload.single('coverFile'), async (req, res) => {
+    const data = collectBody(req);
+    const title = normalizeString(data.title);
+    const content = normalizeString(data.content);
+    const excerpt = normalizeString(data.excerpt);
+    const category = normalizeString(data.category) || 'General';
+    const author = normalizeString(data.author) || 'Admin';
+    const tags = Array.isArray(data.tags)
+      ? data.tags.map(t => normalizeString(t)).filter(Boolean)
+      : (typeof data.tags === 'string' ? data.tags.split(',').map(t => t.trim()).filter(Boolean) : []);
+    const status = ['published', 'draft'].includes(data.status) ? data.status : 'draft';
+    const coverImage = saveBlogCoverImage(normalizeString(data.coverImage), req.file);
+    const metaTitle = normalizeString(data.metaTitle);
+    const metaDescription = normalizeString(data.metaDescription);
+
+    if (!title || !content) {
+      sendJson(res, 400, { message: 'Title and content are required.' });
+      return;
+    }
+
+    try {
+      let slug = data.slug ? generateSlug(data.slug) : generateSlug(title);
+      if (!slug) slug = `post-${Date.now()}`;
+      // Ensure slug uniqueness
+      const existing = await findOne('blogs', { slug });
+      if (existing) {
+        slug = `${slug}-${Date.now()}`;
+      }
+
+      const now = new Date();
+      const post = {
+        title,
+        slug,
+        content,
+        excerpt,
+        category,
+        author,
+        tags,
+        status,
+        coverImage,
+        metaTitle: metaTitle || title,
+        metaDescription: metaDescription || excerpt,
+        publishedAt: status === 'published' ? now : null,
+        createdAt: now,
+        updatedAt: now
+      };
+
+      const result = await insertOne('blogs', post);
+      sendJson(res, 201, { success: true, message: 'Blog post created.', id: result.insertedId, slug, coverImage });
+    } catch (err) {
+      console.error('Error creating blog post:', err);
+      sendJson(res, 500, { message: 'Error creating blog post.' });
+    }
+  });
+
+  // PUT /backend/api/admin/blogs/:id  — admin: update post
+  router.put('/admin/blogs/:id', requireRole('admin'), upload.single('coverFile'), async (req, res) => {
+    const { id } = req.params;
+    const data = collectBody(req);
+
+    if (!id) {
+      sendJson(res, 400, { message: 'Blog post ID is required.' });
+      return;
+    }
+
+    try {
+      const existing = await findOne('blogs', { _id: toObjectId(id) });
+      if (!existing) {
+        sendJson(res, 404, { message: 'Blog post not found.' });
+        return;
+      }
+
+      const title = data.title !== undefined ? normalizeString(data.title) : existing.title;
+      const content = data.content !== undefined ? normalizeString(data.content) : existing.content;
+      const excerpt = data.excerpt !== undefined ? normalizeString(data.excerpt) : existing.excerpt;
+      const category = data.category !== undefined ? normalizeString(data.category) : existing.category;
+      const author = data.author !== undefined ? normalizeString(data.author) : existing.author;
+      const tags = data.tags !== undefined
+        ? (Array.isArray(data.tags) ? data.tags.map(t => normalizeString(t)).filter(Boolean) : (typeof data.tags === 'string' ? data.tags.split(',').map(t => t.trim()).filter(Boolean) : []))
+        : existing.tags;
+      const newStatus = data.status !== undefined && ['published', 'draft'].includes(data.status) ? data.status : existing.status;
+      
+      let coverImage = existing.coverImage || '';
+      if (req.file) {
+        coverImage = saveBlogCoverImage(null, req.file);
+      } else if (data.coverImage !== undefined) {
+        coverImage = saveBlogCoverImage(normalizeString(data.coverImage));
+      }
+
+      const metaTitle = data.metaTitle !== undefined ? normalizeString(data.metaTitle) : existing.metaTitle;
+      const metaDescription = data.metaDescription !== undefined ? normalizeString(data.metaDescription) : existing.metaDescription;
+
+      if (!title || !content) {
+        sendJson(res, 400, { message: 'Title and content are required.' });
+        return;
+      }
+
+      let slug = existing.slug;
+      if (data.slug && normalizeString(data.slug) !== existing.slug) {
+        slug = generateSlug(data.slug);
+      } else if (data.title && normalizeString(data.title) !== existing.title) {
+        slug = generateSlug(title);
+      }
+
+      const slugConflict = await findOne('blogs', { slug, _id: { $ne: toObjectId(id) } });
+      if (slugConflict) {
+        slug = `${slug}-${Date.now()}`;
+      }
+
+      const now = new Date();
+      const updateData = {
+        title,
+        slug,
+        content,
+        excerpt,
+        category,
+        author,
+        tags,
+        status: newStatus,
+        coverImage,
+        metaTitle: metaTitle || title,
+        metaDescription: metaDescription || excerpt,
+        publishedAt: newStatus === 'published' && !existing.publishedAt ? now : existing.publishedAt,
+        updatedAt: now
+      };
+
+      await updateOne('blogs', { _id: toObjectId(id) }, { $set: updateData });
+      sendJson(res, 200, { success: true, message: 'Blog post updated.', slug, coverImage });
+    } catch (err) {
+      console.error('Error updating blog post:', err);
+      sendJson(res, 500, { message: 'Error updating blog post.' });
+    }
+  });
+
+  // DELETE /backend/api/admin/blogs/:id  — admin: delete post
+  router.delete('/admin/blogs/:id', requireRole('admin'), async (req, res) => {
+    const { id } = req.params;
+    if (!id) {
+      sendJson(res, 400, { message: 'Blog post ID is required.' });
+      return;
+    }
+    try {
+      await deleteOne('blogs', { _id: toObjectId(id) });
+      sendJson(res, 200, { success: true, message: 'Blog post deleted.' });
+    } catch (err) {
+      console.error('Error deleting blog post:', err);
+      sendJson(res, 500, { message: 'Error deleting blog post.' });
+    }
+  });
+
+  // ─────────────────────────────────────────────────────────────────────────────
 
   router.all('*', (req, res) => {
     methodNotAllowed(res, req);

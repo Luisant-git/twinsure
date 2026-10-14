@@ -1,0 +1,1122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title id="pageTitle">Blog Post | TwinSure — Insurance & Advisory</title>
+  <meta id="metaDesc" name="description" content="Read expert insights and insurance advice from TwinSure." />
+  <link rel="canonical" id="canonicalLink" href="https://www.twinsure.in/blog" />
+  <link rel="icon" href="/assets/logo.png" type="image/png" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:url" id="ogUrl" content="https://www.twinsure.in/blog" />
+  <meta property="og:title" id="ogTitle" content="Blog Post | TwinSure" />
+  <meta property="og:description" id="ogDesc" content="Read expert insights from TwinSure." />
+  <meta property="og:image" id="ogImage" content="https://www.twinsure.in/assets/logo.png" />
+  <meta property="og:site_name" content="TwinSure" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" id="twTitle" content="Blog Post | TwinSure" />
+  <meta name="twitter:description" id="twDesc" content="Read expert insights from TwinSure." />
+  <meta name="twitter:image" id="twImage" content="https://www.twinsure.in/assets/logo.png" />
+
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" /></noscript>
+  <link rel="stylesheet" href="/css/fonts.css" />
+  <script src="/js/config.js"></script>
+
+  <style>
+    :root {
+      --primary-dark: #001533;
+      --primary-mid: #00296b;
+      --primary-light: #003f88;
+      --primary-lighter: #00509d;
+      --accent-gold: #fdc500;
+      --accent-gold-light: #ffd500;
+      --accent-gold-dark: #d4a000;
+      --text-white: #ffffff;
+      --text-gray: #94a3b8;
+      --text-muted: #64748b;
+      --glass-bg: rgba(255, 255, 255, 0.04);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --card-bg: rgba(0, 29, 74, 0.5);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; overflow-x: clip; scroll-behavior: smooth; }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--primary-dark);
+      color: var(--text-white);
+      background-image:
+        radial-gradient(rgba(255, 255, 255, 0.05) 1.5px, transparent 1.5px),
+        radial-gradient(rgba(253, 197, 0, 0.05) 1.5px, transparent 1.5px);
+      background-size: 32px 32px, 48px 48px;
+      background-position: 0 0, 16px 16px;
+      line-height: 1.6;
+    }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+
+    /* Reading Progress Bar */
+    #readingProgress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3.5px;
+      background: linear-gradient(90deg, var(--accent-gold), #ff8800);
+      width: 0%;
+      z-index: 9999;
+      transition: width 0.1s;
+    }
+
+    /* Navbar */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 1.1rem 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0, 21, 51, 0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--glass-border);
+      transition: all 0.3s;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--accent-gold);
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    .logo img { height: 32px; width: auto; }
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+    .nav-links a {
+      color: var(--text-gray);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent-gold); }
+    .nav-cta {
+      background: var(--accent-gold);
+      color: #000 !important;
+      padding: 0.55rem 1.3rem;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      transition: all 0.25s;
+    }
+    .nav-cta:hover {
+      background: var(--accent-gold-light);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(253, 197, 0, 0.3);
+    }
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.3rem;
+      cursor: pointer;
+    }
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(0, 21, 51, 0.98);
+        padding: 1.5rem 5%;
+        gap: 1.2rem;
+        border-top: 1px solid var(--glass-border);
+      }
+      .nav-links.open { display: flex; }
+      .hamburger { display: block; }
+    }
+
+    /* Article Container */
+    .article-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 7rem 5% 5rem;
+    }
+
+    /* Breadcrumbs */
+    .breadcrumbs {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .breadcrumbs a { color: var(--text-gray); transition: color 0.2s; }
+    .breadcrumbs a:hover { color: var(--accent-gold); }
+    .breadcrumbs span.sep { opacity: 0.4; }
+    .breadcrumbs span.current { color: var(--accent-gold); font-weight: 600; max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* Post Header */
+    .post-header {
+      margin-bottom: 2.5rem;
+    }
+    .post-category-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(253, 197, 0, 0.15);
+      border: 1px solid rgba(253, 197, 0, 0.3);
+      color: var(--accent-gold);
+      padding: 0.35rem 1rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 1.2rem;
+    }
+    .post-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      line-height: 1.25;
+      color: var(--text-white);
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.5px;
+    }
+    .post-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      padding: 1.2rem 0;
+      border-top: 1px solid var(--glass-border);
+      border-bottom: 1px solid var(--glass-border);
+      flex-wrap: wrap;
+    }
+    .author-info {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+    .author-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-mid), var(--primary-light));
+      border: 2px solid rgba(253, 197, 0, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-gold);
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+    .author-name {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-white);
+    }
+    .author-role {
+      font-size: 0.76rem;
+      color: var(--text-gray);
+    }
+    .post-meta-details {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+    .post-meta-details span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    /* Featured Cover Image */
+    .post-featured-image {
+      margin: 2rem 0 3rem;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid var(--glass-border);
+      background: rgba(0, 0, 0, 0.3);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+    }
+    .post-featured-image img {
+      width: 100%;
+      max-height: 480px;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Excerpt Box */
+    .post-lead-excerpt {
+      background: linear-gradient(135deg, rgba(253, 197, 0, 0.08), rgba(0, 41, 107, 0.25));
+      border-left: 4px solid var(--accent-gold);
+      border-radius: 0 16px 16px 0;
+      padding: 1.4rem 1.8rem;
+      font-size: 1.12rem;
+      font-style: italic;
+      color: #e2e8f0;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+    }
+
+    /* Article Content Typography */
+    .post-content {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: #cbd5e1;
+    }
+    .post-content p {
+      margin-bottom: 1.5rem;
+    }
+    .post-content h2 {
+      font-size: 1.65rem;
+      font-weight: 800;
+      color: var(--text-white);
+      margin: 2.5rem 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+    }
+    .post-content h2::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 40px;
+      height: 2px;
+      background: var(--accent-gold);
+    }
+    .post-content h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin: 2rem 0 0.8rem;
+    }
+    .post-content ul, .post-content ol {
+      margin: 1.2rem 0 1.8rem 1.5rem;
+    }
+    .post-content ul { list-style: disc; }
+    .post-content ol { list-style: decimal; }
+    .post-content li {
+      margin-bottom: 0.6rem;
+      padding-left: 0.3rem;
+    }
+    .post-content strong, .post-content b {
+      color: var(--text-white);
+      font-weight: 700;
+    }
+    .post-content blockquote {
+      border-left: 3px solid var(--accent-gold);
+      padding: 1rem 1.5rem;
+      margin: 1.8rem 0;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 0 12px 12px 0;
+      font-style: italic;
+      color: #e2e8f0;
+    }
+    .post-content a {
+      color: var(--accent-gold);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .post-content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      margin: 1.5rem 0;
+      border: 1px solid var(--glass-border);
+    }
+
+    /* Post Tags */
+    .post-tags-section {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.6rem;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--glass-border);
+    }
+    .post-tags-section .tag-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-right: 0.4rem;
+    }
+    .post-tag {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      color: #cbd5e1;
+      padding: 0.3rem 0.85rem;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      transition: all 0.2s;
+    }
+    .post-tag:hover {
+      border-color: var(--accent-gold);
+      color: var(--accent-gold);
+    }
+
+    /* Share Section */
+    .share-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      margin: 2.5rem 0;
+      padding: 1.4rem 1.8rem;
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      flex-wrap: wrap;
+    }
+    .share-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-white);
+    }
+    .share-buttons {
+      display: flex;
+      gap: 0.7rem;
+      align-items: center;
+    }
+    .share-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-gray);
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+    .share-btn:hover {
+      transform: translateY(-2px);
+      color: #fff;
+    }
+    .share-btn.whatsapp:hover { background: #25d366; border-color: #25d366; }
+    .share-btn.linkedin:hover { background: #0077b5; border-color: #0077b5; }
+    .share-btn.twitter:hover { background: #1da1f2; border-color: #1da1f2; }
+    .share-btn.copy:hover { background: var(--accent-gold); border-color: var(--accent-gold); color: #000; }
+
+    /* Author Box */
+    .author-box {
+      margin: 3rem 0;
+      padding: 2rem;
+      background: linear-gradient(135deg, rgba(0, 41, 107, 0.4), rgba(0, 63, 136, 0.2));
+      border: 1px solid rgba(253, 197, 0, 0.2);
+      border-radius: 20px;
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    .author-box-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--primary-mid);
+      border: 3px solid var(--accent-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      color: var(--accent-gold);
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .author-box-content h4 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-bottom: 0.2rem;
+      color: var(--text-white);
+    }
+    .author-box-content .designation {
+      font-size: 0.8rem;
+      color: var(--accent-gold);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .author-box-content p {
+      font-size: 0.88rem;
+      color: var(--text-gray);
+      line-height: 1.6;
+    }
+
+    /* Consultation CTA */
+    .blog-cta-card {
+      margin: 3.5rem 0;
+      padding: 2.8rem 2.2rem;
+      text-align: center;
+      background: linear-gradient(135deg, #00296b 0%, #001533 100%);
+      border: 1px solid rgba(253, 197, 0, 0.3);
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+    .blog-cta-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(253, 197, 0, 0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .blog-cta-card h3 {
+      font-size: clamp(1.4rem, 3vw, 1.85rem);
+      font-weight: 800;
+      margin-bottom: 0.8rem;
+      color: var(--text-white);
+    }
+    .blog-cta-card p {
+      color: var(--text-gray);
+      max-width: 540px;
+      margin: 0 auto 1.8rem;
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+    .cta-btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .cta-primary-btn {
+      background: var(--accent-gold);
+      color: #000;
+      padding: 0.8rem 2rem;
+      border-radius: 50px;
+      font-weight: 800;
+      font-size: 0.92rem;
+      transition: all 0.25s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .cta-primary-btn:hover {
+      background: var(--accent-gold-light);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(253, 197, 0, 0.35);
+    }
+    .cta-secondary-btn {
+      background: transparent;
+      border: 1px solid var(--glass-border);
+      color: #fff;
+      padding: 0.8rem 1.8rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.92rem;
+      transition: all 0.25s;
+    }
+    .cta-secondary-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    /* Related Posts */
+    .related-posts-section {
+      margin-top: 4rem;
+      padding-top: 3rem;
+      border-top: 1px solid var(--glass-border);
+    }
+    .related-title {
+      font-size: 1.45rem;
+      font-weight: 800;
+      margin-bottom: 1.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .related-title i { color: var(--accent-gold); }
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+    .related-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.25s, border-color 0.25s;
+    }
+    .related-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(253, 197, 0, 0.3);
+    }
+    .related-img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      display: block;
+      background: var(--primary-mid);
+    }
+    .related-body {
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      gap: 0.5rem;
+    }
+    .related-cat {
+      font-size: 0.7rem;
+      color: var(--accent-gold);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .related-card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1.4;
+      color: #fff;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .related-read-more {
+      margin-top: auto;
+      font-size: 0.78rem;
+      color: var(--accent-gold);
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    /* Loading & Error States */
+    .state-container {
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+    .state-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(253, 197, 0, 0.2);
+      border-top-color: var(--accent-gold);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+      margin-bottom: 1.2rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .state-error-icon {
+      font-size: 3.5rem;
+      color: #ef4444;
+      margin-bottom: 1rem;
+    }
+    .state-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .state-desc { color: var(--text-gray); max-width: 440px; margin-bottom: 1.5rem; }
+    .back-btn {
+      background: var(--accent-gold);
+      color: #000;
+      padding: 0.7rem 1.6rem;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+    .back-btn:hover { background: var(--accent-gold-light); transform: translateY(-1px); }
+
+    /* Footer */
+    footer {
+      background: rgba(0, 0, 0, 0.4);
+      border-top: 1px solid var(--glass-border);
+      padding: 2.5rem 5%;
+      text-align: center;
+      color: var(--text-gray);
+      font-size: 0.85rem;
+    }
+    footer a { color: var(--accent-gold); }
+
+    /* Copy toast */
+    #copyToast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #10b981;
+      color: #fff;
+      padding: 0.7rem 1.2rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    #copyToast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="readingProgress"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="/index.html" class="logo">
+      <img src="/assets/logo.png" alt="TwinSure Logo" /> TwinSure
+    </a>
+    <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="nav-links" id="navLinks">
+      <a href="/index.html">Home</a>
+      <a href="/about.html">About</a>
+      <a href="/services.html">Services</a>
+      <a href="/blog" class="active">Blog</a>
+      <a href="/contact.html">Contact</a>
+      <a href="/login.html" class="nav-cta">Login</a>
+    </div>
+  </nav>
+
+  <!-- Loading View -->
+  <div id="loadingView" class="state-container">
+    <div class="state-spinner"></div>
+    <div class="state-title">Loading Article...</div>
+    <p class="state-desc">Fetching insights from TwinSure advisory</p>
+  </div>
+
+  <!-- Error View -->
+  <div id="errorView" class="state-container" style="display: none;">
+    <div class="state-error-icon"><i class="fas fa-file-circle-xmark"></i></div>
+    <h2 class="state-title">Article Not Found</h2>
+    <p class="state-desc" id="errorMessage">The requested article could not be found or may have been moved.</p>
+    <a href="/blog" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Blog</a>
+  </div>
+
+  <!-- Article View -->
+  <article id="articleView" class="article-wrap" style="display: none;">
+    <div class="breadcrumbs">
+      <a href="/index.html"><i class="fas fa-home"></i> Home</a>
+      <span class="sep">/</span>
+      <a href="/blog">Blog</a>
+      <span class="sep">/</span>
+      <span class="sep" id="bcCategorySep" style="display:none;">/</span>
+      <span class="current" id="bcTitle">Article</span>
+    </div>
+
+    <header class="post-header">
+      <div class="post-category-badge" id="postCategory">
+        <i class="fas fa-tag"></i> <span id="postCategoryText">General</span>
+      </div>
+      <h1 class="post-title" id="postTitle">Loading Title...</h1>
+
+      <div class="post-meta-row">
+        <div class="author-info">
+          <div class="author-avatar" id="authorAvatar">TS</div>
+          <div>
+            <div class="author-name" id="authorName">TwinSure Team</div>
+            <div class="author-role">Insurance &amp; Financial Advisor</div>
+          </div>
+        </div>
+
+        <div class="post-meta-details">
+          <span><i class="far fa-calendar-alt"></i> <span id="postDate">—</span></span>
+          <span><i class="far fa-clock"></i> <span id="readTime">3 min read</span></span>
+        </div>
+      </div>
+    </header>
+
+    <div class="post-featured-image" id="featuredImageWrap" style="display: none;">
+      <img id="featuredImg" src="" alt="Featured cover image" />
+    </div>
+
+    <div class="post-lead-excerpt" id="postExcerpt" style="display: none;"></div>
+
+    <div class="post-content" id="postBody"></div>
+
+    <div class="post-tags-section" id="postTagsSection" style="display: none;">
+      <span class="tag-label"><i class="fas fa-tags"></i> Topics:</span>
+      <div id="postTagsList" style="display: flex; flex-wrap: wrap; gap: 0.5rem;"></div>
+    </div>
+
+    <!-- Social Share -->
+    <div class="share-section">
+      <div class="share-title"><i class="fas fa-share-nodes" style="color:var(--accent-gold);"></i> Share this article</div>
+      <div class="share-buttons">
+        <button class="share-btn whatsapp" onclick="shareWhatsApp()" title="Share on WhatsApp" aria-label="Share on WhatsApp">
+          <i class="fab fa-whatsapp"></i>
+        </button>
+        <button class="share-btn linkedin" onclick="shareLinkedIn()" title="Share on LinkedIn" aria-label="Share on LinkedIn">
+          <i class="fab fa-linkedin-in"></i>
+        </button>
+        <button class="share-btn twitter" onclick="shareTwitter()" title="Share on X / Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-x-twitter"></i>
+        </button>
+        <button class="share-btn copy" onclick="copyArticleLink()" title="Copy link" aria-label="Copy link">
+          <i class="fas fa-link"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Author Bio Box -->
+    <div class="author-box">
+      <div class="author-box-avatar" id="authorBioAvatar">TS</div>
+      <div class="author-box-content">
+        <h4 id="authorBioName">TwinSure Team</h4>
+        <div class="designation">Expert Insurance &amp; Financial Consultants &bull; Tamil Nadu</div>
+        <p>With 20+ years of dedicated insurance advocacy, TwinSure empowers families and enterprises across Chennai, Coimbatore, Karur, and Tamil Nadu with conflict-free policy advisory and hassle-free claim settlements.</p>
+      </div>
+    </div>
+
+    <!-- Consultation CTA -->
+    <div class="blog-cta-card">
+      <h3>Have Questions About Your Health Insurance?</h3>
+      <p>Don't navigate complex policy clauses alone. Consult our senior advisors for complimentary policy audit and personalized recommendations.</p>
+      <div class="cta-btn-group">
+        <a href="/contact.html" class="cta-primary-btn"><i class="fas fa-phone-volume"></i> Speak with an Expert</a>
+        <a href="/services.html" class="cta-secondary-btn">Explore Our Services</a>
+      </div>
+    </div>
+
+    <!-- Related Articles -->
+    <section class="related-posts-section" id="relatedSection" style="display: none;">
+      <h3 class="related-title"><i class="fas fa-newspaper"></i> Related Articles</h3>
+      <div class="related-grid" id="relatedGrid"></div>
+    </section>
+  </article>
+
+  <!-- Copy Toast -->
+  <div id="copyToast"><i class="fas fa-check-circle"></i> Article link copied to clipboard!</div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 TwinSure. All rights reserved. &nbsp;|&nbsp; <a href="/privacy.html">Privacy Policy</a> &nbsp;|&nbsp; <a href="/terms.html">Terms of Service</a> &nbsp;|&nbsp; <a href="/blog">All Articles</a></p>
+  </footer>
+
+  <script>
+    // Mobile navigation toggle
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('navLinks');
+    if (hamburger && navLinks) {
+      hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
+    }
+
+    // Scroll reading progress
+    window.addEventListener('scroll', () => {
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      if (docHeight > 0) {
+        const scrolled = (window.scrollY / docHeight) * 100;
+        const bar = document.getElementById('readingProgress');
+        if (bar) bar.style.width = scrolled + '%';
+      }
+    });
+
+    const BASE_URL = typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : '/backend/api';
+    let currentPost = null;
+
+    // Extract slug from URL pathname (/blog/:slug) or query string (?slug=:slug)
+    function getSlugFromUrl() {
+      const path = window.location.pathname;
+      const segments = path.split('/').filter(Boolean);
+      // If path is /blog/some-slug
+      if (segments.length >= 2 && segments[0].toLowerCase() === 'blog') {
+        return decodeURIComponent(segments.slice(1).join('/'));
+      }
+      // If query param is used e.g. blog-post.html?slug=...
+      const params = new URLSearchParams(window.location.search);
+      return params.get('slug') || '';
+    }
+
+    // Calculate reading time
+    function calculateReadingTime(text) {
+      const words = (text || '').trim().split(/\s+/).length;
+      const minutes = Math.max(1, Math.round(words / 200));
+      return minutes + ' min read';
+    }
+
+    // Convert markdown/plain text to formatted HTML
+    function formatContent(content) {
+      if (!content) return '';
+      // If already contains HTML tags like <p>, <div>, <h2>, render as is with clean formatting
+      if (/<[a-z][\s\S]*>/i.test(content)) {
+        return content;
+      }
+
+      // Basic Markdown parser for plain text
+      let html = content
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+      // Headings
+      html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+      html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+      html = html.replace(/^# (.*$)/gim, '<h2>$1</h2>');
+
+      // Bold & Italic
+      html = html.replace(/\*\*\*(.*?)\*\*\*/gim, '<strong><em>$1</em></strong>');
+      html = html.replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>');
+      html = html.replace(/\*(.*?)\*/gim, '<em>$1</em>');
+
+      // Blockquotes
+      html = html.replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>');
+
+      // Links: [text](url)
+      html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+
+      // Unordered lists
+      html = html.replace(/^\s*[-*]\s+(.*$)/gim, '<li>$1</li>');
+      html = html.replace(/(<li>.*<\/li>)/gms, '<ul>$1</ul>');
+
+      // Paragraphs
+      const paragraphs = html.split(/\n{2,}/);
+      html = paragraphs.map(p => {
+        const trimmed = p.trim();
+        if (!trimmed) return '';
+        if (/^<(h2|h3|ul|ol|blockquote)/.test(trimmed)) return trimmed;
+        return '<p>' + trimmed.replace(/\n/g, '<br/>') + '</p>';
+      }).join('\n');
+
+      return html;
+    }
+
+    async function loadPost() {
+      const slug = getSlugFromUrl();
+      if (!slug) {
+        showError('No article slug was specified.');
+        return;
+      }
+
+      try {
+        const res = await fetch(BASE_URL + '/blogs/' + encodeURIComponent(slug));
+        if (!res.ok) {
+          throw new Error('Article not found.');
+        }
+        const data = await res.json();
+        if (!data || !data.success || !data.post) {
+          throw new Error((data && data.message) || 'Article not found.');
+        }
+
+        currentPost = data.post;
+        renderPost(data.post);
+        loadRelatedPosts(data.post.category, data.post._id);
+      } catch (err) {
+        showError(err.message || 'Could not load article.');
+      }
+    }
+
+    function renderPost(post) {
+      document.getElementById('loadingView').style.display = 'none';
+      document.getElementById('errorView').style.display = 'none';
+      document.getElementById('articleView').style.display = 'block';
+
+      // Update Page Title and SEO Meta
+      const metaTitle = post.metaTitle || post.title || 'TwinSure Blog';
+      const metaDesc = post.metaDescription || post.excerpt || 'TwinSure Insurance & Advisory';
+      const postUrl = window.location.origin + '/blog/' + encodeURIComponent(post.slug);
+      const postImage = post.coverImage || (window.location.origin + '/assets/logo.png');
+
+      document.title = metaTitle + ' | TwinSure';
+      document.getElementById('pageTitle').textContent = metaTitle + ' | TwinSure';
+      document.getElementById('metaDesc').setAttribute('content', metaDesc);
+      document.getElementById('canonicalLink').setAttribute('href', postUrl);
+
+      // OG Meta
+      document.getElementById('ogTitle').setAttribute('content', metaTitle);
+      document.getElementById('ogDesc').setAttribute('content', metaDesc);
+      document.getElementById('ogUrl').setAttribute('content', postUrl);
+      document.getElementById('ogImage').setAttribute('content', postImage);
+
+      // Twitter Meta
+      document.getElementById('twTitle').setAttribute('content', metaTitle);
+      document.getElementById('twDesc').setAttribute('content', metaDesc);
+      document.getElementById('twImage').setAttribute('content', postImage);
+
+      // Breadcrumb
+      document.getElementById('bcTitle').textContent = post.title;
+
+      // Category
+      const cat = post.category || 'General';
+      document.getElementById('postCategoryText').textContent = cat;
+
+      // Title
+      document.getElementById('postTitle').textContent = post.title;
+
+      // Author & Avatar
+      const author = post.author || 'TwinSure Team';
+      document.getElementById('authorName').textContent = author;
+      document.getElementById('authorBioName').textContent = author;
+
+      const initials = author.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+      document.getElementById('authorAvatar').textContent = initials;
+      document.getElementById('authorBioAvatar').textContent = initials;
+
+      // Date
+      let dateStr = 'Recently published';
+      if (post.publishedAt) {
+        dateStr = new Date(post.publishedAt).toLocaleDateString('en-IN', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        });
+      } else if (post.createdAt) {
+        dateStr = new Date(post.createdAt).toLocaleDateString('en-IN', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        });
+      }
+      document.getElementById('postDate').textContent = dateStr;
+
+      // Read time
+      document.getElementById('readTime').textContent = calculateReadingTime(post.content);
+
+      // Featured Cover Image
+      const featuredWrap = document.getElementById('featuredImageWrap');
+      const featuredImg = document.getElementById('featuredImg');
+      if (post.coverImage && featuredWrap && featuredImg) {
+        featuredImg.src = post.coverImage;
+        featuredImg.alt = post.title;
+        featuredWrap.style.display = 'block';
+      }
+
+      // Excerpt
+      const excerptEl = document.getElementById('postExcerpt');
+      if (post.excerpt && excerptEl) {
+        excerptEl.textContent = post.excerpt;
+        excerptEl.style.display = 'block';
+      }
+
+      // Content Body
+      const bodyEl = document.getElementById('postBody');
+      if (bodyEl) {
+        bodyEl.innerHTML = formatContent(post.content);
+      }
+
+      // Tags
+      const tagsSection = document.getElementById('postTagsSection');
+      const tagsList = document.getElementById('postTagsList');
+      if (post.tags && post.tags.length && tagsSection && tagsList) {
+        tagsList.innerHTML = post.tags.map(t =>
+          `<span class="post-tag">#${escapeHtml(t)}</span>`
+        ).join('');
+        tagsSection.style.display = 'flex';
+      }
+    }
+
+    async function loadRelatedPosts(category, currentId) {
+      try {
+        const res = await fetch(BASE_URL + '/blogs');
+        const data = await res.json();
+        if (!data || !data.posts) return;
+
+        const others = data.posts
+          .filter(p => String(p._id) !== String(currentId))
+          .slice(0, 3);
+
+        if (others.length === 0) return;
+
+        const grid = document.getElementById('relatedGrid');
+        const section = document.getElementById('relatedSection');
+        if (!grid || !section) return;
+
+        grid.innerHTML = others.map(post => {
+          const imgHtml = post.coverImage
+            ? `<img class="related-img" src="${escapeHtml(post.coverImage)}" alt="${escapeHtml(post.title)}" onerror="this.style.display='none'" />`
+            : `<div class="related-img" style="display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.2);"><i class="fas fa-newspaper" style="font-size:2rem;"></i></div>`;
+
+          return `
+            <a href="/blog/${encodeURIComponent(post.slug)}" class="related-card">
+              ${imgHtml}
+              <div class="related-body">
+                <span class="related-cat">${escapeHtml(post.category || 'General')}</span>
+                <h4 class="related-card-title">${escapeHtml(post.title)}</h4>
+                <span class="related-read-more">Read article <i class="fas fa-arrow-right"></i></span>
+              </div>
+            </a>
+          `;
+        }).join('');
+
+        section.style.display = 'block';
+      } catch (e) {
+        console.warn('Could not load related posts', e);
+      }
+    }
+
+    function showError(msg) {
+      document.getElementById('loadingView').style.display = 'none';
+      document.getElementById('articleView').style.display = 'none';
+      const errorView = document.getElementById('errorView');
+      const msgEl = document.getElementById('errorMessage');
+      if (msgEl) msgEl.textContent = msg;
+      if (errorView) errorView.style.display = 'flex';
+    }
+
+    function escapeHtml(str) {
+      return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // Social Sharing
+    function shareWhatsApp() {
+      const url = encodeURIComponent(window.location.href);
+      const text = encodeURIComponent((currentPost ? currentPost.title + ' | TwinSure: ' : '') + window.location.href);
+      window.open('https://api.whatsapp.com/send?text=' + text, '_blank');
+    }
+
+    function shareLinkedIn() {
+      const url = encodeURIComponent(window.location.href);
+      window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + url, '_blank');
+    }
+
+    function shareTwitter() {
+      const url = encodeURIComponent(window.location.href);
+      const text = encodeURIComponent(currentPost ? currentPost.title : 'TwinSure Blog');
+      window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + url, '_blank');
+    }
+
+    function copyArticleLink() {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        const toast = document.getElementById('copyToast');
+        if (toast) {
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+      }).catch(() => {
+        prompt('Copy link:', window.location.href);
+      });
+    }
+
+    // Initialize on page load
+    loadPost();
+  </script>
+</body>
+</html>
